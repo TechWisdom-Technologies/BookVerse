@@ -1,0 +1,189 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  VISITOR
+  MEMBER
+  AUTHOR
+  ADMIN
+}
+
+enum FileType {
+  PDF
+  EPUB
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  FIRE
+  CRY
+  WOW
+}
+
+model User {
+  id          String   @id @default(cuid())
+  firebaseUid String   @unique @map("firebase_uid")
+  email       String   @unique
+  username    String   @unique
+  displayName String?  @map("display_name")
+  avatarUrl   String?  @map("avatar_url")
+  bio         String?
+  role        Role     @default(MEMBER)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  books          Book[]
+  bookReviews    BookReview[]
+  bookSaves      BookSave[]
+  stories        Story[]
+  storyReactions StoryReaction[]
+  comments       Comment[]
+  followers      Follow[]        @relation("following")
+  following      Follow[]        @relation("follower")
+
+  @@map("users")
+}
+
+model Book {
+  id            String   @id @default(cuid())
+  title         String
+  authorName    String   @map("author_name")
+  coverUrl      String?  @map("cover_url")
+  fileUrl       String   @map("file_url")
+  fileType      FileType @map("file_type")
+  genre         String
+  language      String   @default("English")
+  description   String?
+  downloadCount Int      @default(0) @map("download_count")
+  uploadedById  String   @map("uploaded_by_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  uploadedBy User         @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+  reviews    BookReview[]
+  saves      BookSave[]
+  comments   Comment[]
+
+  @@index([genre])
+  @@index([uploadedById])
+  @@map("books")
+}
+
+model BookReview {
+  id        String   @id @default(cuid())
+  bookId    String   @map("book_id")
+  userId    String   @map("user_id")
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, userId])
+  @@map("book_reviews")
+}
+
+model BookSave {
+  id        String   @id @default(cuid())
+  bookId    String   @map("book_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, userId])
+  @@map("book_saves")
+}
+
+model Story {
+  id        String   @id @default(cuid())
+  title     String
+  coverUrl  String?  @map("cover_url")
+  summary   String?
+  authorId  String   @map("author_id")
+  viewCount Int      @default(0) @map("view_count")
+  published Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  author    User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  chapters  StoryChapter[]
+  reactions StoryReaction[]
+  comments  Comment[]
+
+  @@index([authorId])
+  @@index([published])
+  @@map("stories")
+}
+
+model StoryChapter {
+  id           String   @id @default(cuid())
+  storyId      String   @map("story_id")
+  title        String
+  content      Json?
+  chapterOrder Int      @map("chapter_order")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, chapterOrder])
+  @@map("story_chapters")
+}
+
+model StoryReaction {
+  id           String       @id @default(cuid())
+  storyId      String       @map("story_id")
+  userId       String       @map("user_id")
+  reactionType ReactionType @map("reaction_type")
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@map("story_reactions")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  authorId  String   @map("author_id")
+  storyId   String?  @map("story_id")
+  bookId    String?  @map("book_id")
+  parentId  String?  @map("parent_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  story   Story?    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  book    Book?     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([storyId])
+  @@index([bookId])
+  @@index([parentId])
+  @@map("comments")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String   @map("follower_id")
+  followingId String   @map("following_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}

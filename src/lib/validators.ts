@@ -1,0 +1,42 @@
+import { z } from "zod";
+
+export const bookSchema = z.object({
+  title: z.string().min(1),
+  authorName: z.string().min(1),
+  coverUrl: z.string().url().optional().nullable(),
+  fileUrl: z.string().min(1),
+  fileType: z.enum(["PDF", "EPUB"]),
+  genre: z.string().min(1),
+  language: z.string().min(1).default("English"),
+  description: z.string().optional().nullable(),
+});
+
+export const storySchema = z.object({
+  title: z.string().min(1),
+  coverUrl: z.string().url().optional().nullable(),
+  summary: z.string().optional().nullable(),
+  published: z.boolean().optional(),
+});
+
+export const chapterSchema = z.object({
+  title: z.string().min(1),
+  content: z.unknown().optional().nullable(),
+  chapterOrder: z.number().int().min(1),
+});
+
+export const reviewSchema = z.object({
+  rating: z.number().int().min(1).max(5),
+  comment: z.string().optional().nullable(),
+});
+
+export const commentSchema = z.object({
+  content: z.string().min(1),
+  parentId: z.string().optional().nullable(),
+});
+
+export const profileSchema = z.object({
+  displayName: z.string().min(1).optional().nullable(),
+  avatarUrl: z.string().url().optional().nullable(),
+  bio: z.string().max(300).optional().nullable(),
+});
+
