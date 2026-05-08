@@ -8,6 +8,7 @@ import { FileUpload } from "@/components/shared/FileUpload";
 import ChapterList, {
   type ChapterItem,
 } from "@/components/stories/ChapterList";
+import { AiCoverGenerator } from "@/components/stories/AiCoverGenerator";
 import {
   ArrowLeft,
   Globe,
@@ -337,10 +338,14 @@ export default function EditStoryPage({
                 label="Upload cover"
               />
               {editCoverUrl && (
-                <p className="mt-1 text-xs text-green-600 dark:text-green-400">
+                <p className="mt-1 text-xs text-green-600 dark:text-green-400 mb-4">
                   ✓ Cover set
                 </p>
               )}
+              
+              <div className="mt-6">
+                <AiCoverGenerator onCoverGenerated={(url) => setEditCoverUrl(url)} />
+              </div>
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">

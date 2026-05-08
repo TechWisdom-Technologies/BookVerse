@@ -9,6 +9,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
+import { TTSPlayer } from "@/components/stories/TTSPlayer";
 
 interface ChapterReaderPageProps {
   params: Promise<{
@@ -90,15 +91,23 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
       </Link>
 
       <header className="mb-8 border-b border-zinc-200 pb-6 dark:border-zinc-800">
-        <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-          Chapter {chapter.chapterOrder}
-        </p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
-          {chapter.title}
-        </h1>
-        <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-          Updated {formatDate(chapter.updatedAt)}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+              Chapter {chapter.chapterOrder}
+            </p>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+              {chapter.title}
+            </h1>
+            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+              Updated {formatDate(chapter.updatedAt)}
+            </p>
+          </div>
+          
+          {html && (
+            <TTSPlayer htmlContent={html} />
+          )}
+        </div>
       </header>
 
       <article className="prose prose-zinc max-w-none font-serif leading-relaxed dark:prose-invert">

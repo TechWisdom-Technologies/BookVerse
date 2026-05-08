@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
 interface ReviewFormProps {
@@ -19,6 +20,7 @@ export function ReviewForm({
   existingComment,
 }: ReviewFormProps) {
   const { user } = useAuth();
+  const router = useRouter();
   const [rating, setRating] = useState(existingRating || 0);
   const [comment, setComment] = useState(existingComment || "");
   const [submitting, setSubmitting] = useState(false);
@@ -49,6 +51,7 @@ export function ReviewForm({
 
       if (!res.ok) throw new Error("Failed to submit review");
       toast.success(existingRating ? "Review updated" : "Review posted!");
+      router.refresh();
       onReviewSubmitted?.();
       setComment("");
     } catch (err) {

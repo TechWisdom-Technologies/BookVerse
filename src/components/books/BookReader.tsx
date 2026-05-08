@@ -1,10 +1,17 @@
 "use client";
 
-import { PdfReader } from "./PdfReader";
-import { EpubReader } from "./EpubReader";
+import dynamic from "next/dynamic";
 import { FileType } from "@prisma/client";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+
+const PdfReader = dynamic(() => import("./PdfReader").then((mod) => mod.PdfReader), {
+  ssr: false,
+});
+
+const EpubReader = dynamic(() => import("./EpubReader").then((mod) => mod.EpubReader), {
+  ssr: false,
+});
 
 interface BookReaderProps {
   fileUrl: string;

@@ -8,6 +8,7 @@ import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare } from "lucide-
 import { CommentSection } from "@/components/comments/CommentSection";
 import { ReactionBar } from "@/components/stories/ReactionBar";
 import { StoryViewTracker } from "@/components/stories/StoryViewTracker";
+import { TipAuthorDialog } from "@/components/stories/TipAuthorDialog";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -174,6 +175,16 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               </p>
             </div>
           </Link>
+          
+          {currentUserId !== story.author.id && (
+            <div className="mt-2">
+              <TipAuthorDialog 
+                authorId={story.author.id} 
+                authorName={story.author.displayName || story.author.username} 
+                storyId={story.id} 
+              />
+            </div>
+          )}
 
           {story.summary && (
             <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">

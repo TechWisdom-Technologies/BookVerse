@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
@@ -17,9 +18,16 @@ export async function generateMetadata({ params }: ProfilePageProps): Promise<Me
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { username } = await params;
 
+  // Get cookies for authentication forwarding
+  const cookieStore = await cookies();
+  const cookieString = cookieStore.toString();
+
   // Fetch user data from API
   const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/users/${username}`, {
-    next: { revalidate: 60 }, // Revalidate every minute
+    headers: {
+      Cookie: cookieString,
+    },
+    next: { revalidate: 0 }, // Disable revalidation for live profile status
   });
 
   if (!res.ok) {

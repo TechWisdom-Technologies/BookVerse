@@ -12,6 +12,7 @@ import {
   Trash2,
   Globe,
   FileText,
+  Mail,
 } from "lucide-react";
 
 interface StoryItem {
@@ -94,13 +95,22 @@ export default function WriteDashboardPage() {
             Manage your stories, chapters, and publications.
           </p>
         </div>
-        <Link
-          href="/write/new"
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
-        >
-          <PenLine className="h-4 w-4" />
-          New Story
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/write/newsletter"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-4 text-sm font-medium text-zinc-700 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800 transition-colors"
+          >
+            <Mail className="h-4 w-4" />
+            Newsletter
+          </Link>
+          <Link
+            href="/write/new"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+          >
+            <PenLine className="h-4 w-4" />
+            New Story
+          </Link>
+        </div>
       </div>
 
       {/* Stories List */}

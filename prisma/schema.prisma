@@ -26,6 +26,24 @@ enum ReactionType {
   WOW
 }
 
+enum ClubRole {
+  MEMBER
+  MODERATOR
+  ADMIN
+}
+
+enum ChapterStatus {
+  DRAFT
+  BETA
+  PUBLISHED
+}
+
+enum TipStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 model User {
   id          String   @id @default(cuid())
   firebaseUid String   @unique @map("firebase_uid")
@@ -46,6 +64,19 @@ model User {
   comments       Comment[]
   followers      Follow[]        @relation("following")
   following      Follow[]        @relation("follower")
+
+  readingLogs     ReadingLog[]
+  achievements    UserAchievement[]
+  clubMemberships ClubMember[]
+  clubDiscussions ClubDiscussion[]
+  clubsOwned      Club[]           @relation("club_owner")
+
+  betaReads             BetaReader[]
+  newsletterSubscribers NewsletterSubscriber[] @relation("AuthorNewsletters")
+  newsletterSubs        NewsletterSubscriber[] @relation("NewsletterSubscriptions")
+
+  tipsSent     Tip[] @relation("TipsSent")
+  tipsReceived Tip[] @relation("TipsReceived")
 
   @@map("users")
 }
@@ -115,9 +146,11 @@ model Story {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   author    User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  chapters  StoryChapter[]
-  reactions StoryReaction[]
-  comments  Comment[]
+  chapters    StoryChapter[]
+  reactions   StoryReaction[]
+  comments    Comment[]
+  betaReaders BetaReader[]
+  tips        Tip[]
 
   @@index([authorId])
   @@index([published])
@@ -125,13 +158,14 @@ model Story {
 }
 
 model StoryChapter {
-  id           String   @id @default(cuid())
-  storyId      String   @map("story_id")
+  id           String        @id @default(cuid())
+  storyId      String        @map("story_id")
   title        String
   content      Json?
-  chapterOrder Int      @map("chapter_order")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
+  chapterOrder Int           @map("chapter_order")
+  status       ChapterStatus @default(PUBLISHED)
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
 
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
@@ -186,4 +220,149 @@ model Follow {
 
   @@unique([followerId, followingId])
   @@map("follows")
+}
+
+// --- Gamification Models (Batch 2) ---
+
+model ReadingLog {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  date      DateTime @db.Date
+  pagesRead Int      @default(0) @map("pages_read")
+  minutes   Int      @default(0)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@map("reading_logs")
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String
+  icon        String?
+  points      Int      @default(10)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  users UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  achievementId String   @map("achievement_id")
+  earnedAt      DateTime @default(now()) @map("earned_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+// --- Book Clubs & Communities Models (Batch 2) ---
+
+model Club {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  coverUrl    String?  @map("cover_url")
+  ownerId     String   @map("owner_id")
+  genre       String?
+  isPrivate   Boolean  @default(false) @map("is_private")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  owner       User             @relation("club_owner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members     ClubMember[]
+  discussions ClubDiscussion[]
+
+  @@index([ownerId])
+  @@map("clubs")
+}
+
+model ClubMember {
+  id       String   @id @default(cuid())
+  clubId   String   @map("club_id")
+  userId   String   @map("user_id")
+  role     ClubRole @default(MEMBER)
+  joinedAt DateTime @default(now()) @map("joined_at")
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([clubId, userId])
+  @@map("club_members")
+}
+
+model ClubDiscussion {
+  id        String   @id @default(cuid())
+  clubId    String   @map("club_id")
+  authorId  String   @map("author_id")
+  title     String
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  club   Club  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  author User  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([clubId])
+  @@index([authorId])
+  @@map("club_discussions")
+}
+
+// --- Creator Tools Models (Batch 3) ---
+
+model BetaReader {
+  id        String   @id @default(cuid())
+  storyId   String   @map("story_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, userId])
+  @@map("beta_readers")
+}
+
+model NewsletterSubscriber {
+  id           String   @id @default(cuid())
+  authorId     String   @map("author_id")
+  subscriberId String   @map("subscriber_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  author     User @relation("AuthorNewsletters", fields: [authorId], references: [id], onDelete: Cascade)
+  subscriber User @relation("NewsletterSubscriptions", fields: [subscriberId], references: [id], onDelete: Cascade)
+
+  @@unique([authorId, subscriberId])
+  @@map("newsletter_subscribers")
+}
+
+// --- Monetisation Models (Batch 4) ---
+
+model Tip {
+  id              String    @id @default(cuid())
+  amount          Int       
+  currency        String    @default("usd")
+  senderId        String?   @map("sender_id") 
+  receiverId      String    @map("receiver_id")
+  storyId         String?   @map("story_id")
+  message         String?
+  stripeSessionId String?   @unique @map("stripe_session_id")
+  status          TipStatus @default(PENDING)
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  sender   User?  @relation("TipsSent", fields: [senderId], references: [id], onDelete: SetNull)
+  receiver User   @relation("TipsReceived", fields: [receiverId], references: [id], onDelete: Cascade)
+  story    Story? @relation(fields: [storyId], references: [id], onDelete: SetNull)
+
+  @@index([receiverId])
+  @@map("tips")
 }

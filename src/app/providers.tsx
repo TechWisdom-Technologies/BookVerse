@@ -2,7 +2,8 @@
 
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
+export { useAuth };
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (

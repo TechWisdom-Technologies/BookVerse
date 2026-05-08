@@ -109,9 +109,6 @@ export default async function BookPage({ params }: BookPageProps) {
               bookId={id}
               reviews={serializedReviews}
               currentUserId={currentUserId}
-              onReviewSubmitted={() => {
-                // Revalidate on client side
-              }}
             />
           </div>
         </div>

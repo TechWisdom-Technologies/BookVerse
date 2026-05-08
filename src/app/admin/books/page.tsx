@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, Search, Trash2, BookOpen } from "lucide-react";
+import { Loader2, Search, Trash2, BookOpen, Plus } from "lucide-react";
 
 interface Book {
   id: string;
@@ -68,12 +68,23 @@ export default function AdminBooksPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Books
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Manage uploaded books
-      </p>
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+            Books
+          </h1>
+          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            Manage uploaded books
+          </p>
+        </div>
+        <Link
+          href="/upload"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+        >
+          <Plus className="h-4 w-4" />
+          Upload New Book
+        </Link>
+      </div>
 
       <div className="mt-6 flex items-center gap-4">
         <div className="relative flex-1 max-w-sm">

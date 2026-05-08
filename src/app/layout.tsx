@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/app/providers";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { AiLibrarianWidget } from "@/components/shared/AiLibrarianWidget";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -100,7 +101,23 @@ export default function RootLayout({
           <Navbar />
           <div className="flex-1">{children}</div>
           <Footer />
+          <AiLibrarianWidget />
         </Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('ServiceWorker registration successful');
+                  }, function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
       </body>
     </html>
   );

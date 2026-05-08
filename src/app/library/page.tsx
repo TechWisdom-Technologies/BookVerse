@@ -3,6 +3,9 @@ import { BookGrid } from "@/components/books/BookGrid";
 import { BookFilters } from "@/components/books/BookFilters";
 import { Pagination } from "@/components/shared/Pagination";
 import { FileType, type Prisma } from "@prisma/client";
+import { verifyToken } from "@/lib/auth";
+import Link from "next/link";
+import { Upload } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +27,14 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   const page = Math.max(1, parseInt(params.page || "1"));
   const limit = 12;
   const sort = params.sort || "recent";
+
+  let canUpload = false;
+  try {
+    const { dbUser } = await verifyToken();
+    canUpload = dbUser.role === "AUTHOR" || dbUser.role === "ADMIN";
+  } catch {
+    // Guest or unauthenticated user
+  }
 
   try {
     const skip = (page - 1) * limit;
@@ -99,11 +110,22 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
       <main className="min-h-[calc(100vh-8rem)]">
         <div className="mx-auto max-w-5xl px-6 py-8 sm:px-10">
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">Library</h1>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-              {total} book{total !== 1 ? "s" : ""} found
-            </p>
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">Library</h1>
+              <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                {total} book{total !== 1 ? "s" : ""} found
+              </p>
+            </div>
+            {canUpload && (
+              <Link
+                href="/upload"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+              >
+                <Upload className="h-4 w-4" />
+                Upload Book
+              </Link>
+            )}
           </div>
 
           <div className="grid gap-8 lg:grid-cols-4">

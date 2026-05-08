@@ -11,6 +11,16 @@ function requireEnv(name: string, value: string | undefined) {
   return value;
 }
 
+if (process.env.NODE_ENV === "development") {
+  console.log("R2 Config Check:", {
+    hasAccountId: !!accountId,
+    hasAccessKeyId: !!accessKeyId,
+    hasSecretAccessKey: !!secretAccessKey,
+    hasBucket: !!bucket,
+    hasPublicUrl: !!publicUrl,
+  });
+}
+
 const r2Client =
   accountId && accessKeyId && secretAccessKey
     ? new S3Client({
@@ -19,6 +29,10 @@ const r2Client =
         credentials: { accessKeyId, secretAccessKey },
       })
     : null;
+
+if (!r2Client && process.env.NODE_ENV === "development") {
+  console.error("R2 Client initialization failed: Missing required credentials.");
+}
 
 export function getR2Url(key: string) {
   if (!publicUrl) throw new Error("Missing env var: CLOUDFLARE_R2_PUBLIC_URL");
@@ -29,14 +43,19 @@ export async function uploadToR2(key: string, body: Uint8Array | Buffer, content
   if (!r2Client) throw new Error("R2 client not configured (missing env vars).");
   const Bucket = requireEnv("CLOUDFLARE_R2_BUCKET_NAME", bucket);
 
-  await r2Client.send(
-    new PutObjectCommand({
-      Bucket,
-      Key: key,
-      Body: body,
-      ContentType: contentType,
-    })
-  );
+  try {
+    await r2Client.send(
+      new PutObjectCommand({
+        Bucket,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+      })
+    );
+  } catch (error) {
+    console.error("R2 Upload Error:", error);
+    throw error;
+  }
 
   return getR2Url(key);
 }

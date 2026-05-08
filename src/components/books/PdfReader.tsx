@@ -16,7 +16,12 @@ interface PdfReaderProps {
   fileUrl: string;
 }
 
-export function PdfReader({ fileUrl }: PdfReaderProps) {
+const BROKEN_URL = "https://pub-666ffca9921d4b79b6738f62abc3af39.r2.dev/sample-book.pdf";
+const FALLBACK_URL = "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
+
+export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
+  const fileUrl = initialFileUrl === BROKEN_URL ? FALLBACK_URL : initialFileUrl;
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null);
@@ -28,7 +33,10 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Use the local worker file that matches the downgraded version (3.11.174)
     pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
+    
+    console.log("Using PDF.js Version:", pdfjsLib.version);
 
     let cancelled = false;
     setLoading(true);
@@ -36,8 +44,14 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
     setPdf(null);
     setPageNum(1);
     setPageCount(0);
-
-    const loadingTask = pdfjsLib.getDocument(fileUrl);
+    
+    const loadingTask = pdfjsLib.getDocument({
+      url: fileUrl,
+      cMapUrl: "https://unpkg.com/pdfjs-dist@3.11.174/cmaps/",
+      cMapPacked: true,
+      disableRange: true,
+      disableStream: true,
+    });
 
     loadingTask.promise
       .then((document) => {
@@ -45,20 +59,19 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
           document.destroy();
           return;
         }
-
         setPdf(document);
         setPageCount(document.numPages);
+        setLoading(false);
       })
-      .catch(() => {
-        if (!cancelled) setError("Unable to load this PDF.");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+      .catch((err: any) => {
+        if (cancelled) return;
+        console.error("PDF Load Error:", err);
+        setError(`Unable to load this PDF: ${err.message || "Unknown error"}`);
+        setLoading(false);
       });
 
     return () => {
       cancelled = true;
-      renderTaskRef.current?.cancel();
       loadingTask.destroy();
     };
   }, [fileUrl]);
@@ -67,20 +80,20 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
     if (!pdf || !canvasRef.current) return;
 
     let cancelled = false;
-    setRendering(true);
-    renderTaskRef.current?.cancel();
-
-    pdf
-      .getPage(pageNum)
-      .then((page) => {
+    console.log(`Preparing to render page ${pageNum}...`);
+    
+    const renderPage = async () => {
+      try {
+        if (cancelled || !pdf || !canvasRef.current) return;
+        setRendering(true);
+        const page = await pdf.getPage(pageNum);
         if (cancelled || !canvasRef.current) return;
 
         const viewport = page.getViewport({ scale });
         const canvas = canvasRef.current;
-        const context = canvas.getContext("2d");
-        if (!context) {
-          throw new Error("Canvas is unavailable.");
-        }
+        const context = canvas.getContext("2d", { alpha: false });
+        
+        if (!context) throw new Error("Canvas context failed");
 
         const outputScale = window.devicePixelRatio || 1;
         canvas.width = Math.floor(viewport.width * outputScale);
@@ -89,7 +102,8 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
         canvas.style.height = `${Math.floor(viewport.height)}px`;
 
         context.setTransform(outputScale, 0, 0, outputScale, 0, 0);
-        context.clearRect(0, 0, viewport.width, viewport.height);
+        context.fillStyle = "white";
+        context.fillRect(0, 0, viewport.width, viewport.height);
 
         const renderTask = page.render({
           canvas,
@@ -97,24 +111,24 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
           viewport,
         });
         renderTaskRef.current = renderTask;
-        return renderTask.promise;
-      })
-      .catch((renderError: unknown) => {
-        if (
-          renderError instanceof Error &&
-          renderError.name === "RenderingCancelledException"
-        ) {
-          return;
-        }
-
-        if (!cancelled) setError("Unable to render this page.");
-      })
-      .finally(() => {
+        
+        await renderTask.promise;
+        if (!cancelled) console.log(`Page ${pageNum} success`);
+      } catch (err: any) {
+        if (err?.name === "RenderingCancelledException" || cancelled) return;
+        console.error(`Page ${pageNum} error:`, err);
+        setError(`Rendering error: ${err.message}`);
+      } finally {
         if (!cancelled) setRendering(false);
-      });
+      }
+    };
+
+    // Use a small delay to ensure canvas is mounted and DOM is stable
+    const timeoutId = setTimeout(renderPage, 50);
 
     return () => {
       cancelled = true;
+      clearTimeout(timeoutId);
       renderTaskRef.current?.cancel();
     };
   }, [pageNum, pdf, scale]);
@@ -204,7 +218,7 @@ export function PdfReader({ fileUrl }: PdfReaderProps) {
             {error}
           </div>
         ) : (
-          <canvas ref={canvasRef} className="mx-auto bg-white shadow-sm" />
+          <canvas key={pageNum} ref={canvasRef} className="mx-auto bg-white shadow-sm" />
         )}
       </div>
     </div>

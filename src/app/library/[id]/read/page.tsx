@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
-import { BookReader } from "@/components/books/BookReader";
 import { notFound } from "next/navigation";
+import { BookReader } from "@/components/books/BookReader";
 
 export const dynamic = "force-dynamic";
 
