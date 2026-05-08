@@ -3,8 +3,7 @@ import { cookies, headers } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { generateUsername } from "@/lib/utils";
-import { sendEmail } from "@/lib/resend";
-import { WelcomeEmail } from "@/emails/WelcomeEmail";
+import { sendWelcomeEmail } from "@/lib/resend";
 
 async function readToken() {
   const cookieStore = await cookies();
@@ -55,12 +54,9 @@ export async function POST() {
     const res = NextResponse.json({ user });
     res.cookies.set("user-role", user.role, { httpOnly: false, sameSite: "lax", path: "/" });
 
+    // Send welcome email for new users (fire-and-forget)
     if (!existing) {
-      void sendEmail(
-        user.email,
-        "Welcome to BookVerse",
-        WelcomeEmail({ displayName: user.displayName })
-      );
+      void sendWelcomeEmail(user.email, user.username);
     }
 
     return res;

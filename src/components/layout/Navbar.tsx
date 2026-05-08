@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { SearchBar } from "@/components/search/SearchBar";
 import {
   BookOpen,
   PenLine,
@@ -110,11 +111,17 @@ export function Navbar() {
           )}
         </nav>
 
+        {/* Center - Search Bar (hidden on mobile) */}
+        <div className="hidden flex-1 px-8 md:block">
+          <SearchBar />
+        </div>
+
         {/* Right Side */}
         <div className="flex items-center gap-2">
+          {/* Mobile search link */}
           <Link
             href="/search"
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 transition-colors"
+            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50 transition-colors md:hidden"
             title="Search"
           >
             <Search className="h-4 w-4" />

@@ -61,6 +61,7 @@ export default function StoryEditor({
       Underline,
     ],
     content: initialContent || "",
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:

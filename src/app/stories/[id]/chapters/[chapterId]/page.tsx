@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { generateHTML, type JSONContent } from "@tiptap/core";
+import { generateHTML } from "@tiptap/html";
+import { type JSONContent } from "@tiptap/core";
+import { Window } from "happy-dom";
 import ImageExtension from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -19,6 +21,18 @@ function renderChapterContent(content: unknown) {
   if (!content || typeof content !== "object") return null;
 
   try {
+    // Tiptap's generateHTML requires a DOM environment.
+    // We polyfill it here for the server-side rendering using happy-dom.
+    const window = new Window();
+    (global as any).window = window;
+    (global as any).document = window.document;
+    
+    try {
+      (global as any).navigator = window.navigator;
+    } catch (e) {
+      // Handle cases where navigator is read-only in the global scope
+    }
+
     return generateHTML(content as JSONContent, [
       StarterKit,
       ImageExtension,

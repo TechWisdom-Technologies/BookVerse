@@ -35,8 +35,9 @@ export const commentSchema = z.object({
 });
 
 export const profileSchema = z.object({
-  displayName: z.string().min(1).optional().nullable(),
+  displayName: z.string().min(1).max(50).optional().nullable(),
+  username: z.string().min(3).max(30).regex(/^[a-z0-9_]+$/).optional(),
   avatarUrl: z.string().url().optional().nullable(),
-  bio: z.string().max(300).optional().nullable(),
+  bio: z.string().max(500).optional().nullable(),
 });
 

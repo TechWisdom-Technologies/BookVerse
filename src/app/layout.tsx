@@ -20,11 +20,65 @@ const merriweather = Merriweather({
 
 export const metadata: Metadata = {
   title: {
-    default: "BookVerse",
+    default: "BookVerse - Read, Write, Connect",
     template: "%s | BookVerse",
   },
   description:
-    "Read books, publish stories, and build your shelf. An open platform for readers and writers.",
+    "Read free books, publish original stories, and build your personal library. BookVerse is an open platform for readers and writers worldwide.",
+  keywords: [
+    "books",
+    "reading",
+    "stories",
+    "writing",
+    "ebooks",
+    "free books",
+    "online library",
+    "fan fiction",
+    "novels",
+    "authors",
+  ],
+  authors: [{ name: "BookVerse Team" }],
+  creator: "BookVerse",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://bookverse.app"),
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "BookVerse",
+    title: "BookVerse - Read, Write, Connect",
+    description: "Read free books, publish original stories, and build your personal library.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "BookVerse",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "BookVerse - Read, Write, Connect",
+    description: "Read free books, publish original stories, and build your personal library.",
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

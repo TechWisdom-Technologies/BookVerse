@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
+import { indexStory, removeStory } from "@/lib/meilisearch";
 import { Role, type ReactionType } from "@prisma/client";
 
 interface RouteParams {
@@ -130,7 +131,28 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         ...(parsed.coverUrl !== undefined && { coverUrl: parsed.coverUrl }),
         ...(parsed.published !== undefined && { published: parsed.published }),
       },
+      include: {
+        author: {
+          select: { displayName: true, username: true },
+        },
+      },
     });
+
+    // Sync with Meilisearch when published status changes
+    if (parsed.published === true) {
+      void indexStory({
+        id: story.id,
+        title: story.title,
+        summary: story.summary,
+        authorName: story.author.displayName || story.author.username,
+        published: true,
+        coverUrl: story.coverUrl,
+        createdAt: story.createdAt.toISOString(),
+        viewCount: story.viewCount,
+      });
+    } else if (parsed.published === false) {
+      void removeStory(story.id);
+    }
 
     return NextResponse.json({ story });
   } catch (error) {
@@ -159,6 +181,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     }
 
     await prisma.story.delete({ where: { id } });
+
+    // Remove from Meilisearch index
+    void removeStory(id);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

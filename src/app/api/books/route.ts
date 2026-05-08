@@ -138,12 +138,18 @@ export async function POST(request: Request) {
       },
     });
 
-    await indexBook({
+    // Index in Meilisearch (fire-and-forget)
+    void indexBook({
       id: book.id,
       title: book.title,
       authorName: book.authorName,
       genre: book.genre,
       language: book.language,
+      description: book.description,
+      coverUrl: book.coverUrl,
+      fileType: book.fileType,
+      createdAt: book.createdAt.toISOString(),
+      downloadCount: book.downloadCount,
     });
 
     return NextResponse.json({ book }, { status: 201 });

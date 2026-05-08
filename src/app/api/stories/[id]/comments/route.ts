@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { commentSchema } from "@/lib/validators";
+import { sendCommentNotification } from "@/lib/resend";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -129,25 +130,22 @@ export async function POST(request: Request, { params }: RouteParams) {
       },
     });
 
-    // Send notification email to story author (fire-and-forget)
+    // Send notification email to story author (fire-and-forget, non-blocking)
     if (story.authorId !== dbUser.id) {
-      import("@/lib/resend").then(async ({ sendEmail }) => {
-        try {
-          const storyAuthor = await prisma.user.findUnique({
-            where: { id: story.authorId },
-            select: { email: true, displayName: true },
+      void prisma.user.findUnique({
+        where: { id: story.authorId },
+        select: { email: true, displayName: true },
+      }).then((storyAuthor) => {
+        if (storyAuthor?.email) {
+          sendCommentNotification(storyAuthor.email, {
+            authorName: storyAuthor.displayName || "Author",
+            commenterName: dbUser.displayName || dbUser.username,
+            storyTitle: story.title,
+            commentPreview: parsed.content.slice(0, 200),
+            storyId: story.id,
           });
-          if (storyAuthor?.email) {
-            await sendEmail(
-              storyAuthor.email,
-              `New comment on "${story.title}"`,
-              `${dbUser.displayName || dbUser.username} commented: "${parsed.content.slice(0, 200)}"`
-            );
-          }
-        } catch (emailError) {
-          console.error("Failed to send comment notification:", emailError);
         }
-      }).catch(() => { /* ignore email module errors */ });
+      });
     }
 
     return NextResponse.json({ comment }, { status: 201 });

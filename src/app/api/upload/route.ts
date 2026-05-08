@@ -5,8 +5,9 @@ import { verifyToken } from "@/lib/auth";
 import { uploadToR2 } from "@/lib/r2";
 
 const MAX_COVER_SIZE = 5 * 1024 * 1024;
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 const MAX_BOOK_SIZE = 100 * 1024 * 1024;
-const VALID_KINDS = ["cover", "book"] as const;
+const VALID_KINDS = ["cover", "book", "avatar"] as const;
 
 type UploadKind = (typeof VALID_KINDS)[number];
 
@@ -41,6 +42,12 @@ function validateFile(file: File, kind: UploadKind) {
     return null;
   }
 
+  if (kind === "avatar") {
+    if (file.size > MAX_AVATAR_SIZE) return "Avatar must be smaller than 5 MB.";
+    if (!file.type.startsWith("image/")) return "Avatar must be an image file.";
+    return null;
+  }
+
   if (file.size > MAX_BOOK_SIZE) return "Book file must be smaller than 100 MB.";
 
   const isPdf = extension === "pdf" && file.type === "application/pdf";
@@ -59,13 +66,15 @@ export async function POST(request: Request) {
   try {
     const { dbUser } = await verifyToken();
 
-    if (!isAuthorOrAdmin(dbUser.role)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
     const formData = await request.formData();
     const file = formData.get("file");
     const kindValue = String(formData.get("kind") || "book");
+
+    // Avatar uploads allowed for all authenticated users
+    // Book/cover uploads require AUTHOR or ADMIN role
+    if (kindValue !== "avatar" && !isAuthorOrAdmin(dbUser.role)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
 
     if (!(file instanceof File)) {
       return NextResponse.json({ error: "File is required" }, { status: 400 });
@@ -81,7 +90,7 @@ export async function POST(request: Request) {
     }
 
     const fileName = sanitizeFilename(file.name);
-    const folder = kindValue === "cover" ? "covers" : "books";
+    const folder = kindValue === "avatar" ? "avatars" : kindValue === "cover" ? "covers" : "books";
     const key = `${folder}/${dbUser.id}/${Date.now()}-${randomUUID()}-${fileName}`;
     const buffer = Buffer.from(await file.arrayBuffer());
     const url = await uploadToR2(key, buffer, file.type || "application/octet-stream");
