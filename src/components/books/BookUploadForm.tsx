@@ -114,47 +114,55 @@ export function BookUploadForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="grid gap-6 md:grid-cols-2">
-        <label className="space-y-2">
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Title</span>
+    <form onSubmit={handleSubmit} className="space-y-8 sm:space-y-10">
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
+        <div className="group">
+          <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2 sm:mb-3 ml-2 block group-focus-within:text-brand transition-colors">
+            Title
+          </label>
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600"
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
             placeholder="Book title"
           />
-        </label>
+        </div>
 
-        <label className="space-y-2">
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Author Name</span>
+        <div className="group">
+          <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2 sm:mb-3 ml-2 block group-focus-within:text-brand transition-colors">
+            Author Name
+          </label>
           <input
             value={authorName}
             onChange={(event) => setAuthorName(event.target.value)}
-            className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600"
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
             placeholder="Author name"
           />
-        </label>
+        </div>
       </div>
 
-      <label className="block space-y-2">
-        <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Description</span>
+      <div className="group">
+        <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2 sm:mb-3 ml-2 block group-focus-within:text-brand transition-colors">
+          Description
+        </label>
         <textarea
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={5}
-          className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600"
-          placeholder="Optional description"
+          className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 resize-none"
+          placeholder="What is your story about?"
         />
-      </label>
+      </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
-        <label className="space-y-2">
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Genre</span>
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-3">
+        <div className="group">
+          <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2 sm:mb-3 ml-2 block group-focus-within:text-brand transition-colors">
+            Genre
+          </label>
           <select
             value={genre}
             onChange={(event) => setGenre(event.target.value)}
-            className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600"
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-medium text-zinc-900 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 appearance-none"
           >
             {genres.map((item) => (
               <option key={item} value={item}>
@@ -162,14 +170,16 @@ export function BookUploadForm() {
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label className="space-y-2">
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Language</span>
+        <div className="group">
+          <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2 sm:mb-3 ml-2 block group-focus-within:text-brand transition-colors">
+            Language
+          </label>
           <select
             value={language}
             onChange={(event) => setLanguage(event.target.value)}
-            className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600"
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-medium text-zinc-900 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 appearance-none"
           >
             {languages.map((item) => (
               <option key={item} value={item}>
@@ -177,69 +187,84 @@ export function BookUploadForm() {
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label className="space-y-2">
-          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">File Type</span>
+        <div className="group">
+          <label className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-2 sm:mb-3 ml-2 block group-focus-within:text-brand transition-colors">
+            File Type
+          </label>
           <select
             value={fileType}
             onChange={(event) => setFileType(event.target.value as "PDF" | "EPUB")}
-            className="w-full rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-600"
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-medium text-zinc-900 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 appearance-none"
           >
             <option value="">Select after uploading</option>
             <option value="PDF">PDF</option>
             <option value="EPUB">EPUB</option>
           </select>
-        </label>
+        </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
-        <div className="space-y-3">
-          <FileUpload
-            label="Cover Image"
-            accept="image/*"
-            maxSizeMB={5}
-            uploadKind="cover"
-            helperText="Upload a cover image to R2."
-            onUploaded={(result) => setCover(result)}
-          />
+      <div className="grid gap-6 sm:gap-8 md:grid-cols-2 pt-2 sm:pt-4">
+        <div className="space-y-4">
+          <div className="bg-zinc-50 dark:bg-zinc-900/30 rounded-[2rem] sm:rounded-3xl p-6 border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+            <FileUpload
+              label="Cover Image"
+              accept="image/*"
+              maxSizeMB={5}
+              uploadKind="cover"
+              helperText="Upload a beautiful cover to grab attention."
+              onUploaded={(result) => setCover(result)}
+            />
+          </div>
           {cover?.url ? (
-            <div className="overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
-              <img src={cover.url} alt="Cover preview" className="aspect-[2/3] w-full object-cover" />
+            <div className="overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 shadow-xl shadow-zinc-200/20 dark:shadow-none relative aspect-[2/3] w-32 sm:w-48 group">
+              <img src={cover.url} alt="Cover preview" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-4">
+                <span className="text-white font-bold text-xs sm:text-sm tracking-wide uppercase">Cover Ready</span>
+              </div>
             </div>
           ) : null}
         </div>
 
-        <div className="space-y-3">
-          <FileUpload
-            label="Book File"
-            accept=".pdf,.epub,application/pdf,application/epub+zip"
-            maxSizeMB={100}
-            uploadKind="book"
-            helperText="Upload a PDF or EPUB to R2."
-            onUploaded={(result) => {
-              setBookFile(result);
-              setFileType(inferFileType(result.file));
-            }}
-          />
+        <div className="space-y-4">
+          <div className="bg-zinc-50 dark:bg-zinc-900/30 rounded-[2rem] sm:rounded-3xl p-6 border-2 border-dashed border-zinc-200 dark:border-zinc-800">
+            <FileUpload
+              label="Manuscript"
+              accept=".pdf,.epub,application/pdf,application/epub+zip"
+              maxSizeMB={100}
+              uploadKind="book"
+              helperText="Upload your PDF or EPUB manuscript."
+              onUploaded={(result) => {
+                setBookFile(result);
+                setFileType(inferFileType(result.file));
+              }}
+            />
+          </div>
           {bookFile?.file ? (
-            <div className="rounded-2xl border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-              Selected file: {bookFile.file.name}
+            <div className="rounded-2xl border-2 border-green-500/20 bg-green-50 px-4 sm:px-6 py-3 sm:py-4 dark:border-green-500/20 dark:bg-green-500/10 flex items-center gap-4">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500/20 flex items-center justify-center text-green-600 dark:text-green-400 font-bold shrink-0">
+                ✓
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-green-800 dark:text-green-300">File Selected</p>
+                <p className="text-xs font-medium text-green-600 dark:text-green-400 truncate">{bookFile.file.name}</p>
+              </div>
             </div>
           ) : null}
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          Cover and book files are uploaded first, then the book record is created.
+      <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-8 sm:pt-10 mt-8 sm:mt-10 border-t border-zinc-200 dark:border-zinc-800">
+        <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 max-w-sm text-center md:text-left">
+          Make sure your cover and manuscript are uploaded before publishing.
         </p>
         <button
           type="submit"
           disabled={!canSubmit}
-          className="inline-flex h-11 items-center justify-center rounded-2xl bg-zinc-900 px-5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
+          className="w-full md:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brand px-10 sm:px-12 py-4 sm:py-5 text-base sm:text-lg font-black text-white transition-all hover:bg-orange-600 hover:shadow-xl hover:shadow-brand/20 hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
-          {submitting ? "Publishing..." : "Create Book"}
+          {submitting ? "Publishing..." : "Publish Story"}
         </button>
       </div>
     </form>

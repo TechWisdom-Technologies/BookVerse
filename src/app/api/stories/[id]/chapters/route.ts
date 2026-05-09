@@ -85,6 +85,7 @@ export async function POST(request: Request, { params }: RouteParams) {
         storyId,
         title,
         content: Prisma.JsonNull,
+        chapterNumber: nextOrder,
         chapterOrder: nextOrder,
       },
     });

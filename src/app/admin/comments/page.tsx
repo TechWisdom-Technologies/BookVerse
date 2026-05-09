@@ -66,75 +66,77 @@ export default function AdminCommentsPage() {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Comments
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Manage user comments
-      </p>
+    <div className="max-w-7xl mx-auto pb-20 pt-8 sm:pt-12 px-4 sm:px-8">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
+          Comments
+        </h1>
+        <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium">
+          Manage user comments across the platform
+        </p>
+      </header>
 
-      <div className="mt-6 rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-[2rem] border border-zinc-200/50 bg-white/80 p-4 sm:p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-brand" />
           </div>
         ) : comments.length === 0 ? (
-          <div className="py-12 text-center text-zinc-500">No comments found</div>
+          <div className="py-20 text-center text-xl font-bold text-zinc-500">No comments found</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            <table className="w-full text-left border-collapse">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Comment</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Author</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">On</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Date</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-zinc-500">Actions</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Comment</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Author</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Context</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Date</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-right text-xs font-bold uppercase tracking-wider text-zinc-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
                 {comments.map((comment) => (
-                  <tr key={comment.id}>
-                    <td className="px-4 py-3 max-w-md">
-                      <p className="text-sm text-zinc-700 dark:text-zinc-300">
-                        {truncateContent(comment.content)}
+                  <tr key={comment.id} className="group transition-colors hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20">
+                    <td className="px-4 py-4 sm:py-6 max-w-md">
+                      <p className="text-base font-medium text-zinc-900 dark:text-zinc-100">
+                        {truncateContent(comment.content, 120)}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm text-zinc-600 dark:text-zinc-400">
+                    <td className="px-4 py-4 sm:py-6">
+                      <span className="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1 text-sm font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
                         @{comment.author.username}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4 sm:py-6">
                       {comment.story && (
                         <Link
                           href={`/stories/${comment.story.id}`}
-                          className="flex items-center gap-1 text-sm text-indigo-600 hover:underline dark:text-indigo-400"
+                          className="flex items-center gap-2 text-sm font-bold text-brand hover:underline"
                         >
-                          <FileText className="h-3 w-3" />
+                          <FileText className="h-4 w-4" />
                           {comment.story.title}
                         </Link>
                       )}
                       {comment.book && (
                         <Link
                           href={`/library/${comment.book.id}`}
-                          className="flex items-center gap-1 text-sm text-indigo-600 hover:underline dark:text-indigo-400"
+                          className="flex items-center gap-2 text-sm font-bold text-brand hover:underline"
                         >
-                          <BookOpen className="h-3 w-3" />
+                          <BookOpen className="h-4 w-4" />
                           {comment.book.title}
                         </Link>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-sm text-zinc-500 dark:text-zinc-400">
+                    <td className="px-4 py-4 sm:py-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">
                       {formatDate(comment.createdAt)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-4 sm:py-6 text-right">
                       <button
                         onClick={() => handleDelete(comment.id)}
-                        className="rounded p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:hover:bg-red-500 dark:hover:text-white"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5" />
                       </button>
                     </td>
                   </tr>
@@ -146,15 +148,15 @@ export default function AdminCommentsPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex justify-center gap-2">
+        <div className="mt-8 flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`h-8 w-8 rounded-lg text-sm ${
+              className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold transition-all ${
                 page === p
-                  ? "bg-indigo-600 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
+                  ? "bg-brand text-white shadow-lg shadow-brand/30"
+                  : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
               }`}
             >
               {p}

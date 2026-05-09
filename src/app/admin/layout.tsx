@@ -39,28 +39,28 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A]">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onCloseAction={() => setSidebarOpen(false)} />
 
       {/* Main content */}
       <div className="flex flex-1 flex-col md:ml-64">
         {/* Mobile header */}
-        <header className="flex h-14 items-center border-b border-zinc-200 bg-white px-4 md:hidden dark:border-zinc-800 dark:bg-zinc-950">
+        <header className="flex h-16 items-center border-b border-zinc-200/50 bg-white/80 backdrop-blur-md px-4 md:hidden dark:border-zinc-800/50 dark:bg-zinc-950/80 sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+            className="rounded-xl p-2.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-6 w-6" />
           </button>
-          <span className="ml-3 font-semibold text-zinc-900 dark:text-zinc-50">
-            Admin
+          <span className="ml-4 text-lg font-black tracking-tight text-zinc-900 dark:text-white">
+            BookVerse Admin
           </span>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto p-6">
-          <div className="mx-auto max-w-6xl">{children}</div>
+        <main className="flex-1 overflow-auto">
+          {children}
         </main>
       </div>
     </div>

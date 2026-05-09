@@ -53,51 +53,57 @@ export default function AdminPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
+      <div className="flex items-center justify-center py-40">
+        <Loader2 className="h-10 w-10 animate-spin text-brand" />
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Dashboard
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Overview of your BookVerse platform
-      </p>
+    <div className="max-w-7xl mx-auto space-y-12 pb-20 pt-8 sm:pt-12 px-4 sm:px-8">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
+          Control Center.
+        </h1>
+        <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium">
+          Platform overview, metrics, and administration.
+        </p>
+      </header>
 
       {/* Stats Grid */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map(({ key, label, icon: Icon }) => (
           <div
             key={key}
-            className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900"
+            className="group relative overflow-hidden rounded-[2rem] border border-zinc-200/50 bg-white/80 p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-zinc-200/40 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none dark:hover:border-zinc-700"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-start justify-between relative z-10">
               <div>
-                <p className="text-sm font-medium text-zinc-600 dark:text-zinc-400">
+                <p className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
                   {label}
                 </p>
-                <p className="mt-2 text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                <p className="mt-4 text-5xl font-black text-zinc-900 dark:text-white tracking-tight group-hover:text-brand transition-colors">
                   {stats?.[key]?.toLocaleString() || "0"}
                 </p>
               </div>
-              <div className="rounded-lg bg-indigo-50 p-3 dark:bg-indigo-950">
-                <Icon className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand/10 text-brand transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
+                <Icon className="h-8 w-8" />
               </div>
             </div>
+            {/* Decorative background element */}
+            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-brand/5 rounded-full blur-2xl group-hover:bg-brand/10 transition-colors duration-500" />
           </div>
         ))}
       </div>
 
       {/* Quick Links */}
-      <div className="mt-8">
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          Quick Actions
-        </h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-16 sm:mt-24">
+        <div className="mb-8">
+          <h2 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
+            Quick Actions
+          </h2>
+        </div>
+        <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { href: "/admin/users", label: "Manage Users", desc: "View and edit user roles" },
             { href: "/admin/books", label: "Manage Books", desc: "Review and delete books" },
@@ -107,10 +113,10 @@ export default function AdminPage() {
             <a
               key={link.href}
               href={link.href}
-              className="rounded-xl border border-zinc-200 bg-white p-4 transition-colors hover:border-indigo-300 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-indigo-700"
+              className="group block rounded-[1.5rem] border border-zinc-200/50 bg-white/50 p-6 transition-all duration-300 hover:border-brand hover:bg-brand/5 hover:shadow-xl dark:border-zinc-800/50 dark:bg-zinc-900/30 dark:hover:border-brand dark:hover:bg-brand/10"
             >
-              <p className="font-medium text-zinc-900 dark:text-zinc-50">{link.label}</p>
-              <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">{link.desc}</p>
+              <p className="text-xl font-bold text-zinc-900 dark:text-white group-hover:text-brand transition-colors">{link.label}</p>
+              <p className="mt-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">{link.desc}</p>
             </a>
           ))}
         </div>

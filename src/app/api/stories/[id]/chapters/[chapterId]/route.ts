@@ -133,6 +133,7 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
         },
         data: {
           chapterOrder: { decrement: 1 },
+          chapterNumber: { decrement: 1 },
         },
       });
     });

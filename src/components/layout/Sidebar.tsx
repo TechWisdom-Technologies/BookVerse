@@ -45,37 +45,39 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-40 bg-zinc-950/50 backdrop-blur-sm md:hidden"
           onClick={onCloseAction}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-50 h-full w-64 transform border-r border-zinc-200 bg-white transition-transform duration-200 dark:border-zinc-800 dark:bg-zinc-950 md:translate-x-0 ${
+        className={`fixed left-0 top-0 z-50 h-full w-64 transform border-r border-zinc-200/50 bg-white/80 backdrop-blur-md transition-transform duration-300 ease-in-out dark:border-zinc-800/50 dark:bg-zinc-950/80 md:translate-x-0 ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
-          <div className="flex h-14 items-center justify-between border-b border-zinc-200 px-4 dark:border-zinc-800">
+          <div className="flex h-16 items-center justify-between border-b border-zinc-200/50 px-6 dark:border-zinc-800/50">
             <Link
               href="/admin"
-              className="flex items-center gap-2 text-base font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
+              className="flex items-center gap-3 text-lg font-black tracking-tight text-zinc-900 dark:text-white"
             >
-              <LayoutDashboard className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-              Admin
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand text-white shadow-lg shadow-brand/20">
+                <LayoutDashboard className="h-4 w-4" />
+              </div>
+              Admin Panel
             </Link>
             <button
               onClick={onCloseAction}
-              className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 md:hidden dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+              className="rounded-xl p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 md:hidden dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-1 p-4">
+          <nav className="flex-1 space-y-2 p-4 overflow-y-auto">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);
@@ -85,13 +87,13 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={() => onCloseAction()}
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                  className={`group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300 ${
                     active
-                      ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-400"
-                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                      ? "bg-brand/10 text-brand dark:bg-brand/10 dark:text-brand shadow-sm"
+                      : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-white"
                   }`}
                 >
-                  <Icon className="h-5 w-5" />
+                  <Icon className={`h-5 w-5 transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`} />
                   {item.label}
                 </Link>
               );
@@ -99,13 +101,13 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-zinc-200 p-4 dark:border-zinc-800">
+          <div className="border-t border-zinc-200/50 p-4 dark:border-zinc-800/50">
             <Link
               href="/"
-              className="flex items-center gap-2 text-sm text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+              className="group flex w-full items-center justify-center gap-2 rounded-2xl border border-zinc-200/50 bg-zinc-50 px-4 py-3.5 text-sm font-bold text-zinc-600 transition-all hover:border-zinc-300 hover:bg-white hover:text-zinc-900 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 dark:hover:text-white"
             >
-              <ChevronLeft className="h-4 w-4" />
-              Back to site
+              <ChevronLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              Exit Admin
             </Link>
           </div>
         </div>

@@ -95,6 +95,7 @@ export async function POST(request: Request) {
         storyId: story.id,
         title: "Chapter 1",
         content: Prisma.JsonNull,
+        chapterNumber: 1,
         chapterOrder: 1,
       },
     });

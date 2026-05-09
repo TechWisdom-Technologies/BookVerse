@@ -38,10 +38,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const { user } = data;
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-12 sm:px-10">
-      <ProfileHeader user={user} />
-      <div className="mt-8">
-        <ProfileTabs books={user.books} stories={user.stories} />
+    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
+      <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+        <ProfileHeader user={user} />
+        <div className="mt-16">
+          <ProfileTabs books={user.books} stories={user.stories} />
+        </div>
       </div>
     </main>
   );

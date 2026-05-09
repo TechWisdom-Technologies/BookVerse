@@ -42,16 +42,25 @@ export default async function EditProfilePage() {
   }
 
   return (
-    <main className="mx-auto max-w-2xl px-6 py-12 sm:px-10">
-      <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Edit Profile
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Update your profile information and avatar.
-      </p>
+    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
+      <div className="mx-auto max-w-3xl px-6 sm:px-8">
+        <header className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white tracking-tight mb-4">
+            Edit Profile.
+          </h1>
+          <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium">
+            Update your public persona, avatar, and personal details.
+          </p>
+        </header>
 
-      <div className="mt-8 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-        <EditProfileForm user={user} />
+        <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 sm:p-12 shadow-xl shadow-zinc-200/20 dark:border-zinc-800 dark:bg-zinc-900/50 dark:shadow-none relative overflow-hidden">
+          {/* Decorative background element */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-brand/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10">
+            <EditProfileForm user={user} />
+          </div>
+        </div>
       </div>
     </main>
   );

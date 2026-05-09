@@ -83,120 +83,127 @@ export default function AdminStoriesPage() {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Stories
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Manage community stories
-      </p>
+    <div className="max-w-7xl mx-auto pb-20 pt-8 sm:pt-12 px-4 sm:px-8">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
+          Stories
+        </h1>
+        <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium">
+          Manage community stories
+        </p>
+      </header>
 
-      <div className="mt-6 flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+      <div className="mb-8">
+        <div className="relative max-w-xl">
+          <Search className="absolute left-6 top-1/2 h-6 w-6 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search stories..."
-            className="w-full rounded-lg border border-zinc-200 bg-white py-2 pl-10 pr-4 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            className="w-full rounded-full border-2 border-zinc-200/50 bg-white/80 py-4 pl-16 pr-6 text-lg font-medium shadow-xl shadow-zinc-200/20 backdrop-blur-md transition-all focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none dark:focus:border-brand dark:focus:bg-zinc-900/80"
             onKeyDown={(e) => e.key === "Enter" && setPage(1)}
           />
         </div>
       </div>
 
-      <div className="mt-6 rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="rounded-[2rem] border border-zinc-200/50 bg-white/80 p-4 sm:p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-brand" />
           </div>
         ) : stories.length === 0 ? (
-          <div className="py-12 text-center text-zinc-500">No stories found</div>
+          <div className="py-20 text-center text-xl font-bold text-zinc-500">No stories found</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            <table className="w-full text-left border-collapse">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Story</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Author</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Stats</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-zinc-500">Actions</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Story</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Status</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Author</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Stats</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-right text-xs font-bold uppercase tracking-wider text-zinc-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
                 {stories.map((story) => (
-                  <tr key={story.id}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                  <tr key={story.id} className="group transition-colors hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20">
+                    <td className="px-4 py-4 sm:py-6">
+                      <div className="flex items-center gap-4">
                         {story.coverUrl ? (
-                          <Image
-                            src={story.coverUrl}
-                            alt=""
-                            width={40}
-                            height={56}
-                            className="rounded"
-                          />
+                          <div className="relative h-16 w-12 overflow-hidden rounded-lg shadow-md">
+                            <Image
+                              src={story.coverUrl}
+                              alt=""
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
                         ) : (
-                          <div className="flex h-14 w-10 items-center justify-center rounded bg-zinc-200 dark:bg-zinc-700">
-                            <FileText className="h-4 w-4 text-zinc-500" />
+                          <div className="flex h-16 w-12 items-center justify-center rounded-lg bg-zinc-200 dark:bg-zinc-800 shadow-inner">
+                            <FileText className="h-6 w-6 text-zinc-400" />
                           </div>
                         )}
                         <div>
                           <Link
                             href={`/stories/${story.id}`}
-                            className="font-medium text-zinc-900 hover:text-indigo-600 dark:text-zinc-50 dark:hover:text-indigo-400"
+                            className="text-base sm:text-lg font-bold text-zinc-900 transition-colors hover:text-brand dark:text-white dark:hover:text-brand"
                           >
                             {story.title}
                           </Link>
-                          <p className="text-xs text-zinc-500">
+                          <p className="text-sm font-medium text-zinc-500">
                             {story._count.chapters} chapters
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4 sm:py-6">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
+                        className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
                           story.published
-                            ? "bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400"
-                            : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+                            ? "bg-green-50 text-green-600 dark:bg-green-500/10 dark:text-green-400"
+                            : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
                         }`}
                       >
                         {story.published ? (
                           <>
-                            <Globe className="h-3 w-3" /> Published
+                            <Globe className="h-3.5 w-3.5" /> Published
                           </>
                         ) : (
                           "Draft"
                         )}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+                    <td className="px-4 py-4 sm:py-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
                       @{story.author.username}
                     </td>
-                    <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
-                      <span className="flex items-center gap-3">
-                        <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" /> {story.viewCount}
+                    <td className="px-4 py-4 sm:py-6">
+                      <div className="flex flex-col gap-1 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                        <span className="flex items-center gap-2">
+                          <Eye className="h-4 w-4" /> {story.viewCount} views
                         </span>
                         <span>{story._count.comments} comments</span>
-                      </span>
+                      </div>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-4 sm:py-6 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
                           onClick={() => handleTogglePublish(story.id, story.published)}
-                          className="rounded p-1 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+                          className={`inline-flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+                            story.published
+                              ? "bg-zinc-100 text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700"
+                              : "bg-brand/10 text-brand hover:bg-brand hover:text-white"
+                          }`}
                           title={story.published ? "Unpublish" : "Publish"}
                         >
-                          <Globe className="h-4 w-4" />
+                          <Globe className="h-5 w-5" />
                         </button>
                         <button
                           onClick={() => handleDelete(story.id)}
-                          className="rounded p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:hover:bg-red-500 dark:hover:text-white"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-5 w-5" />
                         </button>
                       </div>
                     </td>
@@ -209,15 +216,15 @@ export default function AdminStoriesPage() {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex justify-center gap-2">
+        <div className="mt-8 flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`h-8 w-8 rounded-lg text-sm ${
+              className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold transition-all ${
                 page === p
-                  ? "bg-indigo-600 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
+                  ? "bg-brand text-white shadow-lg shadow-brand/30"
+                  : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
               }`}
             >
               {p}

@@ -3,6 +3,9 @@
 :root {
   --background: 255 255 255;
   --foreground: 9 9 11;
+  --brand: 255 112 6; /* #ff7006 */
+  --brand-light: 255 237 213;
+  --brand-dark: 234 88 12;
   --font-sans: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
   --font-serif: Merriweather, Georgia, Cambria, "Times New Roman", serif;
 }
@@ -16,4 +19,45 @@ body {
   background: rgb(var(--background));
   color: rgb(var(--foreground));
   font-family: var(--font-sans);
+}
+
+/* Brand Color Utilities */
+.text-brand {
+  color: rgb(var(--brand));
+}
+
+.bg-brand {
+  background-color: rgb(var(--brand));
+}
+
+.border-brand {
+  border-color: rgb(var(--brand));
+}
+
+.ring-brand {
+  --tw-ring-color: rgb(var(--brand));
+}
+
+/* Hover states */
+.hover\:text-brand:hover {
+  color: rgb(var(--brand));
+}
+
+.hover\:bg-brand:hover {
+  background-color: rgb(var(--brand));
+}
+
+.hover\:border-brand:hover {
+  border-color: rgb(var(--brand));
+}
+
+/* Focus states */
+.focus\:ring-brand:focus {
+  --tw-ring-color: rgb(var(--brand));
+}
+
+/* Selection */
+::selection {
+  background-color: rgba(255, 112, 6, 0.2);
+  color: rgb(var(--brand));
 }

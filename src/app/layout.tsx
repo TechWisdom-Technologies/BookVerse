@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Merriweather } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/app/providers";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { AiLibrarianWidget } from "@/components/shared/AiLibrarianWidget";
+import { AppLayout } from "@/components/layout/AppLayout";
+import Script from "next/script";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -98,12 +97,11 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <Providers>
-          <Navbar />
-          <div className="flex-1">{children}</div>
-          <Footer />
-          <AiLibrarianWidget />
+          <AppLayout>{children}</AppLayout>
         </Providers>
-        <script
+        <Script
+          id="service-worker-registration"
+          strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {

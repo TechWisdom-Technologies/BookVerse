@@ -95,8 +95,8 @@ export default async function BookPage({ params }: BookPageProps) {
     }
 
     return (
-      <main className="min-h-[calc(100vh-8rem)]">
-        <div className="mx-auto max-w-5xl px-6 py-8 sm:px-10">
+      <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
+        <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
           <BookDetail
             book={{ ...book, averageRating }}
             currentUserId={currentUserId}
@@ -104,7 +104,7 @@ export default async function BookPage({ params }: BookPageProps) {
           />
 
           {/* Reviews Section */}
-          <div className="mt-12 border-t border-zinc-200 pt-12 dark:border-zinc-800">
+          <div className="mt-20 border-t border-zinc-200 pt-16 dark:border-zinc-800">
             <BookReviews
               bookId={id}
               reviews={serializedReviews}

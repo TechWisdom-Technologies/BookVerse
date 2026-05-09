@@ -62,22 +62,22 @@ export function ReviewForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+    <form onSubmit={handleSubmit} className="space-y-6 rounded-[2rem] border border-zinc-200/50 bg-white/50 p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/30 dark:shadow-none">
       <div>
-        <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Your Rating</label>
-        <div className="mt-2 flex gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 block">Your Rating</label>
+        <div className="flex gap-2">
           {[1, 2, 3, 4, 5].map((r) => (
             <button
               key={r}
               type="button"
               onClick={() => setRating(r)}
-              className="transition"
+              className="group p-2 -ml-2 transition-transform hover:scale-110 active:scale-95"
             >
               <Star
-                className={`h-6 w-6 ${
+                className={`h-8 w-8 transition-colors duration-300 ${
                   r <= rating
-                    ? "fill-amber-400 text-amber-400"
-                    : "text-zinc-300 dark:text-zinc-700"
+                    ? "fill-amber-400 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]"
+                    : "text-zinc-300 dark:text-zinc-700 group-hover:text-amber-200 dark:group-hover:text-amber-900"
                 }`}
               />
             </button>
@@ -85,21 +85,21 @@ export function ReviewForm({
         </div>
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Comment</label>
+      <div className="group">
+        <label className="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 block group-focus-within:text-brand transition-colors">Your Review</label>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Share your thoughts (optional)"
-          className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 outline-none transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
-          rows={3}
+          placeholder="What did you think of this book?"
+          className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 resize-none"
+          rows={4}
         />
       </div>
 
       <button
         type="submit"
         disabled={submitting}
-        className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
+        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-brand px-10 py-4 text-base font-bold text-white transition-all hover:bg-orange-600 hover:shadow-xl hover:shadow-brand/20 hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
       >
         {submitting ? "Posting..." : existingRating ? "Update Review" : "Post Review"}
       </button>

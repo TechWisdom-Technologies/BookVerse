@@ -88,81 +88,84 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        Users
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Manage user accounts and roles
-      </p>
+    <div className="max-w-7xl mx-auto pb-20 pt-8 sm:pt-12 px-4 sm:px-8">
+      <header className="mb-12">
+        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
+          Users
+        </h1>
+        <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium">
+          Manage user accounts and roles
+        </p>
+      </header>
 
       {/* Search */}
-      <div className="mt-6 flex items-center gap-4">
-        <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
+      <div className="mb-8">
+        <div className="relative max-w-xl">
+          <Search className="absolute left-6 top-1/2 h-6 w-6 -translate-y-1/2 text-zinc-400" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search users..."
-            className="w-full rounded-lg border border-zinc-200 bg-white py-2 pl-10 pr-4 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            placeholder="Search users by name or email..."
+            className="w-full rounded-full border-2 border-zinc-200/50 bg-white/80 py-4 pl-16 pr-6 text-lg font-medium shadow-xl shadow-zinc-200/20 backdrop-blur-md transition-all focus:border-brand focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none dark:focus:border-brand dark:focus:bg-zinc-900/80"
             onKeyDown={(e) => e.key === "Enter" && setPage(1)}
           />
         </div>
       </div>
 
-      {/* Users Table */}
-      <div className="mt-6 rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+      {/* Users Table Container */}
+      <div className="rounded-[2rem] border border-zinc-200/50 bg-white/80 p-4 sm:p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none">
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-zinc-400" />
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-brand" />
           </div>
         ) : users.length === 0 ? (
-          <div className="py-12 text-center text-zinc-500">No users found</div>
+          <div className="py-20 text-center text-xl font-bold text-zinc-500">No users found</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            <table className="w-full text-left border-collapse">
+              <thead>
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">User</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Role</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Created</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-zinc-500">Content</th>
-                  <th className="px-4 py-3 text-right text-xs font-medium text-zinc-500">Actions</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">User</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Role</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Created</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Content</th>
+                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-right text-xs font-bold uppercase tracking-wider text-zinc-400">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
                 {users.map((user) => (
-                  <tr key={user.id}>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
+                  <tr key={user.id} className="group transition-colors hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20">
+                    <td className="px-4 py-4 sm:py-6">
+                      <div className="flex items-center gap-4">
                         {user.avatarUrl ? (
-                          <Image
-                            src={user.avatarUrl}
-                            alt=""
-                            width={32}
-                            height={32}
-                            className="rounded-full"
-                          />
+                          <div className="relative h-12 w-12 overflow-hidden rounded-full shadow-md">
+                            <Image
+                              src={user.avatarUrl}
+                              alt=""
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
                         ) : (
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-700">
-                            <User className="h-4 w-4 text-zinc-500" />
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand shadow-inner">
+                            <User className="h-6 w-6" />
                           </div>
                         )}
                         <div>
-                          <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                          <p className="text-base sm:text-lg font-bold text-zinc-900 dark:text-white">
                             {user.displayName || user.username}
                           </p>
-                          <p className="text-xs text-zinc-500">@{user.username}</p>
+                          <p className="text-sm font-medium text-zinc-500">@{user.username}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-4 sm:py-6">
                       <select
                         value={user.role}
                         onChange={(e) => handleRoleChange(user.id, e.target.value)}
                         disabled={updating === user.id}
-                        className="rounded border border-zinc-200 bg-white px-2 py-1 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+                        className="rounded-xl border-2 border-zinc-200/50 bg-white px-4 py-2 text-sm font-bold transition-colors focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:border-brand"
                       >
                         {roles.map((role) => (
                           <option key={role} value={role}>
@@ -171,18 +174,25 @@ export default function AdminUsersPage() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
+                    <td className="px-4 py-4 sm:py-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
                       {formatDate(user.createdAt)}
                     </td>
-                    <td className="px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400">
-                      {user._count.books} books, {user._count.stories} stories
+                    <td className="px-4 py-4 sm:py-6">
+                      <div className="flex flex-col gap-1">
+                        <span className="inline-flex items-center rounded-full bg-brand/10 px-2.5 py-0.5 text-xs font-bold text-brand w-max">
+                          {user._count.books} Books
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-indigo-500/10 px-2.5 py-0.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 w-max">
+                          {user._count.stories} Stories
+                        </span>
+                      </div>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-4 sm:py-6 text-right">
                       <button
                         onClick={() => handleDelete(user.id)}
-                        className="rounded p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:hover:bg-red-500 dark:hover:text-white"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5" />
                       </button>
                     </td>
                   </tr>
@@ -195,15 +205,15 @@ export default function AdminUsersPage() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="mt-4 flex justify-center gap-2">
+        <div className="mt-8 flex justify-center gap-2">
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`h-8 w-8 rounded-lg text-sm ${
+              className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold transition-all ${
                 page === p
-                  ? "bg-indigo-600 text-white"
-                  : "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300"
+                  ? "bg-brand text-white shadow-lg shadow-brand/30"
+                  : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
               }`}
             >
               {p}

@@ -9,7 +9,6 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
-import * as pdfjsLib from "pdfjs-dist";
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 
 interface PdfReaderProps {
@@ -19,9 +18,17 @@ interface PdfReaderProps {
 const BROKEN_URL = "https://pub-666ffca9921d4b79b6738f62abc3af39.r2.dev/sample-book.pdf";
 const FALLBACK_URL = "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
 
+// Load PDF.js with CDN worker to avoid bundling issues with Turbopack
+async function loadPdfJs() {
+  const pdfjs = await import("pdfjs-dist");
+  // Use jsdelivr CDN for reliable worker loading
+  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+  return pdfjs;
+}
+
 export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
   const fileUrl = initialFileUrl === BROKEN_URL ? FALLBACK_URL : initialFileUrl;
-  
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
   const [pdf, setPdf] = useState<PDFDocumentProxy | null>(null);
@@ -33,28 +40,26 @@ export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Use the local worker file that matches the downgraded version (3.11.174)
-    pdfjsLib.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
-    
-    console.log("Using PDF.js Version:", pdfjsLib.version);
-
     let cancelled = false;
     setLoading(true);
     setError(null);
     setPdf(null);
     setPageNum(1);
     setPageCount(0);
-    
-    const loadingTask = pdfjsLib.getDocument({
-      url: fileUrl,
-      cMapUrl: "https://unpkg.com/pdfjs-dist@3.11.174/cmaps/",
-      cMapPacked: true,
-      disableRange: true,
-      disableStream: true,
-    });
 
-    loadingTask.promise
-      .then((document) => {
+    const loadPdf = async () => {
+      try {
+        const pdfjs = await loadPdfJs();
+        if (cancelled) return;
+
+        const loadingTask = pdfjs.getDocument({
+          url: fileUrl,
+          useSystemFonts: true,
+          disableRange: false,
+          disableStream: false,
+        });
+
+        const document = await loadingTask.promise;
         if (cancelled) {
           document.destroy();
           return;
@@ -62,17 +67,18 @@ export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
         setPdf(document);
         setPageCount(document.numPages);
         setLoading(false);
-      })
-      .catch((err: any) => {
+      } catch (err: any) {
         if (cancelled) return;
         console.error("PDF Load Error:", err);
         setError(`Unable to load this PDF: ${err.message || "Unknown error"}`);
         setLoading(false);
-      });
+      }
+    };
+
+    loadPdf();
 
     return () => {
       cancelled = true;
-      loadingTask.destroy();
     };
   }, [fileUrl]);
 
@@ -106,7 +112,6 @@ export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
         context.fillRect(0, 0, viewport.width, viewport.height);
 
         const renderTask = page.render({
-          canvas,
           canvasContext: context,
           viewport,
         });

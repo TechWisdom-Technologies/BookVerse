@@ -36,7 +36,7 @@ export function BookCard({ book }: BookCardProps) {
               priority={false}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-300 to-zinc-400 dark:from-zinc-700 dark:to-zinc-800">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500 dark:from-orange-600 dark:to-orange-700">
               <BookOpen className="h-8 w-8 text-white/40" />
             </div>
           )}
@@ -62,9 +62,9 @@ export function BookCard({ book }: BookCardProps) {
               <span>{avgRating.toFixed(1)}</span>
               {reviewCount > 0 && <span className="text-zinc-500">({reviewCount})</span>}
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400">
               <Download className="h-3 w-3" />
-              <span>{book.downloadCount}</span>
+              {book.downloadCount.toLocaleString()}
             </div>
           </div>
         </div>

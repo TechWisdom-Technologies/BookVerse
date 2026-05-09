@@ -55,119 +55,129 @@ export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookD
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="grid gap-8 sm:grid-cols-3">
-        {/* Cover */}
-        <div className="sm:col-span-1">
-          <div className="aspect-[2/3] overflow-hidden rounded-lg bg-zinc-200 shadow-lg dark:bg-zinc-800">
+    <div className="relative">
+      {/* Cinematic Blurred Background */}
+      <div className="absolute inset-0 -top-16 -left-6 -right-6 md:-left-8 md:-right-8 h-[500px] overflow-hidden -z-10 rounded-b-[4rem]">
+        {book.coverUrl ? (
+          <Image
+            src={book.coverUrl}
+            alt="Background"
+            fill
+            className="object-cover blur-3xl opacity-20 dark:opacity-10 scale-110"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-brand/20 to-rose-500/20 blur-3xl" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#FDFDFC]/80 to-[#FDFDFC] dark:via-[#0A0A0A]/80 dark:to-[#0A0A0A]" />
+      </div>
+
+      <div className="flex flex-col md:flex-row gap-12 lg:gap-16 relative z-10 pt-8">
+        {/* Left Col: Cover & Actions */}
+        <div className="w-full md:w-[320px] shrink-0 space-y-8">
+          <div className="relative aspect-[2/3] w-full rounded-2xl overflow-hidden shadow-2xl shadow-black/20 dark:shadow-black/50 ring-1 ring-black/5 dark:ring-white/5">
             {book.coverUrl ? (
               <Image
                 src={book.coverUrl}
                 alt={book.title}
-                width={300}
-                height={450}
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
                 priority
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-300 to-zinc-400 dark:from-zinc-700 dark:to-zinc-800">
-                <div className="text-5xl">📖</div>
+              <div className="flex h-full w-full items-center justify-center bg-zinc-200 dark:bg-zinc-800">
+                <BookOpen className="h-20 w-20 text-zinc-400" />
               </div>
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="mt-4 space-y-3">
+          <div className="flex flex-col gap-3">
+            <Link
+              href={`/library/${book.id}/read`}
+              className="flex items-center justify-center gap-2 w-full px-8 py-4 bg-brand text-white font-bold rounded-full text-lg hover:bg-orange-600 hover:shadow-xl hover:shadow-brand/20 hover:-translate-y-1 transition-all duration-300"
+            >
+              <BookOpen className="h-5 w-5" />
+              Read Online
+            </Link>
+            
             <button
               onClick={handleSave}
               disabled={savingState}
-              className="flex w-full items-center justify-center gap-2 rounded-lg bg-zinc-900 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-950 dark:hover:bg-zinc-200"
+              className={`flex items-center justify-center gap-2 w-full px-8 py-4 font-bold rounded-full text-base transition-all duration-300 ${
+                saved 
+                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl" 
+                  : "bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800"
+              }`}
             >
-              <Bookmark className={`h-4 w-4 ${saved ? "fill-current" : ""}`} />
-              {saved ? "Saved" : "Save to Shelf"}
+              <Bookmark className={`h-5 w-5 ${saved ? "fill-current" : ""}`} />
+              {saved ? "Saved to Shelf" : "Save to Shelf"}
             </button>
-
-            <Link
-              href={`/library/${book.id}/read`}
-              className="flex items-center justify-center gap-2 rounded-lg border border-zinc-200 px-4 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-900"
-            >
-              <BookOpen className="h-4 w-4" />
-              Read Online
-            </Link>
 
             <a
               href={`/api/books/${book.id}/download`}
-              className="flex items-center justify-center gap-2 rounded-lg border border-zinc-200 px-4 py-3 text-sm font-medium text-zinc-900 transition hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-50 dark:hover:bg-zinc-900"
+              className="flex items-center justify-center gap-2 w-full px-8 py-4 font-bold rounded-full text-base bg-white dark:bg-zinc-900 border-2 border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:border-zinc-300 dark:hover:border-zinc-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all duration-300"
             >
-              <Download className="h-4 w-4" />
-              Download
+              <Download className="h-5 w-5" />
+              Download {book.fileType.toUpperCase()}
             </a>
           </div>
         </div>
 
-        {/* Info */}
-        <div className="sm:col-span-2 space-y-6">
+        {/* Right Col: Info */}
+        <div className="flex-1 space-y-10">
           <div>
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">{book.title}</h1>
-            <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">by {book.authorName}</p>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="px-4 py-1.5 bg-brand/10 text-brand font-bold uppercase tracking-wider text-xs rounded-full">
+                {book.genre}
+              </span>
+              <span className="px-4 py-1.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 font-bold uppercase tracking-wider text-xs rounded-full">
+                {book.language}
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-zinc-900 dark:text-white leading-tight tracking-tighter mb-4">
+              {book.title}
+            </h1>
+            <p className="text-xl md:text-2xl font-medium text-zinc-500 dark:text-zinc-400">
+              by <span className="text-zinc-900 dark:text-white font-bold">{book.authorName}</span>
+            </p>
           </div>
 
-          {/* Rating & Stats */}
-          <div className="space-y-3 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900">
-            <div className="flex items-center gap-4">
-              <div>
-                <div className="flex items-center gap-2">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-5 w-5 ${
-                        i < Math.round(book.averageRating || 0)
-                          ? "fill-amber-400 text-amber-400"
-                          : "text-zinc-300 dark:text-zinc-700"
-                      }`}
-                    />
-                  ))}
-                </div>
-                <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-                  {book.averageRating?.toFixed(1) || "No"} rating
-                  {book._count?.reviews ? ` - ${book._count.reviews} reviews` : ""}
-                </p>
+          <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-12 p-6 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] bg-zinc-50/80 dark:bg-zinc-900/50 border border-zinc-200/50 dark:border-zinc-800/50 shadow-xl shadow-zinc-200/20 dark:shadow-none">
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-1">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-6 w-6 ${
+                      i < Math.round(book.averageRating || 0)
+                        ? "fill-amber-400 text-amber-400"
+                        : "text-zinc-200 dark:text-zinc-800"
+                    }`}
+                  />
+                ))}
               </div>
+              <p className="text-sm font-bold text-zinc-500 dark:text-zinc-400">
+                <span className="text-2xl text-zinc-900 dark:text-white mr-2">{book.averageRating?.toFixed(1) || "0.0"}</span> 
+                ({book._count?.reviews || 0} reviews)
+              </p>
             </div>
+            
+            <div className="w-px h-16 bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
 
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div>
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Genre</p>
-                <p className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                  {book.genre}
-                </p>
+            <div className="flex flex-col gap-1 justify-center">
+              <div className="flex items-center gap-3 text-3xl font-black text-zinc-900 dark:text-white">
+                <Download className="h-7 w-7 text-brand" />
+                {book.downloadCount}
               </div>
-              <div>
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Language</p>
-                <p className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                  {book.language}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Format</p>
-                <p className="mt-1 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                  {book.fileType}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-              <Download className="h-4 w-4" />
-              <span>{book.downloadCount} downloads</span>
+              <p className="text-sm font-bold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">
+                Downloads
+              </p>
             </div>
           </div>
 
-          {/* Description */}
           {book.description && (
-            <div>
-              <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">About this book</h2>
-              <p className="mt-2 leading-relaxed text-zinc-700 dark:text-zinc-300">
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Synopsis</h3>
+              <p className="text-zinc-600 dark:text-zinc-300 leading-relaxed text-lg whitespace-pre-wrap">
                 {book.description}
               </p>
             </div>
