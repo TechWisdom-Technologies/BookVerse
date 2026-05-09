@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { Eye, Heart, MessageSquare, BookOpen, Users, TrendingUp } from 'lucide-react';
-import { Loader } from 'lucide-react';
+import { Eye, Heart, MessageSquare, BookOpen, Users, TrendingUp, BarChart3, ArrowLeft, Loader2, Globe, GlobeLock } from 'lucide-react';
 
 interface StoryAnalytics {
   id: string;
@@ -48,11 +47,7 @@ export default function AuthorAnalyticsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
+    if (!user) { router.push('/login'); return; }
     const fetchAnalytics = async () => {
       try {
         setLoading(true);
@@ -61,197 +56,158 @@ export default function AuthorAnalyticsPage() {
           const data = await res.json();
           setAnalytics(data);
         }
-      } catch (error) {
-        console.error('Error fetching analytics:', error);
-      } finally {
-        setLoading(false);
-      }
+      } finally { setLoading(false); }
     };
-
     fetchAnalytics();
   }, [user, router]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
+    </div>
+  );
 
-  if (!analytics) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Failed to load analytics</p>
-        </div>
-      </div>
-    );
-  }
+  if (!analytics) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Analytics Offline</p>
+    </div>
+  );
 
   const { stats, topStories, stories } = analytics;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Author Dashboard</h1>
-          <p className="text-lg text-gray-600">Track your stories, views, and earnings</p>
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        
+        {/* Minimal Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/write" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Studio
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight mb-1">Performance Registry.</h1>
+              <p className="text-xs text-zinc-500 font-medium">Author intelligence and manuscript trajectory analytics.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-3 py-1.5 border border-zinc-100 dark:border-zinc-800 rounded-md">
+            <BarChart3 className="w-3.5 h-3.5" />
+            Intelligence Protocol
+          </div>
+        </header>
+
+        {/* Global Stats Registry */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 mb-12">
+          {[
+            { icon: BookOpen, label: "Manuscripts", value: stats.totalStories },
+            { icon: Eye, label: "Transmissions", value: stats.totalViews },
+            { icon: Heart, label: "Reactions", value: stats.totalReactions },
+            { icon: MessageSquare, label: "Engagement", value: stats.totalComments },
+          ].map((s, i) => (
+            <div key={i} className="p-8 bg-white dark:bg-zinc-950">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{s.label}</span>
+                <s.icon className="w-3.5 h-3.5 text-zinc-200" />
+              </div>
+              <div className="text-2xl font-bold tracking-tight">{s.value.toLocaleString()}</div>
+            </div>
+          ))}
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            icon={BookOpen}
-            label="Total Stories"
-            value={stats.totalStories}
-            color="blue"
-          />
-          <StatCard
-            icon={Eye}
-            label="Total Views"
-            value={stats.totalViews}
-            color="green"
-          />
-          <StatCard
-            icon={Heart}
-            label="Total Reactions"
-            value={stats.totalReactions}
-            color="red"
-          />
-          <StatCard
-            icon={MessageSquare}
-            label="Total Comments"
-            value={stats.totalComments}
-            color="purple"
-          />
+        {/* Subscriber & Fiscal Registry */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {[
+            { label: "Subscribers", val: stats.subscribers, icon: Users },
+            { label: "Followers", val: stats.followers, icon: Users },
+            { label: "Fiscal Yield", val: `$${stats.totalTipsAmount}`, icon: TrendingUp, sub: `${stats.totalTips} transactions` },
+          ].map((s, i) => (
+            <div key={i} className="p-6 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/20 dark:bg-zinc-900/10">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{s.label}</span>
+                <s.icon className="w-3 h-3 text-zinc-300" />
+              </div>
+              <div className="text-xl font-bold tracking-tight">{s.val}</div>
+              {s.sub && <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-300 mt-1 font-mono">{s.sub}</div>}
+            </div>
+          ))}
         </div>
 
-        {/* Engagement Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Subscribers</h3>
-              <Users className="w-5 h-5 text-blue-500" />
-            </div>
-            <p className="text-3xl font-bold text-gray-900">{stats.subscribers}</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Followers</h3>
-              <Users className="w-5 h-5 text-green-500" />
-            </div>
-            <p className="text-3xl font-bold text-gray-900">{stats.followers}</p>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600">Total Tips</h3>
-              <TrendingUp className="w-5 h-5 text-orange-500" />
-            </div>
-            <p className="text-3xl font-bold text-gray-900">${stats.totalTipsAmount}</p>
-            <p className="text-xs text-gray-600 mt-1">{stats.totalTips} tips</p>
-          </div>
-        </div>
-
-        {/* Top Performing Stories */}
+        {/* Top Performers List */}
         {topStories.length > 0 && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">🔥 Top Performing Stories</h2>
-            <div className="space-y-4">
+          <section className="mb-16">
+            <div className="flex items-center gap-2 mb-8 pb-2 border-b border-zinc-50 dark:border-zinc-900">
+              <TrendingUp className="w-3.5 h-3.5 text-zinc-400" />
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">High-Velocity Manuscripts</h2>
+            </div>
+            <div className="space-y-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
               {topStories.map((story, idx) => (
-                <div key={story.id} className="flex items-center justify-between pb-4 border-b last:border-b-0">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold text-gray-400">#{idx + 1}</span>
-                      <Link
-                        href={`/stories/${story.id}`}
-                        className="text-lg font-semibold text-gray-900 hover:text-blue-600"
-                      >
-                        {story.title}
-                      </Link>
-                    </div>
+                <div key={story.id} className="p-6 bg-white dark:bg-zinc-950 flex items-center justify-between group">
+                  <div className="flex items-center gap-6">
+                    <span className="text-[10px] font-mono text-zinc-300">{(idx + 1).toString().padStart(2, '0')}</span>
+                    <Link href={`/stories/${story.id}`} className="text-sm font-bold text-zinc-900 dark:text-white hover:underline">
+                      {story.title}
+                    </Link>
                   </div>
-                  <div className="flex items-center gap-6 text-sm text-gray-600">
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-gray-900">{story.views}</p>
-                      <p className="text-xs">views</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-red-500">{story.reactions}</p>
-                      <p className="text-xs">reactions</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-blue-500">{story.comments}</p>
-                      <p className="text-xs">comments</p>
-                    </div>
-                    {story.tips > 0 && (
-                      <div className="text-right">
-                        <p className="text-xl font-bold text-green-500">${story.tips}</p>
-                        <p className="text-xs">tips</p>
+                  <div className="flex items-center gap-8">
+                    {[
+                      { val: story.views, label: "Transmissions" },
+                      { val: story.reactions, label: "Reactions" },
+                      { val: story.comments, label: "Engagement" }
+                    ].map((stat, j) => (
+                      <div key={j} className="text-right">
+                        <div className="text-sm font-bold">{stat.val.toLocaleString()}</div>
+                        <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">{stat.label}</div>
                       </div>
-                    )}
+                    ))}
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </section>
         )}
 
-        {/* All Stories Table */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">All Stories</h2>
+        {/* Full Archival Log */}
+        <section>
+          <div className="flex items-center gap-2 mb-8 pb-2 border-b border-zinc-50 dark:border-zinc-900">
+            <BookOpen className="w-3.5 h-3.5 text-zinc-400" />
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Full Manuscript Registry</h2>
+          </div>
           {stories.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-500 mb-4">No stories yet</p>
-              <Link
-                href="/write/new"
-                className="text-blue-600 hover:text-blue-700 font-semibold"
-              >
-                Start writing →
-              </Link>
+            <div className="text-center py-20 border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">No records found in registry.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+              <table className="w-full text-left">
                 <thead>
-                  <tr className="border-b">
-                    <th className="text-left py-3 px-4 font-semibold text-gray-900">Story</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-900">Views</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-900">Reactions</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-900">Comments</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-900">Chapters</th>
-                    <th className="text-right py-3 px-4 font-semibold text-gray-900">Tips</th>
-                    <th className="text-center py-3 px-4 font-semibold text-gray-900">Status</th>
+                  <tr className="border-b border-zinc-100 dark:border-zinc-900">
+                    <th className="py-4 px-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Manuscript</th>
+                    <th className="py-4 px-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Views</th>
+                    <th className="py-4 px-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Reactions</th>
+                    <th className="py-4 px-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Engagement</th>
+                    <th className="py-4 px-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Yield</th>
+                    <th className="py-4 px-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">Protocol</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900">
                   {stories.map(story => (
-                    <tr key={story.id} className="border-b hover:bg-gray-50">
-                      <td className="py-3 px-4">
-                        <Link
-                          href={`/stories/${story.id}`}
-                          className="text-blue-600 hover:text-blue-700 font-medium truncate"
-                        >
+                    <tr key={story.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                      <td className="py-4 px-2">
+                        <Link href={`/stories/${story.id}`} className="text-xs font-bold text-zinc-900 dark:text-white hover:underline truncate block max-w-xs">
                           {story.title}
                         </Link>
                       </td>
-                      <td className="text-right py-3 px-4">{story.views}</td>
-                      <td className="text-right py-3 px-4">{story.reactions}</td>
-                      <td className="text-right py-3 px-4">{story.comments}</td>
-                      <td className="text-right py-3 px-4">{story.chapters}</td>
-                      <td className="text-right py-3 px-4">{story.tips > 0 ? `$${story.tips}` : '—'}</td>
-                      <td className="text-center py-3 px-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                            story.published
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                          }`}
-                        >
-                          {story.published ? 'Published' : 'Draft'}
+                      <td className="py-4 px-2 text-right text-[10px] font-mono font-bold text-zinc-400">{story.views}</td>
+                      <td className="py-4 px-2 text-right text-[10px] font-mono font-bold text-rose-500">{story.reactions}</td>
+                      <td className="py-4 px-2 text-right text-[10px] font-mono font-bold text-blue-500">{story.comments}</td>
+                      <td className="py-4 px-2 text-right text-[10px] font-mono font-bold text-emerald-500">{story.tips > 0 ? `$${story.tips}` : '—'}</td>
+                      <td className="py-4 px-2 text-center">
+                        <span className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded flex items-center justify-center gap-1.5 mx-auto w-fit ${
+                          story.published ? "text-emerald-500 bg-emerald-50/5 border border-emerald-500/10" : "text-zinc-400 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800"
+                        }`}>
+                          {story.published ? <Globe className="w-2.5 h-2.5" /> : <GlobeLock className="w-2.5 h-2.5" />}
+                          {story.published ? 'Live' : 'Draft'}
                         </span>
                       </td>
                     </tr>
@@ -260,36 +216,8 @@ export default function AuthorAnalyticsPage() {
               </table>
             </div>
           )}
-        </div>
+        </section>
       </div>
-    </div>
-  );
-}
-
-interface StatCardProps {
-  icon: React.ComponentType<{ className?: string }>;
-  label: string;
-  value: number;
-  color: string;
-}
-
-function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
-  const colorClasses: Record<string, { bg: string; text: string }> = {
-    blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
-    green: { bg: 'bg-green-100', text: 'text-green-600' },
-    red: { bg: 'bg-red-100', text: 'text-red-600' },
-    purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium text-gray-600">{label}</h3>
-        <div className={`${colorClasses[color].bg} p-2 rounded-lg`}>
-          <Icon className={`w-5 h-5 ${colorClasses[color].text}`} />
-        </div>
-      </div>
-      <p className="text-3xl font-bold text-gray-900">{value}</p>
-    </div>
+    </main>
   );
 }

@@ -13,6 +13,11 @@ import {
   Globe,
   FileText,
   Mail,
+  Layers,
+  GitBranch,
+  ArrowLeft,
+  Loader2,
+  Plus
 } from "lucide-react";
 
 interface StoryItem {
@@ -43,8 +48,6 @@ export default function WriteDashboardPage() {
           const data = await res.json();
           setStories(data.stories);
         }
-      } catch {
-        console.error("Failed to fetch stories");
       } finally {
         setLoading(false);
       }
@@ -84,158 +87,100 @@ export default function WriteDashboardPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
-      <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-6xl mx-auto px-6 py-12">
         
-        {/* Huge Clean Header */}
-        <header className="mb-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-7xl font-black text-zinc-900 dark:text-white tracking-tighter mb-6">
-                Studio.
-              </h1>
-              <p className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                Your creative workspace. Draft, publish, and manage your literary universe.
-              </p>
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight mb-2">My Stories</h1>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">Create and manage your stories, universes, and newsletters.</p>
             </div>
-            <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0 w-full md:w-auto">
-              <Link
-                href="/write/newsletter"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full font-bold text-zinc-900 dark:text-white bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-colors"
-              >
-                <Mail className="h-5 w-5" />
-                Newsletter
-              </Link>
-              <Link
-                href="/write/new"
-                className="w-full sm:w-auto group inline-flex items-center justify-center gap-2 px-8 py-4 bg-brand text-white rounded-full font-bold text-lg hover:bg-orange-600 hover:shadow-xl hover:shadow-brand/20 hover:-translate-y-1 transition-all duration-300"
-              >
-                <PenLine className="h-5 w-5" />
-                New Story
-              </Link>
-            </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href="/write/universes" className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500 rounded border border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-2">
+              <GitBranch className="w-3.5 h-3.5" />
+              My Universes
+            </Link>
+            <Link href="/write/newsletter" className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500 rounded border border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-2">
+              <Mail className="w-3.5 h-3.5" />
+              Newsletter
+            </Link>
+            <Link href="/write/new" className="px-3 py-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2">
+              <Plus className="w-3.5 h-3.5" />
+              New Story
+            </Link>
           </div>
         </header>
 
-        {/* Minimal Divider */}
-        <div className="w-full h-px bg-zinc-200 dark:bg-zinc-800 mb-12" />
-
         {/* Stories List */}
-        <div className="space-y-6">
+        <div className="min-h-[400px]">
           {loading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="animate-pulse rounded-3xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-900/50 min-h-[200px]"
-                />
-              ))}
+            <div className="flex items-center justify-center py-32">
+              <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
             </div>
           ) : stories.length === 0 ? (
-            <div className="py-32 text-center bg-zinc-50 dark:bg-zinc-900/30 rounded-[3rem] border border-zinc-200 dark:border-zinc-800">
-              <div className="w-24 h-24 bg-brand/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-brand/5 rotate-12">
-                <PenLine className="h-10 w-10 text-brand -rotate-12" />
-              </div>
-              <h3 className="text-3xl font-bold text-zinc-900 dark:text-white mb-4">
-                The blank page awaits
-              </h3>
-              <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed mb-8">
-                Create your first story, build your audience, and share your imagination with the world.
-              </p>
-              <Link
-                href="/write/new"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold rounded-full hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-xl"
-              >
-                <PenLine className="h-5 w-5" />
-                Start Writing
+            <div className="py-20 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+              <p className="text-xs font-medium text-zinc-400 mb-6 italic">You haven&apos;t written any stories yet.</p>
+              <Link href="/write/new" className="px-8 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded">
+                Start your first story
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
               {stories.map((story) => (
                 <div
                   key={story.id}
-                  className="group rounded-[2rem] border border-zinc-200 bg-white p-8 transition-all duration-300 hover:border-zinc-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900 relative overflow-hidden"
+                  className="group flex flex-col p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
                 >
-                  <div className="flex flex-col h-full justify-between gap-8">
-                    <div>
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <span
-                          className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
-                            story.published
-                              ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                              : "bg-orange-500/10 text-orange-600 dark:text-orange-400"
-                          }`}
-                        >
-                          {story.published ? (
-                            <>
-                              <Globe className="h-3.5 w-3.5" /> Published
-                            </>
-                          ) : (
-                            <>
-                              <FileText className="h-3.5 w-3.5" /> Draft
-                            </>
-                          )}
+                  <div className="flex flex-col h-full justify-between gap-6">
+                    <div className="space-y-4">
+                      <div className="flex items-start justify-between gap-4">
+                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border ${
+                          story.published 
+                            ? "bg-emerald-50/5 border-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                            : "bg-zinc-50 dark:bg-zinc-900 border-zinc-100 dark:border-zinc-800 text-zinc-400"
+                        }`}>
+                          {story.published ? "Published" : "Draft"}
                         </span>
                         
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Link
-                            href={`/write/${story.id}/edit`}
-                            className="rounded-full p-2.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
-                            title="Edit"
-                          >
-                            <PenLine className="h-5 w-5" />
+                          <Link href={`/write/story/${story.id}/edit`} className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Edit">
+                            <PenLine className="w-4 h-4" />
                           </Link>
-                          <button
-                            onClick={() => handleTogglePublish(story.id, story.published)}
-                            className="rounded-full p-2.5 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
-                            title={story.published ? "Unpublish" : "Publish"}
-                          >
-                            <Globe className="h-5 w-5" />
+                          <button onClick={() => handleTogglePublish(story.id, story.published)} className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title={story.published ? "Unpublish" : "Publish"}>
+                            <Globe className="w-4 h-4" />
                           </button>
-                          <button
-                            onClick={() => handleDelete(story.id)}
-                            className="rounded-full p-2.5 text-zinc-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-500/10 dark:hover:text-red-400 transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="h-5 w-5" />
+                          <button onClick={() => handleDelete(story.id)} className="p-1.5 text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="Delete">
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
                       
-                      <Link
-                        href={`/write/${story.id}/edit`}
-                        className="block group-hover:translate-x-1 transition-transform"
-                      >
-                        <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2 line-clamp-1 group-hover:text-brand transition-colors">
+                      <Link href={`/write/story/${story.id}/edit`} className="block group-hover:translate-x-1 transition-transform">
+                        <h3 className="text-base font-bold text-zinc-900 dark:text-white mb-2 tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
                           {story.title}
                         </h3>
                         {story.summary && (
-                          <p className="text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
+                          <p className="text-xs text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">
                             {story.summary}
                           </p>
                         )}
                       </Link>
                     </div>
 
-                    <div className="flex items-center flex-wrap gap-x-6 gap-y-3 pt-6 border-t border-zinc-100 dark:border-zinc-800/50">
-                      <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 font-medium">
-                        <BookOpen className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
-                        {story._count.chapters}
+                    <div className="pt-6 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                        <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5 text-zinc-300" /> {story._count.chapters}</span>
+                        <span className="flex items-center gap-1"><Eye className="w-3.5 h-3.5 text-zinc-300" /> {story.viewCount}</span>
+                        <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5 text-zinc-300" /> {story._count.reactions}</span>
                       </div>
-                      <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 font-medium">
-                        <Eye className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
-                        {story.viewCount}
-                      </div>
-                      <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 font-medium">
-                        <Heart className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
-                        {story._count.reactions}
-                      </div>
-                      <div className="flex items-center gap-2 text-zinc-500 dark:text-zinc-400 font-medium">
-                        <MessageSquare className="h-4 w-4 text-zinc-400 dark:text-zinc-500" />
-                        {story._count.comments}
-                      </div>
-                      <div className="flex-1 text-right text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-600">
+                      <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-mono">
                         {formatDate(story.updatedAt)}
                       </div>
                     </div>

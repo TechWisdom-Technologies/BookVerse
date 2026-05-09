@@ -6,92 +6,88 @@ import { BookOpen, Sparkles, Play, ArrowRight, Star } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-zinc-950 -mt-[env(safe-area-inset-top)] pt-0">
-      {/* Dynamic Background */}
+    <section className="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
+      {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/50 to-transparent" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] dark:opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent" />
         
-        {/* Animated glowing orbs */}
+        {/* Animated Orbs - Subtle in Light Mode */}
         <motion.div 
           animate={{ 
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.1, 0.2, 0.1],
             x: [0, 50, 0],
             y: [0, -50, 0]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-brand/30 rounded-full blur-[128px]" 
+          className="absolute top-1/4 -left-32 w-96 h-96 bg-zinc-200 dark:bg-zinc-800 rounded-full blur-[128px]" 
         />
         <motion.div 
           animate={{ 
             scale: [1, 1.5, 1],
-            opacity: [0.2, 0.4, 0.2],
+            opacity: [0.05, 0.15, 0.05],
             x: [0, -50, 0],
             y: [0, 50, 0]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[128px]" 
+          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-zinc-100 dark:bg-zinc-900 rounded-full blur-[128px]" 
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-zinc-300 text-sm font-medium mb-8 shadow-2xl"
+          className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 shadow-sm"
         >
-          <Sparkles className="w-4 h-4 text-brand" />
-          <span>The Next Generation Reading Platform</span>
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>The Modern Reading Experience</span>
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="text-5xl sm:text-6xl lg:text-8xl font-bold text-white tracking-tight mb-8"
+          className="text-6xl sm:text-7xl lg:text-9xl font-bold text-zinc-900 dark:text-white tracking-tighter mb-10 uppercase leading-[0.9]"
         >
-          Your Digital <br className="hidden sm:block" />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand via-orange-400 to-violet-500">
-            Library Awaits
+          Your Next <br className="hidden sm:block" />
+          <span className="text-zinc-300 dark:text-zinc-800">
+            Story Awaits.
           </span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="text-lg sm:text-xl text-zinc-400 max-w-2xl mb-12"
+          className="text-sm sm:text-base text-zinc-500 max-w-xl mb-16 font-medium italic leading-relaxed"
         >
-          Immerse yourself in thousands of stories, connect with passionate readers, and experience literature like never before.
+          Discover thousands of stories, connect with passionate readers, and experience literature in a clean, minimalist environment.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row items-center gap-6"
+          className="flex flex-col sm:flex-row items-center gap-8"
         >
           <Link
             href="/library"
-            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 bg-brand text-white rounded-full font-black text-lg overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-[0_0_40px_rgba(249,115,22,0.4)]"
+            className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded font-bold text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:scale-105 shadow-xl border border-zinc-900 dark:border-white"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-brand opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <BookOpen className="w-6 h-6 relative z-10" />
-            <span className="relative z-10">Explore Library</span>
-            <ArrowRight className="w-6 h-6 relative z-10 group-hover:translate-x-1 transition-transform" />
+            <BookOpen className="w-4 h-4" />
+            <span>Start Reading</span>
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
           </Link>
           
           <Link
             href="/stories"
-            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 bg-white/5 border-2 border-white/10 text-white rounded-full font-black text-lg backdrop-blur-md transition-all duration-300 hover:bg-white/10 hover:border-white/30 hover:scale-105"
+            className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-transparent border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 rounded font-bold text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white hover:scale-105"
           >
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition-colors">
-              <Play className="w-4 h-4 ml-0.5" />
-            </div>
-            <span>Read Stories</span>
+            <Play className="w-4 h-4 ml-0.5" />
+            <span>Latest Stories</span>
           </Link>
         </motion.div>
 
@@ -99,25 +95,25 @@ export function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
-          className="mt-20 flex items-center gap-8 text-sm text-zinc-500 font-medium"
+          className="mt-24 flex items-center gap-10 text-[10px] font-bold uppercase tracking-widest text-zinc-300 dark:text-zinc-700"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-4">
             <div className="flex -space-x-3">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-8 h-8 rounded-full border-2 border-zinc-950 bg-zinc-800 flex items-center justify-center overflow-hidden">
+                <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
                   <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover" />
                 </div>
               ))}
             </div>
-            <div className="ml-4 flex flex-col items-start">
-              <div className="flex items-center gap-1 text-amber-400">
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
-                <Star className="w-4 h-4 fill-current" />
+            <div className="flex flex-col items-start gap-1">
+              <div className="flex items-center gap-1 text-zinc-900 dark:text-white">
+                <Star className="w-3 h-3 fill-current" />
+                <Star className="w-3 h-3 fill-current" />
+                <Star className="w-3 h-3 fill-current" />
+                <Star className="w-3 h-3 fill-current" />
+                <Star className="w-3 h-3 fill-current" />
               </div>
-              <span>Trusted by 50K+ readers</span>
+              <span className="italic">Trusted by 50K+ readers</span>
             </div>
           </div>
         </motion.div>
@@ -128,13 +124,13 @@ export function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-zinc-500"
+        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-zinc-200 dark:text-zinc-800"
       >
-        <span className="text-xs font-medium uppercase tracking-widest">Scroll</span>
+        <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Scroll</span>
         <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-          className="w-1 h-8 rounded-full bg-gradient-to-b from-brand/50 to-transparent"
+          animate={{ y: [0, 12, 0] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="w-px h-12 bg-zinc-200 dark:bg-zinc-800"
         />
       </motion.div>
     </section>

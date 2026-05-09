@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { AlertCircle, Home, RotateCcw } from "lucide-react";
+import { AlertTriangle, Home, RotateCcw, Terminal } from "lucide-react";
 
 export default function ErrorPage({
   error,
@@ -16,40 +16,51 @@ export default function ErrorPage({
   }, [error]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12">
-      <div className="mx-auto max-w-md text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-red-100 dark:bg-red-950">
-          <AlertCircle className="h-10 w-10 text-red-600 dark:text-red-400" />
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
+      <div className="max-w-[400px] w-full">
+        
+        {/* Malfunction Header */}
+        <div className="mb-10 pb-6 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+            Execution Malfunction
+          </div>
+          <h1 className="text-xl font-bold tracking-tight mb-1">System Interruption.</h1>
+          <p className="text-xs text-zinc-500 font-medium">An unexpected malfunction has occurred during the archival transmission process.</p>
         </div>
 
-        <h1 className="mt-6 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-          Something went wrong
-        </h1>
+        {/* Diagnostic Registry */}
+        <div className="mb-12 p-6 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/20 dark:bg-zinc-900/10">
+          <div className="flex items-center gap-2 mb-4 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+            <Terminal className="w-3 h-3 text-zinc-400" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Diagnostic Data</span>
+          </div>
+          <div className="text-[10px] font-mono text-zinc-500 break-all leading-relaxed">
+            {error.message || "Unknown execution failure detected."}
+            {error.digest && <div className="mt-2 pt-2 border-t border-zinc-50 dark:border-zinc-900 text-[9px] text-zinc-400">DIGEST_ID: {error.digest}</div>}
+          </div>
+        </div>
 
-        <p className="mt-4 text-zinc-600 dark:text-zinc-400">
-          We apologize for the inconvenience. An unexpected error has occurred.
-        </p>
-
-        {error.digest && (
-          <p className="mt-2 text-xs text-zinc-400">Error ID: {error.digest}</p>
-        )}
-
-        <div className="mt-8 flex items-center justify-center gap-4">
+        {/* Recovery Protocols */}
+        <div className="space-y-3">
           <button
             onClick={reset}
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+            className="w-full py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2"
           >
-            <RotateCcw className="h-4 w-4" />
-            Try again
+            <RotateCcw className="w-3 h-3" /> Re-execute Transmission
           </button>
 
           <Link
             href="/"
-            className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+            className="w-full py-3 border border-zinc-100 dark:border-zinc-900 text-zinc-900 dark:text-zinc-100 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2 hover:bg-zinc-50 dark:hover:bg-zinc-900"
           >
-            <Home className="h-4 w-4" />
-            Go home
+            <Home className="w-3 h-3" /> Terminate & Return Home
           </Link>
+        </div>
+
+        {/* System Support Registry */}
+        <div className="mt-12 pt-8 border-t border-zinc-100 dark:border-zinc-900 text-center">
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300">Continuous malfunctions should be reported to system administration.</p>
         </div>
       </div>
     </main>

@@ -35,33 +35,33 @@ export function Pagination({ currentPage, totalPages, basePath }: PaginationProp
   }
 
   return (
-    <div className="flex items-center justify-center gap-2">
+    <div className="flex items-center justify-center gap-3">
       {prevPage >= 1 ? (
         <Link
           href={getPageUrl(prevPage)}
-          className="rounded-lg border border-zinc-200 p-2 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+          className="border border-zinc-100 p-2.5 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900/50 transition-all rounded"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4 text-zinc-400" />
         </Link>
       ) : (
         <button
           disabled
-          className="rounded-lg border border-zinc-200 p-2 opacity-50 dark:border-zinc-800"
+          className="border border-zinc-50 p-2.5 opacity-30 dark:border-zinc-900 cursor-not-allowed rounded"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-4 w-4 text-zinc-300" />
         </button>
       )}
 
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {start > 1 && (
           <>
             <Link
               href={getPageUrl(1)}
-              className="rounded-lg px-3 py-1 text-sm border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+              className="px-4 py-2 text-[10px] font-bold border border-zinc-100 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900/50 transition-all rounded"
             >
-              1
+              01
             </Link>
-            {start > 2 && <span className="px-1 text-zinc-400">...</span>}
+            {start > 2 && <span className="px-2 text-[10px] font-bold text-zinc-300">...</span>}
           </>
         )}
         
@@ -72,25 +72,25 @@ export function Pagination({ currentPage, totalPages, basePath }: PaginationProp
             <Link
               key={page}
               href={getPageUrl(page)}
-              className={`rounded-lg px-3 py-1 text-sm ${
+              className={`px-4 py-2 text-[10px] font-bold transition-all border rounded ${
                 isActive
-                  ? "bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-950"
-                  : "border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+                  ? "bg-zinc-900 text-white border-zinc-900 dark:bg-white dark:text-zinc-950 dark:border-white shadow-sm"
+                  : "border-zinc-100 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900/50 text-zinc-400"
               }`}
             >
-              {page}
+              {page.toString().padStart(2, '0')}
             </Link>
           );
         })}
 
         {end < totalPages && (
           <>
-            {end < totalPages - 1 && <span className="px-1 text-zinc-400">...</span>}
+            {end < totalPages - 1 && <span className="px-2 text-[10px] font-bold text-zinc-300">...</span>}
             <Link
               href={getPageUrl(totalPages)}
-              className="rounded-lg px-3 py-1 text-sm border border-zinc-200 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+              className="px-4 py-2 text-[10px] font-bold border border-zinc-100 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900/50 transition-all rounded"
             >
-              {totalPages}
+              {totalPages.toString().padStart(2, '0')}
             </Link>
           </>
         )}
@@ -99,16 +99,16 @@ export function Pagination({ currentPage, totalPages, basePath }: PaginationProp
       {nextPage <= totalPages ? (
         <Link
           href={getPageUrl(nextPage)}
-          className="rounded-lg border border-zinc-200 p-2 hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-900"
+          className="border border-zinc-100 p-2.5 hover:bg-zinc-50 dark:border-zinc-900 dark:hover:bg-zinc-900/50 transition-all rounded"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4 text-zinc-400" />
         </Link>
       ) : (
         <button
           disabled
-          className="rounded-lg border border-zinc-200 p-2 opacity-50 dark:border-zinc-800"
+          className="border border-zinc-50 p-2.5 opacity-30 dark:border-zinc-900 cursor-not-allowed rounded"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-4 w-4 text-zinc-300" />
         </button>
       )}
     </div>

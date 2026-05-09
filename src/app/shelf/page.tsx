@@ -4,17 +4,14 @@ import Image from "next/image";
 import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
-import { BookOpen } from "lucide-react";
+import { BookOpen, ArrowLeft, Loader2, Bookmark } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 export default async function ShelfPage() {
-  // Verify auth and get current user
   const cookieStore = await cookies();
   const token = cookieStore.get("firebase-token")?.value;
 
-  if (!token) {
-    redirect("/login?redirect=/shelf");
-  }
+  if (!token) redirect("/login?redirect=/shelf");
 
   let userId: string;
   try {
@@ -29,7 +26,6 @@ export default async function ShelfPage() {
     redirect("/login?redirect=/shelf");
   }
 
-  // Fetch saved books
   const savedBooks = await prisma.bookSave.findMany({
     where: { userId },
     include: {
@@ -41,8 +37,6 @@ export default async function ShelfPage() {
           coverUrl: true,
           genre: true,
           description: true,
-          downloadCount: true,
-          _count: { select: { reviews: true } },
         },
       },
     },
@@ -50,93 +44,74 @@ export default async function ShelfPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
-      <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         
-        {/* Huge Clean Header */}
-        <header className="mb-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-7xl font-black text-zinc-900 dark:text-white tracking-tighter mb-6">
-                Your Shelf.
-              </h1>
-              <p className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                Your personal collection of masterpieces. Read, manage, and curate your favorite books and stories.
-              </p>
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">My Library.</h1>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">Your personal collection of saved books and community stories.</p>
             </div>
-            
-            <div className="shrink-0 inline-flex items-center gap-2 px-6 py-3 bg-zinc-100 dark:bg-zinc-900 rounded-full font-bold text-zinc-900 dark:text-white border border-zinc-200 dark:border-zinc-800">
-              <BookOpen className="w-5 h-5 text-brand" />
-              <span>{savedBooks.length} Books Saved</span>
-            </div>
+          </div>
+          
+          <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800">
+            <Bookmark className="w-3.5 h-3.5 text-zinc-300" />
+            {savedBooks.length} Books Saved
           </div>
         </header>
 
-        {/* Minimal Divider */}
-        <div className="w-full h-px bg-zinc-200 dark:bg-zinc-800 mb-12" />
-
         {savedBooks.length === 0 ? (
-          <div className="py-32 text-center bg-zinc-50 dark:bg-zinc-900/30 rounded-[3rem] border border-zinc-200 dark:border-zinc-800">
-            <BookOpen className="mx-auto w-16 h-16 text-zinc-300 dark:text-zinc-700 mb-6" />
-            <h3 className="text-3xl font-bold text-zinc-900 dark:text-white mb-4">
-              Your shelf is empty
-            </h3>
-            <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed mb-8">
-              Start exploring our massive library of books and stories to build your personal collection.
-            </p>
+          <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+            <BookOpen className="mx-auto w-10 h-10 text-zinc-100 dark:text-zinc-800 mb-8" />
+            <h3 className="text-sm font-bold uppercase tracking-tight mb-2">Library Empty</h3>
+            <p className="text-xs text-zinc-400 max-w-xs mx-auto mb-10 font-bold uppercase tracking-widest">You haven&apos;t saved any books yet.</p>
             <Link
               href="/library"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold rounded-full hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              className="px-10 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all"
             >
               Browse Library
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
             {savedBooks.map((save) => (
               <Link 
                 key={save.id}
                 href={`/library/${save.book.id}`}
-                className="group flex flex-col relative"
+                className="group flex flex-col p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
               >
-                <div className="relative aspect-[2/3] w-full rounded-2xl overflow-hidden bg-zinc-100 dark:bg-zinc-900 mb-5 shadow-lg group-hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 ring-1 ring-black/5 dark:ring-white/5">
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10" />
-                  
+                <div className="relative aspect-[2/3] w-full rounded overflow-hidden bg-zinc-50 dark:bg-zinc-900 mb-6 border border-zinc-100 dark:border-zinc-800">
                   {save.book.coverUrl ? (
                     <Image
                       src={save.book.coverUrl}
                       alt={save.book.title}
                       fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="object-cover transition-all duration-700"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-200 to-zinc-300 dark:from-zinc-800 dark:to-zinc-700 transition-transform duration-700 group-hover:scale-105">
-                      <BookOpen className="h-12 w-12 text-zinc-400 dark:text-zinc-600" />
+                    <div className="flex h-full w-full items-center justify-center text-zinc-200 dark:text-zinc-800">
+                      <BookOpen className="h-10 w-10" />
                     </div>
                   )}
-                  
-                  {/* Decorative read button on hover */}
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 ease-out">
-                    <div className="px-8 py-3 bg-white text-zinc-900 font-bold rounded-full text-sm shadow-xl whitespace-nowrap">
-                      Read Now
-                    </div>
-                  </div>
                 </div>
 
-                <div>
+                <div className="space-y-1">
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-brand">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-300">
                       {save.book.genre}
                     </span>
-                    <span className="text-xs font-medium text-zinc-400">
-                      Saved {formatDate(save.createdAt)}
-                    </span>
                   </div>
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white leading-tight mb-1 group-hover:text-brand transition-colors line-clamp-1">
+                  <h3 className="text-sm font-bold tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors line-clamp-1 uppercase">
                     {save.book.title}
                   </h3>
-                  <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400 line-clamp-1">
-                    by {save.book.authorName}
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    {save.book.authorName}
                   </p>
                 </div>
               </Link>
@@ -147,4 +122,3 @@ export default async function ShelfPage() {
     </main>
   );
 }
-

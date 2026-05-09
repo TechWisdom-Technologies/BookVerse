@@ -61,6 +61,7 @@ model User {
   books          Book[]
   bookReviews    BookReview[]
   bookSaves      BookSave[]
+  universes      Universe[]
   stories        Story[]
   storyReactions StoryReaction[]
   comments       Comment[]
@@ -72,6 +73,7 @@ model User {
   clubMemberships ClubMember[]
   clubDiscussions ClubDiscussion[]
   clubsOwned      Club[]           @relation("club_owner")
+  clubBans        ClubBan[]
 
   betaReads             BetaReader[]
   newsletterSubscribers NewsletterSubscriber[] @relation("AuthorNewsletters")
@@ -97,7 +99,6 @@ model User {
   scheduledChapters        ScheduledChapter[]
   inlineComments           InlineComment[]
   shareActivities          ShareActivity[]
-  storyUniverses           StoryUniverse[]          @relation("universe_creator")
   authorSubscriptions      AuthorSubscription[]     @relation("subscriber")
   authorSubscribersTo      AuthorSubscription[]     @relation("author")
   authorSubscriptionsOwned AuthorSubscriptionTier[] @relation("tier_author")
@@ -192,6 +193,7 @@ model Story {
   reactionCount Int  @default(0) @map("reaction_count")
   published Boolean  @default(false)
   genre     String?
+  universeId  String?  @map("universe_id")
   subGenres String[] @default([])
   mood      String?
   contentWarnings String[] @default([])
@@ -201,6 +203,7 @@ model Story {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   author    User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  universe  Universe?       @relation("story_universe", fields: [universeId], references: [id], onDelete: SetNull)
   chapters  StoryChapter[]
   reactions StoryReaction[]
   comments  Comment[]
@@ -215,6 +218,7 @@ model Story {
 
   @@index([authorId])
   @@index([published])
+  @@index([universeId])
   @@map("stories")
 }
 
@@ -340,14 +344,18 @@ model Club {
   ownerId     String   @map("owner_id")
   genre       String?
   isPrivate   Boolean  @default(false) @map("is_private")
+  maxMembers  Int?     @map("max_members")
+  joinCode    String?  @unique @map("join_code")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   owner       User             @relation("club_owner", fields: [ownerId], references: [id], onDelete: Cascade)
   members     ClubMember[]
   discussions ClubDiscussion[]
+  bannedUsers ClubBan[]
 
   @@index([ownerId])
+  @@index([joinCode])
   @@map("clubs")
 }
 
@@ -365,6 +373,22 @@ model ClubMember {
   @@map("club_members")
 }
 
+model ClubBan {
+  id        String   @id @default(cuid())
+  clubId    String   @map("club_id")
+  userId    String   @map("user_id")
+  reason    String?
+  bannedAt  DateTime @default(now()) @map("banned_at")
+  bannedBy  String   @map("banned_by")
+
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([clubId, userId])
+  @@index([clubId])
+  @@map("club_bans")
+}
+
 model ClubDiscussion {
   id        String   @id @default(cuid())
   clubId    String   @map("club_id")
@@ -374,8 +398,8 @@ model ClubDiscussion {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  club   Club  @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  author User  @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  club     Club           @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  author   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([clubId])
   @@index([authorId])
@@ -510,21 +534,7 @@ model ShareActivity {
   @@map("share_activities")
 }
 
-model StoryUniverse {
-  id        String   @id @default(cuid())
-  name      String
-  description String?
-  genre     String?
-  creatorId String   @map("creator_id")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
 
-  creator User @relation("universe_creator", fields: [creatorId], references: [id], onDelete: Cascade)
-  stories String[] @default([]) // Array of story IDs for many-to-many
-
-  @@index([creatorId])
-  @@map("story_universes")
-}
 
 model SpoilerTag {
   id              String   @id @default(cuid())
@@ -655,3 +665,18 @@ model GiftMembership {
   @@map("gift_memberships")
 }
 
+model Universe {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  genre       String   @default("Fiction")
+  userId      String   @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stories Story[] @relation("story_universe")
+
+  @@index([userId])
+  @@map("universes")
+}

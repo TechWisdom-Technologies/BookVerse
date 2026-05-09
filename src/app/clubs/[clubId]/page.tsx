@@ -1,10 +1,26 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { Users, MessageSquare, Settings, LogOut, UserPlus, Loader } from 'lucide-react';
+import { 
+  Users, 
+  MessageSquare, 
+  Settings, 
+  LogOut, 
+  UserPlus, 
+  Loader2, 
+  Link2, 
+  Crown, 
+  ArrowLeft,
+  ChevronRight,
+  ShieldCheck,
+  Plus,
+  ChevronDown,
+  ChevronUp
+} from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import Link from 'next/link';
 
 interface Club {
   id: string;
@@ -12,11 +28,12 @@ interface Club {
   description?: string;
   genre?: string;
   isPrivate: boolean;
+  joinCode?: string;
+  maxMembers: number;
   owner: {
     id: string;
     username: string;
     displayName?: string;
-    bio?: string;
     avatarUrl?: string;
   };
   members: Array<{
@@ -43,359 +60,343 @@ interface Club {
   }>;
 }
 
-interface Discussion {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: string;
-  author: {
-    id: string;
-    username: string;
-    displayName?: string;
-    avatarUrl?: string;
-  };
-}
-
 export default function ClubDetailPage() {
-  const params = useParams();
-  const clubId = params.clubId as string;
-  const { user } = useAuth();
+  const { clubId } = useParams() as { clubId: string };
+  const { dbUser } = useAuth();
+  const router = useRouter();
 
   const [club, setClub] = useState<Club | null>(null);
-  const [discussions, setDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
   const [isMember, setIsMember] = useState(false);
   const [showNewDiscussion, setShowNewDiscussion] = useState(false);
   const [newDiscussionTitle, setNewDiscussionTitle] = useState('');
   const [newDiscussionContent, setNewDiscussionContent] = useState('');
   const [isPosting, setIsPosting] = useState(false);
+  const [showJoinCodeInput, setShowJoinCodeInput] = useState(false);
+  const [joinCodeInput, setJoinCodeInput] = useState('');
+  const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchClub = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/clubs/${clubId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setClub(data);
-          setDiscussions(data.discussions || []);
-          
-          // Check if current user is a member
-          if (user) {
-            const isMemberCheck = data.members.some((m: any) => m.userId === user.id);
+        const [clubRes, discussionsRes] = await Promise.all([
+          fetch(`/api/clubs/${clubId}`),
+          fetch(`/api/clubs/${clubId}/discussions`),
+        ]);
+        if (clubRes.ok) {
+          const clubData = await clubRes.json();
+          const discussionsData = discussionsRes.ok ? await discussionsRes.json() : [];
+          setClub({ ...clubData, discussions: discussionsData });
+          if (dbUser) {
+            const isMemberCheck = clubData.members.some((m: any) => m.userId === dbUser.id);
             setIsMember(isMemberCheck);
           }
         }
       } catch (error) {
         console.error('Error fetching club:', error);
-        toast.error('Failed to load club');
       } finally {
         setLoading(false);
       }
     };
-
-    if (clubId) {
-      fetchClub();
-    }
-  }, [clubId, user]);
+    if (clubId) fetchClub();
+  }, [clubId, dbUser]);
 
   const handleJoinClub = async () => {
-    if (!user) {
-      toast.error('Please log in to join clubs');
-      return;
-    }
+    if (!dbUser) return toast.error('Login required');
+    if (club?.isPrivate && !showJoinCodeInput) return setShowJoinCodeInput(true);
 
     try {
       const res = await fetch(`/api/clubs/${clubId}/members`, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ joinCode: joinCodeInput }),
       });
 
       if (res.ok) {
         setIsMember(true);
-        toast.success('Joined club successfully! 🎉');
-        // Refresh club data
-        const clubRes = await fetch(`/api/clubs/${clubId}`);
-        if (clubRes.ok) {
-          const data = await clubRes.json();
-          setClub(data);
-        }
+        setShowJoinCodeInput(false);
+        toast.success('Welcome to the club!');
+        window.location.reload();
       } else {
-        toast.error('Failed to join club');
+        const data = await res.json();
+        toast.error(data.error || 'Join failed');
       }
     } catch (error) {
-      console.error('Error joining club:', error);
-      toast.error('An error occurred');
+      toast.error('Connection error');
     }
   };
 
   const handleLeaveClub = async () => {
-    if (!confirm('Are you sure you want to leave this club?')) return;
-
+    if (!confirm('Leave this club?')) return;
     try {
-      const res = await fetch(`/api/clubs/${clubId}/members`, {
-        method: 'DELETE',
-      });
-
+      const res = await fetch(`/api/clubs/${clubId}/members`, { method: 'DELETE' });
       if (res.ok) {
         setIsMember(false);
         toast.success('Left club');
-        // Refresh club data
-        const clubRes = await fetch(`/api/clubs/${clubId}`);
-        if (clubRes.ok) {
-          const data = await clubRes.json();
-          setClub(data);
-        }
-      } else {
-        toast.error('Failed to leave club');
+        window.location.reload();
       }
     } catch (error) {
-      console.error('Error leaving club:', error);
-      toast.error('An error occurred');
+      toast.error('Failed to leave');
     }
   };
 
   const handlePostDiscussion = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!newDiscussionTitle.trim() || !newDiscussionContent.trim()) {
-      toast.error('Please fill in title and content');
-      return;
-    }
-
+    if (!newDiscussionTitle.trim() || !newDiscussionContent.trim()) return;
     try {
       setIsPosting(true);
       const res = await fetch(`/api/clubs/${clubId}/discussions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          title: newDiscussionTitle,
-          content: newDiscussionContent,
+        body: JSON.stringify({ 
+          title: newDiscussionTitle, 
+          content: newDiscussionContent, 
+          parentId: replyingTo 
         }),
       });
-
       if (res.ok) {
-        const discussion = await res.json();
-        setDiscussions([discussion, ...discussions]);
+        toast.success('Message posted!');
         setNewDiscussionTitle('');
         setNewDiscussionContent('');
         setShowNewDiscussion(false);
-        toast.success('Discussion posted! 🎉');
+        setReplyingTo(null);
+        window.location.reload();
       } else {
-        toast.error('Failed to post discussion');
+        const data = await res.json();
+        toast.error(data.error || 'Failed to post message');
       }
     } catch (error) {
-      console.error('Error posting discussion:', error);
-      toast.error('An error occurred');
+      toast.error('Network error. Please try again.');
     } finally {
       setIsPosting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
+  const toggleExpand = (id: string) => {
+    setExpandedMessages(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
-  if (!club) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Club not found</p>
-        </div>
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
+    </div>
+  );
 
-  const isOwner = user?.id === club.owner.id;
+  if (!club) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <p className="text-sm font-medium text-zinc-500">Club not found</p>
+    </div>
+  );
+
+  const isOwner = dbUser?.id === club.owner.id;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-6xl mx-auto px-4 py-12">
-          <div className="flex items-start justify-between">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        
+        {/* Header */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="space-y-4">
+            <Link href="/clubs" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              All Clubs
+            </Link>
             <div>
-              <h1 className="text-4xl font-bold mb-2">{club.name}</h1>
-              {club.genre && (
-                <p className="text-blue-100 mb-2">{club.genre}</p>
-              )}
-              {club.description && (
-                <p className="text-blue-100 max-w-2xl">{club.description}</p>
-              )}
+              <div className="flex items-center gap-2 mb-2">
+                <h1 className="text-2xl font-bold tracking-tight uppercase">{club.name}</h1>
+                {club.isPrivate && <ShieldCheck className="w-4 h-4 text-emerald-500" />}
+              </div>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">{club.description || 'A group for book lovers.'}</p>
             </div>
+          </div>
 
-            <div className="flex gap-3">
-              {user && !isOwner && (
-                <>
-                  {isMember ? (
-                    <button
-                      onClick={handleLeaveClub}
-                      className="flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded-lg transition"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Leave
-                    </button>
-                  ) : (
-                    <button
-                      onClick={handleJoinClub}
-                      className="flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded-lg transition"
-                    >
-                      <UserPlus className="w-4 h-4" />
-                      Join Club
-                    </button>
+          <div className="flex items-center gap-3">
+            {isOwner ? (
+              <Link href={`/clubs/${clubId}/settings`} className="px-5 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
+                Club Settings
+              </Link>
+            ) : dbUser && (
+              isMember ? (
+                <button onClick={handleLeaveClub} className="px-5 py-2 border border-zinc-100 dark:border-zinc-800 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded hover:text-rose-500 transition-all">
+                  Leave Club
+                </button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  {showJoinCodeInput && (
+                    <input 
+                      type="text" 
+                      placeholder="CODE" 
+                      value={joinCodeInput}
+                      onChange={e => setJoinCodeInput(e.target.value.toUpperCase())}
+                      className="px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold text-center outline-none w-24 font-mono"
+                    />
                   )}
-                </>
-              )}
+                  <button onClick={handleJoinClub} className="px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded">
+                    {club.isPrivate ? (showJoinCodeInput ? 'Join Now' : 'Enter Private Code') : 'Join This Club'}
+                  </button>
+                </div>
+              )
+            )}
+          </div>
+        </header>
 
-              {isOwner && (
-                <button className="flex items-center gap-2 bg-white text-blue-600 hover:bg-blue-50 font-semibold py-2 px-4 rounded-lg transition">
-                  <Settings className="w-4 h-4" />
-                  Manage
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-16">
+          {/* Discussions Feed */}
+          <section className="space-y-12">
+            <div className="flex items-center justify-between pb-4 border-b border-zinc-50 dark:border-zinc-900">
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Discussion ({club.discussions?.length || 0})</h2>
+              {isMember && !showNewDiscussion && (
+                <button onClick={() => { setShowNewDiscussion(true); setNewDiscussionTitle(''); setNewDiscussionContent(''); }} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white">
+                  <Plus className="w-3.5 h-3.5" /> New Message
                 </button>
               )}
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar - Members */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
-              <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Members ({club.members.length})
-              </h2>
+            {/* New Discussion Form */}
+            {isMember && showNewDiscussion && (
+              <form id="discussion-form" onSubmit={handlePostDiscussion} className="p-8 border border-zinc-100 dark:border-zinc-800 rounded space-y-6 bg-zinc-50/10">
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-bold uppercase text-zinc-400 ml-1">Subject</label>
+                  <input
+                    type="text"
+                    value={newDiscussionTitle}
+                    onChange={e => setNewDiscussionTitle(e.target.value)}
+                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 px-4 py-2.5 text-xs font-bold outline-none rounded focus:border-zinc-900 dark:focus:border-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[9px] font-bold uppercase text-zinc-400 ml-1">Message</label>
+                  <textarea
+                    value={newDiscussionContent}
+                    onChange={e => setNewDiscussionContent(e.target.value)}
+                    rows={6}
+                    className="w-full bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 px-4 py-2.5 text-xs outline-none resize-none rounded focus:border-zinc-900 dark:focus:border-white leading-relaxed"
+                    required
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button type="submit" disabled={isPosting} className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
+                    {isPosting ? 'Posting...' : 'Post Message'}
+                  </button>
+                  <button type="button" onClick={() => { setShowNewDiscussion(false); }} className="px-6 py-2.5 text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            )}
 
-              <div className="space-y-3">
-                {club.members.slice(0, 10).map(member => (
-                  <div key={member.userId} className="flex items-center gap-2">
-                    {member.user.avatarUrl && (
-                      <img
-                        src={member.user.avatarUrl}
-                        alt={member.user.username}
-                        className="w-8 h-8 rounded-full"
-                      />
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        {member.user.displayName || member.user.username}
-                      </p>
-                      {member.role !== 'MEMBER' && (
-                        <p className="text-xs text-blue-600">{member.role}</p>
-                      )}
+            {/* Messages List */}
+            <div className="space-y-6">
+              {club.discussions?.length === 0 ? (
+                <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">No messages yet. Be the first to post!</p>
+                </div>
+              ) : (
+                club.discussions?.map(discussion => {
+                  const isExpanded = expandedMessages.has(discussion.id);
+                  const isLong = discussion.content.length > 300;
+
+                  return (
+                    <article key={discussion.id} className="p-8 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 group hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
+                      {/* Author Info */}
+                      <div className="flex items-center gap-4 mb-6">
+                        <div className="w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[10px] font-bold border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+                          {discussion.author.avatarUrl ? (
+                            <img src={discussion.author.avatarUrl} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            discussion.author.username[0].toUpperCase()
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <span className="text-[11px] font-bold text-zinc-900 dark:text-white block mb-0.5 uppercase">
+                            {discussion.author.displayName || discussion.author.username}
+                          </span>
+                          <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest">
+                            {new Date(discussion.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                            {' · '}
+                            {new Date(discussion.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-sm font-bold mb-4 uppercase tracking-tight">
+                        {discussion.title}
+                      </h3>
+
+                      {/* Full Message Content */}
+                      <div className="mb-6">
+                        <p className={`text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-wrap ${!isExpanded && isLong ? 'line-clamp-6' : ''}`}>
+                          {discussion.content}
+                        </p>
+                        {isLong && (
+                          <button
+                            onClick={() => toggleExpand(discussion.id)}
+                            className="flex items-center gap-1.5 mt-3 text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                          >
+                            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                            {isExpanded ? 'Show Less' : 'Read Full Message'}
+                          </button>
+                        )}
+                      </div>
+
+                    </article>
+                  );
+                })
+              )}
+            </div>
+          </section>
+
+          {/* Members Sidebar */}
+          <aside className="space-y-12">
+            <div>
+              <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-8 pb-2 border-b border-zinc-100 dark:border-zinc-900">Members ({club.members.length})</h2>
+              <div className="space-y-6">
+                {club.members.map(member => (
+                  <div key={member.userId} className="flex items-center justify-between group">
+                    <div className="flex items-center gap-4">
+                      <div className="w-9 h-9 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center font-bold text-[10px] border border-zinc-100 dark:border-zinc-800 group-hover:border-zinc-300 transition-colors overflow-hidden">
+                        {member.user.avatarUrl ? (
+                          <img src={member.user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          member.user.username[0].toUpperCase()
+                        )}
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold block mb-0.5">{member.user.displayName || member.user.username}</span>
+                        <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest">
+                          {member.userId === club.owner.id ? 'Club Owner' : 'Member'}
+                        </span>
+                      </div>
                     </div>
+                    {member.userId === club.owner.id && <Crown className="w-3.5 h-3.5 text-amber-500" />}
                   </div>
                 ))}
               </div>
-
-              {club.members.length > 10 && (
-                <p className="text-xs text-gray-500 mt-4">
-                  +{club.members.length - 10} more members
-                </p>
-              )}
             </div>
-          </div>
-
-          {/* Main Content - Discussions */}
-          <div className="lg:col-span-3">
-            {/* New Discussion Form */}
+            
             {isMember && (
-              <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                {!showNewDiscussion ? (
-                  <button
-                    onClick={() => setShowNewDiscussion(true)}
-                    className="w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-lg text-gray-600 transition"
-                  >
-                    <MessageSquare className="w-4 h-4 inline mr-2" />
-                    Start a discussion...
+              <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+                <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest mb-4">Invite Others</p>
+                <div className="flex items-center justify-between bg-white dark:bg-zinc-950 p-3 rounded border border-zinc-100 dark:border-zinc-900">
+                  <span className="text-xs font-mono font-bold tracking-widest">{club.joinCode || '-------'}</span>
+                  <button onClick={() => { navigator.clipboard.writeText(club.joinCode || ''); toast.success('Code Copied!'); }} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-900 rounded transition-all">
+                    <Link2 className="w-3.5 h-3.5 text-zinc-300" />
                   </button>
-                ) : (
-                  <form onSubmit={handlePostDiscussion} className="space-y-4">
-                    <input
-                      type="text"
-                      placeholder="Discussion title"
-                      value={newDiscussionTitle}
-                      onChange={e => setNewDiscussionTitle(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    />
-                    <textarea
-                      placeholder="What would you like to discuss?"
-                      value={newDiscussionContent}
-                      onChange={e => setNewDiscussionContent(e.target.value)}
-                      rows={4}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                      required
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        type="submit"
-                        disabled={isPosting}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-lg transition"
-                      >
-                        {isPosting ? 'Posting...' : 'Post Discussion'}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setShowNewDiscussion(false)}
-                        className="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-900 font-semibold py-2 px-4 rounded-lg transition"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                )}
+                </div>
               </div>
             )}
-
-            {/* Discussions List */}
-            <div className="space-y-4">
-              {discussions.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                  <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-600">No discussions yet</p>
-                  {isMember && (
-                    <p className="text-sm text-gray-500 mt-2">Be the first to start one!</p>
-                  )}
-                </div>
-              ) : (
-                discussions.map(discussion => (
-                  <div key={discussion.id} className="bg-white rounded-lg shadow-md p-6">
-                    <div className="flex items-start gap-4 mb-3">
-                      {discussion.author.avatarUrl && (
-                        <img
-                          src={discussion.author.avatarUrl}
-                          alt={discussion.author.username}
-                          className="w-10 h-10 rounded-full"
-                        />
-                      )}
-                      <div className="flex-1">
-                        <h3 className="font-bold text-gray-900 text-lg mb-1">
-                          {discussion.title}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          by{' '}
-                          <span className="font-medium">
-                            {discussion.author.displayName || discussion.author.username}
-                          </span>{' '}
-                          • {new Date(discussion.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-
-                    <p className="text-gray-700 whitespace-pre-wrap">{discussion.content}</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          </aside>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

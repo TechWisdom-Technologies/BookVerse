@@ -8,12 +8,23 @@ import { prisma } from '@/lib/prisma';
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ clubId: string }> }
+  context: { params: any }
 ) {
   try {
-    const { clubId } = await params;
+    // Robust params handling for Next.js 14/15 compatibility
+    const params = await context.params;
+    const clubId = params?.clubId || params?.id;
+    
+    console.log('GET /api/clubs/[clubId] - ID:', clubId);
 
-    const club = await prisma.club.findUnique({
+    if (!clubId) {
+      return NextResponse.json({ error: 'Club ID missing' }, { status: 400 });
+    }
+
+    const user = await getCurrentUser();
+    
+    // Try to find by ID first, then by name as fallback
+    let club = await prisma.club.findUnique({
       where: { id: clubId },
       include: {
         owner: {
@@ -33,13 +44,72 @@ export async function GET(
             },
           },
           orderBy: { createdAt: 'desc' },
-          take: 5,
         },
       },
     });
 
     if (!club) {
+      // Fallback: search by name (useful for SEO friendly URLs)
+      club = await prisma.club.findUnique({
+        where: { name: decodeURIComponent(clubId) },
+        include: {
+          owner: {
+            select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true },
+          },
+          members: {
+            include: {
+              user: {
+                select: { id: true, username: true, displayName: true, avatarUrl: true },
+              },
+            },
+          },
+          discussions: {
+            include: {
+              author: {
+                select: { id: true, username: true, displayName: true, avatarUrl: true },
+              },
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+      });
+    }
+
+    if (!club) {
+      console.log('Club not found for ID/Name:', clubId);
       return NextResponse.json({ error: 'Club not found' }, { status: 404 });
+    }
+
+    const isOwner = user?.id === club.ownerId;
+    const isMember = club.members.some(m => m.userId === user?.id);
+
+    // Auto-generate join code if missing for owner
+    if (isOwner && !club.joinCode) {
+      try {
+        const crypto = await import('crypto');
+        const newCode = crypto.randomBytes(3).toString('hex').toUpperCase();
+        club = await prisma.club.update({
+          where: { id: club.id },
+          data: { joinCode: newCode },
+          include: {
+            owner: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true } },
+            members: { include: { user: { select: { id: true, username: true, displayName: true, avatarUrl: true } } } },
+            discussions: {
+              include: {
+                author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+              },
+              orderBy: { createdAt: 'desc' },
+            },
+          },
+        });
+      } catch (err) {
+        console.error('Failed to auto-generate join code:', err);
+      }
+    }
+
+    // Security: Hide joinCode for non-members
+    if (!isOwner && !isMember) {
+      (club as any).joinCode = null;
     }
 
     return NextResponse.json(club);

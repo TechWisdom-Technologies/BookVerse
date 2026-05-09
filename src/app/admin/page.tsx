@@ -8,8 +8,12 @@ import {
   MessageSquare,
   Download,
   TrendingUp,
+  ArrowLeft,
+  Settings,
+  Shield,
+  Loader2
 } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import Link from "next/link";
 
 interface Stats {
   totalUsers: number;
@@ -21,12 +25,12 @@ interface Stats {
 }
 
 const statCards = [
-  { key: "totalUsers", label: "Total Users", icon: Users },
-  { key: "totalBooks", label: "Total Books", icon: BookOpen },
-  { key: "totalStories", label: "Total Stories", icon: FileText },
-  { key: "totalComments", label: "Total Comments", icon: MessageSquare },
-  { key: "downloadsToday", label: "Downloads Today", icon: Download },
-  { key: "newUsersThisWeek", label: "New Users This Week", icon: TrendingUp },
+  { key: "totalUsers", label: "Registered Users", icon: Users },
+  { key: "totalBooks", label: "Scholarly Volumes", icon: BookOpen },
+  { key: "totalStories", label: "Creative Records", icon: FileText },
+  { key: "totalComments", label: "Peer Interactions", icon: MessageSquare },
+  { key: "downloadsToday", label: "Transmission Rate", icon: Download },
+  { key: "newUsersThisWeek", label: "New Acquisitions", icon: TrendingUp },
 ] as const;
 
 export default function AdminPage() {
@@ -41,87 +45,91 @@ export default function AdminPage() {
           const data = await res.json();
           setStats(data);
         }
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchStats();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-40">
-        <Loader2 className="h-10 w-10 animate-spin text-brand" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="max-w-7xl mx-auto space-y-12 pb-20 pt-8 sm:pt-12 px-4 sm:px-8">
-      <header className="mb-12">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
-          Control Center.
-        </h1>
-        <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium">
-          Platform overview, metrics, and administration.
-        </p>
-      </header>
-
-      {/* Stats Grid */}
-      <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3">
-        {statCards.map(({ key, label, icon: Icon }) => (
-          <div
-            key={key}
-            className="group relative overflow-hidden rounded-[2rem] border border-zinc-200/50 bg-white/80 p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-zinc-200/40 dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none dark:hover:border-zinc-700"
-          >
-            <div className="flex items-start justify-between relative z-10">
-              <div>
-                <p className="text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                  {label}
-                </p>
-                <p className="mt-4 text-5xl font-black text-zinc-900 dark:text-white tracking-tight group-hover:text-brand transition-colors">
-                  {stats?.[key]?.toLocaleString() || "0"}
-                </p>
-              </div>
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand/10 text-brand transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6">
-                <Icon className="h-8 w-8" />
-              </div>
-            </div>
-            {/* Decorative background element */}
-            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-brand/5 rounded-full blur-2xl group-hover:bg-brand/10 transition-colors duration-500" />
-          </div>
-        ))}
-      </div>
-
-      {/* Quick Links */}
-      <div className="mt-16 sm:mt-24">
-        <div className="mb-8">
-          <h2 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-            Quick Actions
-          </h2>
-        </div>
-        <div className="grid gap-6 sm:gap-8 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            { href: "/admin/users", label: "Manage Users", desc: "View and edit user roles" },
-            { href: "/admin/books", label: "Manage Books", desc: "Review and delete books" },
-            { href: "/admin/stories", label: "Manage Stories", desc: "Moderate stories" },
-            { href: "/admin/comments", label: "Manage Comments", desc: "Review comments" },
-          ].map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="group block rounded-[1.5rem] border border-zinc-200/50 bg-white/50 p-6 transition-all duration-300 hover:border-brand hover:bg-brand/5 hover:shadow-xl dark:border-zinc-800/50 dark:bg-zinc-900/30 dark:hover:border-brand dark:hover:bg-brand/10"
-            >
-              <p className="text-xl font-bold text-zinc-900 dark:text-white group-hover:text-brand transition-colors">{link.label}</p>
-              <p className="mt-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">{link.desc}</p>
-            </a>
-          ))}
-        </div>
-      </div>
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <Loader2 className="w-5 h-5 animate-spin text-zinc-400" />
     </div>
   );
-}
 
+  return (
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        
+        {/* Minimal Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Archives
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight mb-2">System Oversight</h1>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">Real-time platform metrics and administrative coordination protocols.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-3 py-1.5 border border-zinc-100 dark:border-zinc-800 rounded-md">
+            <Shield className="w-3.5 h-3.5" />
+            Admin Protocol
+          </div>
+        </header>
+
+        {/* Stats Registry Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 mb-20">
+          {statCards.map(({ key, label, icon: Icon }) => (
+            <div
+              key={key}
+              className="p-8 bg-white dark:bg-zinc-950 flex flex-col justify-between group"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                  {label}
+                </span>
+                <Icon className="w-3.5 h-3.5 text-zinc-200 dark:text-zinc-800 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-3xl font-bold tracking-tight">
+                  {stats?.[key]?.toLocaleString() || "0"}
+                </p>
+                <div className="w-8 h-0.5 bg-zinc-100 dark:bg-zinc-900 group-hover:bg-zinc-900 dark:group-hover:bg-white transition-all" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Action Protocol Registry */}
+        <section>
+          <div className="flex items-center gap-2 mb-8 pb-4 border-b border-zinc-50 dark:border-zinc-900">
+            <Settings className="w-4 h-4 text-zinc-400" />
+            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400">Direct Actions</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { href: "/admin/users", label: "User Registry", desc: "Access authorization and role management." },
+              { href: "/admin/books", label: "Volume Registry", desc: "Scholarly metadata and content moderation." },
+              { href: "/admin/stories", label: "Creative Registry", desc: "Community world-record oversight." },
+              { href: "/admin/comments", label: "Interaction Logs", desc: "Peer engagement and moderation protocol." },
+            ].map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="p-6 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all group"
+              >
+                <h3 className="text-sm font-bold tracking-tight text-zinc-900 dark:text-white mb-2 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
+                  {link.label}
+                </h3>
+                <p className="text-xs text-zinc-500 font-medium leading-relaxed">{link.desc}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

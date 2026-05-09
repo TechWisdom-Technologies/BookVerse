@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { BookOpen, Award, Heart, Loader } from 'lucide-react';
+import { BookOpen, Award, Heart, Loader2, ArrowLeft, Clock, ShieldCheck, Activity as ActivityIcon } from 'lucide-react';
 
 interface Activity {
   id: string;
@@ -22,16 +22,13 @@ interface Activity {
 
 export default function ActivityFeedPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      router.push('/login');
-      return;
-    }
-
+    if (authLoading) return;
+    if (!user) { router.push('/login'); return; }
     const fetchFeed = async () => {
       try {
         setLoading(true);
@@ -40,127 +37,130 @@ export default function ActivityFeedPage() {
           const data = await res.json();
           setActivities(data.activities);
         }
-      } catch (error) {
-        console.error('Error fetching activity feed:', error);
-      } finally {
-        setLoading(false);
-      }
+      } finally { setLoading(false); }
     };
-
     fetchFeed();
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   const getIcon = (type: string) => {
     switch (type) {
-      case 'story_published':
-        return <BookOpen className="w-5 h-5 text-blue-500" />;
-      case 'achievement_earned':
-        return <Award className="w-5 h-5 text-yellow-500" />;
-      case 'tip_received':
-        return <Heart className="w-5 h-5 text-red-500" />;
-      default:
-        return <BookOpen className="w-5 h-5 text-gray-500" />;
+      case 'story_published': return <BookOpen className="w-3 h-3 text-zinc-300" />;
+      case 'achievement_earned': return <Award className="w-3 h-3 text-zinc-300" />;
+      case 'tip_received': return <Heart className="w-3 h-3 text-zinc-300" />;
+      default: return <BookOpen className="w-3 h-3 text-zinc-300" />;
     }
   };
 
   const getActivityLink = (activity: Activity) => {
-    switch (activity.type) {
-      case 'story_published':
-        return `/stories/${activity.content.id}`;
-      default:
-        return `/profile/${activity.actor.username}`;
-    }
+    return activity.type === 'story_published' ? `/stories/${activity.content.id}` : `/profile/${activity.actor.username}`;
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Activity Feed</h1>
-          <p className="text-lg text-gray-600">
-            Stay updated with your followed readers and authors
-          </p>
-        </div>
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-3xl mx-auto px-6 py-12">
+        
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Recent Activity.</h1>
+              <p className="text-xs text-zinc-500 font-medium">See what the readers and writers you follow are doing.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded">
+            Live Updates
+          </div>
+        </header>
 
-        {/* Activity Feed */}
+        {/* Activity Logs */}
         {activities.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <p className="text-gray-600 text-lg mb-4">
-              No activity yet. Follow authors and readers to see their updates here.
-            </p>
-            <Link
-              href="/search"
-              className="text-blue-600 hover:text-blue-700 font-semibold"
-            >
-              Explore and follow →
+          <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 mb-8">No activity found yet.</p>
+            <Link href="/universes" className="px-8 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
+              Find People to Follow
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
-            {activities.map(activity => (
-              <Link
-                key={activity.id}
-                href={getActivityLink(activity)}
-                className="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4"
-              >
-                <div className="flex gap-4">
-                  {/* Avatar */}
-                  {activity.actor.avatarUrl && (
-                    <img
-                      src={activity.actor.avatarUrl}
-                      alt={activity.actor.username}
-                      className="w-12 h-12 rounded-full"
-                    />
-                  )}
+          <div className="border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden">
+            <div className="divide-y divide-zinc-50 dark:divide-zinc-900">
+              {activities.map(activity => (
+                <Link
+                  key={activity.id}
+                  href={getActivityLink(activity)}
+                  className="flex gap-4 p-6 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all group"
+                >
+                  {/* Compact Avatar */}
+                  <div className="w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 overflow-hidden border border-zinc-100 dark:border-zinc-800 shrink-0">
+                    {activity.actor.avatarUrl ? (
+                      <img src={activity.actor.avatarUrl} alt="" className="w-full h-full object-cover transition-all duration-500" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center font-bold text-[10px] text-zinc-300">
+                        {activity.actor.username[0].toUpperCase()}
+                      </div>
+                    )}
+                  </div>
 
-                  {/* Content */}
+                  {/* Activity Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start gap-3">
-                      <div className="mt-1">{getIcon(activity.type)}</div>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-900">
-                          <span className="font-semibold">
-                            {activity.actor.displayName || activity.actor.username}
-                          </span>{' '}
-                          <span className="text-gray-600">{activity.description}</span>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="space-y-1">
+                        <p className="text-[11px] text-zinc-900 dark:text-zinc-100">
+                          <span className="font-bold uppercase">{activity.actor.displayName || activity.actor.username}</span>
+                          <span className="text-zinc-500 ml-2 italic lowercase">{activity.description}</span>
                         </p>
 
-                        {/* Activity-specific content */}
                         {activity.type === 'story_published' && (
-                          <p className="text-sm text-blue-600 font-medium mt-1">
-                            {activity.content.title}
-                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <BookOpen className="w-3 h-3 text-zinc-300" />
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                              {activity.content.title}
+                            </p>
+                          </div>
                         )}
 
                         {activity.type === 'achievement_earned' && (
-                          <p className="text-sm text-yellow-600 font-medium mt-1">
-                            🏆 {activity.content.achievementName}
-                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Award className="w-3 h-3 text-zinc-300" />
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                              {activity.content.achievementName}
+                            </p>
+                          </div>
                         )}
-
-                        <p className="text-xs text-gray-500 mt-2">
-                          {new Date(activity.timestamp).toLocaleDateString()} •{' '}
-                          {formatTime(activity.timestamp)}
-                        </p>
                       </div>
+                      <div className="shrink-0 transition-opacity">{getIcon(activity.type)}</div>
+                    </div>
+
+                    <div className="flex items-center gap-2 mt-4 pt-4 border-t border-zinc-50 dark:divide-zinc-900">
+                      <Clock className="w-2.5 h-2.5 text-zinc-200" />
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
+                        {new Date(activity.timestamp).toLocaleDateString()} • {formatTime(activity.timestamp)}
+                      </p>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
+
+        {/* Simple Footer */}
+        <div className="mt-32 pt-12 border-t border-zinc-100 dark:border-zinc-900 flex justify-between items-center">
+          <div className="flex items-center gap-3 text-zinc-300 opacity-40">
+            <span className="text-[9px] font-bold uppercase tracking-[0.4em]">Read, Write, Connect — V4.1.0</span>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -172,8 +172,8 @@ function formatTime(timestamp: string) {
   const hours = Math.floor(diff / 3600000);
   const days = Math.floor(diff / 86400000);
 
-  if (minutes < 60) return `${minutes}m ago`;
-  if (hours < 24) return `${hours}h ago`;
-  if (days < 7) return `${days}d ago`;
+  if (minutes < 60) return `${minutes}M`;
+  if (hours < 24) return `${hours}H`;
+  if (days < 7) return `${days}D`;
   return date.toLocaleDateString();
 }

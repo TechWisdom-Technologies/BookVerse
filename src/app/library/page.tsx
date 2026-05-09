@@ -5,7 +5,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { FileType, type Prisma } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
 import Link from "next/link";
-import { Upload, Library, Search } from "lucide-react";
+import { Upload, Search, Library as LibraryIcon, Loader2 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -32,13 +32,10 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   try {
     const { dbUser } = await verifyToken();
     canUpload = dbUser.role === "AUTHOR" || dbUser.role === "ADMIN";
-  } catch {
-    // Guest or unauthenticated user
-  }
+  } catch {}
 
   try {
     const skip = (page - 1) * limit;
-
     const where: Prisma.BookWhereInput = {};
     if (q) {
       where.OR = [
@@ -54,49 +51,26 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     }
 
     const orderBy: Prisma.BookOrderByWithRelationInput = {};
-    if (sort === "popular") {
-      orderBy.downloadCount = "desc";
-    } else if (sort === "title") {
-      orderBy.title = "asc";
-    } else {
-      orderBy.createdAt = "desc";
-    }
+    if (sort === "popular") orderBy.downloadCount = "desc";
+    else if (sort === "title") orderBy.title = "asc";
+    else orderBy.createdAt = "desc";
 
-    // Fetch books
     const [books, total, genres, languages] = await Promise.all([
       prisma.book.findMany({
         where,
-        select: {
-          id: true,
-          title: true,
-          authorName: true,
-          coverUrl: true,
-          genre: true,
-          downloadCount: true,
-          _count: { select: { reviews: true } },
-        },
+        select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } },
         orderBy,
         skip,
         take: limit,
       }),
       prisma.book.count({ where }),
-      prisma.book.findMany({
-        distinct: ["genre"],
-        select: { genre: true },
-      }),
-      prisma.book.findMany({
-        distinct: ["language"],
-        select: { language: true },
-      }),
+      prisma.book.findMany({ distinct: ["genre"], select: { genre: true } }),
+      prisma.book.findMany({ distinct: ["language"], select: { language: true } }),
     ]);
 
-    // Calculate average ratings
     const booksWithRatings = await Promise.all(
       books.map(async (book) => {
-        const reviews = await prisma.bookReview.findMany({
-          where: { bookId: book.id },
-          select: { rating: true },
-        });
+        const reviews = await prisma.bookReview.findMany({ where: { bookId: book.id }, select: { rating: true } });
         const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
         return { ...book, averageRating: avgRating };
       })
@@ -107,74 +81,71 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     const languageList = languages.map((l) => l.language).filter(Boolean);
 
     return (
-      <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-10 sm:pt-16 pb-20 sm:pb-32">
-        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 md:px-10">
-          <header className="mb-8 sm:mb-12">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-zinc-900 dark:text-white mb-3 sm:mb-4">
-              The Library.
-            </h1>
-            <p className="text-lg sm:text-xl text-zinc-500 dark:text-zinc-400 font-medium max-w-2xl">
-              Discover, read, and get inspired by thousands of community stories.
-            </p>
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          
+          {/* Simple Header */}
+          <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-zinc-300 dark:text-zinc-600">
+                <LibraryIcon className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Browse All Books</span>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Digital Library.</h1>
+                <p className="text-sm text-zinc-500 max-w-xl font-medium">Explore thousands of stories and books shared by our community.</p>
+              </div>
+            </div>
+            {canUpload && (
+              <Link href="/upload" className="px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2">
+                <Upload className="w-4 h-4" />
+                Upload a Book
+              </Link>
+            )}
           </header>
 
-          <div className="flex flex-col gap-6 sm:gap-8 lg:flex-row lg:items-start">
-            {/* Filters Sidebar */}
-            <div className="w-full lg:w-80 shrink-0 lg:sticky lg:top-8 z-10">
-              {canUpload && (
-                <Link
-                  href="/upload"
-                  className="group relative w-full mb-6 sm:mb-8 flex items-center justify-center gap-3 px-6 py-4 sm:py-5 bg-brand text-white rounded-full font-bold text-base sm:text-lg hover:bg-orange-600 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/20 transition-all duration-300"
-                >
-                  <Upload className="w-5 h-5 transition-transform group-hover:scale-110" />
-                  Publish Your Work
-                </Link>
+          <div className="flex flex-col lg:flex-row gap-16">
+            {/* Simple Sidebar */}
+            <aside className="w-full lg:w-72 shrink-0">
+              <div className="sticky top-24 space-y-12">
+                <div>
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 mb-8 flex items-center gap-2">
+                    <Search className="w-3.5 h-3.5" /> Search
+                  </h3>
+                  <BookFilters genres={genreList} languages={languageList} />
+                </div>
+              </div>
+            </aside>
+
+            {/* Content Area */}
+            <section className="flex-1 min-w-0">
+              <div className="flex items-center justify-between mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900">
+                <h2 className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest italic">
+                  {q ? `Search results for "${q}"` : 'Collections'}
+                </h2>
+                <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                  {total} Books Found
+                </span>
+              </div>
+              
+              <BookGrid books={booksWithRatings} />
+
+              {totalPages > 1 && (
+                <div className="mt-20 flex justify-center border-t border-zinc-50 dark:border-zinc-900 pt-16">
+                  <Pagination currentPage={page} totalPages={totalPages} basePath="/library" />
+                </div>
               )}
-              <div className="rounded-[2rem] bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 p-6 sm:p-8 shadow-xl shadow-zinc-200/20 dark:shadow-none">
-                <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                  <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center text-brand shrink-0">
-                    <Search className="w-5 h-5" />
-                  </div>
-                  <h3 className="text-xl font-bold text-zinc-900 dark:text-white">Discover</h3>
-                </div>
-                <BookFilters genres={genreList} languages={languageList} />
-              </div>
-            </div>
-
-            {/* Books Grid */}
-            <div className="flex-1 min-w-0">
-              <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 p-6 sm:p-8 md:p-10 shadow-xl shadow-zinc-200/20 dark:shadow-none min-h-[500px]">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 sm:gap-6 mb-8 pb-6 border-b-2 border-zinc-100 dark:border-zinc-800/50">
-                  <h2 className="text-2xl sm:text-3xl font-black text-zinc-900 dark:text-white tracking-tight">
-                    {q ? `Search: "${q}"` : 'All Stories'}
-                  </h2>
-                  <div className="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-400">
-                    Showing <span className="text-brand">{Math.min(limit, books.length)}</span> of <span className="text-zinc-900 dark:text-white">{total}</span>
-                  </div>
-                </div>
-                
-                <BookGrid books={booksWithRatings} />
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="mt-12 sm:mt-16 flex justify-center">
-                    <Pagination currentPage={page} totalPages={totalPages} basePath="/library" />
-                  </div>
-                )}
-              </div>
-            </div>
+            </section>
           </div>
         </div>
       </main>
     );
   } catch (error) {
-    console.error("LibraryPage error:", error);
     return (
-      <main>
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <div className="text-center">
-            <p className="text-zinc-600 dark:text-zinc-400">Failed to load library</p>
-          </div>
+      <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+        <div className="text-center space-y-4">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Failed to load books.</p>
+          <Link href="/" className="text-xs font-bold text-zinc-900 dark:text-white underline">Back Home</Link>
         </div>
       </main>
     );

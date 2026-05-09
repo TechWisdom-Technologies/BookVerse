@@ -13,10 +13,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
         position="top-right"
         toastOptions={{
           className:
-            "rounded-2xl border border-zinc-200 bg-white text-zinc-900 shadow-lg dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50",
+            "rounded border border-zinc-100 bg-white text-zinc-900 shadow-xl dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 text-[10px] font-bold uppercase tracking-widest",
+          style: {
+            padding: '12px 16px',
+          }
         }}
       />
     </ThemeProvider>
   );
 }
-

@@ -3,6 +3,7 @@
 import { useState, useRef, FormEvent } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useAuth } from '@/components/auth/AuthProvider';
 import { Loader2, Camera, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -13,9 +14,10 @@ interface User {
   email: string;
   avatarUrl: string | null;
   bio: string | null;
-  _count: {
+  _count?: {
     followers: number;
     following: number;
+    stories?: number;
   };
 }
 
@@ -25,6 +27,7 @@ interface EditProfileFormProps {
 
 export function EditProfileForm({ user }: EditProfileFormProps) {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [displayName, setDisplayName] = useState(user.displayName || "");
   const [username, setUsername] = useState(user.username);
@@ -107,12 +110,13 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           displayName: displayName || null,
           username,
           bio: bio || null,
-          avatarUrl: avatarUrl || null,
+          avatarUrl: avatarUrl || user.avatarUrl,
         }),
       });
 
       if (res.ok) {
         toast.success("Profile updated successfully");
+        await refreshUser();
         router.push(`/profile/${username}`);
         router.refresh();
       } else {

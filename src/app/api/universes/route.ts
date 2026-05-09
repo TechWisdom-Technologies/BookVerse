@@ -21,24 +21,23 @@ export async function GET(req: Request) {
       };
     }
 
-    const series = await prisma.series.findMany({
+    const universes = await prisma.universe.findMany({
       where,
       include: {
-        books: {
+        stories: {
           select: {
             id: true,
             title: true,
             coverUrl: true,
-            sequenceNumber: true,
           },
-          orderBy: { sequenceNumber: 'asc' },
+          orderBy: { createdAt: 'asc' },
         },
         user: {
           select: {
             id: true,
             username: true,
             displayName: true,
-            avatar: true,
+            avatarUrl: true,
           },
         },
       },
@@ -46,10 +45,10 @@ export async function GET(req: Request) {
       take: 50,
     });
 
-    return NextResponse.json(series);
+    return NextResponse.json(universes);
   } catch (error) {
-    console.error('Error fetching series:', error);
-    return NextResponse.json({ error: 'Failed to fetch series' }, { status: 500 });
+    console.error('Error fetching universes:', error);
+    return NextResponse.json({ error: 'Failed to fetch universes' }, { status: 500 });
   }
 }
 
@@ -64,30 +63,31 @@ export async function POST(req: Request) {
     const { name, description, genre } = body;
 
     if (!name || !name.trim()) {
-      return NextResponse.json({ error: 'Series name is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Universe name is required' }, { status: 400 });
     }
 
-    const series = await prisma.series.create({
+    const universe = await prisma.universe.create({
       data: {
         name: name.trim(),
         description: description?.trim() || null,
         genre: genre?.trim() || 'Fiction',
-        userId: user.uid,
+        userId: user.id,
       },
       include: {
-        books: {
-          select: {
-            id: true,
-            title: true,
-            sequenceNumber: true,
-          },
-        },
+        stories: true,
       },
     });
 
-    return NextResponse.json(series, { status: 201 });
-  } catch (error) {
-    console.error('Error creating series:', error);
-    return NextResponse.json({ error: 'Failed to create series' }, { status: 500 });
+    return NextResponse.json(universe, { status: 201 });
+  } catch (error: any) {
+    console.error('CREATE UNIVERSE ERROR:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack,
+    });
+    return NextResponse.json({
+      error: 'Failed to create universe',
+      details: error.message
+    }, { status: 500 });
   }
 }

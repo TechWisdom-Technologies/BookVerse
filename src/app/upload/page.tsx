@@ -1,6 +1,8 @@
 import { BookUploadForm } from "@/components/books/BookUploadForm";
 import { verifyToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { Upload, ArrowLeft, ShieldAlert } from "lucide-react";
+import Link from "next/link";
 
 export default async function UploadPage() {
   let role: string;
@@ -14,17 +16,26 @@ export default async function UploadPage() {
 
   if (role !== "AUTHOR" && role !== "ADMIN") {
     return (
-      <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
-        <div className="mx-auto max-w-3xl px-6 sm:px-8">
-          <header className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-black text-zinc-900 dark:text-white tracking-tight mb-4">
-              Publish Story.
-            </h1>
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+        <div className="max-w-3xl mx-auto px-6 py-12">
+          <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+            <div className="space-y-4">
+              <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <ArrowLeft className="w-3 h-3" />
+                Dashboard
+              </Link>
+              <h1 className="text-2xl font-bold tracking-tight">Manuscript Protocol</h1>
+            </div>
           </header>
-          <div className="rounded-[2rem] border border-zinc-200 bg-white p-8 sm:p-12 shadow-xl shadow-zinc-200/20 dark:border-zinc-800 dark:bg-zinc-900/50 dark:shadow-none relative overflow-hidden">
-            <p className="text-lg font-medium text-zinc-700 dark:text-zinc-300">
-              Your account needs author access before you can publish stories.
-            </p>
+          
+          <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-zinc-50/50 dark:bg-zinc-900/30 flex items-start gap-4">
+            <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-900 dark:text-white mb-2">Access Restricted</h3>
+              <p className="text-xs text-zinc-500 font-medium leading-relaxed">
+                Your account requires Author-level authorization before original manuscripts can be registered in the BookVerse collective.
+              </p>
+            </div>
           </div>
         </div>
       </main>
@@ -32,18 +43,26 @@ export default async function UploadPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-10 sm:pt-16 pb-20 sm:pb-32">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 md:px-8">
-        <header className="mb-8 sm:mb-12">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-zinc-900 dark:text-white tracking-tight mb-3 sm:mb-4">
-            Publish Story.
-          </h1>
-          <p className="text-lg sm:text-xl text-zinc-500 dark:text-zinc-400 font-medium">
-            Upload your manuscript, design a cover, and share your world.
-          </p>
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Archives
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight mb-2">Publish Manuscript</h1>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">Upload original scholarly volumes or world-records to the BookVerse collective.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-3 py-1.5 border border-zinc-100 dark:border-zinc-800 rounded-md">
+            <Upload className="w-3.5 h-3.5" />
+            Registry Submission
+          </div>
         </header>
 
-        <div className="rounded-[2rem] sm:rounded-[2.5rem] bg-white/80 dark:bg-zinc-900/50 backdrop-blur-md border border-zinc-200/50 dark:border-zinc-800/50 p-6 sm:p-10 md:p-12 shadow-xl shadow-zinc-200/20 dark:shadow-none">
+        <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 shadow-sm">
           <BookUploadForm />
         </div>
       </div>

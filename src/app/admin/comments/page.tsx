@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Loader2, Trash2, BookOpen, FileText } from "lucide-react";
+import { Loader2, Trash2, BookOpen, FileText, ArrowLeft, MessageSquare, ShieldAlert } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 interface Comment {
@@ -23,9 +23,7 @@ export default function AdminCommentsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    fetchComments();
-  }, [page]);
+  useEffect(() => { fetchComments(); }, [page]);
 
   const fetchComments = async () => {
     setLoading(true);
@@ -36,28 +34,19 @@ export default function AdminCommentsPage() {
         setComments(data.comments);
         setTotalPages(data.totalPages);
       }
-    } catch (error) {
-      console.error("Failed to fetch comments:", error);
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const handleDelete = async (commentId: string) => {
-    if (!confirm("Are you sure you want to delete this comment?")) return;
-
+    if (!confirm("Execute interaction purge? This archival record will be permanently deleted.")) return;
     try {
       const res = await fetch("/api/admin/comments", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ commentId }),
       });
-      if (res.ok) {
-        setComments(comments.filter((c) => c.id !== commentId));
-      }
-    } catch (error) {
-      console.error("Failed to delete comment:", error);
-    }
+      if (res.ok) { setComments(comments.filter((c) => c.id !== commentId)); }
+    } catch (error) { console.error("Failed to delete comment:", error); }
   };
 
   const truncateContent = (content: string, maxLength = 100) => {
@@ -66,105 +55,114 @@ export default function AdminCommentsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pb-20 pt-8 sm:pt-12 px-4 sm:px-8">
-      <header className="mb-12">
-        <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-4">
-          Comments
-        </h1>
-        <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium">
-          Manage user comments across the platform
-        </p>
-      </header>
-
-      <div className="rounded-[2rem] border border-zinc-200/50 bg-white/80 p-4 sm:p-8 shadow-xl shadow-zinc-200/20 backdrop-blur-md dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:shadow-none">
-        {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-10 w-10 animate-spin text-brand" />
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        
+        {/* Minimal Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/admin" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Oversight Hub
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1">Interaction Audit Registry.</h1>
+              <p className="text-xs text-zinc-500 font-medium">Global management and moderation of community engagement records.</p>
+            </div>
           </div>
-        ) : comments.length === 0 ? (
-          <div className="py-20 text-center text-xl font-bold text-zinc-500">No comments found</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr>
-                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Comment</th>
-                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Author</th>
-                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Context</th>
-                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-xs font-bold uppercase tracking-wider text-zinc-400">Date</th>
-                  <th className="border-b-2 border-zinc-100 dark:border-zinc-800 pb-4 px-4 text-right text-xs font-bold uppercase tracking-wider text-zinc-400">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800/50">
-                {comments.map((comment) => (
-                  <tr key={comment.id} className="group transition-colors hover:bg-zinc-50/50 dark:hover:bg-zinc-800/20">
-                    <td className="px-4 py-4 sm:py-6 max-w-md">
-                      <p className="text-base font-medium text-zinc-900 dark:text-zinc-100">
-                        {truncateContent(comment.content, 120)}
-                      </p>
-                    </td>
-                    <td className="px-4 py-4 sm:py-6">
-                      <span className="inline-flex items-center rounded-full bg-zinc-100 px-3 py-1 text-sm font-bold text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-                        @{comment.author.username}
-                      </span>
-                    </td>
-                    <td className="px-4 py-4 sm:py-6">
-                      {comment.story && (
-                        <Link
-                          href={`/stories/${comment.story.id}`}
-                          className="flex items-center gap-2 text-sm font-bold text-brand hover:underline"
-                        >
-                          <FileText className="h-4 w-4" />
-                          {comment.story.title}
-                        </Link>
-                      )}
-                      {comment.book && (
-                        <Link
-                          href={`/library/${comment.book.id}`}
-                          className="flex items-center gap-2 text-sm font-bold text-brand hover:underline"
-                        >
-                          <BookOpen className="h-4 w-4" />
-                          {comment.book.title}
-                        </Link>
-                      )}
-                    </td>
-                    <td className="px-4 py-4 sm:py-6 text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                      {formatDate(comment.createdAt)}
-                    </td>
-                    <td className="px-4 py-4 sm:py-6 text-right">
-                      <button
-                        onClick={() => handleDelete(comment.id)}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-50 text-red-500 transition-colors hover:bg-red-500 hover:text-white dark:bg-red-500/10 dark:hover:bg-red-500 dark:hover:text-white"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </td>
+          <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800 font-mono">
+            <ShieldAlert className="w-3 h-3 text-zinc-300" />
+            Audit Mode Active
+          </div>
+        </header>
+
+        {/* Interaction Registry Table */}
+        <div className="border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden">
+          {loading ? (
+            <div className="flex items-center justify-center py-40">
+              <Loader2 className="h-5 w-5 animate-spin text-zinc-300" />
+            </div>
+          ) : comments.length === 0 ? (
+            <div className="py-40 text-center">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">No interaction records detected in registry.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-zinc-100 dark:border-zinc-900">
+                    <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Interaction Content</th>
+                    <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Author Identity</th>
+                    <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Archival Context</th>
+                    <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Timestamp</th>
+                    <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900">
+                  {comments.map((comment) => (
+                    <tr key={comment.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                      <td className="py-4 px-6 max-w-md">
+                        <p className="text-xs font-medium text-zinc-900 dark:text-zinc-100 leading-relaxed">
+                          {truncateContent(comment.content, 120)}
+                        </p>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-2 py-0.5 rounded border border-zinc-100 dark:border-zinc-800">
+                          @{comment.author.username}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        {comment.story && (
+                          <Link href={`/stories/${comment.story.id}`} className="flex items-center gap-2 text-[10px] font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors uppercase tracking-widest">
+                            <FileText className="w-3 h-3" />
+                            {comment.story.title}
+                          </Link>
+                        )}
+                        {comment.book && (
+                          <Link href={`/library/${comment.book.id}`} className="flex items-center gap-2 text-[10px] font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors uppercase tracking-widest">
+                            <BookOpen className="w-3 h-3" />
+                            {comment.book.title}
+                          </Link>
+                        )}
+                      </td>
+                      <td className="py-4 px-6 text-[10px] font-mono font-bold text-zinc-300">
+                        {formatDate(comment.createdAt)}
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <button
+                          onClick={() => handleDelete(comment.id)}
+                          className="p-2 text-zinc-300 hover:text-rose-500 hover:bg-rose-500/5 transition-all rounded"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination Protocol */}
+        {totalPages > 1 && (
+          <div className="mt-12 flex justify-center gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`w-8 h-8 flex items-center justify-center rounded text-[10px] font-bold uppercase transition-all ${
+                  page === p
+                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
+                    : "bg-white dark:bg-zinc-950 text-zinc-400 border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600"
+                }`}
+              >
+                {p}
+              </button>
+            ))}
           </div>
         )}
       </div>
-
-      {totalPages > 1 && (
-        <div className="mt-8 flex justify-center gap-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <button
-              key={p}
-              onClick={() => setPage(p)}
-              className={`flex h-12 w-12 items-center justify-center rounded-full text-base font-bold transition-all ${
-                page === p
-                  ? "bg-brand text-white shadow-lg shadow-brand/30"
-                  : "bg-white text-zinc-600 hover:bg-zinc-100 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    </main>
   );
 }
-

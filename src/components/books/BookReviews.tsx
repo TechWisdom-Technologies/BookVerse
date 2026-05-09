@@ -33,9 +33,9 @@ export function BookReviews({
   const userReview = reviews.find((r) => r.user.id === currentUserId);
 
   return (
-    <div className="space-y-12">
-      <div className="flex items-center justify-between">
-        <h3 className="text-3xl font-black text-zinc-900 dark:text-white tracking-tight">Community Reviews</h3>
+    <div className="space-y-16">
+      <div className="flex items-center justify-between pb-6 border-b border-zinc-50 dark:border-zinc-900">
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Reader Reviews</h3>
       </div>
 
       {/* Review Form */}
@@ -47,22 +47,22 @@ export function BookReviews({
       />
 
       {/* Reviews List */}
-      <div className="space-y-6">
+      <div className="space-y-10">
         {reviews.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium">Be the first to review this book.</p>
+          <div className="py-32 border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10 text-center">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">No reviews found. Be the first to share your thoughts.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 shadow-sm">
             {reviews.map((review) => (
               <div
                 key={review.id}
-                className="group rounded-[2rem] border border-zinc-200/50 bg-white p-8 transition-all duration-300 hover:border-zinc-300 hover:shadow-xl dark:border-zinc-800/50 dark:bg-zinc-900/50 dark:hover:border-zinc-700 dark:hover:bg-zinc-900"
+                className="group flex flex-col p-10 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
               >
-                <div className="flex items-start justify-between mb-6">
+                <div className="flex items-start justify-between mb-8">
                   {/* Reviewer Info */}
-                  <div className="flex items-center gap-4">
-                    <div className="relative h-14 w-14 overflow-hidden rounded-full border-2 border-white dark:border-zinc-900 shadow-md">
+                  <div className="flex items-center gap-5">
+                    <div className="relative h-12 w-12 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 transition-all duration-700">
                       {review.user.avatarUrl ? (
                         <Image
                           src={review.user.avatarUrl}
@@ -71,19 +71,19 @@ export function BookReviews({
                           className="object-cover"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-400 to-purple-500 text-lg font-bold text-white">
-                          {(review.user.displayName || review.user.username)[0]?.toUpperCase()}
+                        <div className="flex h-full w-full items-center justify-center text-[10px] font-bold text-zinc-400 uppercase">
+                          {(review.user.displayName || review.user.username)[0]}
                         </div>
                       )}
                     </div>
                     <div>
-                      <p className="text-lg font-bold text-zinc-900 dark:text-white">
+                      <p className="text-[11px] font-bold text-zinc-900 dark:text-white uppercase tracking-widest">
                         {review.user.displayName || review.user.username}
                       </p>
-                      <p className="text-sm font-medium text-zinc-500 dark:text-zinc-400">
+                      <p className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest italic">
                         {new Date(review.createdAt).toLocaleDateString(undefined, {
                           year: 'numeric',
-                          month: 'long',
+                          month: 'short',
                           day: 'numeric'
                         })}
                       </p>
@@ -91,14 +91,14 @@ export function BookReviews({
                   </div>
 
                   {/* Rating */}
-                  <div className="flex gap-1 bg-amber-50 dark:bg-amber-500/10 px-3 py-1.5 rounded-full">
+                  <div className="flex gap-1">
                     {Array.from({ length: 5 }).map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-4 w-4 ${
+                        className={`h-3 w-3 ${
                           i < review.rating
-                            ? "fill-amber-400 text-amber-400"
-                            : "text-amber-200 dark:text-amber-900/50"
+                            ? "text-zinc-900 dark:text-white fill-current"
+                            : "text-zinc-100 dark:text-zinc-800"
                         }`}
                       />
                     ))}
@@ -107,8 +107,8 @@ export function BookReviews({
 
                 {/* Comment */}
                 {review.comment && (
-                  <p className="text-zinc-700 dark:text-zinc-300 text-lg leading-relaxed whitespace-pre-wrap">
-                    {review.comment}
+                  <p className="text-zinc-500 dark:text-zinc-400 text-[11px] font-medium leading-relaxed italic border-l-2 border-zinc-100 dark:border-zinc-900 pl-6 py-1">
+                    &quot;{review.comment}&quot;
                   </p>
                 )}
               </div>

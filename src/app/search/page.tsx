@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Search, Loader2, BookOpen } from "lucide-react";
+import { Search, Loader2, BookOpen, ArrowLeft, Clock } from "lucide-react";
 import { SearchResults } from "@/components/search/SearchResults";
 import { Pagination } from "@/components/shared/Pagination";
 import type { SearchResult } from "@/lib/meilisearch";
@@ -44,13 +44,10 @@ function SearchContent() {
           setTotal(data.total);
           setTotalPages(data.totalPages);
         }
-      } catch (error) {
-        console.error("Search failed:", error);
       } finally {
         setIsLoading(false);
       }
     };
-
     fetchResults();
   }, [query, typeParam, pageParam]);
 
@@ -69,34 +66,41 @@ function SearchContent() {
   const isEmpty = !isLoading && query.trim() && !hasResults;
 
   return (
-    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
-      <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         
-        {/* Huge Clean Header */}
-        <header className="mb-12 text-center max-w-3xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-black text-zinc-900 dark:text-white tracking-tighter mb-6">
-            Search.
-          </h1>
-          <p className="text-xl text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-            Find the stories, books, and authors you're looking for.
-          </p>
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <button onClick={() => router.back()} className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
+            </button>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Search BookVerse.</h1>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">Find stories, books, and authors across the entire platform.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-4 py-2 border border-zinc-100 dark:border-zinc-800 rounded">
+            <Search className="w-3.5 h-3.5 text-zinc-300" />
+            Search
+          </div>
         </header>
 
-        {/* Interactive Big Search Form */}
-        <form onSubmit={handleSearch} className="max-w-4xl mx-auto mb-16 relative group z-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-brand via-orange-500 to-rose-500 rounded-full blur-xl opacity-20 group-hover:opacity-40 transition-opacity duration-500" />
-          <div className="relative flex items-center bg-white dark:bg-zinc-900/80 backdrop-blur-xl rounded-full border border-zinc-200 dark:border-zinc-800 shadow-2xl overflow-hidden ring-1 ring-zinc-900/5 dark:ring-white/5">
-            <Search className="absolute left-8 w-6 h-6 text-zinc-400 group-focus-within:text-brand transition-colors" />
+        {/* Search Form */}
+        <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-16">
+          <div className="relative flex items-center">
+            <Search className="absolute left-5 w-4 h-4 text-zinc-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by title, author, or keyword..."
-              className="w-full bg-transparent py-5 sm:py-6 pl-20 pr-32 text-lg sm:text-xl text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none font-medium"
+              placeholder="Type title, author, or keywords..."
+              className="w-full pl-14 pr-28 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-sm font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all shadow-sm"
             />
             <button
               type="submit"
-              className="absolute right-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 font-bold rounded-full hover:scale-[1.02] active:scale-[0.98] transition-transform"
+              className="absolute right-2 px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all"
             >
               Search
             </button>
@@ -110,10 +114,10 @@ function SearchContent() {
               <button
                 key={t}
                 onClick={() => handleTypeChange(t)}
-                className={`px-8 py-3 rounded-full text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
+                className={`px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border ${
                   typeParam === t
-                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-xl"
-                    : "bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
+                    : "bg-transparent border-zinc-100 dark:border-zinc-900 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
                 }`}
               >
                 {t}
@@ -122,62 +126,43 @@ function SearchContent() {
           </div>
         )}
 
-        {/* Minimal Divider if active search */}
+        {/* Results Metadata */}
         {query.trim() && !isLoading && (
-          <div className="w-full flex items-center justify-between mb-12 border-b border-zinc-200 dark:border-zinc-800 pb-4">
-            <h2 className="text-2xl font-bold text-zinc-900 dark:text-white">Results</h2>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-semibold text-zinc-600 dark:text-zinc-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              {total} match{total !== 1 ? "es" : ""} found
+          <div className="flex items-center justify-between mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 italic">Search Results</h2>
+            <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-zinc-900 dark:bg-white" />
+              {total} Results Found
             </div>
           </div>
         )}
 
-        {/* Loading State */}
-        {isLoading && (
-          <div className="flex items-center justify-center py-32">
-            <Loader2 className="w-10 h-10 animate-spin text-brand" />
-          </div>
-        )}
-
-        {/* Results */}
-        {!isLoading && hasResults && (
-          <div className="min-h-[400px]">
+        {/* Loading / Results / Empty States */}
+        <div className="min-h-[400px]">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-40">
+              <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
+            </div>
+          ) : hasResults ? (
             <SearchResults results={results} type={typeParam} />
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!isLoading && isEmpty && (
-          <div className="py-32 text-center bg-zinc-50 dark:bg-zinc-900/30 rounded-[3rem] border border-zinc-200 dark:border-zinc-800">
-            <BookOpen className="mx-auto w-16 h-16 text-zinc-300 dark:text-zinc-700 mb-6" />
-            <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
-              No results found
-            </h3>
-            <p className="text-lg text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
-              We couldn't find anything matching "{query}". Try adjusting your search or browsing the library.
-            </p>
-          </div>
-        )}
-
-        {/* Initial State - No Query */}
-        {!query.trim() && !isLoading && (
-          <div className="py-32 text-center">
-            <div className="w-24 h-24 bg-brand/10 rounded-[2rem] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-brand/5 rotate-12">
-              <Search className="w-10 h-10 text-brand -rotate-12" />
+          ) : isEmpty ? (
+            <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">No results found for &quot;{query}&quot;.</p>
             </div>
-            <h3 className="text-3xl font-bold text-zinc-900 dark:text-white mb-4">
-              What are you looking for?
-            </h3>
-            <p className="text-xl text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto leading-relaxed">
-              Type a title, genre, or author in the massive search bar above to begin exploring our collection.
-            </p>
-          </div>
-        )}
+          ) : !query.trim() && (
+            <div className="py-40 text-center">
+              <div className="w-14 h-14 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded flex items-center justify-center mx-auto mb-8">
+                <Search className="w-6 h-6 text-zinc-200" />
+              </div>
+              <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Ready to Search</h3>
+              <p className="text-xs text-zinc-400 max-w-xs mx-auto leading-relaxed font-bold uppercase tracking-widest">Enter keywords above to start searching.</p>
+            </div>
+          )}
+        </div>
 
         {/* Pagination */}
         {!isLoading && hasResults && totalPages > 1 && (
-          <div className="mt-24 border-t border-zinc-200 dark:border-zinc-800 pt-12 flex justify-center">
+          <div className="mt-24 pt-16 border-t border-zinc-50 dark:border-zinc-900 flex justify-center">
             <Pagination
               currentPage={pageParam}
               totalPages={totalPages}
@@ -193,14 +178,11 @@ function SearchContent() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <main className="mx-auto max-w-5xl px-6 py-10 sm:px-10">
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-zinc-400" />
-        </div>
-      </main>
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+        <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
+      </div>
     }>
       <SearchContent />
     </Suspense>
   );
 }
-

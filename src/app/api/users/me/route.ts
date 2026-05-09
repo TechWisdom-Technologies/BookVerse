@@ -23,6 +23,7 @@ export async function GET() {
           select: {
             followers: true,
             following: true,
+            stories: true,
           },
         },
       },
@@ -87,6 +88,7 @@ export async function PATCH(request: Request) {
           select: {
             followers: true,
             following: true,
+            stories: true,
           },
         },
       },

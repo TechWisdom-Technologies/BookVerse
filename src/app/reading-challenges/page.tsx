@@ -1,8 +1,21 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from 'react';
-import { Zap, Trophy, Users, Loader } from 'lucide-react';
+import { 
+  Trophy, 
+  Users, 
+  Loader2, 
+  ArrowLeft, 
+  BookOpen, 
+  CheckCircle2, 
+  Target,
+  ChevronRight,
+  ShieldCheck,
+  Activity
+} from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
 import Link from 'next/link';
 
 interface Challenge {
@@ -13,18 +26,18 @@ interface Challenge {
   targetBooks: number;
   startDate: string;
   endDate: string;
-  participants: Array<any>;
+  participants: Array<{ userId: string }>;
 }
 
 export default function ReadingChallengesPage() {
+  const router = useRouter();
+  const { dbUser } = useAuth();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('ACTIVE');
-  const [participatedIds, setParticipatedIds] = useState<Set<string>>(new Set());
+  const [joiningId, setJoiningId] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchChallenges();
-  }, [filter]);
+  useEffect(() => { fetchChallenges(); }, [filter]);
 
   const fetchChallenges = async () => {
     try {
@@ -34,149 +47,120 @@ export default function ReadingChallengesPage() {
         const data = await res.json();
         setChallenges(data);
       }
-    } catch (error) {
-      console.error('Error fetching challenges:', error);
-      toast.error('Failed to load challenges');
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const handleParticipate = async (challengeId: string) => {
+    if (!dbUser) return toast.error('Please login first.');
     try {
-      const res = await fetch(`/api/reading-challenges/${challengeId}/participate`, {
-        method: 'POST',
-      });
-
+      setJoiningId(challengeId);
+      const res = await fetch(`/api/reading-challenges/${challengeId}/participate`, { method: 'POST' });
       if (res.ok) {
-        setParticipatedIds((prev) => new Set([...prev, challengeId]));
-        toast.success('Joined challenge! 🎉');
+        toast.success('Challenge started!');
         fetchChallenges();
-      } else {
-        const data = await res.json();
-        toast.error(data.error || 'Failed to join challenge');
       }
-    } catch (error) {
-      console.error('Error joining challenge:', error);
-      toast.error('An error occurred');
-    }
+    } finally { setJoiningId(null); }
   };
 
-  const getDaysRemaining = (endDate: string) => {
-    const days = Math.ceil(
-      (new Date(endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
-    );
-    return days;
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader className="w-8 h-8 animate-spin text-blue-600" />
-      </div>
-    );
-  }
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50">
-      <div className="max-w-6xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <Zap className="w-8 h-8 text-yellow-500" />
-            <h1 className="text-4xl font-bold text-gray-900">Reading Challenges</h1>
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Reading Challenges.</h1>
+              <p className="text-xs text-zinc-500 font-medium">Join fun reading goals to build a better reading habit.</p>
+            </div>
           </div>
-          <p className="text-gray-600 text-lg">Join the community and challenge yourself to read more</p>
+          <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded">
+            Challenges: {challenges.length}
+          </div>
+        </header>
+
+        {/* Simple Filter */}
+        <div className="mb-12 flex items-center justify-center">
+          <div className="flex gap-1 p-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded">
+            {['ACTIVE', 'UPCOMING', 'COMPLETED'].map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilter(status)}
+                className={`px-6 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest transition-all ${
+                  filter === status 
+                    ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm' 
+                    : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Filters */}
-        <div className="flex gap-4 mb-8 flex-wrap">
-          {['ACTIVE', 'UPCOMING', 'COMPLETED'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status)}
-              className={`px-6 py-2 rounded-full font-semibold transition ${
-                filter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-200 hover:border-blue-300'
-              }`}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
-
-        {/* Challenges Grid */}
+        {/* Challenge Grid */}
         {challenges.length === 0 ? (
-          <div className="text-center py-12">
-            <Zap className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">No challenges found</h2>
-            <p className="text-gray-600">Check back later for more reading challenges!</p>
+          <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">No challenges found in this section.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
             {challenges.map((challenge) => {
-              const isParticipating = participatedIds.has(challenge.id);
-              const daysLeft = getDaysRemaining(challenge.endDate);
+              const isParticipating = dbUser && challenge.participants.some(p => p.userId === dbUser.id);
+              const daysLeft = Math.ceil((new Date(challenge.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 
               return (
-                <div
-                  key={challenge.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition overflow-hidden"
-                >
-                  {/* Badge */}
-                  <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="w-5 h-5" />
-                      <span className="font-semibold">{challenge.genre}</span>
-                    </div>
-                    {daysLeft > 0 && (
-                      <span className="text-sm bg-white/20 px-3 py-1 rounded-full">
-                        {daysLeft}d left
-                      </span>
-                    )}
+                <div key={challenge.id} className="group p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all flex flex-col">
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-2 py-0.5 border border-zinc-100 dark:border-zinc-800 rounded">
+                      {challenge.genre}
+                    </span>
+                    <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-1.5">
+                      {daysLeft > 0 ? `${daysLeft} Days left` : 'Finished'}
+                    </span>
                   </div>
 
-                  {/* Content */}
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">{challenge.title}</h3>
-                      {challenge.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2">{challenge.description}</p>
-                      )}
-                    </div>
+                  <h3 className="text-sm font-bold mb-2 uppercase tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
+                    {challenge.title}
+                  </h3>
+                  <p className="text-[11px] text-zinc-500 font-medium leading-relaxed mb-10 line-clamp-2">
+                    {challenge.description}
+                  </p>
 
-                    {/* Stats */}
-                    <div className="flex gap-4">
-                      <div className="flex-1">
-                        <p className="text-2xl font-bold text-blue-600">{challenge.targetBooks}</p>
-                        <p className="text-xs text-gray-600">Books</p>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-1">
-                          <Users className="w-4 h-4 text-gray-600" />
-                          <p className="text-2xl font-bold text-purple-600">
-                            {challenge.participants.length}
-                          </p>
-                        </div>
-                        <p className="text-xs text-gray-600">Joined</p>
-                      </div>
+                  <div className="grid grid-cols-2 gap-px bg-zinc-50 dark:bg-zinc-900 border border-zinc-50 dark:border-zinc-900 mb-10">
+                    <div className="p-4 bg-white dark:bg-zinc-950 flex flex-col">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-300 mb-1">Goal</span>
+                      <span className="text-[11px] font-bold uppercase">{challenge.targetBooks} Books</span>
                     </div>
+                    <div className="p-4 bg-white dark:bg-zinc-950 flex flex-col text-right">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-300 mb-1">Players</span>
+                      <span className="text-[11px] font-bold uppercase">{challenge.participants.length} joined</span>
+                    </div>
+                  </div>
 
-                    {/* Action */}
+                  <div className="mt-auto">
                     {isParticipating ? (
-                      <button
-                        disabled
-                        className="w-full bg-green-100 text-green-700 font-semibold py-2 px-4 rounded-lg cursor-default flex items-center justify-center gap-2"
-                      >
-                        ✓ Participating
-                      </button>
+                      <div className="w-full py-2.5 border border-zinc-900 dark:border-white text-zinc-900 dark:text-white text-[9px] font-bold uppercase tracking-[0.3em] flex items-center justify-center gap-2 rounded">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Joined
+                      </div>
                     ) : (
                       <button
                         onClick={() => handleParticipate(challenge.id)}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition"
+                        disabled={joiningId === challenge.id}
+                        className="w-full py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-[0.3em] rounded transition-all flex items-center justify-center gap-2"
                       >
-                        Join Challenge
+                        {joiningId === challenge.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Join Challenge'}
                       </button>
                     )}
                   </div>
@@ -186,28 +170,14 @@ export default function ReadingChallengesPage() {
           </div>
         )}
 
-        {/* Info Section */}
-        <div className="mt-12 bg-white rounded-lg p-8 border border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div>
-              <div className="text-3xl font-bold text-blue-600 mb-2">1</div>
-              <h3 className="font-semibold text-gray-900 mb-2">Join</h3>
-              <p className="text-gray-600">Pick a challenge and join the community</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-purple-600 mb-2">2</div>
-              <h3 className="font-semibold text-gray-900 mb-2">Read</h3>
-              <p className="text-gray-600">Read the specified number of books</p>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-green-600 mb-2">3</div>
-              <h3 className="font-semibold text-gray-900 mb-2">Complete</h3>
-              <p className="text-gray-600">Track your progress and earn badges</p>
-            </div>
+        {/* Simple Footer Info */}
+        <div className="mt-32 pt-12 border-t border-zinc-100 dark:border-zinc-900">
+          <div className="flex items-center gap-3 text-zinc-300 opacity-40">
+            <Trophy className="w-4 h-4" />
+            <span className="text-[9px] font-bold uppercase tracking-[0.4em]">Read, Write, Connect — V2.4.0</span>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

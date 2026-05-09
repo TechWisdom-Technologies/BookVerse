@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from '@/lib/auth';
+import { getAuth, getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import crypto from 'crypto';
 
 /**
  * GET /api/clubs
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const where: any = {};
     if (genre) where.genre = genre;
-    if (isPrivate !== undefined) where.isPrivate;
+    if (isPrivate !== undefined && searchParams.has('isPrivate')) where.isPrivate = isPrivate;
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
@@ -86,6 +87,7 @@ export async function POST(req: NextRequest) {
         isPrivate: isPrivate || false,
         coverUrl: coverUrl || null,
         ownerId: user.id,
+        joinCode: crypto.randomBytes(3).toString('hex').toUpperCase(),
         members: {
           create: {
             userId: user.id,

@@ -25,44 +25,43 @@ export function BookCard({ book }: BookCardProps) {
 
   return (
     <Link href={`/library/${book.id}`}>
-      <div className="group cursor-pointer space-y-3 transition">
-        <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-200 shadow-md transition group-hover:shadow-lg dark:bg-zinc-800">
+      <div className="group cursor-pointer transition-all">
+        <div className="relative aspect-[2/3] overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 mb-6 shadow-sm">
           {book.coverUrl ? (
             <Image
               src={book.coverUrl}
               alt={book.title}
               fill
-              className="object-cover transition group-hover:scale-105"
+              className="object-cover transition-all duration-700"
               priority={false}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-400 to-orange-500 dark:from-orange-600 dark:to-orange-700">
-              <BookOpen className="h-8 w-8 text-white/40" />
+            <div className="flex h-full w-full items-center justify-center text-zinc-100 dark:text-zinc-800">
+              <BookOpen className="h-10 w-10" />
             </div>
           )}
         </div>
 
-        <div className="space-y-1">
-          <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {book.title}
-          </h3>
-          <p className="line-clamp-1 text-xs text-zinc-600 dark:text-zinc-400">
-            {book.authorName}
-          </p>
-
-          <div className="pt-1">
-            <span className="inline-block rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-300">
               {book.genre}
             </span>
           </div>
+          <h3 className="line-clamp-1 text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
+            {book.title}
+          </h3>
+          <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+            {book.authorName}
+          </p>
 
-          <div className="flex items-center justify-between pt-2 text-xs text-zinc-600 dark:text-zinc-400">
-            <div className="flex items-center gap-1">
-              <Star className="h-3 w-3 fill-current" />
-              <span>{avgRating.toFixed(1)}</span>
-              {reviewCount > 0 && <span className="text-zinc-500">({reviewCount})</span>}
+          <div className="flex items-center justify-between pt-3 border-t border-zinc-50 dark:border-zinc-900 mt-3">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300">
+              <Star className="h-3 w-3 fill-current text-zinc-900 dark:text-white" />
+              <span className="text-zinc-900 dark:text-white">{avgRating.toFixed(1)}</span>
+              {reviewCount > 0 && <span>({reviewCount})</span>}
             </div>
-            <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400">
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300">
               <Download className="h-3 w-3" />
               {book.downloadCount.toLocaleString()}
             </div>

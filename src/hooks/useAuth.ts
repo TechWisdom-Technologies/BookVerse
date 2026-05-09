@@ -20,6 +20,11 @@ type SyncedUser = {
   avatarUrl: string | null;
   bio: string | null;
   role: string;
+  _count?: {
+    followers: number;
+    following: number;
+    stories: number;
+  };
 };
 
 function setCookie(name: string, value: string, maxAgeSeconds?: number) {
@@ -57,8 +62,13 @@ export function useAuth() {
           credentials: "include",
         });
         if (response.ok) {
-          const payload = (await response.json()) as { user?: SyncedUser };
+          const payload = (await response.json()) as { user?: SyncedUser, needsOnboarding?: boolean };
           setDbUser(payload.user ?? null);
+          
+          // Redirect to onboarding if needed
+          if (payload.needsOnboarding && window.location.pathname !== '/onboarding') {
+            window.location.href = '/onboarding';
+          }
         }
       } finally {
         setLoading(false);
@@ -101,9 +111,25 @@ export function useAuth() {
     await fbSignOut(auth);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    if (!user) return;
+    try {
+      const response = await fetch("/api/auth/sync", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (response.ok) {
+        const payload = (await response.json()) as { user?: SyncedUser };
+        setDbUser(payload.user ?? null);
+      }
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+    }
+  }, [user]);
+
   return useMemo(
-    () => ({ user, dbUser, loading, signIn, signUp, signInWithGoogle, signOut }),
-    [user, dbUser, loading, signIn, signUp, signInWithGoogle, signOut]
+    () => ({ user, dbUser, loading, signIn, signUp, signInWithGoogle, signOut, refreshUser }),
+    [user, dbUser, loading, signIn, signUp, signInWithGoogle, signOut, refreshUser]
   );
 }
 

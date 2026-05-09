@@ -3,7 +3,7 @@ import { z } from "zod";
 export const bookSchema = z.object({
   title: z.string().min(1),
   authorName: z.string().min(1),
-  coverUrl: z.string().url().optional().nullable(),
+  coverUrl: z.string().optional().nullable(),
   fileUrl: z.string().min(1),
   fileType: z.enum(["PDF", "EPUB"]),
   genre: z.string().min(1),
@@ -13,9 +13,11 @@ export const bookSchema = z.object({
 
 export const storySchema = z.object({
   title: z.string().min(1),
-  coverUrl: z.string().url().optional().nullable(),
+  coverUrl: z.string().optional().nullable(),
   summary: z.string().optional().nullable(),
   published: z.boolean().optional(),
+  universeId: z.string().optional().nullable(),
+  sequenceNumber: z.number().int().min(1).optional().nullable(),
 });
 
 export const chapterSchema = z.object({

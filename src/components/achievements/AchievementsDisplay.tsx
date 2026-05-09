@@ -34,7 +34,7 @@ export function AchievementsDisplay({ userId, maxDisplay = 6 }: AchievementsDisp
     const fetchAchievements = async () => {
       try {
         setLoading(true);
-        
+
         // Fetch all available achievements
         const allRes = await fetch('/api/achievements');
         if (allRes.ok) {
@@ -68,7 +68,7 @@ export function AchievementsDisplay({ userId, maxDisplay = 6 }: AchievementsDisp
   const earnedIds = new Set(userAchievements.map(ua => ua.achievementId));
   const earnedAchievements = userAchievements.slice(0, maxDisplay);
   const displayAchievements = [
-    ...earnedAchievements,
+    ...earnedAchievements.map(ua => ua.achievement),
     ...allAchievements
       .filter(a => !earnedIds.has(a.id))
       .slice(0, maxDisplay - earnedAchievements.length),

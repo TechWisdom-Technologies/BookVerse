@@ -18,11 +18,11 @@ interface PdfReaderProps {
 const BROKEN_URL = "https://pub-666ffca9921d4b79b6738f62abc3af39.r2.dev/sample-book.pdf";
 const FALLBACK_URL = "https://raw.githubusercontent.com/mozilla/pdf.js/ba2edeae/web/compressed.tracemonkey-pldi-09.pdf";
 
-// Load PDF.js with CDN worker to avoid bundling issues with Turbopack
+// Load PDF.js with local worker to avoid CDN issues
 async function loadPdfJs() {
   const pdfjs = await import("pdfjs-dist");
-  // Use jsdelivr CDN for reliable worker loading
-  pdfjs.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
+  // Use local worker file from public folder
+  pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
   return pdfjs;
 }
 

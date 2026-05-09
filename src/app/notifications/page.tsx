@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Bell, Check, Loader2, MessageSquare, Heart, FileText, Users } from "lucide-react";
+import { Bell, Check, Loader2, MessageSquare, Heart, FileText, Users, ArrowLeft, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 interface Notification {
@@ -52,7 +52,6 @@ export default function NotificationsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
       });
-      // Update local state
       setNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
     } catch (error) {
       console.error("Failed to mark notifications as read", error);
@@ -61,118 +60,109 @@ export default function NotificationsPage() {
 
   const getIconForType = (type: string) => {
     switch (type) {
-      case "REACT": return <Heart className="h-5 w-5 text-rose-500" />;
+      case "REACT": return <Heart className="h-4 w-4 text-rose-500" />;
       case "COMMENT":
-      case "REPLY": return <MessageSquare className="h-5 w-5 text-blue-500" />;
-      case "STORY_POST": return <FileText className="h-5 w-5 text-brand" />;
-      case "DISCUSSION": return <Users className="h-5 w-5 text-violet-500" />;
-      default: return <Bell className="h-5 w-5 text-zinc-400" />;
+      case "REPLY": return <MessageSquare className="h-4 w-4 text-indigo-500" />;
+      case "STORY_POST": return <FileText className="h-4 w-4 text-zinc-400" />;
+      case "DISCUSSION": return <Users className="h-4 w-4 text-zinc-400" />;
+      default: return <Bell className="h-4 w-4 text-zinc-400" />;
     }
   };
 
-  if (authLoading || loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-brand" />
-      </div>
-    );
-  }
+  if (authLoading || loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+      <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
+    </div>
+  );
 
-  if (!user) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center p-4 text-center">
-        <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-900">
-          <Bell className="h-10 w-10 text-zinc-400" />
-        </div>
-        <h1 className="mb-2 text-3xl font-black text-zinc-900 dark:text-white">Sign In to View Alerts</h1>
-        <p className="mb-8 text-zinc-500 dark:text-zinc-400 max-w-md">
-          You need an account to receive notifications about reactions, comments, and new stories.
-        </p>
-        <Link
-          href="/login"
-          className="rounded-full bg-brand px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-brand/20 transition-all hover:-translate-y-1 hover:bg-orange-600 hover:shadow-xl"
-        >
-          Sign In Now
-        </Link>
+  if (!user) return (
+    <div className="min-h-screen bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-14 h-14 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded flex items-center justify-center mb-8">
+        <Bell className="w-6 h-6 text-zinc-200" />
       </div>
-    );
-  }
+      <h1 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Sign In Required</h1>
+      <p className="text-xs text-zinc-400 max-w-xs mb-10 font-bold uppercase tracking-widest leading-relaxed">Please log in to see your notifications.</p>
+      <Link href="/login" className="px-10 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
+        Login Now
+      </Link>
+    </div>
+  );
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12 pb-32 sm:px-6">
-      <header className="mb-10 flex items-center justify-between">
-        <div>
-          <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-zinc-900 dark:text-white mb-2">
-            Alerts
-          </h1>
-          <p className="text-lg text-zinc-500 dark:text-zinc-400 font-medium">
-            Stay updated with your community
-          </p>
-        </div>
-      </header>
-
-      {notifications.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[2rem] border-2 border-dashed border-zinc-200/50 bg-white/50 p-12 text-center backdrop-blur-sm dark:border-zinc-800/50 dark:bg-zinc-900/50">
-          <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
-            <Check className="h-8 w-8 text-zinc-400" />
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-4xl mx-auto px-6 py-12">
+        
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
+            </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Notifications.</h1>
+              <p className="text-sm text-zinc-500 font-medium">Stay updated with your latest activities, story reactions, and community updates.</p>
+            </div>
           </div>
-          <h3 className="text-xl font-bold text-zinc-900 dark:text-white mb-2">All Caught Up!</h3>
-          <p className="text-zinc-500 dark:text-zinc-400 max-w-sm">
-            You don't have any new notifications right now. Check back later for updates.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {notifications.map((notification) => {
-            const content = (
-              <div className="flex items-start gap-4 sm:gap-6">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
-                  {getIconForType(notification.type)}
-                </div>
-                <div className="flex-1 min-w-0 pt-1">
-                  <h4 className="text-base font-bold text-zinc-900 dark:text-white mb-1">
-                    {notification.title}
-                  </h4>
-                  <p className="text-zinc-600 dark:text-zinc-300 text-sm mb-2 leading-relaxed">
-                    {notification.message}
-                  </p>
-                  <span className="text-xs font-medium text-zinc-400 dark:text-zinc-500">
-                    {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                  </span>
-                </div>
-                {!notification.isRead && (
-                  <div className="h-3 w-3 shrink-0 rounded-full bg-brand mt-4 shadow-sm shadow-brand/40" />
-                )}
-              </div>
-            );
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-4 py-2 border border-zinc-100 dark:border-zinc-800 rounded">
+            <Clock className="w-3.5 h-3.5 text-zinc-300" />
+            Active
+          </div>
+        </header>
 
-            return notification.link ? (
-              <Link
-                key={notification.id}
-                href={notification.link}
-                className={`block rounded-[2rem] border p-5 sm:p-6 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-zinc-200/20 dark:hover:shadow-none ${
-                  notification.isRead 
-                    ? "border-zinc-200/50 bg-white/80 dark:border-zinc-800/50 dark:bg-zinc-900/50" 
-                    : "border-brand/20 bg-brand/5 dark:border-brand/10 dark:bg-brand/5"
-                }`}
-              >
-                {content}
-              </Link>
-            ) : (
-              <div
-                key={notification.id}
-                className={`rounded-[2rem] border p-5 sm:p-6 transition-all ${
-                  notification.isRead 
-                    ? "border-zinc-200/50 bg-white/80 dark:border-zinc-800/50 dark:bg-zinc-900/50" 
-                    : "border-brand/20 bg-brand/5 dark:border-brand/10 dark:bg-brand/5"
-                }`}
-              >
-                {content}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+        {notifications.length === 0 ? (
+          <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">No notifications yet.</p>
+          </div>
+        ) : (
+          <div className="space-y-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
+            {notifications.map((notification) => {
+              const content = (
+                <div className="flex items-start gap-6">
+                  <div className="w-12 h-12 shrink-0 flex items-center justify-center rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800">
+                    {getIconForType(notification.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h4 className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-100 mb-1 uppercase">
+                          {notification.title}
+                        </h4>
+                        <p className="text-[11px] text-zinc-500 leading-relaxed font-medium">
+                          {notification.message}
+                        </p>
+                      </div>
+                      {!notification.isRead && (
+                        <div className="w-2 h-2 rounded-full bg-zinc-900 dark:bg-white mt-2" />
+                      )}
+                    </div>
+                    <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-300 mt-4">
+                      {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                    </p>
+                  </div>
+                </div>
+              );
+
+              return notification.link ? (
+                <Link
+                  key={notification.id}
+                  href={notification.link}
+                  className="block p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all group"
+                >
+                  {content}
+                </Link>
+              ) : (
+                <div
+                  key={notification.id}
+                  className="p-8 bg-white dark:bg-zinc-950 transition-all"
+                >
+                  {content}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

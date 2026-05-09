@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PenLine, Feather } from "lucide-react";
+import { PenLine, Feather, ArrowLeft, Loader2, Sparkles, Activity } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { StoryGrid } from "@/components/stories/StoryGrid";
 import { StoryFilters } from "@/components/stories/StoryFilters";
@@ -9,14 +9,7 @@ import type { Prisma } from "@prisma/client";
 export const dynamic = "force-dynamic";
 
 const storyGenres = [
-  "Adventure",
-  "Fantasy",
-  "Fiction",
-  "Horror",
-  "Mystery",
-  "Romance",
-  "Science Fiction",
-  "Thriller",
+  "Adventure", "Fantasy", "Fiction", "Horror", "Mystery", "Romance", "Science Fiction", "Thriller",
 ];
 
 interface StoriesPageProps {
@@ -54,21 +47,8 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
     prisma.story.findMany({
       where,
       include: {
-        author: {
-          select: {
-            id: true,
-            username: true,
-            displayName: true,
-            avatarUrl: true,
-          },
-        },
-        _count: {
-          select: {
-            chapters: true,
-            reactions: true,
-            comments: true,
-          },
-        },
+        author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+        _count: { select: { chapters: true, reactions: true, comments: true } },
       },
       orderBy,
       skip,
@@ -84,50 +64,44 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
   }));
 
   return (
-    <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
-      <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+      <div className="max-w-7xl mx-auto px-6 py-12">
         
-        {/* Huge Clean Header */}
-        <header className="mb-16">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="max-w-3xl">
-              <h1 className="text-5xl md:text-7xl font-black text-zinc-900 dark:text-white tracking-tighter mb-6">
-                Voices.
-              </h1>
-              <p className="text-xl md:text-2xl text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                Discover brilliant original stories, crafted by our community of independent writers and creators.
-              </p>
-            </div>
-            <Link
-              href="/write/new"
-              className="group flex items-center justify-center gap-3 px-8 py-4 bg-brand text-white rounded-full font-bold text-lg hover:bg-orange-600 hover:shadow-xl hover:shadow-brand/20 hover:-translate-y-1 transition-all duration-300 shrink-0"
-            >
-              <PenLine className="w-5 h-5" />
-              Start Writing
+        {/* Simple Header */}
+        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-4">
+            <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              <ArrowLeft className="w-3 h-3" />
+              Back Home
             </Link>
+            <div>
+              <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Community Stories.</h1>
+              <p className="text-xs text-zinc-500 font-medium">Read original stories shared by independent authors across the BookVerse.</p>
+            </div>
           </div>
+          <Link href="/write/new" className="px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2">
+            <PenLine className="w-3.5 h-3.5" />
+            Start a Story
+          </Link>
         </header>
 
-        {/* Minimal Divider */}
-        <div className="w-full h-px bg-zinc-200 dark:bg-zinc-800 mb-12" />
-
-        {/* Filters and Count */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
+        {/* Simple Filters */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
           <StoryFilters genres={storyGenres} />
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm font-semibold text-zinc-600 dark:text-zinc-400">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            {total} Active Stories
+          <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800">
+            <Activity className="w-3 h-3 text-zinc-300" />
+            {total} Stories Found
           </div>
         </div>
 
-        {/* Grid */}
+        {/* Story Grid */}
         <div className="min-h-[400px]">
           <StoryGrid stories={serializedStories} />
         </div>
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-24 flex justify-center">
+          <div className="mt-24 pt-12 border-t border-zinc-50 dark:border-zinc-900 flex justify-center">
             <Pagination currentPage={page} totalPages={totalPages} basePath="/stories" />
           </div>
         )}

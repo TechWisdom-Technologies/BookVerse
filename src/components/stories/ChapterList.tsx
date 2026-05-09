@@ -8,6 +8,9 @@ import {
   ChevronDown,
   Loader2,
   GripVertical,
+  BookOpen,
+  Layout,
+  FileText
 } from "lucide-react";
 
 export interface ChapterItem {
@@ -80,7 +83,6 @@ export default function ChapterList({
           .map((c, i) => ({ ...c, chapterOrder: i + 1 }));
         onChaptersChange(updated);
 
-        // If deleting the active chapter, select the first remaining one
         if (activeChapterId === chapterId && updated.length > 0) {
           onSelectChapter(updated[0].id);
         }
@@ -108,14 +110,12 @@ export default function ChapterList({
       reordered[index],
     ];
 
-    // Update order numbers
     const withNewOrder = reordered.map((c, i) => ({
       ...c,
       chapterOrder: i + 1,
     }));
     onChaptersChange(withNewOrder);
 
-    // Persist the reorder
     setLoadingAction(`move-${chapterId}`);
     try {
       await Promise.all([
@@ -142,7 +142,6 @@ export default function ChapterList({
       ]);
     } catch (error) {
       console.error("Failed to reorder chapters:", error);
-      // Revert on failure
       onChaptersChange(chapters);
     } finally {
       setLoadingAction(null);
@@ -182,24 +181,25 @@ export default function ChapterList({
   };
 
   return (
-    <div className="flex flex-col rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-      {/* Header */}
-      <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-          Chapters ({chapters.length})
-        </h3>
+    <div className="flex flex-col border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden">
+      {/* Simple Header */}
+      <div className="flex items-center justify-between px-4 py-3 bg-zinc-50/50 dark:bg-zinc-900/10 border-b border-zinc-50 dark:border-zinc-900">
+        <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+          <FileText className="w-3.5 h-3.5" />
+          Chapter List ({chapters.length})
+        </div>
         <button
           onClick={() => setIsAdding(true)}
-          className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950 transition-colors"
+          className="px-2 py-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-1.5"
         >
-          <Plus className="h-3.5 w-3.5" />
+          <Plus className="w-3 h-3" />
           Add
         </button>
       </div>
 
       {/* Add Chapter Input */}
       {isAdding && (
-        <div className="border-b border-zinc-200 p-3 dark:border-zinc-800">
+        <div className="p-4 bg-zinc-50/10 border-b border-zinc-50 dark:border-zinc-900 space-y-3">
           <input
             type="text"
             autoFocus
@@ -207,31 +207,23 @@ export default function ChapterList({
             onChange={(e) => setNewTitle(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") handleAddChapter();
-              if (e.key === "Escape") {
-                setIsAdding(false);
-                setNewTitle("");
-              }
+              if (e.key === "Escape") { setIsAdding(false); setNewTitle(""); }
             }}
-            placeholder="Chapter title..."
-            className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500"
+            placeholder="e.g. Chapter 1: The Beginning"
+            className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
           />
-          <div className="mt-2 flex gap-2">
+          <div className="flex gap-2">
             <button
               onClick={handleAddChapter}
               disabled={!newTitle.trim() || loadingAction === "add"}
-              className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+              className="px-4 py-1.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2"
             >
-              {loadingAction === "add" && (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              )}
-              Add Chapter
+              {loadingAction === "add" && <Loader2 className="w-3 h-3 animate-spin" />}
+              Save Chapter
             </button>
             <button
-              onClick={() => {
-                setIsAdding(false);
-                setNewTitle("");
-              }}
-              className="rounded-lg px-3 py-1 text-xs text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+              onClick={() => { setIsAdding(false); setNewTitle(""); }}
+              className="px-4 py-1.5 text-zinc-400 text-[9px] font-bold uppercase tracking-widest hover:text-zinc-900 dark:hover:text-white"
             >
               Cancel
             </button>
@@ -240,29 +232,27 @@ export default function ChapterList({
       )}
 
       {/* Chapter List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="max-h-[600px] overflow-y-auto">
         {chapters.length === 0 ? (
-          <div className="px-4 py-6 text-center text-sm text-zinc-500 dark:text-zinc-400">
-            No chapters yet. Add your first chapter to start writing.
+          <div className="px-6 py-12 text-center text-[10px] font-bold uppercase tracking-widest text-zinc-300">
+            No chapters found.
           </div>
         ) : (
-          <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+          <div className="divide-y divide-zinc-50 dark:divide-zinc-900">
             {chapters
               .sort((a, b) => a.chapterOrder - b.chapterOrder)
               .map((chapter, index) => (
-                <li
+                <div
                   key={chapter.id}
-                  className={`group flex items-center gap-2 px-3 py-2.5 transition-colors cursor-pointer ${
-                    activeChapterId === chapter.id
-                      ? "bg-indigo-50 dark:bg-indigo-950/50"
-                      : "hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
-                  }`}
                   onClick={() => onSelectChapter(chapter.id)}
+                  className={`group flex items-center gap-4 px-4 py-3 cursor-pointer transition-all ${
+                    activeChapterId === chapter.id
+                      ? "bg-zinc-50 dark:bg-zinc-900"
+                      : "hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50"
+                  }`}
                 >
-                  {/* Grip icon */}
-                  <GripVertical className="h-3.5 w-3.5 flex-shrink-0 text-zinc-300 dark:text-zinc-600" />
-
-                  {/* Chapter info */}
+                  <GripVertical className="w-3.5 h-3.5 text-zinc-200 dark:text-zinc-800 shrink-0" />
+                  
                   <div className="flex-1 min-w-0">
                     {editingId === chapter.id ? (
                       <input
@@ -271,80 +261,49 @@ export default function ChapterList({
                         value={editTitle}
                         onChange={(e) => setEditTitle(e.target.value)}
                         onKeyDown={(e) => {
-                          if (e.key === "Enter")
-                            handleRenameChapter(chapter.id);
+                          if (e.key === "Enter") handleRenameChapter(chapter.id);
                           if (e.key === "Escape") setEditingId(null);
                         }}
                         onBlur={() => handleRenameChapter(chapter.id)}
                         onClick={(e) => e.stopPropagation()}
-                        className="w-full rounded border border-indigo-300 bg-white px-2 py-0.5 text-sm text-zinc-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-indigo-700 dark:bg-zinc-900 dark:text-zinc-50"
+                        className="w-full bg-white dark:bg-zinc-950 border border-zinc-900 dark:border-white px-2 py-0.5 text-xs font-bold outline-none rounded"
                       />
                     ) : (
-                      <button
-                        type="button"
-                        onDoubleClick={(e) => {
-                          e.stopPropagation();
-                          setEditingId(chapter.id);
-                          setEditTitle(chapter.title);
-                        }}
-                        className="block w-full text-left"
-                      >
-                        <span
-                          className={`text-sm truncate block ${
-                            activeChapterId === chapter.id
-                              ? "font-medium text-indigo-700 dark:text-indigo-300"
-                              : "text-zinc-700 dark:text-zinc-300"
-                          }`}
-                        >
+                      <div className="flex items-center justify-between gap-4">
+                        <span className={`text-[11px] font-bold uppercase tracking-tight truncate ${
+                          activeChapterId === chapter.id ? "text-zinc-900 dark:text-white" : "text-zinc-500"
+                        }`}>
                           {chapter.chapterOrder}. {chapter.title}
                         </span>
-                      </button>
+                        
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleMoveChapter(chapter.id, "up"); }}
+                            disabled={index === 0}
+                            className="p-1 text-zinc-300 hover:text-zinc-900 dark:hover:text-white disabled:opacity-20"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleMoveChapter(chapter.id, "down"); }}
+                            disabled={index === chapters.length - 1}
+                            className="p-1 text-zinc-300 hover:text-zinc-900 dark:hover:text-white disabled:opacity-20"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDeleteChapter(chapter.id); }}
+                            className="p-1 text-zinc-300 hover:text-rose-500 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
                     )}
                   </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMoveChapter(chapter.id, "up");
-                      }}
-                      disabled={index === 0}
-                      className="rounded p-1 text-zinc-400 hover:text-zinc-700 disabled:opacity-30 dark:hover:text-zinc-200"
-                      title="Move up"
-                    >
-                      <ChevronUp className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMoveChapter(chapter.id, "down");
-                      }}
-                      disabled={index === chapters.length - 1}
-                      className="rounded p-1 text-zinc-400 hover:text-zinc-700 disabled:opacity-30 dark:hover:text-zinc-200"
-                      title="Move down"
-                    >
-                      <ChevronDown className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteChapter(chapter.id);
-                      }}
-                      disabled={loadingAction === `delete-${chapter.id}`}
-                      className="rounded p-1 text-zinc-400 hover:text-red-600 dark:hover:text-red-400"
-                      title="Delete chapter"
-                    >
-                      {loadingAction === `delete-${chapter.id}` ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                  </div>
-                </li>
+                </div>
               ))}
-          </ul>
+          </div>
         )}
       </div>
     </div>

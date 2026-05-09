@@ -93,28 +93,7 @@ export async function GET() {
             body: { type: 'string', pageNumber: 'number', content: 'string' },
           },
         },
-        universe: {
-          listUniverses: {
-            method: 'GET',
-            path: '/story-universes',
-            description: 'List all story universes',
-            auth: false,
-          },
-          createUniverse: {
-            method: 'POST',
-            path: '/story-universes',
-            description: 'Create new story universe',
-            auth: true,
-            body: { name: 'string', description: 'string', genre: 'string' },
-          },
-          addStoryToUniverse: {
-            method: 'POST',
-            path: '/story-universes/{universeId}/add-story',
-            description: 'Add story to universe',
-            auth: true,
-            body: { storyId: 'string' },
-          },
-        },
+
       },
       authentication: {
         type: 'Bearer Token',

@@ -46,12 +46,24 @@ export async function POST() {
       },
       update: {
         email,
-        displayName: decoded.name ?? null,
-        avatarUrl: decoded.picture ?? null,
+      },
+      include: {
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            stories: true,
+          },
+        },
+        onboardingQuiz: {
+          select: { completed: true }
+        },
       },
     });
 
-    const res = NextResponse.json({ user });
+    const needsOnboarding = !user.onboardingQuiz || !user.onboardingQuiz.completed;
+
+    const res = NextResponse.json({ user, needsOnboarding });
     res.cookies.set("user-role", user.role, { httpOnly: false, sameSite: "lax", path: "/" });
 
     // Send welcome email for new users (fire-and-forget)

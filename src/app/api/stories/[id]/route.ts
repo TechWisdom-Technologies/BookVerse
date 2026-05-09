@@ -134,7 +134,24 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const parsed = storySchema.partial().parse(body);
+    // Clean body before validation: convert empty/null optional fields to undefined
+    const cleanBody: Record<string, unknown> = {};
+    if (body.title !== undefined) cleanBody.title = body.title;
+    if (body.summary !== undefined) cleanBody.summary = body.summary || null;
+    if (body.coverUrl !== undefined) cleanBody.coverUrl = body.coverUrl || null;
+    if (body.published !== undefined) cleanBody.published = body.published;
+    if (body.universeId !== undefined) cleanBody.universeId = body.universeId || null;
+    // sequenceNumber: only pass if it's a valid number
+    if (body.sequenceNumber !== undefined && body.sequenceNumber !== null) {
+      const seqNum = Number(body.sequenceNumber);
+      if (!isNaN(seqNum) && seqNum >= 1) {
+        cleanBody.sequenceNumber = seqNum;
+      }
+    } else if (body.sequenceNumber === null) {
+      cleanBody.sequenceNumber = null;
+    }
+
+    const parsed = storySchema.partial().parse(cleanBody);
 
     const story = await prisma.story.update({
       where: { id },
@@ -143,6 +160,8 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         ...(parsed.summary !== undefined && { summary: parsed.summary }),
         ...(parsed.coverUrl !== undefined && { coverUrl: parsed.coverUrl }),
         ...(parsed.published !== undefined && { published: parsed.published }),
+        ...(parsed.universeId !== undefined && { universeId: parsed.universeId }),
+        ...(parsed.sequenceNumber !== undefined && { sequenceNumber: parsed.sequenceNumber }),
       },
       include: {
         author: {
@@ -189,6 +208,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     console.error("PATCH /api/stories/[id] error:", error);
+    // Return Zod validation errors
+    if (error && typeof error === "object" && "issues" in error) {
+      return NextResponse.json(
+        { error: "Validation failed", details: (error as any).issues },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
       { error: "Failed to update story" },
       { status: 500 }

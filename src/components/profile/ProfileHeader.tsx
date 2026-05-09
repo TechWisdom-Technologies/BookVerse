@@ -3,7 +3,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { FollowButton } from "./FollowButton";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
-import { Calendar, BookOpen, Users } from "lucide-react";
+import { Calendar, BookOpen, Users, Award, BarChart3, Settings } from "lucide-react";
 
 interface ProfileHeaderProps {
   user: {
@@ -29,58 +29,60 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
 
   return (
     <div className="relative">
-      {/* Abstract Cover Banner */}
-      <div className="h-48 md:h-64 w-full rounded-[2rem] bg-gradient-to-r from-brand via-violet-500 to-rose-500 opacity-20 overflow-hidden relative shadow-inner">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-30" />
-      </div>
+      {/* Simple Header Background */}
+      <div className="h-40 w-full bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-100 dark:border-zinc-900 rounded-xl overflow-hidden" />
 
-      <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6 sm:gap-10 -mt-20 sm:-mt-24 px-6 sm:px-12 relative z-10">
-        {/* Avatar */}
+      <div className="flex flex-col md:flex-row items-center md:items-end gap-10 -mt-16 px-6 md:px-12 relative z-10">
+        {/* Profile Image */}
         <div className="relative shrink-0">
-          {user.avatarUrl ? (
-            <Image
-              src={user.avatarUrl}
-              alt={displayName}
-              width={160}
-              height={160}
-              className="rounded-full object-cover border-8 border-[#FDFDFC] dark:border-[#0A0A0A] shadow-2xl bg-white dark:bg-zinc-900 h-32 w-32 sm:h-40 sm:w-40"
-            />
-          ) : (
-            <div className="flex h-32 w-32 sm:h-40 sm:w-40 items-center justify-center rounded-full border-8 border-[#FDFDFC] dark:border-[#0A0A0A] bg-gradient-to-br from-indigo-400 to-purple-500 text-6xl font-bold text-white shadow-2xl">
-              {displayName[0]?.toUpperCase()}
-            </div>
-          )}
+          <div className="h-32 w-32 md:h-40 md:w-40 rounded-xl overflow-hidden border-4 border-white dark:border-zinc-950 shadow-2xl bg-white dark:bg-zinc-900">
+            {user.avatarUrl ? (
+              <Image
+                src={user.avatarUrl}
+                alt={displayName}
+                width={160}
+                height={160}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-zinc-200 dark:text-zinc-800 uppercase">
+                {displayName[0]}
+              </div>
+            )}
+          </div>
           {user.role === "AUTHOR" && (
-            <div className="absolute bottom-2 right-2 bg-brand text-white p-2.5 rounded-full shadow-lg border-4 border-[#FDFDFC] dark:border-[#0A0A0A]" title="Author">
-              <BookOpen className="w-5 h-5" />
+            <div className="absolute -bottom-2 -right-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-2 rounded shadow-xl border-2 border-white dark:border-zinc-950">
+              <BookOpen className="w-4 h-4" />
             </div>
           )}
         </div>
 
-        {/* Info */}
-        <div className="flex-1 text-center sm:text-left mb-2 sm:mb-4 w-full">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-            <div>
-              <h1 className="text-4xl sm:text-5xl font-black text-zinc-900 dark:text-white tracking-tight mb-1">
+        {/* User Info & Actions */}
+        <div className="flex-1 w-full pb-2">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="text-center md:text-left">
+              <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mb-1 uppercase">
                 {displayName}
               </h1>
-              <p className="text-xl font-medium text-zinc-500 dark:text-zinc-400 mb-4">@{user.username}</p>
+              <p className="text-xs font-bold text-zinc-400 dark:text-zinc-500 mb-6 tracking-widest">@{user.username}</p>
               {user.bio && (
-                <p className="text-zinc-700 dark:text-zinc-300 max-w-2xl text-lg leading-relaxed">{user.bio}</p>
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed italic">
+                  &quot;{user.bio}&quot;
+                </p>
               )}
             </div>
 
-            {/* Actions */}
-            <div className="shrink-0 flex items-center justify-center gap-3">
+            <div className="flex items-center justify-center gap-3">
               {user.isOwnProfile ? (
                 <Link
-                  href="/profile/edit"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-900 dark:bg-white px-8 py-3.5 text-base font-bold text-white dark:text-zinc-900 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-xl"
+                  href="/settings"
+                  className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center gap-2"
                 >
+                  <Settings className="w-3.5 h-3.5" />
                   Edit Profile
                 </Link>
               ) : (
-                <>
+                <div className="flex items-center gap-3">
                   <FollowButton targetUserId={user.id} isFollowing={user.isFollowing} />
                   {user.role === "AUTHOR" && (
                     <NewsletterSubscribeButton 
@@ -88,63 +90,35 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                       initialIsSubscribed={!!user.isSubscribed} 
                     />
                   )}
-                </>
+                </div>
               )}
             </div>
           </div>
 
-          {/* Stats Bar */}
-          <div className="mt-8 flex flex-wrap justify-center sm:justify-start items-center gap-x-8 gap-y-4">
-            <Link
-              href={`/profile/${user.username}?tab=followers`}
-              className="flex items-center gap-3 group"
-            >
-              <div className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-900 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-800 transition-colors">
-                <Users className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
-              </div>
-              <div className="text-left">
-                <div className="font-black text-2xl text-zinc-900 dark:text-white leading-none mb-0.5">
-                  {user._count.followers}
-                </div>
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  Followers
-                </div>
-              </div>
+          {/* Simple Stats Bar */}
+          <div className="mt-10 flex flex-wrap justify-center md:justify-start items-center gap-x-12 gap-y-6 pt-8 border-t border-zinc-50 dark:border-zinc-900">
+            <Link href={`/profile/${user.username}?tab=followers`} className="flex flex-col group">
+              <span className="text-base font-bold text-zinc-900 dark:text-white leading-none tracking-tighter">{user._count.followers}</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 mt-1.5 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Followers</span>
             </Link>
 
-            <div className="w-px h-12 bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
-
-            <Link
-              href={`/profile/${user.username}?tab=following`}
-              className="flex items-center gap-3 group"
-            >
-              <div className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-900 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-800 transition-colors">
-                <Users className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
-              </div>
-              <div className="text-left">
-                <div className="font-black text-2xl text-zinc-900 dark:text-white leading-none mb-0.5">
-                  {user._count.following}
-                </div>
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  Following
-                </div>
-              </div>
+            <Link href={`/profile/${user.username}?tab=following`} className="flex flex-col group">
+              <span className="text-base font-bold text-zinc-900 dark:text-white leading-none tracking-tighter">{user._count.following}</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 mt-1.5 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">Following</span>
             </Link>
 
-            <div className="w-px h-12 bg-zinc-200 dark:bg-zinc-800 hidden sm:block" />
+            <div className="flex flex-col">
+              <span className="text-base font-bold text-zinc-900 dark:text-white leading-none tracking-tighter">{formatDate(user.createdAt)}</span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 mt-1.5">Member Since</span>
+            </div>
 
-            <div className="flex items-center gap-3">
-              <div className="p-3 rounded-2xl bg-zinc-100 dark:bg-zinc-900">
-                <Calendar className="h-5 w-5 text-zinc-500 dark:text-zinc-400" />
-              </div>
-              <div className="text-left">
-                <div className="font-black text-2xl text-zinc-900 dark:text-white leading-none mb-0.5">
-                  Joined
-                </div>
-                <div className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  {formatDate(user.createdAt)}
-                </div>
-              </div>
+            <div className="flex gap-4 ml-auto">
+              <Link href="/achievements" className="p-2.5 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800 hover:border-zinc-900 dark:hover:border-white transition-colors">
+                <Award className="h-4 w-4 text-zinc-300" />
+              </Link>
+              <Link href="/reading-stats" className="p-2.5 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800 hover:border-zinc-900 dark:hover:border-white transition-colors">
+                <BarChart3 className="h-4 w-4 text-zinc-300" />
+              </Link>
             </div>
           </div>
         </div>
