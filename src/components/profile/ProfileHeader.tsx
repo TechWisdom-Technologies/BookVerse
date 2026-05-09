@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { FollowButton } from "./FollowButton";
+import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
 import { Calendar, BookOpen, Users } from "lucide-react";
 
 interface ProfileHeaderProps {
@@ -18,6 +19,7 @@ interface ProfileHeaderProps {
       following: number;
     };
     isFollowing: boolean;
+    isSubscribed?: boolean;
     isOwnProfile: boolean;
   };
 }
@@ -78,7 +80,15 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                   Edit Profile
                 </Link>
               ) : (
-                <FollowButton targetUserId={user.id} isFollowing={user.isFollowing} />
+                <>
+                  <FollowButton targetUserId={user.id} isFollowing={user.isFollowing} />
+                  {user.role === "AUTHOR" && (
+                    <NewsletterSubscribeButton 
+                      authorId={user.id} 
+                      initialIsSubscribed={!!user.isSubscribed} 
+                    />
+                  )}
+                </>
               )}
             </div>
           </div>

@@ -1,3 +1,4 @@
+// Updated to fix syntax error in prisma queries
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
@@ -97,10 +98,23 @@ export async function GET(_request: Request, { params }: RouteParams) {
         })
       : null;
 
+    // Check if current user is subscribed to this user's newsletter
+    const isSubscribed = currentUserId && user.role === "AUTHOR"
+      ? await prisma.newsletterSubscriber.findUnique({
+          where: {
+            authorId_subscriberId: {
+              authorId: user.id,
+              subscriberId: currentUserId,
+            },
+          },
+        })
+      : null;
+
     return NextResponse.json({
       user: {
         ...user,
         isFollowing: !!isFollowing,
+        isSubscribed: !!isSubscribed,
         isOwnProfile: currentUserId === user.id,
       },
     });

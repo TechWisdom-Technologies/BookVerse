@@ -1,11 +1,6 @@
-import { OpenAI } from "openai";
 import { NextResponse } from "next/server";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-export const maxDuration = 60; // DALL-E generation can take a bit of time
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
@@ -18,25 +13,25 @@ export async function POST(req: Request) {
       );
     }
 
-    // Enhance the prompt to ensure it generates a good book cover
     const enhancedPrompt = `A professional, high-quality book cover design without any text. Style: ${prompt}. Cinematic lighting, highly detailed, centered composition, suitable for a novel cover.`;
 
-    const response = await openai.images.generate({
-      model: "dall-e-3",
-      prompt: enhancedPrompt,
-      n: 1,
-      size: "1024x1024",
-      quality: "standard",
-      style: "vivid",
-    });
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(
+      enhancedPrompt
+    )}`;
 
-    const imageUrl = response.data?.[0]?.url;
-
-    if (!imageUrl) {
-      throw new Error("No image URL returned by OpenAI");
+    // Fetch the image on the server to prevent CORS or slow-loading broken images on the frontend.
+    const imageRes = await fetch(imageUrl);
+    if (!imageRes.ok) {
+      throw new Error(`Pollinations API returned ${imageRes.status}`);
     }
 
-    return NextResponse.json({ url: imageUrl });
+    const arrayBuffer = await imageRes.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const base64 = buffer.toString("base64");
+    const mimeType = imageRes.headers.get("content-type") || "image/jpeg";
+
+    // Return as a Data URL so it loads instantly in the <img> tag
+    return NextResponse.json({ url: `data:${mimeType};base64,${base64}` });
   } catch (error) {
     console.error("Failed to generate cover:", error);
     return NextResponse.json(
