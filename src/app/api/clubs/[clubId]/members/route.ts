@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { createNotification } from '@/lib/notifications';
 
 /**
  * POST /api/clubs/[clubId]/members
@@ -56,6 +57,17 @@ export async function POST(
         },
       },
     });
+
+    // Notify club owner
+    if (club.ownerId !== user.id) {
+      void createNotification({
+        userId: club.ownerId,
+        type: "CLUB_JOIN",
+        title: "New Club Member",
+        message: `${user.displayName || user.username} joined your club "${club.name}"!`,
+        link: `/clubs/${clubId}`,
+      });
+    }
 
     return NextResponse.json(member, { status: 201 });
   } catch (error) {

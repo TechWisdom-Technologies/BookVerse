@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { commentSchema } from "@/lib/validators";
 import { sendCommentNotification } from "@/lib/resend";
+import { createNotification } from "@/lib/notifications";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -135,7 +136,7 @@ export async function POST(request: Request, { params }: RouteParams) {
       void prisma.user.findUnique({
         where: { id: story.authorId },
         select: { email: true, displayName: true },
-      }).then((storyAuthor) => {
+      }).then(async (storyAuthor) => {
         if (storyAuthor?.email) {
           sendCommentNotification(storyAuthor.email, {
             authorName: storyAuthor.displayName || "Author",
@@ -145,7 +146,32 @@ export async function POST(request: Request, { params }: RouteParams) {
             storyId: story.id,
           });
         }
+        
+        await createNotification({
+          userId: story.authorId,
+          type: "COMMENT",
+          title: "New Comment on Your Story",
+          message: `${dbUser.displayName || dbUser.username} commented on "${story.title}"`,
+          link: `/stories/${story.id}`,
+        });
       });
+    }
+
+    // If it's a reply and not replying to themselves, notify the parent comment author
+    if (parsed.parentId) {
+      const parentComment = await prisma.comment.findUnique({
+        where: { id: parsed.parentId },
+        select: { authorId: true },
+      });
+      if (parentComment && parentComment.authorId !== dbUser.id) {
+        await createNotification({
+          userId: parentComment.authorId,
+          type: "REPLY",
+          title: "New Reply to Your Comment",
+          message: `${dbUser.displayName || dbUser.username} replied to your comment on "${story.title}"`,
+          link: `/stories/${story.id}`,
+        });
+      }
     }
 
     return NextResponse.json({ comment }, { status: 201 });

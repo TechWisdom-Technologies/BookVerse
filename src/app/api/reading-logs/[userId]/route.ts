@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { createNotification } from '@/lib/notifications';
 
 /**
  * GET /api/reading-logs/[userId]
@@ -99,7 +100,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { pagesRead = 0, minutes = 0, date } = await req.json();
+    const { pagesRead = 0, minutes = 0, date, storyId } = await req.json();
 
     const logDate = date ? new Date(date) : new Date();
     logDate.setHours(0, 0, 0, 0);
@@ -137,7 +138,26 @@ export async function POST(
           date: logDate,
           pagesRead,
           minutes,
+          storyId, // Optional tracking of the story
         },
+      });
+    }
+
+    // Send notification to author if storyId exists and it's a new log
+    if (storyId) {
+      void prisma.story.findUnique({
+        where: { id: storyId },
+        select: { authorId: true, title: true }
+      }).then((story) => {
+        if (story && story.authorId !== userId) {
+          createNotification({
+            userId: story.authorId,
+            type: 'READ',
+            title: 'Someone is reading your story!',
+            message: `A reader just logged a reading session for "${story.title}" (${minutes} minutes).`,
+            link: `/stories/${storyId}`,
+          });
+        }
       });
     }
 

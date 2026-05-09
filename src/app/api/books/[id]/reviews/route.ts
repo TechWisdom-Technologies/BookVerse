@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { z } from "zod";
+import { createNotification } from "@/lib/notifications";
 
 const reviewSchema = z.object({
   rating: z.number().min(1).max(5),

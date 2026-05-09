@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { createNotification } from '@/lib/notifications';
 
 /**
  * GET /api/clubs/[clubId]/discussions
@@ -86,6 +87,22 @@ export async function POST(
           select: { id: true, username: true, displayName: true, avatarUrl: true },
         },
       },
+    });
+
+    // Notify other club members
+    void prisma.clubMember.findMany({
+      where: { clubId, userId: { not: user.id } },
+      include: { club: { select: { name: true } } }
+    }).then(async (members) => {
+      for (const member of members) {
+        await createNotification({
+          userId: member.userId,
+          type: "DISCUSSION",
+          title: `New Discussion in ${member.club.name}`,
+          message: `${user.displayName || user.username} posted: "${title}"`,
+          link: `/clubs/${clubId}`, // or specific discussion page
+        });
+      }
     });
 
     return NextResponse.json(discussion, { status: 201 });

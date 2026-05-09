@@ -5,10 +5,11 @@ import { toast } from 'react-hot-toast';
 
 interface ReadingLogFormProps {
   userId: string;
+  storyId?: string; // Optional story to track
   onSuccess?: () => void;
 }
 
-export function ReadingLogForm({ userId, onSuccess }: ReadingLogFormProps) {
+export function ReadingLogForm({ userId, storyId, onSuccess }: ReadingLogFormProps) {
   const [pagesRead, setPagesRead] = useState('');
   const [minutes, setMinutes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +30,7 @@ export function ReadingLogForm({ userId, onSuccess }: ReadingLogFormProps) {
         body: JSON.stringify({
           pagesRead: parseInt(pagesRead) || 0,
           minutes: parseInt(minutes) || 0,
+          storyId,
         }),
       });
 

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
+import { createNotification } from "@/lib/notifications";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2024-12-18.acacia",
@@ -32,10 +33,21 @@ export async function POST(req: Request) {
       const tipId = session.metadata?.tipId;
 
       if (tipId) {
-        await prisma.tip.update({
+        const completedTip = await prisma.tip.update({
           where: { id: tipId },
           data: { status: "COMPLETED" },
+          include: { sender: true }
         });
+        
+        if (completedTip) {
+          void createNotification({
+            userId: completedTip.receiverId,
+            type: "TIP",
+            title: "You received a Tip!",
+            message: `${completedTip.sender?.displayName || completedTip.sender?.username || 'Someone'} sent you a tip of ${(completedTip.amount / 100).toFixed(2)}!`,
+            link: `/profile`,
+          });
+        }
       }
     }
 

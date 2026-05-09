@@ -106,8 +106,25 @@ model User {
   onboardingQuiz           OnboardingQuiz?
   contentReports           ContentReport[]          @relation("reporter")
   dmcaNotices              DMCANotice[]             @relation("dmca_submitter")
+  notifications            Notification[]           @relation("user_notifications")
 
   @@map("users")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  type      String   // e.g., "REACT", "COMMENT", "REPLY", "STORY_POST", "DISCUSSION"
+  title     String
+  message   String
+  link      String?  
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation("user_notifications", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("notifications")
 }
 
 model Book {

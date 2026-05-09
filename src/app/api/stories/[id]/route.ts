@@ -4,6 +4,7 @@ import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
 import { indexStory, removeStory } from "@/lib/meilisearch";
 import { Role, type ReactionType } from "@prisma/client";
+import { createNotification } from "@/lib/notifications";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -108,6 +109,18 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         where: { id },
         data: { viewCount: { increment: 1 } },
       });
+      
+      // Milestone check
+      const milestones = [100, 500, 1000, 5000, 10000];
+      if (milestones.includes(updated.viewCount)) {
+        void createNotification({
+          userId: updated.authorId,
+          type: 'MILESTONE',
+          title: 'Story Milestone reached!',
+          message: `Congratulations! Your story "${updated.title}" just reached ${updated.viewCount} views.`,
+          link: `/stories/${id}`,
+        });
+      }
       return NextResponse.json({ story: updated });
     }
 
@@ -139,7 +152,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     });
 
     // Sync with Meilisearch when published status changes
-    if (parsed.published === true) {
+    if (parsed.published === true && !existing.published) {
       void indexStory({
         id: story.id,
         title: story.title,
@@ -150,6 +163,22 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         createdAt: story.createdAt.toISOString(),
         viewCount: story.viewCount,
       });
+
+      // Notify followers
+      void prisma.follow.findMany({
+        where: { followingId: story.authorId },
+      }).then(async (followers) => {
+        for (const follower of followers) {
+          await createNotification({
+            userId: follower.followerId,
+            type: "STORY_POST",
+            title: "New Story Published!",
+            message: `${story.author.displayName || story.author.username} just published "${story.title}"`,
+            link: `/stories/${story.id}`,
+          });
+        }
+      });
+
     } else if (parsed.published === false) {
       void removeStory(story.id);
     }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import type { ReactionType } from "@prisma/client";
+import { createNotification } from "@/lib/notifications";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -102,6 +103,22 @@ export async function POST(request: Request, { params }: RouteParams) {
         userId: dbUser.id,
         reactionType,
       },
+    });
+
+    // Notify story author (fire and forget)
+    void prisma.story.findUnique({
+      where: { id: storyId },
+      select: { authorId: true, title: true }
+    }).then(async (story) => {
+      if (story && story.authorId !== dbUser.id) {
+        await createNotification({
+          userId: story.authorId,
+          type: "REACT",
+          title: "New Reaction",
+          message: `${dbUser.displayName || dbUser.username} reacted to your story "${story.title}" with a ${reactionType}`,
+          link: `/stories/${storyId}`,
+        });
+      }
     });
 
     return NextResponse.json({ reaction }, { status: 201 });

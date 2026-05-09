@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { sendFollowNotification } from "@/lib/resend";
 import { z } from "zod";
+import { createNotification } from "@/lib/notifications";
 
 const followSchema = z.object({
   followingId: z.string().min(1),
@@ -44,6 +45,15 @@ export async function POST(request: Request) {
       userName: targetUser.displayName || targetUser.username,
       followerName: dbUser.displayName || dbUser.username,
       followerAvatarUrl: dbUser.avatarUrl,
+    });
+
+    // Send in-app notification (fire-and-forget)
+    void createNotification({
+      userId: targetUser.id,
+      type: "FOLLOW",
+      title: "New Follower",
+      message: `${dbUser.displayName || dbUser.username} started following you!`,
+      link: `/profile/${dbUser.username}`,
     });
 
     return NextResponse.json({ follow }, { status: 201 });

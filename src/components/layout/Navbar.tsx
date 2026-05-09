@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
   BookOpen,
@@ -144,12 +144,30 @@ export function Navbar() {
   const pathname = usePathname();
   const { user, dbUser, loading, signOut } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (user && !loading) {
+      fetch("/api/notifications")
+        .then(res => res.json())
+        .then(data => {
+          if (data.unreadCount !== undefined) {
+            setUnreadCount(data.unreadCount);
+          }
+        })
+        .catch(err => console.error("Failed to fetch unread notifications", err));
+    }
+  }, [user, loading, pathname]); // Re-fetch on route change as a cheap update mechanism
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
 
   // Build dynamic nav arrays based on auth state
-  const leftItems = user ? [...authLeftItems, ...leftNavItems] : leftNavItems;
+  const dynamicAuthLeftItems = [
+    { href: "/notifications", label: "Alerts", icon: Bell, badge: unreadCount > 0 },
+  ];
+  
+  const leftItems = user ? [...dynamicAuthLeftItems, ...leftNavItems] : leftNavItems;
   const rightItems = user ? [...rightNavItems, ...authRightItems] : rightNavItems;
 
   return (
