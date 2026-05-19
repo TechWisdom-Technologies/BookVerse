@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, use } from "react";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -9,10 +9,11 @@ import { toast } from 'react-hot-toast';
 import { signInWithCustomToken } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
-export default function UserDetail({ params }: { params: { id: string } }) {
-  const { id } = params;
+export default function UserDetail({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [data, setData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const router = useRouter();
 
   useEffect(() => { fetchData(); }, [id]);
@@ -29,8 +30,6 @@ export default function UserDetail({ params }: { params: { id: string } }) {
   if (!data?.user) return <div className="p-12">User not found.</div>;
 
   const { user, analytics } = data;
-
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleBan = async () => {
     if (!confirm('Ban this user? This will revoke access.')) return;
