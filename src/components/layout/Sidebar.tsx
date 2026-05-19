@@ -8,6 +8,8 @@ import {
   BookOpen,
   FileText,
   MessageSquare,
+  AlertCircle,
+  Globe,
   ChevronLeft,
 } from "lucide-react";
 
@@ -23,6 +25,9 @@ const sidebarItems: SidebarItem[] = [
   { href: "/admin/books", label: "Books", icon: BookOpen },
   { href: "/admin/stories", label: "Stories", icon: FileText },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
+  { href: "/admin/dmca", label: "DMCA", icon: AlertCircle },
+  { href: "/admin/universes", label: "Universes", icon: Globe },
+  { href: "/admin/clubs", label: "Clubs", icon: Users },
 ];
 
 interface SidebarProps {

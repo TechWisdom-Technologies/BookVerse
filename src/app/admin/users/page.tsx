@@ -144,7 +144,7 @@ export default function AdminUsersPage() {
                           </div>
                           <div>
                             <p className="text-xs font-bold text-zinc-900 dark:text-white uppercase">
-                              {user.displayName || user.username}
+                              <Link href={`/admin/users/${user.id}`} className="hover:underline">{user.displayName || user.username}</Link>
                             </p>
                             <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">@{user.username}</p>
                           </div>

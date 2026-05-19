@@ -17,6 +17,10 @@ const nextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'luminaverse.sk',
+      },
+      {
+        protocol: 'https',
         hostname: 'image.pollinations.ai',
       },
     ],

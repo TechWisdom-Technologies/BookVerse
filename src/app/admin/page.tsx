@@ -115,6 +115,9 @@ export default function AdminPage() {
               { href: "/admin/books", label: "Volume Registry", desc: "Scholarly metadata and content moderation." },
               { href: "/admin/stories", label: "Creative Registry", desc: "Community world-record oversight." },
               { href: "/admin/comments", label: "Interaction Logs", desc: "Peer engagement and moderation protocol." },
+              { href: "/admin/dmca", label: "DMCA Notices", desc: "Copyright claims and takedown tracking." },
+              { href: "/admin/universes", label: "Universes", desc: "Manage story universes and metadata." },
+              { href: "/admin/clubs", label: "Clubs", desc: "Community clubs and membership oversight." },
             ].map((link) => (
               <Link
                 key={link.href}

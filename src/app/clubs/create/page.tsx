@@ -33,6 +33,7 @@ export default function CreateClubPage() {
     genre: '',
     isPrivate: false,
     maxMembers: '50',
+    coverUrl: '',
   });
 
   if (loading) {
@@ -184,6 +185,27 @@ export default function CreateClubPage() {
                 rows={5}
                 className="w-full px-5 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all text-xs leading-relaxed resize-none font-medium"
               />
+            </div>
+
+            {/* Cover Image URL */}
+            <div className="space-y-2">
+              <label htmlFor="coverUrl" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">
+                Cover Image URL (optional)
+              </label>
+              <input
+                type="text"
+                id="coverUrl"
+                name="coverUrl"
+                value={formData.coverUrl}
+                onChange={handleChange}
+                placeholder="https://example.com/image.jpg"
+                className="w-full px-5 py-3.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all text-xs font-medium"
+              />
+              {formData.coverUrl ? (
+                <div className="mt-2 w-40 h-24 rounded overflow-hidden border border-zinc-100 dark:border-zinc-800">
+                  <img src={formData.coverUrl} alt="cover preview" className="w-full h-full object-cover" />
+                </div>
+              ) : null}
             </div>
 
             {/* Genre Selection */}
