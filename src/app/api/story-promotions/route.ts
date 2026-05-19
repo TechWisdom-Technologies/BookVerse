@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 export async function GET(req: Request) {
   try {
@@ -32,6 +33,12 @@ export async function POST(req: Request) {
     const { dbUser } = await verifyToken();
     if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user has pro plan access (first 100 users get free)
+    const hasAccess = await hasFeatureAccess(dbUser, 'PRO');
+    if (!hasAccess) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 403 });
     }
 
     const body = await req.json();
