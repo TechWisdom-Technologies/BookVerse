@@ -8,12 +8,10 @@ import { prisma } from '@/lib/prisma';
  */
 export async function GET(
   req: NextRequest,
-  context: { params: any }
+  { params }: { params: Promise<{ clubId: string }> }
 ) {
   try {
-    // Robust params handling for Next.js 14/15 compatibility
-    const params = await context.params;
-    const clubId = params?.clubId || params?.id;
+    const { clubId } = await params;
     
     console.log('GET /api/clubs/[clubId] - ID:', clubId);
 

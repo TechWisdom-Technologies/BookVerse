@@ -3,12 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role } from "@prisma/client";
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { dbUser } = await verifyToken();
     if (dbUser.role !== Role.ADMIN) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const id = params.id;
+    const { id } = await params;
     const club = await prisma.club.findUnique({
       where: { id },
       include: { owner: { select: { id: true, username: true } }, members: { select: { id: true, userId: true, role: true } } },

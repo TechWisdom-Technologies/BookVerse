@@ -4,12 +4,12 @@ import { verifyToken } from "@/lib/auth";
 import { Role } from "@prisma/client";
 import { adminAuth } from "@/lib/firebase-admin";
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { dbUser } = await verifyToken();
     if (dbUser.role !== Role.ADMIN) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
-    const id = params.id;
+    const { id } = await params;
     const body = await request.json();
     const { action, until } = body;
 
