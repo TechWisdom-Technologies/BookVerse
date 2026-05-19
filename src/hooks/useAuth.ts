@@ -87,8 +87,18 @@ export function useAuth() {
   }, []);
 
   const resetPassword = useCallback(async (email: string) => {
-    const firebaseAuth = await import("firebase/auth");
-    return firebaseAuth.sendPasswordResetEmail(auth, email);
+    const response = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || "Failed to send reset email.");
+    }
   }, []);
 
   const signInWithGoogle = useCallback(() => {

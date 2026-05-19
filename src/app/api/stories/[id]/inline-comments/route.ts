@@ -45,7 +45,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { paragraphId, content, hasSpiderAlert } = body;
+    const { paragraphId, content, spoilerAlert, parentId } = body;
 
     if (!paragraphId || !content) {
       return NextResponse.json(
@@ -60,7 +60,8 @@ export async function POST(
         authorId: user.id,
         paragraphId,
         content,
-        hasSpiderAlert: hasSpiderAlert ?? false,
+        spoilerAlert: spoilerAlert ?? false,
+        parentId: parentId || null,
       },
       include: {
         author: {

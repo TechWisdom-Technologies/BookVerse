@@ -1,6 +1,22 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
+
+type ChallengeParticipantDelegate = {
+  findFirst(args: unknown): Promise<{ id: string } | null>;
+  create(args: unknown): Promise<unknown>;
+  delete(args: unknown): Promise<unknown>;
+};
+
+type ReadingChallengeDelegate = {
+  findUnique(args: unknown): Promise<unknown | null>;
+};
+
+type ChallengePrisma = {
+  readingChallenge: ReadingChallengeDelegate;
+  challengeParticipant: ChallengeParticipantDelegate;
+};
 
 export async function POST(
   req: Request,
@@ -12,8 +28,12 @@ export async function POST(
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
-    const challenge = await prisma.readingChallenge.findUnique({
+    const anyPrisma = prisma as unknown as ChallengePrisma;
+    const challenge = await anyPrisma.readingChallenge.findUnique({
       where: { id: challengeId },
     });
 
@@ -22,9 +42,9 @@ export async function POST(
     }
 
     // Check if already participating
-    const existing = await prisma.challengeParticipant.findFirst({
+    const existing = await anyPrisma.challengeParticipant.findFirst({
       where: {
-        userId: user.uid,
+        userId: user.id,
         challengeId: challengeId,
       },
     });
@@ -33,9 +53,9 @@ export async function POST(
       return NextResponse.json({ error: 'Already participating' }, { status: 400 });
     }
 
-    const participant = await prisma.challengeParticipant.create({
+    const participant = await anyPrisma.challengeParticipant.create({
       data: {
-        userId: user.uid,
+        userId: user.id,
         challengeId: challengeId,
         progress: 0,
       },
@@ -58,10 +78,14 @@ export async function DELETE(
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
-    const participant = await prisma.challengeParticipant.findFirst({
+    const anyPrisma = prisma as unknown as ChallengePrisma;
+    const participant = await anyPrisma.challengeParticipant.findFirst({
       where: {
-        userId: user.uid,
+        userId: user.id,
         challengeId: challengeId,
       },
     });
@@ -70,7 +94,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Not participating' }, { status: 404 });
     }
 
-    await prisma.challengeParticipant.delete({
+    await anyPrisma.challengeParticipant.delete({
       where: { id: participant.id },
     });
 

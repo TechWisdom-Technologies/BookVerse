@@ -25,6 +25,9 @@
     "paths": {
       "@/*": [
         "./src/*"
+      ],
+      "@prisma/client": [
+        "./src/generated/client"
       ]
     }
   },
@@ -37,6 +40,8 @@
     "**/*.mts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "Archive",
+    "scripts"
   ]
 }

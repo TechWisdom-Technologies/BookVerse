@@ -35,6 +35,24 @@ export async function POST(
       return NextResponse.json({ error: 'Only club owner can manage' }, { status: 403 });
     }
 
+    // Kick member (remove membership but don't ban)
+    if (action === 'kick') {
+      const targetId = userId || body.targetUserId;
+      if (!targetId) {
+        return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+      }
+
+      if (targetId === dbUser.id) {
+        return NextResponse.json({ error: 'Cannot kick yourself' }, { status: 400 });
+      }
+
+      await prisma.clubMember.deleteMany({
+        where: { clubId, userId: targetId },
+      });
+
+      return NextResponse.json({ success: true });
+    }
+
     // Ban member
     if (action === 'ban') {
       if (!userId) {
@@ -69,8 +87,8 @@ export async function POST(
       return NextResponse.json({ success: true, ban }, { status: 201 });
     }
 
-    // Generate join code
-    if (action === 'generate-code') {
+    // Generate join code (supporting both generate-code and generate_code actions)
+    if (action === 'generate-code' || action === 'generate_code') {
       const code = crypto.randomBytes(4).toString('hex').toUpperCase();
       
       await prisma.club.update({
@@ -81,6 +99,7 @@ export async function POST(
       return NextResponse.json({ 
         success: true, 
         code,
+        joinCode: code,
         joinUrl: `${process.env.NEXT_PUBLIC_BASE_URL || ''}/clubs/${clubId}?code=${code}`
       });
     }

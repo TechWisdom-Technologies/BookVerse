@@ -152,7 +152,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { name, description, genre, isPrivate, coverUrl } = await req.json();
+    const { name, description, genre, isPrivate, coverUrl, maxMembers } = await req.json();
 
     const updated = await prisma.club.update({
       where: { id: clubId },
@@ -162,6 +162,7 @@ export async function PATCH(
         ...(genre !== undefined && { genre }),
         ...(isPrivate !== undefined && { isPrivate }),
         ...(coverUrl !== undefined && { coverUrl }),
+        ...(maxMembers !== undefined && { maxMembers: maxMembers ? parseInt(maxMembers) : null }),
       },
       include: {
         owner: {

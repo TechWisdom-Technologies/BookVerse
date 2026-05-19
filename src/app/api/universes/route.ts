@@ -40,6 +40,11 @@ export async function GET(req: Request) {
             avatarUrl: true,
           },
         },
+        _count: {
+          select: {
+            stories: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
@@ -60,7 +65,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, description, genre } = body;
+    const { name, description, genre, coverUrl } = body;
 
     if (!name || !name.trim()) {
       return NextResponse.json({ error: 'Universe name is required' }, { status: 400 });
@@ -71,6 +76,7 @@ export async function POST(req: Request) {
         name: name.trim(),
         description: description?.trim() || null,
         genre: genre?.trim() || 'Fiction',
+        coverUrl: coverUrl?.trim() || null,
         userId: user.id,
       },
       include: {

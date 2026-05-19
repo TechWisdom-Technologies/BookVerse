@@ -76,6 +76,7 @@ export default function ClubDetailPage() {
   const [joinCodeInput, setJoinCodeInput] = useState('');
   const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(5);
 
   useEffect(() => {
     const fetchClub = async () => {
@@ -300,7 +301,7 @@ export default function ClubDetailPage() {
                   <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">No messages yet. Be the first to post!</p>
                 </div>
               ) : (
-                club.discussions?.map(discussion => {
+                club.discussions?.slice(0, visibleCount).map(discussion => {
                   const isExpanded = expandedMessages.has(discussion.id);
                   const isLong = discussion.content.length > 300;
 
@@ -351,6 +352,17 @@ export default function ClubDetailPage() {
                     </article>
                   );
                 })
+              )}
+
+              {club.discussions && club.discussions.length > visibleCount && (
+                <div className="pt-4 flex justify-center">
+                  <button
+                    onClick={() => setVisibleCount(prev => prev + 5)}
+                    className="px-8 py-3.5 bg-transparent hover:bg-zinc-50 dark:hover:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 hover:border-zinc-900 dark:hover:border-white text-zinc-400 hover:text-zinc-950 dark:hover:text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all duration-300 flex items-center gap-2 shadow-sm font-mono"
+                  >
+                    + Load More Messages ({club.discussions.length - visibleCount} Remaining)
+                  </button>
+                </div>
               )}
             </div>
           </section>

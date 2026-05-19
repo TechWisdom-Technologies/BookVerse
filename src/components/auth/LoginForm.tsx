@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Loader2, Shield } from "lucide-react";
+import { getFriendlyAuthErrorMessage } from "@/lib/auth-errors";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -40,7 +41,7 @@ export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
     try {
       await signIn(result.data.email, result.data.password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to sign in.");
+      setError(getFriendlyAuthErrorMessage(err, "Failed to sign in."));
       setSubmitting(false);
     }
   }
@@ -51,7 +52,7 @@ export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
     try {
       await signInWithGoogle();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to sign in with Google.");
+      setError(getFriendlyAuthErrorMessage(err, "Failed to sign in with Google."));
       setSubmitting(false);
     }
   }

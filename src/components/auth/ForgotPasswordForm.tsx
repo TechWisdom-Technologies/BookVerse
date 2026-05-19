@@ -5,6 +5,7 @@ import Link from "next/link";
 import { z } from "zod";
 import { MailCheck } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { getFriendlyAuthErrorMessage } from "@/lib/auth-errors";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -33,7 +34,7 @@ export function ForgotPasswordForm({ redirectUrl = "/" }: { redirectUrl?: string
       await resetPassword(result.data.email);
       setSuccess("Reset link sent. Check your email inbox and spam folder.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send reset email.");
+      setError(getFriendlyAuthErrorMessage(err, "Failed to send reset email."));
     } finally {
       setSubmitting(false);
     }

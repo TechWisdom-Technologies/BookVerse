@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 /**
  * GET /api/author/analytics
  * Fetch analytics for the current author
  */
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const user = await getAuth();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
+      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
     // Get author's stories with analytics

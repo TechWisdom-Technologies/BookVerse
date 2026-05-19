@@ -28,8 +28,8 @@ export async function POST(req: Request) {
     const giftCode = `GIFT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
 
     const tierPricing: Record<string, number> = {
-      PRO: 9.99,
-      CREATOR: 19.99,
+      PRO: 499,
+      CREATOR: 999,
     };
 
     const gift = await prisma.giftMembership.create({
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
         code: giftCode,
         tier,
         duration,
-        sentBy: user.uid,
+        sentBy: user.id,
         recipientEmail,
         value: (tierPricing[tier] || 0) * duration,
         expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year

@@ -63,10 +63,15 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
               href="/admin"
               className="flex items-center gap-3 text-lg font-black tracking-tight text-zinc-900 dark:text-white"
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand text-white shadow-lg shadow-brand/20">
-                <LayoutDashboard className="h-4 w-4" />
+              <img
+                src="/bookverse.png"
+                alt="BookVerse"
+                className="h-8 w-8 object-contain rounded"
+              />
+              <div className="flex flex-col">
+                <span className="text-sm font-black text-zinc-900 dark:text-white leading-tight">Admin Panel</span>
+                <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400">By TechWisdom</span>
               </div>
-              Admin Panel
             </Link>
             <button
               onClick={onCloseAction}

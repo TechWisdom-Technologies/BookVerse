@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { FileType } from "@prisma/client";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { BookAnnotations } from "./BookAnnotations";
 
 const PdfReader = dynamic(() => import("./PdfReader").then((mod) => mod.PdfReader), {
   ssr: false,
@@ -47,6 +48,9 @@ export function BookReader({ fileUrl, fileType, title, bookId }: BookReaderProps
         ) : (
           <EpubReader fileUrl={fileUrl} />
         )}
+        <aside className="mt-10 rounded border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5">
+          <BookAnnotations bookId={bookId} />
+        </aside>
       </div>
     </div>
   );

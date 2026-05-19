@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { adminAuth } from "@/lib/firebase-admin";
+import { hasFeatureAccess, paidFeatureError } from "@/lib/entitlements";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,6 +27,9 @@ export async function POST(req: Request) {
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    if (!(await hasFeatureAccess(user, "PRO"))) {
+      return NextResponse.json(paidFeatureError("PRO"), { status: 402 });
     }
 
     const { subject, htmlContent } = await req.json();

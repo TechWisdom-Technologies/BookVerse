@@ -26,6 +26,23 @@ interface Universe {
   user: { id: string; username: string; displayName: string; avatarUrl?: string };
 }
 
+const getUniverseGraphic = (name: string) => {
+  const colors = [
+    "from-indigo-600 via-purple-600 to-pink-600",
+    "from-cyan-500 via-blue-600 to-indigo-700",
+    "from-emerald-500 via-teal-600 to-cyan-700",
+    "from-rose-500 via-pink-600 to-purple-700",
+    "from-amber-500 via-orange-600 to-rose-700",
+    "from-violet-600 via-fuchsia-600 to-pink-700"
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
+};
+
 export default function UniverseShowcasePage({ params }: { params: Promise<{ universeId: string }> }) {
   const { universeId } = use(params);
   const [universe, setUniverse] = useState<Universe | null>(null);
@@ -61,6 +78,35 @@ export default function UniverseShowcasePage({ params }: { params: Promise<{ uni
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
       <div className="max-w-7xl mx-auto px-6 py-12">
         
+        {/* Banner Graphic Showcase */}
+        <div className="relative h-64 w-full rounded-lg mb-12 overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-900 flex flex-col justify-end p-8">
+          {universe.coverUrl ? (
+            <img 
+              src={universe.coverUrl} 
+              alt="" 
+              className="absolute inset-0 w-full h-full object-cover" 
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${getUniverseGraphic(universe.name)}`} />
+          )}
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-[0.5px]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+          <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-white/10 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-black/30 blur-3xl pointer-events-none" />
+          
+          <div className="relative z-10 space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded bg-white/25 backdrop-blur-md text-white text-[9px] font-bold uppercase tracking-widest border border-white/20">
+                {universe.genre}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/90 font-mono flex items-center gap-1.5">
+                <Compass className="w-3.5 h-3.5 text-white/90 animate-pulse" /> Cosmic Hub
+              </span>
+            </div>
+            <h1 className="text-3xl font-extrabold tracking-tight text-white uppercase drop-shadow-md">{universe.name}</h1>
+          </div>
+        </div>
+
         {/* Minimal Header Dossier */}
         <header className="flex flex-col md:flex-row md:items-start justify-between gap-12 mb-20 pb-12 border-b border-zinc-100 dark:border-zinc-900">
           <div className="flex-1 space-y-6">

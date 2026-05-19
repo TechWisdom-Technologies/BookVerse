@@ -141,6 +141,13 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     if (body.coverUrl !== undefined) cleanBody.coverUrl = body.coverUrl || null;
     if (body.published !== undefined) cleanBody.published = body.published;
     if (body.universeId !== undefined) cleanBody.universeId = body.universeId || null;
+    if (body.subGenres !== undefined) cleanBody.subGenres = body.subGenres || [];
+    if (body.mood !== undefined) cleanBody.mood = body.mood || null;
+    if (body.contentWarnings !== undefined) cleanBody.contentWarnings = body.contentWarnings || [];
+    if (body.ageRating !== undefined) cleanBody.ageRating = body.ageRating !== null ? Number(body.ageRating) : 0;
+    if (body.tags !== undefined) cleanBody.tags = body.tags || [];
+    if (body.description !== undefined) cleanBody.description = body.description || null;
+
     // sequenceNumber: only pass if it's a valid number
     if (body.sequenceNumber !== undefined && body.sequenceNumber !== null) {
       const seqNum = Number(body.sequenceNumber);
@@ -160,8 +167,18 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         ...(parsed.summary !== undefined && { summary: parsed.summary }),
         ...(parsed.coverUrl !== undefined && { coverUrl: parsed.coverUrl }),
         ...(parsed.published !== undefined && { published: parsed.published }),
-        ...(parsed.universeId !== undefined && { universeId: parsed.universeId }),
+        ...(parsed.universeId !== undefined && {
+          universe: parsed.universeId
+            ? { connect: { id: parsed.universeId } }
+            : { disconnect: true }
+        }),
         ...(parsed.sequenceNumber !== undefined && { sequenceNumber: parsed.sequenceNumber }),
+        ...(parsed.subGenres !== undefined && { subGenres: parsed.subGenres }),
+        ...(parsed.mood !== undefined && { mood: parsed.mood }),
+        ...(parsed.contentWarnings !== undefined && { contentWarnings: parsed.contentWarnings }),
+        ...(parsed.ageRating !== undefined && { ageRating: parsed.ageRating }),
+        ...(parsed.tags !== undefined && { tags: parsed.tags }),
+        ...(parsed.description !== undefined && { description: parsed.description }),
       },
       include: {
         author: {
@@ -216,7 +233,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       );
     }
     return NextResponse.json(
-      { error: "Failed to update story" },
+      { error: error instanceof Error ? error.message : "Failed to update story" },
       { status: 500 }
     );
   }

@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, description, genre, isPrivate, coverUrl } = await req.json();
+    const { name, description, genre, isPrivate, coverUrl, maxMembers } = await req.json();
 
     if (!name) {
       return NextResponse.json(
@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
         genre: genre || null,
         isPrivate: isPrivate || false,
         coverUrl: coverUrl || null,
+        maxMembers: maxMembers ? parseInt(maxMembers) : 50,
         ownerId: user.id,
         joinCode: crypto.randomBytes(3).toString('hex').toUpperCase(),
         members: {

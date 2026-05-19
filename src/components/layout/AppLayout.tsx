@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { AiLibrarianWidget } from "@/components/shared/AiLibrarianWidget";
+import { DevPhaseModal } from "@/components/shared/DevPhaseModal";
 import { ReactNode } from "react";
 
 export function AppLayout({ children }: { children: ReactNode }) {
@@ -19,6 +20,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <Navbar />
       <div className="flex-1">{children}</div>
       <Footer />
+      <DevPhaseModal />
       <AiLibrarianWidget />
     </>
   );

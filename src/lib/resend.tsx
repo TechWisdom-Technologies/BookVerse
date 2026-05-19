@@ -3,9 +3,11 @@ import type { ReactElement } from "react";
 import { WelcomeEmail } from "@/emails/WelcomeEmail";
 import { CommentNotification } from "@/emails/CommentNotification";
 import { FollowNotification } from "@/emails/FollowNotification";
+import { ResetPasswordEmail } from "@/emails/ResetPasswordEmail";
+import { SupportRequestNotification } from "@/emails/SupportRequestNotification";
 
 const apiKey = process.env.RESEND_API_KEY;
-const from = process.env.RESEND_FROM_EMAIL;
+const from = process.env.RESEND_FROM_EMAIL || "BookVerse <onboarding@resend.dev>";
 const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const resend = apiKey ? new Resend(apiKey) : null;
@@ -18,6 +20,37 @@ export async function sendEmail(to: string, subject: string, content: ReactEleme
   }
 
   await resend.emails.send({ from, to, subject, react: content });
+}
+
+// Password Reset email - sent when a user requests password reset
+export function sendPasswordResetEmail(to: string, resetLink: string) {
+  void sendEmail(
+    to,
+    "Reset your BookVerse password",
+    <ResetPasswordEmail resetLink={resetLink} />
+  );
+}
+
+// Support Request email - sent to official@techwisdom.site when user submits support form
+export function sendSupportRequestEmail(data: {
+  name: string;
+  email: string;
+  category: string;
+  subject: string;
+  message: string;
+}) {
+  const adminEmail = "twtech.contact@gmail.com";
+  void sendEmail(
+    adminEmail,
+    `[Support Desk] ${data.category.toUpperCase()}: ${data.subject}`,
+    <SupportRequestNotification
+      name={data.name}
+      email={data.email}
+      category={data.category}
+      subject={data.subject}
+      message={data.message}
+    />
+  );
 }
 
 // Welcome email - sent when new user signs up

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { Eye, Heart, MessageSquare, BookOpen, Users, TrendingUp, BarChart3, ArrowLeft, Loader2, Globe, GlobeLock } from 'lucide-react';
 
 interface StoryAnalytics {
@@ -42,12 +42,14 @@ interface Analytics {
 
 export default function AuthorAnalyticsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) { router.push('/login'); return; }
+    if (authLoading) return;
+    if (!user) { router.push('/login?redirect=/author/analytics'); return; }
     const fetchAnalytics = async () => {
       try {
         setLoading(true);
@@ -55,21 +57,33 @@ export default function AuthorAnalyticsPage() {
         if (res.ok) {
           const data = await res.json();
           setAnalytics(data);
+        } else if (res.status === 402) {
+          const data = await res.json();
+          setUpgradeUrl(data.upgradeUrl || '/premium/checkout?plan=creator');
         }
       } finally { setLoading(false); }
     };
     fetchAnalytics();
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
-  if (loading) return (
+  if (authLoading || loading) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
     </div>
   );
 
   if (!analytics) return (
-    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
-      <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Analytics Offline</p>
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
+      <div className="text-center space-y-6">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">
+          {upgradeUrl ? 'Creator plan required for analytics.' : 'Analytics Offline'}
+        </p>
+        {upgradeUrl && (
+          <Link href={upgradeUrl} className="inline-flex px-8 py-3 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest">
+            Upgrade to Creator
+          </Link>
+        )}
+      </div>
     </div>
   );
 

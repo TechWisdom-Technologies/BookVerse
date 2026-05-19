@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
-  BookOpen,
   PenLine,
   Library,
   Search,
@@ -15,20 +14,21 @@ import {
   Upload,
   Shield,
   Home,
+  HelpCircle,
   Settings,
-  Heart,
-  Compass,
-  Bookmark,
   Bell,
-  Sparkles,
   Crown,
   Feather,
   MessageSquare,
   Gift,
   Crown as Premium,
   Trophy,
-  Target,
   Globe,
+  BarChart3,
+  PlusCircle,
+  Mail,
+  Layers,
+  Send,
 } from "lucide-react";
 
 // Navigation item type
@@ -158,11 +158,20 @@ export function Navbar() {
     pathname === href || pathname.startsWith(href + "/");
 
   // Build dynamic nav arrays based on auth state
-  const dynamicAuthLeftItems = [
+  const dynamicAuthLeftItems: NavItem[] = [
     { href: "/notifications", label: "Notifications", icon: Bell, badge: unreadCount > 0 },
   ];
 
-  const leftItems = user ? [...dynamicAuthLeftItems, ...leftNavItems] : leftNavItems;
+  const leftItems: NavItem[] = user
+    ? [
+        { href: "/support", label: "Support", icon: HelpCircle },
+        ...dynamicAuthLeftItems,
+        ...leftNavItems,
+      ]
+    : [
+        { href: "/support", label: "Support", icon: HelpCircle },
+        ...leftNavItems,
+      ];
   const rightItems = user ? [...rightNavItems, ...authRightItems] : rightNavItems;
 
   return (
@@ -277,35 +286,63 @@ export function Navbar() {
                 </div>
 
                 {/* Creator */}
-                {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
-                  <div>
-                    <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Creator</h3>
+                <div>
+                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Author</h3>
+                  <DropdownItem
+                    href="/write"
+                    icon={PenLine}
+                    label="Author Studio"
+                    highlight
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/new"
+                    icon={PlusCircle}
+                    label="New Story"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/universes"
+                    icon={Layers}
+                    label="Story Universes"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/author/analytics"
+                    icon={BarChart3}
+                    label="Analytics"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/author/newsletter"
+                    icon={Mail}
+                    label="Subscribers"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/newsletter"
+                    icon={Send}
+                    label="Send Newsletter"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
                     <DropdownItem
-                      href="/write"
-                      icon={PenLine}
-                      label="Write Story"
+                      href="/upload"
+                      icon={Upload}
+                      label="Upload Book"
+                      onClick={() => setProfileOpen(false)}
+                    />
+                  )}
+                  {dbUser?.role === "ADMIN" && (
+                    <DropdownItem
+                      href="/admin"
+                      icon={Shield}
+                      label="Admin Panel"
                       highlight
                       onClick={() => setProfileOpen(false)}
                     />
-                    {dbUser?.role === "AUTHOR" && (
-                      <DropdownItem
-                        href="/upload"
-                        icon={Upload}
-                        label="Upload Book"
-                        onClick={() => setProfileOpen(false)}
-                      />
-                    )}
-                    {dbUser?.role === "ADMIN" && (
-                      <DropdownItem
-                        href="/admin"
-                        icon={Shield}
-                        label="Admin Panel"
-                        highlight
-                        onClick={() => setProfileOpen(false)}
-                      />
-                    )}
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               {/* Sign Out */}

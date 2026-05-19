@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getAuth } from '@/lib/auth';
+import { verifyToken } from '@/lib/auth';
 
 export async function GET(req: Request) {
   try {
@@ -29,8 +29,8 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const user = await getAuth();
-    if (!user) {
+    const { dbUser } = await verifyToken();
+    if (!dbUser) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -46,10 +46,10 @@ export async function POST(req: Request) {
 
     const story = await prisma.story.findUnique({
       where: { id: storyId },
-      select: { userId: true },
+      select: { authorId: true },
     });
 
-    if (!story || story.userId !== user.id) {
+    if (!story || story.authorId !== dbUser.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

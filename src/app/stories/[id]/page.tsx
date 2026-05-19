@@ -4,11 +4,13 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactionType } from "@prisma/client";
-import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft, Heart, Coins } from "lucide-react";
+import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft } from "lucide-react";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { ReactionBar } from "@/components/stories/ReactionBar";
 import { StoryViewTracker } from "@/components/stories/StoryViewTracker";
 import { TipAuthorDialog } from "@/components/stories/TipAuthorDialog";
+import { StoryFeatureActions } from "@/components/stories/StoryFeatureActions";
+import { PromotionBadge } from "@/components/promotions/PromotionBadge";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -50,6 +52,11 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     include: {
       author: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true, _count: { select: { followers: true, following: true } } } },
       chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true } },
+      promotions: {
+        where: { status: "ACTIVE", endDate: { gt: new Date() } },
+        orderBy: { endDate: "asc" },
+        select: { id: true, tier: true, endDate: true },
+      },
       _count: { select: { reactions: true, comments: true } },
     },
   });
@@ -91,6 +98,13 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           <div className="flex-1 space-y-6">
             <div className="space-y-4">
               <h1 className="text-3xl font-bold tracking-tight">{story.title}</h1>
+              {story.promotions.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {story.promotions.map((promotion) => (
+                    <PromotionBadge key={promotion.id} tier={promotion.tier} endDate={promotion.endDate.toISOString()} />
+                  ))}
+                </div>
+              )}
               
               <div className="flex items-center gap-4">
                 <Link href={`/profile/${story.author.username}`} className="flex items-center gap-3 group">
@@ -172,6 +186,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           </div>
           <CommentSection storyId={story.id} currentUserId={currentUserId ?? undefined} />
         </section>
+
+        <StoryFeatureActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
       </div>
     </main>
   );

@@ -3,18 +3,11 @@
 import { useEffect, useState } from 'react';
 import { 
   Trophy, 
-  Users, 
   Loader2, 
   ArrowLeft, 
-  BookOpen, 
   CheckCircle2, 
-  Target,
-  ChevronRight,
-  ShieldCheck,
-  Activity
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
 import Link from 'next/link';
 
@@ -30,10 +23,10 @@ interface Challenge {
 }
 
 export default function ReadingChallengesPage() {
-  const router = useRouter();
   const { dbUser } = useAuth();
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
+  const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
   const [filter, setFilter] = useState('ACTIVE');
   const [joiningId, setJoiningId] = useState<string | null>(null);
 
@@ -46,6 +39,10 @@ export default function ReadingChallengesPage() {
       if (res.ok) {
         const data = await res.json();
         setChallenges(data);
+        setUpgradeUrl(null);
+      } else if (res.status === 402) {
+        const data = await res.json();
+        setUpgradeUrl(data.upgradeUrl || '/premium/checkout?plan=pro');
       }
     } finally { setLoading(false); }
   };
@@ -58,6 +55,10 @@ export default function ReadingChallengesPage() {
       if (res.ok) {
         toast.success('Challenge started!');
         fetchChallenges();
+      } else if (res.status === 402) {
+        const data = await res.json();
+        setUpgradeUrl(data.upgradeUrl || '/premium/checkout?plan=pro');
+        toast.error('Pro plan required for reading challenges.');
       }
     } finally { setJoiningId(null); }
   };
@@ -66,6 +67,17 @@ export default function ReadingChallengesPage() {
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
     </div>
+  );
+
+  if (upgradeUrl) return (
+    <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
+      <div className="text-center space-y-6">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Pro plan required for reading challenges.</p>
+        <Link href={upgradeUrl} className="inline-flex px-8 py-3 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest">
+          Upgrade to Pro
+        </Link>
+      </div>
+    </main>
   );
 
   return (

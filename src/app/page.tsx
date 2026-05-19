@@ -12,12 +12,9 @@ import {
   ArrowRight,
   Users,
   Library,
-  PenTool,
   Award,
   Clock,
   Zap,
-  ChevronRight,
-  Play,
   Download,
   Bookmark,
   Activity,
@@ -46,11 +43,34 @@ const features = [
 
 export default async function HomePage() {
   try {
-    const [featured, recent, trending, stories] = await Promise.all([
+    const [featured, recent, trending, stories, promotedStories] = await Promise.all([
       prisma.book.findMany({ take: 6, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
       prisma.book.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
       prisma.book.findMany({ take: 4, orderBy: { createdAt: "desc" }, where: { downloadCount: { gte: 100 } }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
       prisma.story.findMany({ take: 8, where: { published: true }, orderBy: { viewCount: "desc" }, select: { id: true, title: true, coverUrl: true, summary: true, viewCount: true, createdAt: true, author: { select: { id: true, username: true, displayName: true, avatarUrl: true } }, _count: { select: { chapters: true, reactions: true, comments: true } } } }),
+      prisma.storyPromotion.findMany({
+        take: 8,
+        where: {
+          status: "ACTIVE",
+          endDate: { gt: new Date() },
+          story: { published: true },
+        },
+        orderBy: [{ tier: "desc" }, { endDate: "asc" }],
+        include: {
+          story: {
+            select: {
+              id: true,
+              title: true,
+              coverUrl: true,
+              summary: true,
+              viewCount: true,
+              createdAt: true,
+              author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+              _count: { select: { chapters: true, reactions: true, comments: true } },
+            },
+          },
+        },
+      }),
     ]);
 
     const addRatings = async <T extends Pick<Book, "id">>(books: T[]) => {
@@ -63,6 +83,7 @@ export default async function HomePage() {
 
     const [featuredWithRatings, recentWithRatings, trendingWithRatings] = await Promise.all([addRatings(featured), addRatings(recent), addRatings(trending)]);
     const formattedStories = stories.map(story => ({ ...story, createdAt: story.createdAt.toISOString() }));
+    const formattedPromotedStories = promotedStories.map(({ story }) => ({ ...story, createdAt: story.createdAt.toISOString() }));
 
     return (
       <main className="overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
@@ -104,6 +125,26 @@ export default async function HomePage() {
             <BookGrid books={featuredWithRatings} />
           </div>
         </section>
+
+        {/* Latest Stories */}
+        {formattedPromotedStories.length > 0 && (
+          <section className="py-32 px-6 border-y border-zinc-50 dark:border-zinc-900 bg-zinc-50/10">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex items-end justify-between mb-16">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
+                    <Zap className="w-4 h-4" /> Promoted Stories
+                  </div>
+                  <h2 className="text-xl font-bold tracking-tight uppercase">Spotlight Reads.</h2>
+                </div>
+                <Link href="/stories" className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all underline-offset-8 hover:underline">
+                  Explore More
+                </Link>
+              </div>
+              <StoryGrid stories={formattedPromotedStories} />
+            </div>
+          </section>
+        )}
 
         {/* Latest Stories */}
         <section className="py-32 px-6 border-y border-zinc-50 dark:border-zinc-900 bg-zinc-50/10">
@@ -188,7 +229,7 @@ export default async function HomePage() {
         </section>
       </main>
     );
-  } catch (error) {
+  } catch {
     return (
       <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
         <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 animate-pulse italic">Platform Offline</p>

@@ -9,7 +9,22 @@ export default function NotFoundPage() {
       <div className="max-w-[400px] w-full">
         
         {/* Header */}
-        <div className="mb-10 pb-6 border-b border-zinc-100 dark:border-zinc-900">
+        <div className="mb-10 pb-6 border-b border-zinc-100 dark:border-zinc-900 flex flex-col items-center text-center">
+          <Link href="/" className="flex flex-col items-center gap-2 group mb-6">
+            <img
+              src="/bookverse.png"
+              alt="BookVerse Logo"
+              className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300"
+            />
+            <div className="flex flex-col items-center">
+              <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
+                BookVerse
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
+                By TechWisdom Technologies
+              </span>
+            </div>
+          </Link>
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-4 italic">
             <AlertCircle className="w-3.5 h-3.5" />
             Page Not Found

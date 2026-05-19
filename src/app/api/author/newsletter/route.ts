@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 /**
  * GET /api/author/newsletter
  * Get newsletter subscribers for the current author
  */
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const user = await getAuth();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
+      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
     const subscribers = await prisma.newsletterSubscriber.findMany({
@@ -46,7 +50,7 @@ export async function GET(req: NextRequest) {
  * POST /api/author/newsletter/subscribe
  * Subscribe to an author's newsletter
  */
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const user = await getAuth();
     if (!user) {

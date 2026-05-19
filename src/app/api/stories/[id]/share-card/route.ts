@@ -36,7 +36,7 @@ export async function GET(
         reactions: story.reactionCount || 0,
         chapters: chapterCount,
       },
-      shareText: `📚 Reading "${story.title}" by @${story.author.username} on BookVerse. Join the community! 🎉`,
+      shareText: `Reading "${story.title}" by @${story.author.username} on BookVerse. Join the community!`,
     };
 
     return NextResponse.json(shareCard);

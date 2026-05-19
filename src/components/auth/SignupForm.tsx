@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Loader2, UserPlus } from "lucide-react";
+import { getFriendlyAuthErrorMessage } from "@/lib/auth-errors";
 
 const signupSchema = z
   .object({
@@ -47,7 +48,7 @@ export function SignupForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
     try {
       await signUp(result.data.email, result.data.password);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create account.");
+      setError(getFriendlyAuthErrorMessage(err, "Failed to create account."));
       setSubmitting(false);
     }
   }
@@ -58,7 +59,7 @@ export function SignupForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
     try {
       await signInWithGoogle();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to sign up with Google.");
+      setError(getFriendlyAuthErrorMessage(err, "Failed to sign up with Google."));
       setSubmitting(false);
     }
   }

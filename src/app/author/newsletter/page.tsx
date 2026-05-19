@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
-import { Mail, Users, Loader2, Search, ArrowLeft, Lightbulb, Calendar } from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { Mail, Users, Loader2, Search, ArrowLeft, Lightbulb } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
 
@@ -21,14 +21,16 @@ interface Subscriber {
 
 export default function NewsletterManagementPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
+  const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredSubscribers, setFilteredSubscribers] = useState<Subscriber[]>([]);
 
   useEffect(() => {
-    if (!user) { router.push('/login'); return; }
+    if (authLoading) return;
+    if (!user) { router.push('/login?redirect=/author/newsletter'); return; }
     const fetchSubscribers = async () => {
       try {
         setLoading(true);
@@ -37,17 +39,20 @@ export default function NewsletterManagementPage() {
           const data = await res.json();
           setSubscribers(data.subscribers);
           setFilteredSubscribers(data.subscribers);
+        } else if (res.status === 402) {
+          const data = await res.json();
+          setUpgradeUrl(data.upgradeUrl || '/premium/checkout?plan=creator');
         } else {
           toast.error('Failed to load subscribers');
         }
-      } catch (error) {
+      } catch {
         toast.error('An error occurred');
       } finally {
         setLoading(false);
       }
     };
     fetchSubscribers();
-  }, [user, router]);
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     const filtered = subscribers.filter(
@@ -59,10 +64,21 @@ export default function NewsletterManagementPage() {
     setFilteredSubscribers(filtered);
   }, [searchQuery, subscribers]);
 
-  if (loading) return (
+  if (authLoading || loading) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
     </div>
+  );
+
+  if (upgradeUrl) return (
+    <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
+      <div className="text-center space-y-6">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Creator plan required for subscriber management.</p>
+        <Link href={upgradeUrl} className="inline-flex px-8 py-3 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest">
+          Upgrade to Creator
+        </Link>
+      </div>
+    </main>
   );
 
   return (

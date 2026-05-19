@@ -14,6 +14,7 @@ interface User {
   email: string;
   avatarUrl: string | null;
   bio: string | null;
+  dateOfBirth?: string | Date | null;
   _count?: {
     followers: number;
     following: number;
@@ -33,6 +34,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
   const [username, setUsername] = useState(user.username);
   const [bio, setBio] = useState(user.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl || "");
+  const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().substring(0, 10) : "");
   const [usernameError, setUsernameError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -111,6 +113,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           username,
           bio: bio || null,
           avatarUrl: avatarUrl || user.avatarUrl,
+          dateOfBirth: dateOfBirth || null,
         }),
       });
 
@@ -249,6 +252,22 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           <p className="mt-3 text-right text-sm font-medium text-zinc-400">
             {bio.length} / 500
           </p>
+        </div>
+        {/* Date of Birth */}
+        <div className="group">
+          <label
+            htmlFor="dateOfBirth"
+            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+          >
+            Date of Birth
+          </label>
+          <input
+            type="date"
+            id="dateOfBirth"
+            value={dateOfBirth}
+            onChange={(e) => setDateOfBirth(e.target.value)}
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+          />
         </div>
 
         {/* Email (read-only) */}

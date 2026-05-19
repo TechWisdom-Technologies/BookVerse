@@ -17,6 +17,7 @@ export async function GET() {
         email: true,
         avatarUrl: true,
         bio: true,
+        dateOfBirth: true,
         role: true,
         createdAt: true,
         _count: {
@@ -71,6 +72,9 @@ export async function PATCH(request: Request) {
     if (parsed.username !== undefined) updateData.username = parsed.username;
     if (parsed.avatarUrl !== undefined) updateData.avatarUrl = parsed.avatarUrl;
     if (parsed.bio !== undefined) updateData.bio = parsed.bio;
+    if (parsed.dateOfBirth !== undefined) {
+      updateData.dateOfBirth = parsed.dateOfBirth ? new Date(parsed.dateOfBirth) : null;
+    }
 
     const user = await prisma.user.update({
       where: { id: dbUser.id },
@@ -82,6 +86,7 @@ export async function PATCH(request: Request) {
         email: true,
         avatarUrl: true,
         bio: true,
+        dateOfBirth: true,
         role: true,
         createdAt: true,
         _count: {

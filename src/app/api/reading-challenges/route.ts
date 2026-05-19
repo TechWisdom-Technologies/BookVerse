@@ -1,20 +1,44 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
+
+type ReadingChallengeDelegate = {
+  findMany(args: unknown): Promise<unknown[]>;
+  create(args: unknown): Promise<unknown>;
+};
+
+type UserDelegate = {
+  findUnique(args: unknown): Promise<{ role: string } | null>;
+};
+
+type ChallengePrisma = {
+  readingChallenge: ReadingChallengeDelegate;
+  user: UserDelegate;
+};
 
 export async function GET(req: Request) {
   try {
+    const user = await getAuth();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
+
     const { searchParams } = new URL(req.url);
     const genre = searchParams.get('genre');
     const status = searchParams.get('status') || 'ACTIVE';
 
-    let where: any = { status };
+    const where: Record<string, unknown> = { status };
 
     if (genre) {
       where.genre = { contains: genre, mode: 'insensitive' };
     }
 
-    const challenges = await prisma.readingChallenge.findMany({
+    const anyPrisma = prisma as unknown as ChallengePrisma;
+    const challenges = await anyPrisma.readingChallenge.findMany({
       where,
       include: {
         participants: {
@@ -43,10 +67,14 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
     // Only admins can create challenges - check if user is admin
-    const userRecord = await prisma.user.findUnique({
-      where: { id: user.uid },
+    const anyPrisma = prisma as unknown as ChallengePrisma;
+    const userRecord = await anyPrisma.user.findUnique({
+      where: { id: user.id },
       select: { role: true },
     });
 
@@ -64,7 +92,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const challenge = await prisma.readingChallenge.create({
+    const challenge = await anyPrisma.readingChallenge.create({
       data: {
         title: title.trim(),
         description: description?.trim() || null,

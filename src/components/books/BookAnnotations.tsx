@@ -16,6 +16,11 @@ interface Annotation {
 export function BookAnnotations({ bookId }: { bookId: string }) {
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [type, setType] = useState<Annotation['type']>('NOTE');
+  const [content, setContent] = useState('');
+  const [highlightedText, setHighlightedText] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchAnnotations = async () => {
@@ -44,8 +49,36 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
       if (!res.ok) throw new Error('Failed to delete');
       setAnnotations((prev) => prev.filter((a) => a.id !== annotationId));
       toast.success('Annotation deleted');
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete annotation');
+    }
+  };
+
+  const handleCreate = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/books/${bookId}/annotations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          pageNumber,
+          type,
+          content,
+          highlightedText,
+          highlightColor: type === 'HIGHLIGHT' ? '#facc15' : null,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Failed to add annotation');
+      setAnnotations((prev) => [data, ...prev]);
+      setContent('');
+      setHighlightedText('');
+      toast.success('Annotation added');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to add annotation');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -54,6 +87,50 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
   return (
     <div className="space-y-3">
       <h3 className="font-bold text-lg mb-3">Your Annotations</h3>
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 p-3 space-y-3">
+        <div className="grid grid-cols-2 gap-2">
+          <input
+            type="number"
+            min={1}
+            value={pageNumber}
+            onChange={(event) => setPageNumber(Number(event.target.value))}
+            className="rounded border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm"
+            aria-label="Page number"
+          />
+          <select
+            value={type}
+            onChange={(event) => setType(event.target.value as Annotation['type'])}
+            className="rounded border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm"
+            aria-label="Annotation type"
+          >
+            <option value="NOTE">Note</option>
+            <option value="BOOKMARK">Bookmark</option>
+            <option value="HIGHLIGHT">Highlight</option>
+          </select>
+        </div>
+        {type === 'HIGHLIGHT' && (
+          <input
+            value={highlightedText}
+            onChange={(event) => setHighlightedText(event.target.value)}
+            className="w-full rounded border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm"
+            placeholder="Highlighted text"
+          />
+        )}
+        <textarea
+          value={content}
+          onChange={(event) => setContent(event.target.value)}
+          className="w-full resize-none rounded border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-sm"
+          rows={3}
+          placeholder="Annotation note"
+        />
+        <button
+          onClick={handleCreate}
+          disabled={saving}
+          className="w-full rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-4 py-2 text-xs font-bold uppercase tracking-widest disabled:opacity-50"
+        >
+          {saving ? 'Saving...' : 'Add Annotation'}
+        </button>
+      </div>
       {annotations.length === 0 ? (
         <p className="text-gray-500">No annotations yet</p>
       ) : (

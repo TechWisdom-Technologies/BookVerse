@@ -18,6 +18,12 @@ export const storySchema = z.object({
   published: z.boolean().optional(),
   universeId: z.string().optional().nullable(),
   sequenceNumber: z.number().int().min(1).optional().nullable(),
+  subGenres: z.array(z.string()).optional(),
+  mood: z.string().optional().nullable(),
+  contentWarnings: z.array(z.string()).optional(),
+  ageRating: z.number().int().optional().nullable(),
+  tags: z.array(z.string()).optional(),
+  description: z.string().optional().nullable(),
 });
 
 export const chapterSchema = z.object({
@@ -41,5 +47,6 @@ export const profileSchema = z.object({
   username: z.string().min(3).max(30).regex(/^[a-z0-9_]+$/).optional(),
   avatarUrl: z.string().url().optional().nullable(),
   bio: z.string().max(500).optional().nullable(),
+  dateOfBirth: z.string().optional().nullable(),
 });
 

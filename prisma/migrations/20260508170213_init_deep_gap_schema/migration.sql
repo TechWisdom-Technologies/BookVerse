@@ -342,17 +342,6 @@ CREATE TABLE "story_universes" (
 );
 
 -- CreateTable
-CREATE TABLE "spoiler_tags" (
-    "id" TEXT NOT NULL,
-    "originalContent" TEXT NOT NULL,
-    "maskedContent" TEXT NOT NULL,
-    "story_id" TEXT,
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "spoiler_tags_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "onboarding_quizzes" (
     "id" TEXT NOT NULL,
     "user_id" TEXT NOT NULL,
@@ -406,19 +395,6 @@ CREATE TABLE "author_subscriptions" (
     "updated_at" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "author_subscriptions_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "author_subscription_tiers" (
-    "id" TEXT NOT NULL,
-    "author_id" TEXT NOT NULL,
-    "name" TEXT NOT NULL,
-    "description" TEXT,
-    "price" DOUBLE PRECISION NOT NULL,
-    "benefits" TEXT[],
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "author_subscription_tiers_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -571,9 +547,6 @@ CREATE INDEX "author_subscriptions_author_id_idx" ON "author_subscriptions"("aut
 CREATE UNIQUE INDEX "author_subscriptions_subscriber_id_author_id_key" ON "author_subscriptions"("subscriber_id", "author_id");
 
 -- CreateIndex
-CREATE INDEX "author_subscription_tiers_author_id_idx" ON "author_subscription_tiers"("author_id");
-
--- CreateIndex
 CREATE INDEX "story_promotions_story_id_idx" ON "story_promotions"("story_id");
 
 -- CreateIndex
@@ -700,9 +673,6 @@ ALTER TABLE "share_activities" ADD CONSTRAINT "share_activities_shared_by_fkey" 
 ALTER TABLE "story_universes" ADD CONSTRAINT "story_universes_creator_id_fkey" FOREIGN KEY ("creator_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "spoiler_tags" ADD CONSTRAINT "spoiler_tags_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "stories"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "onboarding_quizzes" ADD CONSTRAINT "onboarding_quizzes_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -716,9 +686,6 @@ ALTER TABLE "author_subscriptions" ADD CONSTRAINT "author_subscriptions_subscrib
 
 -- AddForeignKey
 ALTER TABLE "author_subscriptions" ADD CONSTRAINT "author_subscriptions_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "author_subscription_tiers" ADD CONSTRAINT "author_subscription_tiers_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "story_promotions" ADD CONSTRAINT "story_promotions_story_id_fkey" FOREIGN KEY ("story_id") REFERENCES "stories"("id") ON DELETE CASCADE ON UPDATE CASCADE;

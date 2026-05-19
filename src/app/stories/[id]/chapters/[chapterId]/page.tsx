@@ -10,6 +10,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, BookOpen, Clock } from "lucide-re
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { TTSPlayer } from "@/components/stories/TTSPlayer";
+import { ChapterInlineComments } from "@/components/stories/ChapterInlineComments";
 
 interface ChapterReaderPageProps {
   params: Promise<{ id: string; chapterId: string; }>;
@@ -90,6 +91,8 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
             <p className="text-xs font-medium text-zinc-400 italic">No narrative data transmitted for this record.</p>
           )}
         </article>
+
+        <ChapterInlineComments storyId={storyId} chapterId={chapterId} />
 
         {/* Transmission Navigation Registry */}
         <nav className="mt-20 pt-12 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4">

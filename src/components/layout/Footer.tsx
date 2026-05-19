@@ -111,15 +111,17 @@ export function Footer() {
         <div className="grid lg:grid-cols-2 gap-20 mb-20 pb-20 border-b border-zinc-50 dark:border-zinc-900">
           {/* Left - Brand & Description */}
           <div className="space-y-8">
-            <Link href="/" className="inline-flex items-center gap-4 group">
-              <div className="w-10 h-10 rounded bg-zinc-900 dark:bg-white flex items-center justify-center text-white dark:text-zinc-900">
-                <BookOpen size={20} />
-              </div>
-              <div>
+            <Link href="/" className="flex flex-col items-start gap-4 group">
+              <img
+                src="/bookverse.png"
+                alt="BookVerse Logo"
+                className="w-12 h-12 object-contain rounded"
+              />
+              <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-tight">
                   BookVerse
                 </span>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-300">Your Digital Library</p>
+                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">By TechWisdom Technologies</p>
               </div>
             </Link>
             <p className="text-[11px] text-zinc-500 leading-relaxed font-medium max-w-md italic">
@@ -185,6 +187,7 @@ export function Footer() {
               <li><FooterLink href="/premium">Premium</FooterLink></li>
               <li><FooterLink href="/gifts">Gifts</FooterLink></li>
               <li><FooterLink href="/settings">Settings</FooterLink></li>
+              <li><FooterLink href="/support">Support Desk</FooterLink></li>
               <li><FooterLink href="/dmca">DMCA</FooterLink></li>
             </ul>
           </div>
@@ -195,20 +198,25 @@ export function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
                 <MapPin size={14} className="text-zinc-300 mt-0.5 flex-shrink-0" />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 leading-relaxed">
-                  123 Book Street, Literary District<br />New York, NY 10001
-                </span>
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=158/Cha,+Kuratoli+Rd,+Dhaka+1229,+Bangladesh"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors leading-relaxed"
+                >
+                  158/Cha, Kuratoli Rd<br />Dhaka 1229, Bangladesh
+                </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={14} className="text-zinc-300 flex-shrink-0" />
-                <a href="mailto:hello@bookverse.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-                  hello@bookverse.com
+                <a href="mailto:twtech.contact@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                  twtech.contact@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Phone size={14} className="text-zinc-300 flex-shrink-0" />
-                <a href="tel:+1234567890" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-                  +1 (234) 567-890
+                <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                  +880 1799-269699
                 </a>
               </li>
             </ul>
@@ -219,8 +227,13 @@ export function Footer() {
         <div className="pt-10 border-t border-zinc-50 dark:border-zinc-900">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Copyright */}
-            <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">
-              © {new Date().getFullYear()} BookVerse. All rights reserved.
+            <div className="flex flex-col items-center md:items-start gap-1">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">
+                © {new Date().getFullYear()} BookVerse. All rights reserved.
+              </div>
+              <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
+                Design and Developed by TechWisdom Technologies
+              </div>
             </div>
 
             {/* Social Links */}

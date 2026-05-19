@@ -23,7 +23,7 @@ const TIERS = [
   },
   {
     name: 'Pro',
-    price: 9.99,
+    price: 499,
     period: 'month',
     description: 'Perfect for active readers and authors',
     features: [
@@ -43,7 +43,7 @@ const TIERS = [
   },
   {
     name: 'Creator',
-    price: 19.99,
+    price: 999,
     period: 'month',
     description: 'For serious authors and creators',
     features: [
@@ -107,7 +107,7 @@ export default function PremiumPage() {
                 </div>
                 <div className="flex items-baseline gap-1 mb-4">
                   <span className="text-4xl font-bold tracking-tighter">
-                    {tier.price === 0 ? 'Free' : `$${tier.price}`}
+                    {tier.price === 0 ? 'Free' : `৳${tier.price}`}
                   </span>
                   {tier.price > 0 && (
                     <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">/{tier.period}</span>

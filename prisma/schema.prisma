@@ -1,11 +1,13 @@
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
+  output          = "../src/generated/client"
 }
 
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 enum Role {
@@ -101,7 +103,6 @@ model User {
   shareActivities          ShareActivity[]
   authorSubscriptions      AuthorSubscription[]     @relation("subscriber")
   authorSubscribersTo      AuthorSubscription[]     @relation("author")
-  authorSubscriptionsOwned AuthorSubscriptionTier[] @relation("tier_author")
   giftsSent                GiftMembership[]         @relation("sender")
   giftsReceived            GiftMembership[]         @relation("receiver")
   onboardingQuiz           OnboardingQuiz?
@@ -194,6 +195,7 @@ model Story {
   published Boolean  @default(false)
   genre     String?
   universeId  String?  @map("universe_id")
+  sequenceNumber  Int?     @map("sequence_number")
   subGenres String[] @default([])
   mood      String?
   contentWarnings String[] @default([])
@@ -214,7 +216,6 @@ model Story {
   inlineComments    InlineComment[]
   shareActivities   ShareActivity[]
   promotions        StoryPromotion[]
-  spoilerTags       SpoilerTag[]
 
   @@index([authorId])
   @@index([published])
@@ -536,18 +537,6 @@ model ShareActivity {
 
 
 
-model SpoilerTag {
-  id              String   @id @default(cuid())
-  originalContent String
-  maskedContent   String
-  storyId         String?  @map("story_id")
-  createdAt       DateTime @default(now()) @map("created_at")
-
-  story Story? @relation(fields: [storyId], references: [id], onDelete: Cascade)
-
-  @@map("spoiler_tags")
-}
-
 model OnboardingQuiz {
   id                String   @id @default(cuid())
   userId            String   @unique @map("user_id")
@@ -613,21 +602,6 @@ model AuthorSubscription {
   @@map("author_subscriptions")
 }
 
-model AuthorSubscriptionTier {
-  id          String   @id @default(cuid())
-  authorId    String   @map("author_id")
-  name        String
-  description String?
-  price       Float
-  benefits    String[]
-  createdAt   DateTime @default(now()) @map("created_at")
-
-  author User @relation("tier_author", fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@index([authorId])
-  @@map("author_subscription_tiers")
-}
-
 model StoryPromotion {
   id        String   @id @default(cuid())
   storyId   String   @map("story_id")
@@ -670,6 +644,7 @@ model Universe {
   name        String
   description String?
   genre       String   @default("Fiction")
+  coverUrl    String?  @map("cover_url")
   userId      String   @map("user_id")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")

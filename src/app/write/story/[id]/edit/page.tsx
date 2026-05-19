@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/shared/FileUpload";
+import { AuthorStoryTools } from "@/components/stories/AuthorStoryTools";
 import { toast } from "react-hot-toast";
 import ChapterList, {
   type ChapterItem,
@@ -53,6 +54,12 @@ interface StoryData {
   chapters: ChapterItem[];
   universeId: string | null;
   sequenceNumber: number | null;
+  subGenres: string[];
+  mood: string | null;
+  contentWarnings: string[];
+  ageRating: number | null;
+  tags: string[];
+  description: string | null;
   _count: { reactions: number; comments: number; };
 }
 
@@ -73,6 +80,12 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   const [editCoverUrl, setEditCoverUrl] = useState("");
   const [editUniverseId, setEditUniverseId] = useState<string | null>(null);
   const [editSequenceNumber, setEditSequenceNumber] = useState<number | null>(null);
+  const [editSubGenres, setEditSubGenres] = useState<string[]>([]);
+  const [editMood, setEditMood] = useState("");
+  const [editContentWarnings, setEditContentWarnings] = useState<string[]>([]);
+  const [editAgeRating, setEditAgeRating] = useState<number>(0);
+  const [editTags, setEditTags] = useState<string[]>([]);
+  const [editDescription, setEditDescription] = useState("");
   const [availableUniverses, setAvailableUniverses] = useState<any[]>([]);
   const [savingMeta, setSavingMeta] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
@@ -90,7 +103,13 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         setEditSummary(storyData.summary || "");
         setEditCoverUrl(storyData.coverUrl || "");
         setEditUniverseId(storyData.universeId);
-        setEditSequenceNumber(storyData.sequenceNumber);
+        setEditSequenceNumber(storyData.sequenceNumber ?? null);
+        setEditSubGenres(storyData.subGenres || []);
+        setEditMood(storyData.mood || "");
+        setEditContentWarnings(storyData.contentWarnings || []);
+        setEditAgeRating(storyData.ageRating || 0);
+        setEditTags(storyData.tags || []);
+        setEditDescription(storyData.description || "");
         if (storyData.chapters.length > 0) setActiveChapterId(storyData.chapters[0].id);
       } catch { router.push("/write"); } finally { setLoadingStory(false); }
     };
@@ -150,6 +169,12 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
           coverUrl: editCoverUrl || null,
           universeId: editUniverseId || null,
           sequenceNumber: editSequenceNumber || null,
+          subGenres: editSubGenres,
+          mood: editMood || null,
+          contentWarnings: editContentWarnings,
+          ageRating: Number(editAgeRating) || 0,
+          tags: editTags,
+          description: editDescription || null,
         }),
       });
       if (res.ok) {
@@ -269,6 +294,37 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Summary</label>
                     <textarea value={editSummary} onChange={(e) => setEditSummary(e.target.value)} rows={5} className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm resize-none" />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Associated Universe</label>
+                    <select
+                      value={editUniverseId || ""}
+                      onChange={(e) => setEditUniverseId(e.target.value || null)}
+                      className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm appearance-none cursor-pointer"
+                    >
+                      <option value="">None (Standalone Story)</option>
+                      {availableUniverses.map((uni) => (
+                        <option key={uni.id} value={uni.id}>
+                          {uni.name} ({uni.genre})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {editUniverseId && (
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Sequence Number (Optional)</label>
+                      <input
+                        type="number"
+                        min={1}
+                        value={editSequenceNumber ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEditSequenceNumber(val ? parseInt(val) : null);
+                        }}
+                        placeholder="e.g. 1 (Book One), 2 (Book Two)"
+                        className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -303,6 +359,59 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
               </div>
             </div>
 
+            {/* Story Classification & Audience */}
+            <div className="pt-10 border-t border-zinc-100 dark:border-zinc-900 grid grid-cols-1 md:grid-cols-2 gap-16">
+              <div className="space-y-8">
+                <div className="flex items-center gap-2 pb-3 border-b border-zinc-100 dark:border-zinc-900">
+                  <Activity className="w-4 h-4 text-zinc-300" />
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-305">Audience & Mood</h2>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Mood (e.g. Dark, Romantic, Adventurous)</label>
+                    <input type="text" value={editMood} onChange={(e) => setEditMood(e.target.value)} placeholder="e.g. Melancholic, Mysterious" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Age Rating</label>
+                    <select
+                      value={editAgeRating}
+                      onChange={(e) => setEditAgeRating(Number(e.target.value))}
+                      className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm appearance-none cursor-pointer"
+                    >
+                      <option value="0">All Ages (G / PG)</option>
+                      <option value="13">Teenagers (13+)</option>
+                      <option value="17">Mature Audiences (17+)</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Detailed Description (Optional)</label>
+                    <textarea value={editDescription} onChange={(e) => setEditDescription(e.target.value)} rows={4} placeholder="A full, detailed description that will appear on the story profile..." className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm resize-none" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-8">
+                <div className="flex items-center gap-2 pb-3 border-b border-zinc-100 dark:border-zinc-900">
+                  <Archive className="w-4 h-4 text-zinc-300" />
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-305">Tags, subGenres & Warnings</h2>
+                </div>
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Sub-Genres (Comma separated)</label>
+                    <input type="text" value={editSubGenres.join(", ")} onChange={(e) => setEditSubGenres(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g. Space Opera, Cyberpunk, Hard Sci-Fi" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Content Warnings (Comma separated)</label>
+                    <input type="text" value={editContentWarnings.join(", ")} onChange={(e) => setEditContentWarnings(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g. Mild Violence, Strong Language" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Search Tags (Comma separated)</label>
+                    <input type="text" value={editTags.join(", ")} onChange={(e) => setEditTags(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g. futuristic, neon, space" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="pt-10 border-t border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
               <button onClick={handleDeleteStory} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-rose-500 hover:text-rose-600 transition-colors">
                 <Trash2 className="w-4 h-4" /> Delete Story
@@ -313,6 +422,8 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
             </div>
           </div>
         )}
+
+        <AuthorStoryTools storyId={storyId} />
 
         {/* Main Editor Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-16">

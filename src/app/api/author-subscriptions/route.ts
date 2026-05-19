@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const user = await getAuth();
     if (!user) {
@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       where: { subscriberId: user.id },
       include: {
         author: {
-          select: { id: true, username: true, displayName: true, avatar: true },
+          select: { id: true, username: true, displayName: true, avatarUrl: true },
         },
       },
       orderBy: { subscribedAt: 'desc' },
@@ -44,7 +44,8 @@ export async function POST(req: Request) {
     }
 
     const validTiers = ['BASIC', 'PREMIUM', 'VIP'];
-    if (!validTiers.includes(tier)) {
+    const normalizedTier = String(tier).toUpperCase();
+    if (!validTiers.includes(normalizedTier)) {
       return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
     }
 
@@ -70,8 +71,8 @@ export async function POST(req: Request) {
       data: {
         subscriberId: user.id,
         authorId,
-        tier,
-        monthlyPrice: tierPricing[tier],
+        tier: normalizedTier,
+        monthlyPrice: tierPricing[normalizedTier],
         renewalDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       },
     });

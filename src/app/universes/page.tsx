@@ -17,6 +17,23 @@ interface Universe {
   user: { id: string; username: string; displayName: string; avatarUrl?: string };
 }
 
+const getUniverseGraphic = (name: string) => {
+  const colors = [
+    "from-indigo-600 via-purple-600 to-pink-600",
+    "from-cyan-500 via-blue-600 to-indigo-700",
+    "from-emerald-500 via-teal-600 to-cyan-700",
+    "from-rose-500 via-pink-600 to-purple-700",
+    "from-amber-500 via-orange-600 to-rose-700",
+    "from-violet-600 via-fuchsia-600 to-pink-700"
+  ];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % colors.length;
+  return colors[index];
+};
+
 export default function UniverseExplorationPage() {
   const router = useRouter();
   const [universes, setUniverses] = useState<Universe[]>([]);
@@ -82,19 +99,26 @@ export default function UniverseExplorationPage() {
             <Link
               key={u.id}
               href={`/universes/${u.id}`}
-              className="group flex flex-col border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all relative overflow-hidden"
+              className="group flex flex-col border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all relative overflow-hidden shadow-sm"
             >
               {/* Universe Cover */}
-              <div className="h-48 w-full overflow-hidden bg-zinc-50 dark:bg-zinc-900 relative">
+              <div className="h-48 w-full overflow-hidden relative">
                 {u.coverUrl ? (
                   <img
                     src={u.coverUrl}
                     alt=""
-                    className="w-full h-full object-cover transition-all duration-700"
+                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center opacity-10">
-                    <Compass className="w-12 h-12" />
+                  <div className={`w-full h-full bg-gradient-to-br ${getUniverseGraphic(u.name)} flex flex-col items-center justify-center p-6 text-center relative overflow-hidden`}>
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_60%)] animate-pulse duration-1000" />
+                    <div className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+                    <div className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-black/20 blur-xl" />
+                    
+                    <Compass className="w-10 h-10 text-white/90 drop-shadow-md mb-2 relative z-10" />
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-white/80 relative z-10 drop-shadow-sm">
+                      {u.genre} Realm
+                    </span>
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent opacity-60" />
