@@ -86,6 +86,11 @@ export function useAuth() {
     return createUserWithEmailAndPassword(auth, email, password);
   }, []);
 
+  const resetPassword = useCallback(async (email: string) => {
+    const firebaseAuth = await import("firebase/auth");
+    return firebaseAuth.sendPasswordResetEmail(auth, email);
+  }, []);
+
   const signInWithGoogle = useCallback(() => {
     return signInWithPopup(auth, googleProvider).catch((error: unknown) => {
       const code =
@@ -128,8 +133,8 @@ export function useAuth() {
   }, [user]);
 
   return useMemo(
-    () => ({ user, dbUser, loading, signIn, signUp, signInWithGoogle, signOut, refreshUser }),
-    [user, dbUser, loading, signIn, signUp, signInWithGoogle, signOut, refreshUser]
+    () => ({ user, dbUser, loading, signIn, signUp, resetPassword, signInWithGoogle, signOut, refreshUser }),
+    [user, dbUser, loading, signIn, signUp, resetPassword, signInWithGoogle, signOut, refreshUser]
   );
 }
 

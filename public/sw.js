@@ -1,10 +1,11 @@
-const CACHE_NAME = "bookverse-cache-v1";
+const CACHE_NAME = "bookverse-cache-v3";
 
 const ASSETS_TO_CACHE = [
   "/",
   "/manifest.json",
   "/site.webmanifest",
-  "/favicon.ico"
+  "/bookverse.png",
+  "/apple-touch-icon.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -35,37 +36,34 @@ self.addEventListener("fetch", (event) => {
   // Only handle GET requests
   if (event.request.method !== "GET") return;
 
-  // Stale-while-revalidate strategy for navigation requests and assets
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const fetchPromise = fetch(event.request)
-        .then((networkResponse) => {
-          // Don't cache non-200 responses or API/external requests
-          if (
-            !networkResponse ||
-            networkResponse.status !== 200 ||
-            networkResponse.type !== "basic" ||
-            event.request.url.includes("/api/")
-          ) {
-            return networkResponse;
-          }
+  const url = new URL(event.request.url);
 
+  // Never cache dev/build chunks or API calls. Caching these can break module loading.
+  if (
+    url.origin !== self.location.origin ||
+    url.pathname.startsWith("/_next/") ||
+    url.pathname.startsWith("/api/")
+  ) {
+    return;
+  }
+
+  // Network-first for same-origin pages/assets, fallback to cache when offline.
+  event.respondWith(
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (
+          networkResponse &&
+          networkResponse.status === 200 &&
+          networkResponse.type === "basic"
+        ) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
+        }
 
-          return networkResponse;
-        })
-        .catch(() => {
-          // If network fails, return cached response if available
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // Optional: Return a generic offline page here if we had one
-        });
-
-      return cachedResponse || fetchPromise;
-    })
+        return networkResponse;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

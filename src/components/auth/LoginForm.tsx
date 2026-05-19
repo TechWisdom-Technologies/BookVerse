@@ -98,6 +98,14 @@ export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
             className="w-full px-5 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-sm text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all shadow-sm"
             placeholder="At least 8 characters"
           />
+          <div className="text-right pt-1">
+            <Link
+              href={`/forgot-password${redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`}
+              className="text-[10px] font-bold uppercase tracking-[0.12em] text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
         </div>
 
         {error && (
