@@ -1,5 +1,5 @@
-import { cert, getApps, initializeApp } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import { cert, getApps, initializeApp, type App } from "firebase-admin/app";
+import { getAuth, type Auth } from "firebase-admin/auth";
 
 function getServiceAccount() {
   const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
@@ -15,12 +15,30 @@ function getServiceAccount() {
   return { projectId, clientEmail, privateKey };
 }
 
-export const firebaseAdminApp =
-  getApps().length === 0
-    ? initializeApp({
-        credential: cert(getServiceAccount()),
-      })
-    : getApps()[0]!;
+let _app: App | undefined;
+let _auth: Auth | undefined;
 
-export const adminAuth = getAuth(firebaseAdminApp);
+function getFirebaseAdminApp(): App {
+  if (!_app) {
+    _app =
+      getApps().length === 0
+        ? initializeApp({ credential: cert(getServiceAccount()) })
+        : getApps()[0]!;
+  }
+  return _app;
+}
+
+function getAdminAuth(): Auth {
+  if (!_auth) {
+    _auth = getAuth(getFirebaseAdminApp());
+  }
+  return _auth;
+}
+
+export { getFirebaseAdminApp as firebaseAdminApp };
+export const adminAuth = new Proxy({} as Auth, {
+  get(_target, prop, receiver) {
+    return Reflect.get(getAdminAuth(), prop, receiver);
+  },
+});
 
