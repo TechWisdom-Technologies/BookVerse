@@ -9,28 +9,61 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { plan, duration } = await req.json();
-    const upperPlan = plan?.toUpperCase();
+    const { plan, duration, senderNumber, transactionId } = await req.json();
 
+    const upperPlan = plan?.toUpperCase();
     if (upperPlan !== 'PRO' && upperPlan !== 'CREATOR') {
-      return NextResponse.json({ error: 'Invalid plan' }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid subscription plan selected.' }, { status: 400 });
     }
 
     const months = duration ? Number(duration) : 1;
-    const membershipExpiry = new Date(Date.now() + months * 30 * 24 * 60 * 60 * 1000);
+    if (![1, 3, 6, 12].includes(months)) {
+      return NextResponse.json({ error: 'Invalid subscription duration selected.' }, { status: 400 });
+    }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
+    if (!senderNumber || typeof senderNumber !== 'string' || !senderNumber.trim()) {
+      return NextResponse.json({ error: 'Sender Mobile Number is required.' }, { status: 400 });
+    }
+
+    if (!transactionId || typeof transactionId !== 'string' || !transactionId.trim()) {
+      return NextResponse.json({ error: 'Transaction ID is required.' }, { status: 400 });
+    }
+
+    const cleanTxnId = transactionId.trim();
+
+    // Prevent duplicate Transaction ID submissions
+    const existingTxn = await prisma.subscriptionTransaction.findUnique({
+      where: { transactionId: cleanTxnId },
+    });
+
+    if (existingTxn) {
+      return NextResponse.json(
+        { error: 'This Transaction ID has already been submitted for verification.' },
+        { status: 400 }
+      );
+    }
+
+    // Calculate billing amount based on plan prices (PRO = 499 BDT, CREATOR = 999 BDT per month)
+    const pricePerMonth = upperPlan === 'CREATOR' ? 999 : 499;
+    const amount = pricePerMonth * months;
+
+    // Log the pending manual payment transaction
+    const transaction = await prisma.subscriptionTransaction.create({
       data: {
-        membershipTier: upperPlan,
-        membershipExpiry,
+        userId: user.id,
+        plan: upperPlan,
+        duration: months,
+        amount,
+        senderNumber: senderNumber.trim(),
+        transactionId: cleanTxnId,
+        status: 'PENDING',
       },
     });
 
     return NextResponse.json({
       success: true,
-      membershipTier: updatedUser.membershipTier,
-      membershipExpiry,
+      message: 'Transaction submitted successfully for administrative review.',
+      transactionId: transaction.transactionId,
     });
   } catch (error) {
     console.error('Upgrade subscription error:', error);

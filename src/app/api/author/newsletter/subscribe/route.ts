@@ -18,11 +18,11 @@ export async function POST(req: Request) {
 
     const author = await prisma.user.findUnique({
       where: { id: authorId },
-      select: { role: true },
+      select: { id: true },
     });
 
-    if (!author || author.role !== "AUTHOR") {
-      return NextResponse.json({ error: "Target user is not an author" }, { status: 400 });
+    if (!author) {
+      return NextResponse.json({ error: "Target user not found" }, { status: 404 });
     }
 
     if (action === "subscribe") {

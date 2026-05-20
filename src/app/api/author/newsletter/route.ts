@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
+import { createNotification } from '@/lib/notifications';
 
 /**
  * GET /api/author/newsletter
@@ -13,7 +14,10 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
+
+    const isAuthorOrAdmin = user.role === 'AUTHOR' || user.role === 'ADMIN';
+    const hasAccess = isAuthorOrAdmin || (await hasFeatureAccess(user, 'CREATOR'));
+    if (!hasAccess) {
       return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
@@ -106,6 +110,19 @@ export async function POST(req: Request) {
         },
       },
     });
+
+    // Notify the author that someone has subscribed to their newsletter
+    try {
+      await createNotification({
+        userId: authorId,
+        type: 'NEWSLETTER_SUBSCRIBE',
+        title: 'New Newsletter Subscriber! 📧',
+        message: `${user.displayName || user.username} (@${user.username}) has subscribed to your newsletter.`,
+        link: '/author/newsletter',
+      });
+    } catch (notifErr) {
+      console.error('Failed to trigger newsletter subscription notification:', notifErr);
+    }
 
     return NextResponse.json(subscription, { status: 201 });
   } catch (error) {

@@ -40,6 +40,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
         avatarUrl: true,
         bio: true,
         role: true,
+        membershipTier: true,
         createdAt: true,
         _count: {
           select: {
@@ -99,7 +100,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
       : null;
 
     // Check if current user is subscribed to this user's newsletter
-    const isSubscribed = currentUserId && user.role === "AUTHOR"
+    const isSubscribed = currentUserId
       ? await prisma.newsletterSubscriber.findUnique({
           where: {
             authorId_subscriberId: {

@@ -83,7 +83,18 @@ export default async function HomePage() {
 
     const [featuredWithRatings, recentWithRatings, trendingWithRatings] = await Promise.all([addRatings(featured), addRatings(recent), addRatings(trending)]);
     const formattedStories = stories.map(story => ({ ...story, createdAt: story.createdAt.toISOString() }));
-    const formattedPromotedStories = promotedStories.map(({ story }) => ({ ...story, createdAt: story.createdAt.toISOString() }));
+    
+    // Deduplicate promoted stories by ID to prevent duplicate React keys
+    const uniquePromotedMap = new Map();
+    promotedStories.forEach(({ story }) => {
+      if (!uniquePromotedMap.has(story.id)) {
+        uniquePromotedMap.set(story.id, {
+          ...story,
+          createdAt: story.createdAt.toISOString(),
+        });
+      }
+    });
+    const formattedPromotedStories = Array.from(uniquePromotedMap.values());
 
     return (
       <main className="overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">

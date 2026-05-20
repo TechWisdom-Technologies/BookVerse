@@ -18,6 +18,18 @@ export function AiLibrarianWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Listen for toggle events from the Navbar
+  useEffect(() => {
+    const handleToggle = () => setIsOpen(prev => !prev);
+    window.addEventListener("toggle-ai-librarian", handleToggle);
+    return () => window.removeEventListener("toggle-ai-librarian", handleToggle);
+  }, []);
+
+  // Notify Navbar of state changes
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("ai-librarian-state", { detail: isOpen }));
+  }, [isOpen]);
+
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -56,22 +68,6 @@ export function AiLibrarianWidget() {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <AnimatePresence>
-        {!isOpen && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-white shadow-xl shadow-indigo-600/30 transition-transform hover:scale-105 active:scale-95"
-            aria-label="Open AI Librarian"
-          >
-            <Sparkles className="h-6 w-6" />
-          </motion.button>
-        )}
-      </AnimatePresence>
-
       {/* Chat Window */}
       <AnimatePresence>
         {isOpen && (

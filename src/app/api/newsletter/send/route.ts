@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { resend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { adminAuth } from "@/lib/firebase-admin";
 import { hasFeatureAccess, paidFeatureError } from "@/lib/entitlements";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const from = process.env.RESEND_FROM_EMAIL || "BookVerse <onboarding@resend.dev>";
 
 export async function POST(req: Request) {
   try {
@@ -47,9 +47,12 @@ export async function POST(req: Request) {
     }
 
     // Send emails in batches using Resend
-    // Note: Resend free tier has limitations, but this handles the API correctly.
+    if (!resend) {
+      return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
+    }
+
     const { data, error } = await resend.emails.send({
-      from: 'BookVerse Authors <authors@bookverse.app>',
+      from,
       to: subscriberEmails,
       subject: subject,
       html: htmlContent,

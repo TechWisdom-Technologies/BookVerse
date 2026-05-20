@@ -13,6 +13,7 @@ interface ProfileHeaderProps {
     avatarUrl: string | null;
     bio: string | null;
     role: string;
+    membershipTier?: string | null;
     createdAt: Date | string;
     _count: {
       followers: number;
@@ -84,12 +85,10 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
               ) : (
                 <div className="flex items-center gap-3">
                   <FollowButton targetUserId={user.id} isFollowing={user.isFollowing} />
-                  {user.role === "AUTHOR" && (
-                    <NewsletterSubscribeButton 
-                      authorId={user.id} 
-                      initialIsSubscribed={!!user.isSubscribed} 
-                    />
-                  )}
+                  <NewsletterSubscribeButton 
+                    authorId={user.id} 
+                    initialIsSubscribed={!!user.isSubscribed} 
+                  />
                 </div>
               )}
             </div>

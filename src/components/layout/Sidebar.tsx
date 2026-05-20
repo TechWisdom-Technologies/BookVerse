@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Globe,
   ChevronLeft,
+  CreditCard,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -22,6 +23,7 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
+  { href: "/admin/transactions", label: "Payments", icon: CreditCard },
   { href: "/admin/books", label: "Books", icon: BookOpen },
   { href: "/admin/stories", label: "Stories", icon: FileText },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },

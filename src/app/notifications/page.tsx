@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { Bell, Check, Loader2, MessageSquare, Heart, FileText, Users, ArrowLeft, Clock } from "lucide-react";
+import { Bell, Check, Loader2, MessageSquare, Heart, FileText, Users, ArrowLeft, Clock, ShieldCheck, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 interface Notification {
@@ -64,7 +64,10 @@ export default function NotificationsPage() {
       case "COMMENT":
       case "REPLY": return <MessageSquare className="h-4 w-4 text-indigo-500" />;
       case "STORY_POST": return <FileText className="h-4 w-4 text-zinc-400" />;
-      case "DISCUSSION": return <Users className="h-4 w-4 text-zinc-400" />;
+      case "DISCUSSION":
+      case "NEWSLETTER_SUBSCRIBE": return <Users className="h-4 w-4 text-emerald-500" />;
+      case "MEMBERSHIP_UPGRADE": return <ShieldCheck className="h-4 w-4 text-purple-500" />;
+      case "MEMBERSHIP_DECLINED": return <X className="h-4 w-4 text-rose-500" />;
       default: return <Bell className="h-4 w-4 text-zinc-400" />;
     }
   };
@@ -91,7 +94,7 @@ export default function NotificationsPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        
+
         {/* Simple Header */}
         <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">

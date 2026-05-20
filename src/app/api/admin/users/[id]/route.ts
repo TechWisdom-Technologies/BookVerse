@@ -27,7 +27,6 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         subGenres: true,
         achievements: { select: { achievement: { select: { id: true, name: true, points: true } }, earnedAt: true } },
         newsletterSubs: { select: { author: { select: { id: true, username: true } }, createdAt: true } },
-        authorSubscriptions: { select: { author: { select: { id: true, username: true } }, tier: true, monthlyPrice: true, subscribedAt: true } },
         dmcaNotices: { select: { id: true, storyId: true, status: true, createdAt: true } },
         _count: {
           select: { books: true, stories: true, followers: true, readingLogs: true, comments: true },

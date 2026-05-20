@@ -416,17 +416,6 @@ exports.Prisma.DMCANoticeScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.AuthorSubscriptionScalarFieldEnum = {
-  id: 'id',
-  subscriberId: 'subscriberId',
-  authorId: 'authorId',
-  tier: 'tier',
-  monthlyPrice: 'monthlyPrice',
-  renewalDate: 'renewalDate',
-  subscribedAt: 'subscribedAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.StoryPromotionScalarFieldEnum = {
   id: 'id',
   storyId: 'storyId',
@@ -460,6 +449,19 @@ exports.Prisma.UniverseScalarFieldEnum = {
   genre: 'genre',
   coverUrl: 'coverUrl',
   userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SubscriptionTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  plan: 'plan',
+  duration: 'duration',
+  amount: 'amount',
+  senderNumber: 'senderNumber',
+  transactionId: 'transactionId',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -561,10 +563,10 @@ exports.Prisma.ModelName = {
   OnboardingQuiz: 'OnboardingQuiz',
   ContentReport: 'ContentReport',
   DMCANotice: 'DMCANotice',
-  AuthorSubscription: 'AuthorSubscription',
   StoryPromotion: 'StoryPromotion',
   GiftMembership: 'GiftMembership',
-  Universe: 'Universe'
+  Universe: 'Universe',
+  SubscriptionTransaction: 'SubscriptionTransaction'
 };
 
 /**

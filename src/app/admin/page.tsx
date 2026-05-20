@@ -112,6 +112,7 @@ export default function AdminPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { href: "/admin/users", label: "User Registry", desc: "Access authorization and role management." },
+              { href: "/admin/transactions", label: "Subscription Payments", desc: "Audit and verify manual premium upgrade transactions." },
               { href: "/admin/books", label: "Volume Registry", desc: "Scholarly metadata and content moderation." },
               { href: "/admin/stories", label: "Creative Registry", desc: "Community world-record oversight." },
               { href: "/admin/comments", label: "Interaction Logs", desc: "Peer engagement and moderation protocol." },

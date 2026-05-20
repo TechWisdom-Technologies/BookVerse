@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Eye, Loader2, Share2, ShieldAlert, Star } from "lucide-react";
+import { AlertTriangle, Eye, Loader2, Share2, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface StoryFeatureActionsProps {
@@ -85,17 +85,7 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
     }
   };
 
-  const subscribe = async (tier: string) => {
-    if (!currentUserId) return toast.error("Please sign in first");
-    setLoading(`tier-${tier}`);
-    try {
-      await submitJson("/api/author-subscriptions", { authorId, tier }, "Subscription activated");
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to subscribe");
-    } finally {
-      setLoading(null);
-    }
-  };
+
 
   return (
     <section className="mt-12 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950">
@@ -168,31 +158,7 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
           )}
         </div>
 
-        {!isAuthor && (
-          <div className="bg-white dark:bg-zinc-950 p-6 md:col-span-2 space-y-4">
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-              <Star className="h-3.5 w-3.5" />
-              Author Subscription
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { name: "BASIC", price: 2.99 },
-                { name: "PREMIUM", price: 4.99 },
-                { name: "VIP", price: 9.99 },
-              ].map((tier) => (
-                <div key={tier.name} className="border border-zinc-100 dark:border-zinc-800 rounded p-4 space-y-3">
-                  <div>
-                    <h3 className="text-sm font-bold">{tier.name}</h3>
-                    <p className="text-xs text-zinc-500">${tier.price.toFixed(2)}/mo</p>
-                  </div>
-                  <button onClick={() => subscribe(tier.name)} disabled={loading === `tier-${tier.name}`} className="w-full px-3 py-2 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest disabled:opacity-50">
-                    Subscribe
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+
       </div>
     </section>
   );

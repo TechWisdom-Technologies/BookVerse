@@ -20,6 +20,8 @@ type SyncedUser = {
   avatarUrl: string | null;
   bio: string | null;
   role: string;
+  membershipTier?: string | null;
+  membershipExpiry?: Date | string | null;
   _count?: {
     followers: number;
     following: number;

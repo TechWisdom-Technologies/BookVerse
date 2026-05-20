@@ -28,6 +28,7 @@ function CheckoutContent() {
   // Form & Method Selection States
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'contact'>('none');
   const [senderNumber, setSenderNumber] = useState('');
+  const [transactionId, setTransactionId] = useState('');
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
   const [duration, setDuration] = useState(1); // Default to 1 Month
 
@@ -38,19 +39,25 @@ function CheckoutContent() {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (paymentMethod === 'contact' && !senderNumber.trim()) {
-      toast.error('Please enter your bkash / Nagad / mobile number');
-      return;
+    if (paymentMethod === 'contact') {
+      if (!senderNumber.trim()) {
+        toast.error('Please enter your bkash / Nagad sender mobile number');
+        return;
+      }
+      if (!transactionId.trim()) {
+        toast.error('Please enter your payment Transaction ID');
+        return;
+      }
     }
 
     setProcessing(true);
     setPaymentStep('processing');
 
     const steps = [
-      'Verifying manual bkash / Nagad settlement protocols...',
-      'Authorizing charge through mobile banking portal...',
-      'Allocating client keys and system clearance handshake...',
-      'Finalizing database profile allocations...',
+      'Packaging payment credentials for submission...',
+      'Auditing Sender Mobile Number format...',
+      'Connecting to BookVerse central ledger registry...',
+      'Publishing pending transaction logs to administrative queue...',
     ];
 
     for (let i = 0; i < steps.length; i++) {
@@ -62,22 +69,27 @@ function CheckoutContent() {
       const res = await fetch('/api/premium/upgrade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plan: planName, duration: duration }),
+        body: JSON.stringify({ 
+          plan: planName, 
+          duration: duration,
+          senderNumber: senderNumber.trim(),
+          transactionId: transactionId.trim()
+        }),
       });
 
       if (res.ok) {
         setPaymentStep('success');
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        toast.success(`✨ Welcome to BookVerse ${planName}! Subscription activated!`);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        toast.success(`✨ Subscription payment receipt submitted for verification!`);
         router.push('/');
         router.refresh();
       } else {
         const err = await res.json();
-        toast.error(err.error || 'Failed to process subscription payment');
+        toast.error(err.error || 'Failed to submit payment details');
         setPaymentStep('idle');
       }
     } catch (error) {
-      toast.error('Payment gateway connection failure');
+      toast.error('Payment verification submission failure');
       setPaymentStep('idle');
     } finally {
       setProcessing(false);
@@ -105,20 +117,23 @@ function CheckoutContent() {
         <div className="border border-zinc-900 rounded-2xl p-12 bg-[#0c0c0e] shadow-xl text-center space-y-6">
           <Loader2 className="w-10 h-10 animate-spin text-white mx-auto" />
           <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-200">Processing Subscription...</h2>
-            <p className="text-[10px] text-zinc-400 font-medium italic animate-pulse">{paymentProgressText}</p>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-200">Submitting Receipt...</h2>
+            <p className="text-[10px] text-zinc-450 font-medium italic animate-pulse">{paymentProgressText}</p>
           </div>
         </div>
       )}
 
       {paymentStep === 'success' && (
-        <div className="border border-zinc-900 rounded-2xl p-12 bg-[#0c0c0e] shadow-xl text-center space-y-6">
+        <div className="border border-zinc-900 rounded-2xl p-12 bg-[#0c0c0e] shadow-xl text-center space-y-6 animate-fade-in">
           <div className="w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto border border-emerald-500/20 animate-bounce">
             <Check className="w-6 h-6" />
           </div>
-          <div className="space-y-1">
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">Transaction Cleared</h2>
-            <p className="text-[10px] text-zinc-400 font-medium">Your BookVerse {planName} membership has been activated! Redirecting...</p>
+          <div className="space-y-3">
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-emerald-400">Receipt Submitted</h2>
+            <p className="text-[11px] text-zinc-300 font-bold uppercase tracking-wide">Your payment details have been successfully queued for audit</p>
+            <p className="text-[10px] text-zinc-400 max-w-md mx-auto leading-relaxed">
+              BookVerse administrators will audit Sender Mobile <span className="font-mono text-zinc-200 font-bold">({senderNumber})</span> and Transaction ID <span className="font-mono text-zinc-200 font-bold">({transactionId})</span>. Your <span className="text-zinc-200 font-bold">{planName}</span> premium status will be granted upon verification. Redirecting home...
+            </p>
           </div>
         </div>
       )}
@@ -135,7 +150,7 @@ function CheckoutContent() {
               
               <div className="space-y-4 mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-white text-zinc-950 rounded-lg">
+                  <div className="p-2.5 bg-white text-zinc-955 rounded-lg">
                     {isCreator ? <Zap className="w-4 h-4" /> : <Heart className="w-4 h-4" />}
                   </div>
                   <div>
@@ -154,7 +169,7 @@ function CheckoutContent() {
                       id="checkout-duration"
                       value={duration}
                       onChange={e => setDuration(parseInt(e.target.value))}
-                      className="w-full px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white transition-all text-xs font-bold uppercase tracking-wider text-zinc-300 cursor-pointer appearance-none"
+                      className="w-full px-3 py-2.5 bg-zinc-955 border border-zinc-800 rounded-xl outline-none focus:border-white transition-all text-xs font-bold uppercase tracking-wider text-zinc-300 cursor-pointer appearance-none"
                     >
                       <option value="1">1 Month</option>
                       <option value="3">3 Months</option>
@@ -169,7 +184,7 @@ function CheckoutContent() {
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Total Value</span>
                   <span className="text-xl font-bold tracking-tight text-white">৳{(planPrice * duration).toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center text-[10px] text-zinc-450 font-medium pt-1">
+                <div className="flex justify-between items-center text-[10px] text-zinc-455 font-medium pt-1">
                   <span>Billing Cycle</span>
                   <span>{duration} Month{duration > 1 ? 's' : ''} Prepaid</span>
                 </div>
@@ -213,16 +228,16 @@ function CheckoutContent() {
                   >
                     <div className="p-2.5 bg-white text-zinc-955 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">1</div>
                     <div className="flex-1">
-                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Direct Manual bkash / Nagad</h4>
-                      <p className="text-[9px] text-zinc-450 font-medium italic">Instant clearance via manual mobile wallet send money</p>
+                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-white font-mono">Direct Manual bkash / Nagad</h4>
+                      <p className="text-[9px] text-zinc-450 font-medium italic">Submit transaction credentials for manual wallet transfer</p>
                     </div>
                   </button>
 
                   {/* Option 2: Autopay Card */}
                   <button
                     type="button"
-                    onClick={() => setWarningMsg("we are working on it Please pay manually using Bkash/Nagad with this 01799269699")}
-                    className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4"
+                    onClick={() => setWarningMsg("Card payments are under construction. Please use Direct Manual bkash/Nagad payment.")}
+                    className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4 opacity-50"
                   >
                     <div className="p-2.5 bg-white text-zinc-955 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">2</div>
                     <div className="flex-1">
@@ -234,8 +249,8 @@ function CheckoutContent() {
                   {/* Option 3: Merchant Pay */}
                   <button
                     type="button"
-                    onClick={() => setWarningMsg("we are working on it Please pay manually using Bkash/Nagad with this 01799269699")}
-                    className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4"
+                    onClick={() => setWarningMsg("Merchant payments are under construction. Please use Direct Manual bkash/Nagad payment.")}
+                    className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4 opacity-50"
                   >
                     <div className="p-2.5 bg-white text-zinc-955 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">3</div>
                     <div className="flex-1">
@@ -247,44 +262,60 @@ function CheckoutContent() {
               )}
 
               {paymentMethod === 'contact' && (
-                <form onSubmit={handleCheckout} className="space-y-6">
+                <form onSubmit={handleCheckout} className="space-y-6 animate-fade-in">
                   <div className="bg-zinc-900/80 p-5 rounded-xl border border-zinc-800 space-y-3">
-                    <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">Payment Instructions</h4>
+                    <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-455">Payment Instructions</h4>
                     <p className="text-[10px] text-zinc-350 leading-relaxed font-medium">
-                      Please send money (Personal) of **৳{(planPrice * duration).toLocaleString()} BDT** to:
+                      Please Send Money (Personal bKash or Nagad) of **৳{(planPrice * duration).toLocaleString()} BDT** to:
                     </p>
                     <div className="p-3 bg-zinc-950 text-white rounded-xl font-mono text-xs text-center font-bold tracking-widest select-all border border-zinc-850">
                       01799269699
                     </div>
                     <p className="text-[9px] text-zinc-500 font-medium italic">
-                      After sending, enter your sender number or Transaction ID below to verify your purchase instantly.
+                      After transfer, submit both your sender mobile number and the Transaction ID below for admin review.
                     </p>
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1">Your bkash/Nagad/Phone Number</label>
-                    <input 
-                      type="text" 
-                      value={senderNumber}
-                      onChange={e => setSenderNumber(e.target.value)}
-                      placeholder="e.g. 017XXXXXXXX or TxnID"
-                      required
-                      className="w-full px-4 py-3.5 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white text-xs font-mono text-center tracking-wider text-white animate-fade-in"
-                    />
+                  <div className="space-y-4">
+                    {/* Input 1: Sender Mobile Number */}
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1">Your bkash/Nagad Sender Mobile Number</label>
+                      <input 
+                        type="text" 
+                        value={senderNumber}
+                        onChange={e => setSenderNumber(e.target.value)}
+                        placeholder="e.g. 017XXXXXXXX"
+                        required
+                        className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white text-xs font-mono text-center tracking-wider text-white"
+                      />
+                    </div>
+
+                    {/* Input 2: Transaction ID */}
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1">Payment Transaction ID (TxnID)</label>
+                      <input 
+                        type="text" 
+                        value={transactionId}
+                        onChange={e => setTransactionId(e.target.value)}
+                        placeholder="e.g. A1B2C3D4E5"
+                        required
+                        className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white text-xs font-mono text-center tracking-wider text-white uppercase"
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 pt-2">
                     <button 
                       type="button"
                       onClick={() => setPaymentMethod('none')}
-                      className="flex-1 py-3.5 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-850"
+                      className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-850"
                     >
                       Back
                     </button>
                     <button 
                       type="submit"
                       disabled={processing}
-                      className="flex-1 py-3.5 bg-white text-zinc-955 hover:bg-zinc-100 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all text-center flex items-center justify-center gap-1.5"
+                      className="flex-1 py-3 bg-white text-zinc-955 hover:bg-zinc-100 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all text-center flex items-center justify-center gap-1.5"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Complete Payment

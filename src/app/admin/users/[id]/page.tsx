@@ -179,15 +179,8 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
         </div>
 
         <div className="border border-zinc-100 dark:border-zinc-900 rounded p-4 mb-6">
-          <h2 className="text-sm font-bold uppercase text-zinc-400">Subscriptions & Relations</h2>
+          <h2 className="text-sm font-bold uppercase text-zinc-400">Newsletter Subscriptions</h2>
           <div className="mt-2">
-            <p><strong>Author Subscriptions:</strong></p>
-            <ul className="list-disc pl-6">
-              {user.authorSubscriptions?.map((s: any) => (
-                <li key={s.author.id}>{s.author.username} — {s.tier} • ${s.monthlyPrice}/mo</li>
-              ))}
-            </ul>
-            <p className="mt-3"><strong>Newsletter Subscriptions:</strong></p>
             <ul className="list-disc pl-6">
               {user.newsletterSubs?.map((n: any) => (
                 <li key={n.author.id}>{n.author.username} • subscribed {new Date(n.createdAt).toLocaleDateString()}</li>

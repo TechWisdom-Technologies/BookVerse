@@ -149,11 +149,6 @@ export type ContentReport = $Result.DefaultSelection<Prisma.$ContentReportPayloa
  */
 export type DMCANotice = $Result.DefaultSelection<Prisma.$DMCANoticePayload>
 /**
- * Model AuthorSubscription
- * 
- */
-export type AuthorSubscription = $Result.DefaultSelection<Prisma.$AuthorSubscriptionPayload>
-/**
  * Model StoryPromotion
  * 
  */
@@ -168,6 +163,11 @@ export type GiftMembership = $Result.DefaultSelection<Prisma.$GiftMembershipPayl
  * 
  */
 export type Universe = $Result.DefaultSelection<Prisma.$UniversePayload>
+/**
+ * Model SubscriptionTransaction
+ * 
+ */
+export type SubscriptionTransaction = $Result.DefaultSelection<Prisma.$SubscriptionTransactionPayload>
 
 /**
  * Enums
@@ -663,16 +663,6 @@ export class PrismaClient<
   get dMCANotice(): Prisma.DMCANoticeDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.authorSubscription`: Exposes CRUD operations for the **AuthorSubscription** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more AuthorSubscriptions
-    * const authorSubscriptions = await prisma.authorSubscription.findMany()
-    * ```
-    */
-  get authorSubscription(): Prisma.AuthorSubscriptionDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.storyPromotion`: Exposes CRUD operations for the **StoryPromotion** model.
     * Example usage:
     * ```ts
@@ -701,6 +691,16 @@ export class PrismaClient<
     * ```
     */
   get universe(): Prisma.UniverseDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.subscriptionTransaction`: Exposes CRUD operations for the **SubscriptionTransaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SubscriptionTransactions
+    * const subscriptionTransactions = await prisma.subscriptionTransaction.findMany()
+    * ```
+    */
+  get subscriptionTransaction(): Prisma.SubscriptionTransactionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1168,10 +1168,10 @@ export namespace Prisma {
     OnboardingQuiz: 'OnboardingQuiz',
     ContentReport: 'ContentReport',
     DMCANotice: 'DMCANotice',
-    AuthorSubscription: 'AuthorSubscription',
     StoryPromotion: 'StoryPromotion',
     GiftMembership: 'GiftMembership',
-    Universe: 'Universe'
+    Universe: 'Universe',
+    SubscriptionTransaction: 'SubscriptionTransaction'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1187,7 +1187,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "notification" | "book" | "bookReview" | "bookSave" | "story" | "storyChapter" | "storyReaction" | "comment" | "follow" | "readingLog" | "achievement" | "userAchievement" | "club" | "clubMember" | "clubBan" | "clubDiscussion" | "betaReader" | "newsletterSubscriber" | "tip" | "bookAnnotation" | "scheduledChapter" | "inlineComment" | "shareActivity" | "onboardingQuiz" | "contentReport" | "dMCANotice" | "authorSubscription" | "storyPromotion" | "giftMembership" | "universe"
+      modelProps: "user" | "notification" | "book" | "bookReview" | "bookSave" | "story" | "storyChapter" | "storyReaction" | "comment" | "follow" | "readingLog" | "achievement" | "userAchievement" | "club" | "clubMember" | "clubBan" | "clubDiscussion" | "betaReader" | "newsletterSubscriber" | "tip" | "bookAnnotation" | "scheduledChapter" | "inlineComment" | "shareActivity" | "onboardingQuiz" | "contentReport" | "dMCANotice" | "storyPromotion" | "giftMembership" | "universe" | "subscriptionTransaction"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3189,80 +3189,6 @@ export namespace Prisma {
           }
         }
       }
-      AuthorSubscription: {
-        payload: Prisma.$AuthorSubscriptionPayload<ExtArgs>
-        fields: Prisma.AuthorSubscriptionFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.AuthorSubscriptionFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.AuthorSubscriptionFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>
-          }
-          findFirst: {
-            args: Prisma.AuthorSubscriptionFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.AuthorSubscriptionFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>
-          }
-          findMany: {
-            args: Prisma.AuthorSubscriptionFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>[]
-          }
-          create: {
-            args: Prisma.AuthorSubscriptionCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>
-          }
-          createMany: {
-            args: Prisma.AuthorSubscriptionCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.AuthorSubscriptionCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>[]
-          }
-          delete: {
-            args: Prisma.AuthorSubscriptionDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>
-          }
-          update: {
-            args: Prisma.AuthorSubscriptionUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>
-          }
-          deleteMany: {
-            args: Prisma.AuthorSubscriptionDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.AuthorSubscriptionUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.AuthorSubscriptionUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>[]
-          }
-          upsert: {
-            args: Prisma.AuthorSubscriptionUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AuthorSubscriptionPayload>
-          }
-          aggregate: {
-            args: Prisma.AuthorSubscriptionAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateAuthorSubscription>
-          }
-          groupBy: {
-            args: Prisma.AuthorSubscriptionGroupByArgs<ExtArgs>
-            result: $Utils.Optional<AuthorSubscriptionGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.AuthorSubscriptionCountArgs<ExtArgs>
-            result: $Utils.Optional<AuthorSubscriptionCountAggregateOutputType> | number
-          }
-        }
-      }
       StoryPromotion: {
         payload: Prisma.$StoryPromotionPayload<ExtArgs>
         fields: Prisma.StoryPromotionFieldRefs
@@ -3485,6 +3411,80 @@ export namespace Prisma {
           }
         }
       }
+      SubscriptionTransaction: {
+        payload: Prisma.$SubscriptionTransactionPayload<ExtArgs>
+        fields: Prisma.SubscriptionTransactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SubscriptionTransactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SubscriptionTransactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>
+          }
+          findFirst: {
+            args: Prisma.SubscriptionTransactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SubscriptionTransactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>
+          }
+          findMany: {
+            args: Prisma.SubscriptionTransactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>[]
+          }
+          create: {
+            args: Prisma.SubscriptionTransactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>
+          }
+          createMany: {
+            args: Prisma.SubscriptionTransactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SubscriptionTransactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>[]
+          }
+          delete: {
+            args: Prisma.SubscriptionTransactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>
+          }
+          update: {
+            args: Prisma.SubscriptionTransactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.SubscriptionTransactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SubscriptionTransactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SubscriptionTransactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.SubscriptionTransactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SubscriptionTransactionPayload>
+          }
+          aggregate: {
+            args: Prisma.SubscriptionTransactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSubscriptionTransaction>
+          }
+          groupBy: {
+            args: Prisma.SubscriptionTransactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SubscriptionTransactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SubscriptionTransactionCountArgs<ExtArgs>
+            result: $Utils.Optional<SubscriptionTransactionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3600,10 +3600,10 @@ export namespace Prisma {
     onboardingQuiz?: OnboardingQuizOmit
     contentReport?: ContentReportOmit
     dMCANotice?: DMCANoticeOmit
-    authorSubscription?: AuthorSubscriptionOmit
     storyPromotion?: StoryPromotionOmit
     giftMembership?: GiftMembershipOmit
     universe?: UniverseOmit
+    subscriptionTransaction?: SubscriptionTransactionOmit
   }
 
   /* Types for Logging */
@@ -3722,13 +3722,12 @@ export namespace Prisma {
     scheduledChapters: number
     inlineComments: number
     shareActivities: number
-    authorSubscriptions: number
-    authorSubscribersTo: number
     giftsSent: number
     giftsReceived: number
     contentReports: number
     dmcaNotices: number
     notifications: number
+    subscriptionTransactions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3756,13 +3755,12 @@ export namespace Prisma {
     scheduledChapters?: boolean | UserCountOutputTypeCountScheduledChaptersArgs
     inlineComments?: boolean | UserCountOutputTypeCountInlineCommentsArgs
     shareActivities?: boolean | UserCountOutputTypeCountShareActivitiesArgs
-    authorSubscriptions?: boolean | UserCountOutputTypeCountAuthorSubscriptionsArgs
-    authorSubscribersTo?: boolean | UserCountOutputTypeCountAuthorSubscribersToArgs
     giftsSent?: boolean | UserCountOutputTypeCountGiftsSentArgs
     giftsReceived?: boolean | UserCountOutputTypeCountGiftsReceivedArgs
     contentReports?: boolean | UserCountOutputTypeCountContentReportsArgs
     dmcaNotices?: boolean | UserCountOutputTypeCountDmcaNoticesArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
+    subscriptionTransactions?: boolean | UserCountOutputTypeCountSubscriptionTransactionsArgs
   }
 
   // Custom InputTypes
@@ -3947,20 +3945,6 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
-  export type UserCountOutputTypeCountAuthorSubscriptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AuthorSubscriptionWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
-  export type UserCountOutputTypeCountAuthorSubscribersToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AuthorSubscriptionWhereInput
-  }
-
-  /**
-   * UserCountOutputType without action
-   */
   export type UserCountOutputTypeCountGiftsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GiftMembershipWhereInput
   }
@@ -3991,6 +3975,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountNotificationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: NotificationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountSubscriptionTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SubscriptionTransactionWhereInput
   }
 
 
@@ -4657,14 +4648,13 @@ export namespace Prisma {
     scheduledChapters?: boolean | User$scheduledChaptersArgs<ExtArgs>
     inlineComments?: boolean | User$inlineCommentsArgs<ExtArgs>
     shareActivities?: boolean | User$shareActivitiesArgs<ExtArgs>
-    authorSubscriptions?: boolean | User$authorSubscriptionsArgs<ExtArgs>
-    authorSubscribersTo?: boolean | User$authorSubscribersToArgs<ExtArgs>
     giftsSent?: boolean | User$giftsSentArgs<ExtArgs>
     giftsReceived?: boolean | User$giftsReceivedArgs<ExtArgs>
     onboardingQuiz?: boolean | User$onboardingQuizArgs<ExtArgs>
     contentReports?: boolean | User$contentReportsArgs<ExtArgs>
     dmcaNotices?: boolean | User$dmcaNoticesArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    subscriptionTransactions?: boolean | User$subscriptionTransactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4763,14 +4753,13 @@ export namespace Prisma {
     scheduledChapters?: boolean | User$scheduledChaptersArgs<ExtArgs>
     inlineComments?: boolean | User$inlineCommentsArgs<ExtArgs>
     shareActivities?: boolean | User$shareActivitiesArgs<ExtArgs>
-    authorSubscriptions?: boolean | User$authorSubscriptionsArgs<ExtArgs>
-    authorSubscribersTo?: boolean | User$authorSubscribersToArgs<ExtArgs>
     giftsSent?: boolean | User$giftsSentArgs<ExtArgs>
     giftsReceived?: boolean | User$giftsReceivedArgs<ExtArgs>
     onboardingQuiz?: boolean | User$onboardingQuizArgs<ExtArgs>
     contentReports?: boolean | User$contentReportsArgs<ExtArgs>
     dmcaNotices?: boolean | User$dmcaNoticesArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
+    subscriptionTransactions?: boolean | User$subscriptionTransactionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4803,14 +4792,13 @@ export namespace Prisma {
       scheduledChapters: Prisma.$ScheduledChapterPayload<ExtArgs>[]
       inlineComments: Prisma.$InlineCommentPayload<ExtArgs>[]
       shareActivities: Prisma.$ShareActivityPayload<ExtArgs>[]
-      authorSubscriptions: Prisma.$AuthorSubscriptionPayload<ExtArgs>[]
-      authorSubscribersTo: Prisma.$AuthorSubscriptionPayload<ExtArgs>[]
       giftsSent: Prisma.$GiftMembershipPayload<ExtArgs>[]
       giftsReceived: Prisma.$GiftMembershipPayload<ExtArgs>[]
       onboardingQuiz: Prisma.$OnboardingQuizPayload<ExtArgs> | null
       contentReports: Prisma.$ContentReportPayload<ExtArgs>[]
       dmcaNotices: Prisma.$DMCANoticePayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
+      subscriptionTransactions: Prisma.$SubscriptionTransactionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5251,14 +5239,13 @@ export namespace Prisma {
     scheduledChapters<T extends User$scheduledChaptersArgs<ExtArgs> = {}>(args?: Subset<T, User$scheduledChaptersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ScheduledChapterPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     inlineComments<T extends User$inlineCommentsArgs<ExtArgs> = {}>(args?: Subset<T, User$inlineCommentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InlineCommentPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     shareActivities<T extends User$shareActivitiesArgs<ExtArgs> = {}>(args?: Subset<T, User$shareActivitiesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ShareActivityPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
-    authorSubscriptions<T extends User$authorSubscriptionsArgs<ExtArgs> = {}>(args?: Subset<T, User$authorSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
-    authorSubscribersTo<T extends User$authorSubscribersToArgs<ExtArgs> = {}>(args?: Subset<T, User$authorSubscribersToArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     giftsSent<T extends User$giftsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$giftsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GiftMembershipPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     giftsReceived<T extends User$giftsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$giftsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GiftMembershipPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     onboardingQuiz<T extends User$onboardingQuizArgs<ExtArgs> = {}>(args?: Subset<T, User$onboardingQuizArgs<ExtArgs>>): Prisma__OnboardingQuizClient<$Result.GetResult<Prisma.$OnboardingQuizPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | null, null, ExtArgs, ClientOptions>
     contentReports<T extends User$contentReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$contentReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ContentReportPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     dmcaNotices<T extends User$dmcaNoticesArgs<ExtArgs> = {}>(args?: Subset<T, User$dmcaNoticesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DMCANoticePayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
+    subscriptionTransactions<T extends User$subscriptionTransactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$subscriptionTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6260,54 +6247,6 @@ export namespace Prisma {
   }
 
   /**
-   * User.authorSubscriptions
-   */
-  export type User$authorSubscriptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    where?: AuthorSubscriptionWhereInput
-    orderBy?: AuthorSubscriptionOrderByWithRelationInput | AuthorSubscriptionOrderByWithRelationInput[]
-    cursor?: AuthorSubscriptionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: AuthorSubscriptionScalarFieldEnum | AuthorSubscriptionScalarFieldEnum[]
-  }
-
-  /**
-   * User.authorSubscribersTo
-   */
-  export type User$authorSubscribersToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    where?: AuthorSubscriptionWhereInput
-    orderBy?: AuthorSubscriptionOrderByWithRelationInput | AuthorSubscriptionOrderByWithRelationInput[]
-    cursor?: AuthorSubscriptionWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: AuthorSubscriptionScalarFieldEnum | AuthorSubscriptionScalarFieldEnum[]
-  }
-
-  /**
    * User.giftsSent
    */
   export type User$giftsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6444,6 +6383,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: NotificationScalarFieldEnum | NotificationScalarFieldEnum[]
+  }
+
+  /**
+   * User.subscriptionTransactions
+   */
+  export type User$subscriptionTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    where?: SubscriptionTransactionWhereInput
+    orderBy?: SubscriptionTransactionOrderByWithRelationInput | SubscriptionTransactionOrderByWithRelationInput[]
+    cursor?: SubscriptionTransactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SubscriptionTransactionScalarFieldEnum | SubscriptionTransactionScalarFieldEnum[]
   }
 
   /**
@@ -35696,1133 +35659,6 @@ export namespace Prisma {
 
 
   /**
-   * Model AuthorSubscription
-   */
-
-  export type AggregateAuthorSubscription = {
-    _count: AuthorSubscriptionCountAggregateOutputType | null
-    _avg: AuthorSubscriptionAvgAggregateOutputType | null
-    _sum: AuthorSubscriptionSumAggregateOutputType | null
-    _min: AuthorSubscriptionMinAggregateOutputType | null
-    _max: AuthorSubscriptionMaxAggregateOutputType | null
-  }
-
-  export type AuthorSubscriptionAvgAggregateOutputType = {
-    monthlyPrice: number | null
-  }
-
-  export type AuthorSubscriptionSumAggregateOutputType = {
-    monthlyPrice: number | null
-  }
-
-  export type AuthorSubscriptionMinAggregateOutputType = {
-    id: string | null
-    subscriberId: string | null
-    authorId: string | null
-    tier: string | null
-    monthlyPrice: number | null
-    renewalDate: Date | null
-    subscribedAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type AuthorSubscriptionMaxAggregateOutputType = {
-    id: string | null
-    subscriberId: string | null
-    authorId: string | null
-    tier: string | null
-    monthlyPrice: number | null
-    renewalDate: Date | null
-    subscribedAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type AuthorSubscriptionCountAggregateOutputType = {
-    id: number
-    subscriberId: number
-    authorId: number
-    tier: number
-    monthlyPrice: number
-    renewalDate: number
-    subscribedAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type AuthorSubscriptionAvgAggregateInputType = {
-    monthlyPrice?: true
-  }
-
-  export type AuthorSubscriptionSumAggregateInputType = {
-    monthlyPrice?: true
-  }
-
-  export type AuthorSubscriptionMinAggregateInputType = {
-    id?: true
-    subscriberId?: true
-    authorId?: true
-    tier?: true
-    monthlyPrice?: true
-    renewalDate?: true
-    subscribedAt?: true
-    updatedAt?: true
-  }
-
-  export type AuthorSubscriptionMaxAggregateInputType = {
-    id?: true
-    subscriberId?: true
-    authorId?: true
-    tier?: true
-    monthlyPrice?: true
-    renewalDate?: true
-    subscribedAt?: true
-    updatedAt?: true
-  }
-
-  export type AuthorSubscriptionCountAggregateInputType = {
-    id?: true
-    subscriberId?: true
-    authorId?: true
-    tier?: true
-    monthlyPrice?: true
-    renewalDate?: true
-    subscribedAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type AuthorSubscriptionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which AuthorSubscription to aggregate.
-     */
-    where?: AuthorSubscriptionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AuthorSubscriptions to fetch.
-     */
-    orderBy?: AuthorSubscriptionOrderByWithRelationInput | AuthorSubscriptionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: AuthorSubscriptionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AuthorSubscriptions from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AuthorSubscriptions.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned AuthorSubscriptions
-    **/
-    _count?: true | AuthorSubscriptionCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: AuthorSubscriptionAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: AuthorSubscriptionSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: AuthorSubscriptionMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: AuthorSubscriptionMaxAggregateInputType
-  }
-
-  export type GetAuthorSubscriptionAggregateType<T extends AuthorSubscriptionAggregateArgs> = {
-        [P in keyof T & keyof AggregateAuthorSubscription]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateAuthorSubscription[P]>
-      : GetScalarType<T[P], AggregateAuthorSubscription[P]>
-  }
-
-
-
-
-  export type AuthorSubscriptionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AuthorSubscriptionWhereInput
-    orderBy?: AuthorSubscriptionOrderByWithAggregationInput | AuthorSubscriptionOrderByWithAggregationInput[]
-    by: AuthorSubscriptionScalarFieldEnum[] | AuthorSubscriptionScalarFieldEnum
-    having?: AuthorSubscriptionScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: AuthorSubscriptionCountAggregateInputType | true
-    _avg?: AuthorSubscriptionAvgAggregateInputType
-    _sum?: AuthorSubscriptionSumAggregateInputType
-    _min?: AuthorSubscriptionMinAggregateInputType
-    _max?: AuthorSubscriptionMaxAggregateInputType
-  }
-
-  export type AuthorSubscriptionGroupByOutputType = {
-    id: string
-    subscriberId: string
-    authorId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date
-    subscribedAt: Date
-    updatedAt: Date
-    _count: AuthorSubscriptionCountAggregateOutputType | null
-    _avg: AuthorSubscriptionAvgAggregateOutputType | null
-    _sum: AuthorSubscriptionSumAggregateOutputType | null
-    _min: AuthorSubscriptionMinAggregateOutputType | null
-    _max: AuthorSubscriptionMaxAggregateOutputType | null
-  }
-
-  type GetAuthorSubscriptionGroupByPayload<T extends AuthorSubscriptionGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<AuthorSubscriptionGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof AuthorSubscriptionGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], AuthorSubscriptionGroupByOutputType[P]>
-            : GetScalarType<T[P], AuthorSubscriptionGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type AuthorSubscriptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    subscriberId?: boolean
-    authorId?: boolean
-    tier?: boolean
-    monthlyPrice?: boolean
-    renewalDate?: boolean
-    subscribedAt?: boolean
-    updatedAt?: boolean
-    subscriber?: boolean | UserDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["authorSubscription"]>
-
-  export type AuthorSubscriptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    subscriberId?: boolean
-    authorId?: boolean
-    tier?: boolean
-    monthlyPrice?: boolean
-    renewalDate?: boolean
-    subscribedAt?: boolean
-    updatedAt?: boolean
-    subscriber?: boolean | UserDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["authorSubscription"]>
-
-  export type AuthorSubscriptionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    subscriberId?: boolean
-    authorId?: boolean
-    tier?: boolean
-    monthlyPrice?: boolean
-    renewalDate?: boolean
-    subscribedAt?: boolean
-    updatedAt?: boolean
-    subscriber?: boolean | UserDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["authorSubscription"]>
-
-  export type AuthorSubscriptionSelectScalar = {
-    id?: boolean
-    subscriberId?: boolean
-    authorId?: boolean
-    tier?: boolean
-    monthlyPrice?: boolean
-    renewalDate?: boolean
-    subscribedAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type AuthorSubscriptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "subscriberId" | "authorId" | "tier" | "monthlyPrice" | "renewalDate" | "subscribedAt" | "updatedAt", ExtArgs["result"]["authorSubscription"]>
-  export type AuthorSubscriptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subscriber?: boolean | UserDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type AuthorSubscriptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subscriber?: boolean | UserDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
-  }
-  export type AuthorSubscriptionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subscriber?: boolean | UserDefaultArgs<ExtArgs>
-    author?: boolean | UserDefaultArgs<ExtArgs>
-  }
-
-  export type $AuthorSubscriptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "AuthorSubscription"
-    objects: {
-      subscriber: Prisma.$UserPayload<ExtArgs>
-      author: Prisma.$UserPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      subscriberId: string
-      authorId: string
-      tier: string
-      monthlyPrice: number
-      renewalDate: Date
-      subscribedAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["authorSubscription"]>
-    composites: {}
-  }
-
-  type AuthorSubscriptionGetPayload<S extends boolean | null | undefined | AuthorSubscriptionDefaultArgs> = $Result.GetResult<Prisma.$AuthorSubscriptionPayload, S>
-
-  type AuthorSubscriptionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<AuthorSubscriptionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: AuthorSubscriptionCountAggregateInputType | true
-    }
-
-  export interface AuthorSubscriptionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AuthorSubscription'], meta: { name: 'AuthorSubscription' } }
-    /**
-     * Find zero or one AuthorSubscription that matches the filter.
-     * @param {AuthorSubscriptionFindUniqueArgs} args - Arguments to find a AuthorSubscription
-     * @example
-     * // Get one AuthorSubscription
-     * const authorSubscription = await prisma.authorSubscription.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends AuthorSubscriptionFindUniqueArgs>(args: SelectSubset<T, AuthorSubscriptionFindUniqueArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
-
-    /**
-     * Find one AuthorSubscription that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {AuthorSubscriptionFindUniqueOrThrowArgs} args - Arguments to find a AuthorSubscription
-     * @example
-     * // Get one AuthorSubscription
-     * const authorSubscription = await prisma.authorSubscription.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends AuthorSubscriptionFindUniqueOrThrowArgs>(args: SelectSubset<T, AuthorSubscriptionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
-
-    /**
-     * Find the first AuthorSubscription that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionFindFirstArgs} args - Arguments to find a AuthorSubscription
-     * @example
-     * // Get one AuthorSubscription
-     * const authorSubscription = await prisma.authorSubscription.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends AuthorSubscriptionFindFirstArgs>(args?: SelectSubset<T, AuthorSubscriptionFindFirstArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
-
-    /**
-     * Find the first AuthorSubscription that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionFindFirstOrThrowArgs} args - Arguments to find a AuthorSubscription
-     * @example
-     * // Get one AuthorSubscription
-     * const authorSubscription = await prisma.authorSubscription.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends AuthorSubscriptionFindFirstOrThrowArgs>(args?: SelectSubset<T, AuthorSubscriptionFindFirstOrThrowArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
-
-    /**
-     * Find zero or more AuthorSubscriptions that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all AuthorSubscriptions
-     * const authorSubscriptions = await prisma.authorSubscription.findMany()
-     * 
-     * // Get first 10 AuthorSubscriptions
-     * const authorSubscriptions = await prisma.authorSubscription.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const authorSubscriptionWithIdOnly = await prisma.authorSubscription.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends AuthorSubscriptionFindManyArgs>(args?: SelectSubset<T, AuthorSubscriptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "findMany", ClientOptions>>
-
-    /**
-     * Create a AuthorSubscription.
-     * @param {AuthorSubscriptionCreateArgs} args - Arguments to create a AuthorSubscription.
-     * @example
-     * // Create one AuthorSubscription
-     * const AuthorSubscription = await prisma.authorSubscription.create({
-     *   data: {
-     *     // ... data to create a AuthorSubscription
-     *   }
-     * })
-     * 
-     */
-    create<T extends AuthorSubscriptionCreateArgs>(args: SelectSubset<T, AuthorSubscriptionCreateArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
-
-    /**
-     * Create many AuthorSubscriptions.
-     * @param {AuthorSubscriptionCreateManyArgs} args - Arguments to create many AuthorSubscriptions.
-     * @example
-     * // Create many AuthorSubscriptions
-     * const authorSubscription = await prisma.authorSubscription.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends AuthorSubscriptionCreateManyArgs>(args?: SelectSubset<T, AuthorSubscriptionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many AuthorSubscriptions and returns the data saved in the database.
-     * @param {AuthorSubscriptionCreateManyAndReturnArgs} args - Arguments to create many AuthorSubscriptions.
-     * @example
-     * // Create many AuthorSubscriptions
-     * const authorSubscription = await prisma.authorSubscription.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many AuthorSubscriptions and only return the `id`
-     * const authorSubscriptionWithIdOnly = await prisma.authorSubscription.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends AuthorSubscriptionCreateManyAndReturnArgs>(args?: SelectSubset<T, AuthorSubscriptionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
-
-    /**
-     * Delete a AuthorSubscription.
-     * @param {AuthorSubscriptionDeleteArgs} args - Arguments to delete one AuthorSubscription.
-     * @example
-     * // Delete one AuthorSubscription
-     * const AuthorSubscription = await prisma.authorSubscription.delete({
-     *   where: {
-     *     // ... filter to delete one AuthorSubscription
-     *   }
-     * })
-     * 
-     */
-    delete<T extends AuthorSubscriptionDeleteArgs>(args: SelectSubset<T, AuthorSubscriptionDeleteArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
-
-    /**
-     * Update one AuthorSubscription.
-     * @param {AuthorSubscriptionUpdateArgs} args - Arguments to update one AuthorSubscription.
-     * @example
-     * // Update one AuthorSubscription
-     * const authorSubscription = await prisma.authorSubscription.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends AuthorSubscriptionUpdateArgs>(args: SelectSubset<T, AuthorSubscriptionUpdateArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
-
-    /**
-     * Delete zero or more AuthorSubscriptions.
-     * @param {AuthorSubscriptionDeleteManyArgs} args - Arguments to filter AuthorSubscriptions to delete.
-     * @example
-     * // Delete a few AuthorSubscriptions
-     * const { count } = await prisma.authorSubscription.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends AuthorSubscriptionDeleteManyArgs>(args?: SelectSubset<T, AuthorSubscriptionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more AuthorSubscriptions.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many AuthorSubscriptions
-     * const authorSubscription = await prisma.authorSubscription.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends AuthorSubscriptionUpdateManyArgs>(args: SelectSubset<T, AuthorSubscriptionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more AuthorSubscriptions and returns the data updated in the database.
-     * @param {AuthorSubscriptionUpdateManyAndReturnArgs} args - Arguments to update many AuthorSubscriptions.
-     * @example
-     * // Update many AuthorSubscriptions
-     * const authorSubscription = await prisma.authorSubscription.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more AuthorSubscriptions and only return the `id`
-     * const authorSubscriptionWithIdOnly = await prisma.authorSubscription.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends AuthorSubscriptionUpdateManyAndReturnArgs>(args: SelectSubset<T, AuthorSubscriptionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
-
-    /**
-     * Create or update one AuthorSubscription.
-     * @param {AuthorSubscriptionUpsertArgs} args - Arguments to update or create a AuthorSubscription.
-     * @example
-     * // Update or create a AuthorSubscription
-     * const authorSubscription = await prisma.authorSubscription.upsert({
-     *   create: {
-     *     // ... data to create a AuthorSubscription
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the AuthorSubscription we want to update
-     *   }
-     * })
-     */
-    upsert<T extends AuthorSubscriptionUpsertArgs>(args: SelectSubset<T, AuthorSubscriptionUpsertArgs<ExtArgs>>): Prisma__AuthorSubscriptionClient<$Result.GetResult<Prisma.$AuthorSubscriptionPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
-
-
-    /**
-     * Count the number of AuthorSubscriptions.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionCountArgs} args - Arguments to filter AuthorSubscriptions to count.
-     * @example
-     * // Count the number of AuthorSubscriptions
-     * const count = await prisma.authorSubscription.count({
-     *   where: {
-     *     // ... the filter for the AuthorSubscriptions we want to count
-     *   }
-     * })
-    **/
-    count<T extends AuthorSubscriptionCountArgs>(
-      args?: Subset<T, AuthorSubscriptionCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], AuthorSubscriptionCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a AuthorSubscription.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends AuthorSubscriptionAggregateArgs>(args: Subset<T, AuthorSubscriptionAggregateArgs>): Prisma.PrismaPromise<GetAuthorSubscriptionAggregateType<T>>
-
-    /**
-     * Group by AuthorSubscription.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AuthorSubscriptionGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends AuthorSubscriptionGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: AuthorSubscriptionGroupByArgs['orderBy'] }
-        : { orderBy?: AuthorSubscriptionGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, AuthorSubscriptionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAuthorSubscriptionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the AuthorSubscription model
-   */
-  readonly fields: AuthorSubscriptionFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for AuthorSubscription.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__AuthorSubscriptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    subscriber<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
-    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the AuthorSubscription model
-   */ 
-  interface AuthorSubscriptionFieldRefs {
-    readonly id: FieldRef<"AuthorSubscription", 'String'>
-    readonly subscriberId: FieldRef<"AuthorSubscription", 'String'>
-    readonly authorId: FieldRef<"AuthorSubscription", 'String'>
-    readonly tier: FieldRef<"AuthorSubscription", 'String'>
-    readonly monthlyPrice: FieldRef<"AuthorSubscription", 'Float'>
-    readonly renewalDate: FieldRef<"AuthorSubscription", 'DateTime'>
-    readonly subscribedAt: FieldRef<"AuthorSubscription", 'DateTime'>
-    readonly updatedAt: FieldRef<"AuthorSubscription", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * AuthorSubscription findUnique
-   */
-  export type AuthorSubscriptionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * Filter, which AuthorSubscription to fetch.
-     */
-    where: AuthorSubscriptionWhereUniqueInput
-  }
-
-  /**
-   * AuthorSubscription findUniqueOrThrow
-   */
-  export type AuthorSubscriptionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * Filter, which AuthorSubscription to fetch.
-     */
-    where: AuthorSubscriptionWhereUniqueInput
-  }
-
-  /**
-   * AuthorSubscription findFirst
-   */
-  export type AuthorSubscriptionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * Filter, which AuthorSubscription to fetch.
-     */
-    where?: AuthorSubscriptionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AuthorSubscriptions to fetch.
-     */
-    orderBy?: AuthorSubscriptionOrderByWithRelationInput | AuthorSubscriptionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for AuthorSubscriptions.
-     */
-    cursor?: AuthorSubscriptionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AuthorSubscriptions from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AuthorSubscriptions.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of AuthorSubscriptions.
-     */
-    distinct?: AuthorSubscriptionScalarFieldEnum | AuthorSubscriptionScalarFieldEnum[]
-  }
-
-  /**
-   * AuthorSubscription findFirstOrThrow
-   */
-  export type AuthorSubscriptionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * Filter, which AuthorSubscription to fetch.
-     */
-    where?: AuthorSubscriptionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AuthorSubscriptions to fetch.
-     */
-    orderBy?: AuthorSubscriptionOrderByWithRelationInput | AuthorSubscriptionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for AuthorSubscriptions.
-     */
-    cursor?: AuthorSubscriptionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AuthorSubscriptions from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AuthorSubscriptions.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of AuthorSubscriptions.
-     */
-    distinct?: AuthorSubscriptionScalarFieldEnum | AuthorSubscriptionScalarFieldEnum[]
-  }
-
-  /**
-   * AuthorSubscription findMany
-   */
-  export type AuthorSubscriptionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * Filter, which AuthorSubscriptions to fetch.
-     */
-    where?: AuthorSubscriptionWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AuthorSubscriptions to fetch.
-     */
-    orderBy?: AuthorSubscriptionOrderByWithRelationInput | AuthorSubscriptionOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing AuthorSubscriptions.
-     */
-    cursor?: AuthorSubscriptionWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AuthorSubscriptions from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AuthorSubscriptions.
-     */
-    skip?: number
-    distinct?: AuthorSubscriptionScalarFieldEnum | AuthorSubscriptionScalarFieldEnum[]
-  }
-
-  /**
-   * AuthorSubscription create
-   */
-  export type AuthorSubscriptionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * The data needed to create a AuthorSubscription.
-     */
-    data: XOR<AuthorSubscriptionCreateInput, AuthorSubscriptionUncheckedCreateInput>
-  }
-
-  /**
-   * AuthorSubscription createMany
-   */
-  export type AuthorSubscriptionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many AuthorSubscriptions.
-     */
-    data: AuthorSubscriptionCreateManyInput | AuthorSubscriptionCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * AuthorSubscription createManyAndReturn
-   */
-  export type AuthorSubscriptionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * The data used to create many AuthorSubscriptions.
-     */
-    data: AuthorSubscriptionCreateManyInput | AuthorSubscriptionCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * AuthorSubscription update
-   */
-  export type AuthorSubscriptionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * The data needed to update a AuthorSubscription.
-     */
-    data: XOR<AuthorSubscriptionUpdateInput, AuthorSubscriptionUncheckedUpdateInput>
-    /**
-     * Choose, which AuthorSubscription to update.
-     */
-    where: AuthorSubscriptionWhereUniqueInput
-  }
-
-  /**
-   * AuthorSubscription updateMany
-   */
-  export type AuthorSubscriptionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update AuthorSubscriptions.
-     */
-    data: XOR<AuthorSubscriptionUpdateManyMutationInput, AuthorSubscriptionUncheckedUpdateManyInput>
-    /**
-     * Filter which AuthorSubscriptions to update
-     */
-    where?: AuthorSubscriptionWhereInput
-  }
-
-  /**
-   * AuthorSubscription updateManyAndReturn
-   */
-  export type AuthorSubscriptionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * The data used to update AuthorSubscriptions.
-     */
-    data: XOR<AuthorSubscriptionUpdateManyMutationInput, AuthorSubscriptionUncheckedUpdateManyInput>
-    /**
-     * Filter which AuthorSubscriptions to update
-     */
-    where?: AuthorSubscriptionWhereInput
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * AuthorSubscription upsert
-   */
-  export type AuthorSubscriptionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * The filter to search for the AuthorSubscription to update in case it exists.
-     */
-    where: AuthorSubscriptionWhereUniqueInput
-    /**
-     * In case the AuthorSubscription found by the `where` argument doesn't exist, create a new AuthorSubscription with this data.
-     */
-    create: XOR<AuthorSubscriptionCreateInput, AuthorSubscriptionUncheckedCreateInput>
-    /**
-     * In case the AuthorSubscription was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<AuthorSubscriptionUpdateInput, AuthorSubscriptionUncheckedUpdateInput>
-  }
-
-  /**
-   * AuthorSubscription delete
-   */
-  export type AuthorSubscriptionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-    /**
-     * Filter which AuthorSubscription to delete.
-     */
-    where: AuthorSubscriptionWhereUniqueInput
-  }
-
-  /**
-   * AuthorSubscription deleteMany
-   */
-  export type AuthorSubscriptionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which AuthorSubscriptions to delete
-     */
-    where?: AuthorSubscriptionWhereInput
-  }
-
-  /**
-   * AuthorSubscription without action
-   */
-  export type AuthorSubscriptionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AuthorSubscription
-     */
-    select?: AuthorSubscriptionSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AuthorSubscription
-     */
-    omit?: AuthorSubscriptionOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: AuthorSubscriptionInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Model StoryPromotion
    */
 
@@ -40259,6 +39095,1155 @@ export namespace Prisma {
 
 
   /**
+   * Model SubscriptionTransaction
+   */
+
+  export type AggregateSubscriptionTransaction = {
+    _count: SubscriptionTransactionCountAggregateOutputType | null
+    _avg: SubscriptionTransactionAvgAggregateOutputType | null
+    _sum: SubscriptionTransactionSumAggregateOutputType | null
+    _min: SubscriptionTransactionMinAggregateOutputType | null
+    _max: SubscriptionTransactionMaxAggregateOutputType | null
+  }
+
+  export type SubscriptionTransactionAvgAggregateOutputType = {
+    duration: number | null
+    amount: number | null
+  }
+
+  export type SubscriptionTransactionSumAggregateOutputType = {
+    duration: number | null
+    amount: number | null
+  }
+
+  export type SubscriptionTransactionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    plan: string | null
+    duration: number | null
+    amount: number | null
+    senderNumber: string | null
+    transactionId: string | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SubscriptionTransactionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    plan: string | null
+    duration: number | null
+    amount: number | null
+    senderNumber: string | null
+    transactionId: string | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SubscriptionTransactionCountAggregateOutputType = {
+    id: number
+    userId: number
+    plan: number
+    duration: number
+    amount: number
+    senderNumber: number
+    transactionId: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SubscriptionTransactionAvgAggregateInputType = {
+    duration?: true
+    amount?: true
+  }
+
+  export type SubscriptionTransactionSumAggregateInputType = {
+    duration?: true
+    amount?: true
+  }
+
+  export type SubscriptionTransactionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    plan?: true
+    duration?: true
+    amount?: true
+    senderNumber?: true
+    transactionId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SubscriptionTransactionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    plan?: true
+    duration?: true
+    amount?: true
+    senderNumber?: true
+    transactionId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SubscriptionTransactionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    plan?: true
+    duration?: true
+    amount?: true
+    senderNumber?: true
+    transactionId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SubscriptionTransactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SubscriptionTransaction to aggregate.
+     */
+    where?: SubscriptionTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SubscriptionTransactions to fetch.
+     */
+    orderBy?: SubscriptionTransactionOrderByWithRelationInput | SubscriptionTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SubscriptionTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SubscriptionTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SubscriptionTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SubscriptionTransactions
+    **/
+    _count?: true | SubscriptionTransactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SubscriptionTransactionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SubscriptionTransactionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SubscriptionTransactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SubscriptionTransactionMaxAggregateInputType
+  }
+
+  export type GetSubscriptionTransactionAggregateType<T extends SubscriptionTransactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateSubscriptionTransaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSubscriptionTransaction[P]>
+      : GetScalarType<T[P], AggregateSubscriptionTransaction[P]>
+  }
+
+
+
+
+  export type SubscriptionTransactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SubscriptionTransactionWhereInput
+    orderBy?: SubscriptionTransactionOrderByWithAggregationInput | SubscriptionTransactionOrderByWithAggregationInput[]
+    by: SubscriptionTransactionScalarFieldEnum[] | SubscriptionTransactionScalarFieldEnum
+    having?: SubscriptionTransactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SubscriptionTransactionCountAggregateInputType | true
+    _avg?: SubscriptionTransactionAvgAggregateInputType
+    _sum?: SubscriptionTransactionSumAggregateInputType
+    _min?: SubscriptionTransactionMinAggregateInputType
+    _max?: SubscriptionTransactionMaxAggregateInputType
+  }
+
+  export type SubscriptionTransactionGroupByOutputType = {
+    id: string
+    userId: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status: string
+    createdAt: Date
+    updatedAt: Date
+    _count: SubscriptionTransactionCountAggregateOutputType | null
+    _avg: SubscriptionTransactionAvgAggregateOutputType | null
+    _sum: SubscriptionTransactionSumAggregateOutputType | null
+    _min: SubscriptionTransactionMinAggregateOutputType | null
+    _max: SubscriptionTransactionMaxAggregateOutputType | null
+  }
+
+  type GetSubscriptionTransactionGroupByPayload<T extends SubscriptionTransactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SubscriptionTransactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SubscriptionTransactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SubscriptionTransactionGroupByOutputType[P]>
+            : GetScalarType<T[P], SubscriptionTransactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SubscriptionTransactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    plan?: boolean
+    duration?: boolean
+    amount?: boolean
+    senderNumber?: boolean
+    transactionId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["subscriptionTransaction"]>
+
+  export type SubscriptionTransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    plan?: boolean
+    duration?: boolean
+    amount?: boolean
+    senderNumber?: boolean
+    transactionId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["subscriptionTransaction"]>
+
+  export type SubscriptionTransactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    plan?: boolean
+    duration?: boolean
+    amount?: boolean
+    senderNumber?: boolean
+    transactionId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["subscriptionTransaction"]>
+
+  export type SubscriptionTransactionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    plan?: boolean
+    duration?: boolean
+    amount?: boolean
+    senderNumber?: boolean
+    transactionId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SubscriptionTransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "plan" | "duration" | "amount" | "senderNumber" | "transactionId" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["subscriptionTransaction"]>
+  export type SubscriptionTransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SubscriptionTransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type SubscriptionTransactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $SubscriptionTransactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SubscriptionTransaction"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      plan: string
+      duration: number
+      amount: number
+      senderNumber: string
+      transactionId: string
+      status: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["subscriptionTransaction"]>
+    composites: {}
+  }
+
+  type SubscriptionTransactionGetPayload<S extends boolean | null | undefined | SubscriptionTransactionDefaultArgs> = $Result.GetResult<Prisma.$SubscriptionTransactionPayload, S>
+
+  type SubscriptionTransactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SubscriptionTransactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SubscriptionTransactionCountAggregateInputType | true
+    }
+
+  export interface SubscriptionTransactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SubscriptionTransaction'], meta: { name: 'SubscriptionTransaction' } }
+    /**
+     * Find zero or one SubscriptionTransaction that matches the filter.
+     * @param {SubscriptionTransactionFindUniqueArgs} args - Arguments to find a SubscriptionTransaction
+     * @example
+     * // Get one SubscriptionTransaction
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SubscriptionTransactionFindUniqueArgs>(args: SelectSubset<T, SubscriptionTransactionFindUniqueArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one SubscriptionTransaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SubscriptionTransactionFindUniqueOrThrowArgs} args - Arguments to find a SubscriptionTransaction
+     * @example
+     * // Get one SubscriptionTransaction
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SubscriptionTransactionFindUniqueOrThrowArgs>(args: SelectSubset<T, SubscriptionTransactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first SubscriptionTransaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionFindFirstArgs} args - Arguments to find a SubscriptionTransaction
+     * @example
+     * // Get one SubscriptionTransaction
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SubscriptionTransactionFindFirstArgs>(args?: SelectSubset<T, SubscriptionTransactionFindFirstArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first SubscriptionTransaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionFindFirstOrThrowArgs} args - Arguments to find a SubscriptionTransaction
+     * @example
+     * // Get one SubscriptionTransaction
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SubscriptionTransactionFindFirstOrThrowArgs>(args?: SelectSubset<T, SubscriptionTransactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more SubscriptionTransactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SubscriptionTransactions
+     * const subscriptionTransactions = await prisma.subscriptionTransaction.findMany()
+     * 
+     * // Get first 10 SubscriptionTransactions
+     * const subscriptionTransactions = await prisma.subscriptionTransaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const subscriptionTransactionWithIdOnly = await prisma.subscriptionTransaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SubscriptionTransactionFindManyArgs>(args?: SelectSubset<T, SubscriptionTransactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a SubscriptionTransaction.
+     * @param {SubscriptionTransactionCreateArgs} args - Arguments to create a SubscriptionTransaction.
+     * @example
+     * // Create one SubscriptionTransaction
+     * const SubscriptionTransaction = await prisma.subscriptionTransaction.create({
+     *   data: {
+     *     // ... data to create a SubscriptionTransaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends SubscriptionTransactionCreateArgs>(args: SelectSubset<T, SubscriptionTransactionCreateArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many SubscriptionTransactions.
+     * @param {SubscriptionTransactionCreateManyArgs} args - Arguments to create many SubscriptionTransactions.
+     * @example
+     * // Create many SubscriptionTransactions
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SubscriptionTransactionCreateManyArgs>(args?: SelectSubset<T, SubscriptionTransactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SubscriptionTransactions and returns the data saved in the database.
+     * @param {SubscriptionTransactionCreateManyAndReturnArgs} args - Arguments to create many SubscriptionTransactions.
+     * @example
+     * // Create many SubscriptionTransactions
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SubscriptionTransactions and only return the `id`
+     * const subscriptionTransactionWithIdOnly = await prisma.subscriptionTransaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SubscriptionTransactionCreateManyAndReturnArgs>(args?: SelectSubset<T, SubscriptionTransactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a SubscriptionTransaction.
+     * @param {SubscriptionTransactionDeleteArgs} args - Arguments to delete one SubscriptionTransaction.
+     * @example
+     * // Delete one SubscriptionTransaction
+     * const SubscriptionTransaction = await prisma.subscriptionTransaction.delete({
+     *   where: {
+     *     // ... filter to delete one SubscriptionTransaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SubscriptionTransactionDeleteArgs>(args: SelectSubset<T, SubscriptionTransactionDeleteArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one SubscriptionTransaction.
+     * @param {SubscriptionTransactionUpdateArgs} args - Arguments to update one SubscriptionTransaction.
+     * @example
+     * // Update one SubscriptionTransaction
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SubscriptionTransactionUpdateArgs>(args: SelectSubset<T, SubscriptionTransactionUpdateArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more SubscriptionTransactions.
+     * @param {SubscriptionTransactionDeleteManyArgs} args - Arguments to filter SubscriptionTransactions to delete.
+     * @example
+     * // Delete a few SubscriptionTransactions
+     * const { count } = await prisma.subscriptionTransaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SubscriptionTransactionDeleteManyArgs>(args?: SelectSubset<T, SubscriptionTransactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SubscriptionTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SubscriptionTransactions
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SubscriptionTransactionUpdateManyArgs>(args: SelectSubset<T, SubscriptionTransactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SubscriptionTransactions and returns the data updated in the database.
+     * @param {SubscriptionTransactionUpdateManyAndReturnArgs} args - Arguments to update many SubscriptionTransactions.
+     * @example
+     * // Update many SubscriptionTransactions
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SubscriptionTransactions and only return the `id`
+     * const subscriptionTransactionWithIdOnly = await prisma.subscriptionTransaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SubscriptionTransactionUpdateManyAndReturnArgs>(args: SelectSubset<T, SubscriptionTransactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one SubscriptionTransaction.
+     * @param {SubscriptionTransactionUpsertArgs} args - Arguments to update or create a SubscriptionTransaction.
+     * @example
+     * // Update or create a SubscriptionTransaction
+     * const subscriptionTransaction = await prisma.subscriptionTransaction.upsert({
+     *   create: {
+     *     // ... data to create a SubscriptionTransaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SubscriptionTransaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SubscriptionTransactionUpsertArgs>(args: SelectSubset<T, SubscriptionTransactionUpsertArgs<ExtArgs>>): Prisma__SubscriptionTransactionClient<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of SubscriptionTransactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionCountArgs} args - Arguments to filter SubscriptionTransactions to count.
+     * @example
+     * // Count the number of SubscriptionTransactions
+     * const count = await prisma.subscriptionTransaction.count({
+     *   where: {
+     *     // ... the filter for the SubscriptionTransactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends SubscriptionTransactionCountArgs>(
+      args?: Subset<T, SubscriptionTransactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SubscriptionTransactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SubscriptionTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SubscriptionTransactionAggregateArgs>(args: Subset<T, SubscriptionTransactionAggregateArgs>): Prisma.PrismaPromise<GetSubscriptionTransactionAggregateType<T>>
+
+    /**
+     * Group by SubscriptionTransaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SubscriptionTransactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SubscriptionTransactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SubscriptionTransactionGroupByArgs['orderBy'] }
+        : { orderBy?: SubscriptionTransactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SubscriptionTransactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSubscriptionTransactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SubscriptionTransaction model
+   */
+  readonly fields: SubscriptionTransactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SubscriptionTransaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SubscriptionTransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SubscriptionTransaction model
+   */ 
+  interface SubscriptionTransactionFieldRefs {
+    readonly id: FieldRef<"SubscriptionTransaction", 'String'>
+    readonly userId: FieldRef<"SubscriptionTransaction", 'String'>
+    readonly plan: FieldRef<"SubscriptionTransaction", 'String'>
+    readonly duration: FieldRef<"SubscriptionTransaction", 'Int'>
+    readonly amount: FieldRef<"SubscriptionTransaction", 'Float'>
+    readonly senderNumber: FieldRef<"SubscriptionTransaction", 'String'>
+    readonly transactionId: FieldRef<"SubscriptionTransaction", 'String'>
+    readonly status: FieldRef<"SubscriptionTransaction", 'String'>
+    readonly createdAt: FieldRef<"SubscriptionTransaction", 'DateTime'>
+    readonly updatedAt: FieldRef<"SubscriptionTransaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SubscriptionTransaction findUnique
+   */
+  export type SubscriptionTransactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SubscriptionTransaction to fetch.
+     */
+    where: SubscriptionTransactionWhereUniqueInput
+  }
+
+  /**
+   * SubscriptionTransaction findUniqueOrThrow
+   */
+  export type SubscriptionTransactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SubscriptionTransaction to fetch.
+     */
+    where: SubscriptionTransactionWhereUniqueInput
+  }
+
+  /**
+   * SubscriptionTransaction findFirst
+   */
+  export type SubscriptionTransactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SubscriptionTransaction to fetch.
+     */
+    where?: SubscriptionTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SubscriptionTransactions to fetch.
+     */
+    orderBy?: SubscriptionTransactionOrderByWithRelationInput | SubscriptionTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SubscriptionTransactions.
+     */
+    cursor?: SubscriptionTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SubscriptionTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SubscriptionTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SubscriptionTransactions.
+     */
+    distinct?: SubscriptionTransactionScalarFieldEnum | SubscriptionTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * SubscriptionTransaction findFirstOrThrow
+   */
+  export type SubscriptionTransactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SubscriptionTransaction to fetch.
+     */
+    where?: SubscriptionTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SubscriptionTransactions to fetch.
+     */
+    orderBy?: SubscriptionTransactionOrderByWithRelationInput | SubscriptionTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SubscriptionTransactions.
+     */
+    cursor?: SubscriptionTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SubscriptionTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SubscriptionTransactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SubscriptionTransactions.
+     */
+    distinct?: SubscriptionTransactionScalarFieldEnum | SubscriptionTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * SubscriptionTransaction findMany
+   */
+  export type SubscriptionTransactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * Filter, which SubscriptionTransactions to fetch.
+     */
+    where?: SubscriptionTransactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SubscriptionTransactions to fetch.
+     */
+    orderBy?: SubscriptionTransactionOrderByWithRelationInput | SubscriptionTransactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SubscriptionTransactions.
+     */
+    cursor?: SubscriptionTransactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SubscriptionTransactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SubscriptionTransactions.
+     */
+    skip?: number
+    distinct?: SubscriptionTransactionScalarFieldEnum | SubscriptionTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * SubscriptionTransaction create
+   */
+  export type SubscriptionTransactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a SubscriptionTransaction.
+     */
+    data: XOR<SubscriptionTransactionCreateInput, SubscriptionTransactionUncheckedCreateInput>
+  }
+
+  /**
+   * SubscriptionTransaction createMany
+   */
+  export type SubscriptionTransactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SubscriptionTransactions.
+     */
+    data: SubscriptionTransactionCreateManyInput | SubscriptionTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SubscriptionTransaction createManyAndReturn
+   */
+  export type SubscriptionTransactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many SubscriptionTransactions.
+     */
+    data: SubscriptionTransactionCreateManyInput | SubscriptionTransactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SubscriptionTransaction update
+   */
+  export type SubscriptionTransactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a SubscriptionTransaction.
+     */
+    data: XOR<SubscriptionTransactionUpdateInput, SubscriptionTransactionUncheckedUpdateInput>
+    /**
+     * Choose, which SubscriptionTransaction to update.
+     */
+    where: SubscriptionTransactionWhereUniqueInput
+  }
+
+  /**
+   * SubscriptionTransaction updateMany
+   */
+  export type SubscriptionTransactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SubscriptionTransactions.
+     */
+    data: XOR<SubscriptionTransactionUpdateManyMutationInput, SubscriptionTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which SubscriptionTransactions to update
+     */
+    where?: SubscriptionTransactionWhereInput
+  }
+
+  /**
+   * SubscriptionTransaction updateManyAndReturn
+   */
+  export type SubscriptionTransactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * The data used to update SubscriptionTransactions.
+     */
+    data: XOR<SubscriptionTransactionUpdateManyMutationInput, SubscriptionTransactionUncheckedUpdateManyInput>
+    /**
+     * Filter which SubscriptionTransactions to update
+     */
+    where?: SubscriptionTransactionWhereInput
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * SubscriptionTransaction upsert
+   */
+  export type SubscriptionTransactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the SubscriptionTransaction to update in case it exists.
+     */
+    where: SubscriptionTransactionWhereUniqueInput
+    /**
+     * In case the SubscriptionTransaction found by the `where` argument doesn't exist, create a new SubscriptionTransaction with this data.
+     */
+    create: XOR<SubscriptionTransactionCreateInput, SubscriptionTransactionUncheckedCreateInput>
+    /**
+     * In case the SubscriptionTransaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SubscriptionTransactionUpdateInput, SubscriptionTransactionUncheckedUpdateInput>
+  }
+
+  /**
+   * SubscriptionTransaction delete
+   */
+  export type SubscriptionTransactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+    /**
+     * Filter which SubscriptionTransaction to delete.
+     */
+    where: SubscriptionTransactionWhereUniqueInput
+  }
+
+  /**
+   * SubscriptionTransaction deleteMany
+   */
+  export type SubscriptionTransactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SubscriptionTransactions to delete
+     */
+    where?: SubscriptionTransactionWhereInput
+  }
+
+  /**
+   * SubscriptionTransaction without action
+   */
+  export type SubscriptionTransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SubscriptionTransaction
+     */
+    select?: SubscriptionTransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SubscriptionTransaction
+     */
+    omit?: SubscriptionTransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SubscriptionTransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -40652,20 +40637,6 @@ export namespace Prisma {
   export type DMCANoticeScalarFieldEnum = (typeof DMCANoticeScalarFieldEnum)[keyof typeof DMCANoticeScalarFieldEnum]
 
 
-  export const AuthorSubscriptionScalarFieldEnum: {
-    id: 'id',
-    subscriberId: 'subscriberId',
-    authorId: 'authorId',
-    tier: 'tier',
-    monthlyPrice: 'monthlyPrice',
-    renewalDate: 'renewalDate',
-    subscribedAt: 'subscribedAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type AuthorSubscriptionScalarFieldEnum = (typeof AuthorSubscriptionScalarFieldEnum)[keyof typeof AuthorSubscriptionScalarFieldEnum]
-
-
   export const StoryPromotionScalarFieldEnum: {
     id: 'id',
     storyId: 'storyId',
@@ -40710,6 +40681,22 @@ export namespace Prisma {
   };
 
   export type UniverseScalarFieldEnum = (typeof UniverseScalarFieldEnum)[keyof typeof UniverseScalarFieldEnum]
+
+
+  export const SubscriptionTransactionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    plan: 'plan',
+    duration: 'duration',
+    amount: 'amount',
+    senderNumber: 'senderNumber',
+    transactionId: 'transactionId',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SubscriptionTransactionScalarFieldEnum = (typeof SubscriptionTransactionScalarFieldEnum)[keyof typeof SubscriptionTransactionScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -40977,14 +40964,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterListRelationFilter
     inlineComments?: InlineCommentListRelationFilter
     shareActivities?: ShareActivityListRelationFilter
-    authorSubscriptions?: AuthorSubscriptionListRelationFilter
-    authorSubscribersTo?: AuthorSubscriptionListRelationFilter
     giftsSent?: GiftMembershipListRelationFilter
     giftsReceived?: GiftMembershipListRelationFilter
     onboardingQuiz?: XOR<OnboardingQuizNullableScalarRelationFilter, OnboardingQuizWhereInput> | null
     contentReports?: ContentReportListRelationFilter
     dmcaNotices?: DMCANoticeListRelationFilter
     notifications?: NotificationListRelationFilter
+    subscriptionTransactions?: SubscriptionTransactionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -41032,14 +41018,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterOrderByRelationAggregateInput
     inlineComments?: InlineCommentOrderByRelationAggregateInput
     shareActivities?: ShareActivityOrderByRelationAggregateInput
-    authorSubscriptions?: AuthorSubscriptionOrderByRelationAggregateInput
-    authorSubscribersTo?: AuthorSubscriptionOrderByRelationAggregateInput
     giftsSent?: GiftMembershipOrderByRelationAggregateInput
     giftsReceived?: GiftMembershipOrderByRelationAggregateInput
     onboardingQuiz?: OnboardingQuizOrderByWithRelationInput
     contentReports?: ContentReportOrderByRelationAggregateInput
     dmcaNotices?: DMCANoticeOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
+    subscriptionTransactions?: SubscriptionTransactionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -41090,14 +41075,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterListRelationFilter
     inlineComments?: InlineCommentListRelationFilter
     shareActivities?: ShareActivityListRelationFilter
-    authorSubscriptions?: AuthorSubscriptionListRelationFilter
-    authorSubscribersTo?: AuthorSubscriptionListRelationFilter
     giftsSent?: GiftMembershipListRelationFilter
     giftsReceived?: GiftMembershipListRelationFilter
     onboardingQuiz?: XOR<OnboardingQuizNullableScalarRelationFilter, OnboardingQuizWhereInput> | null
     contentReports?: ContentReportListRelationFilter
     dmcaNotices?: DMCANoticeListRelationFilter
     notifications?: NotificationListRelationFilter
+    subscriptionTransactions?: SubscriptionTransactionListRelationFilter
   }, "id" | "firebaseUid" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -43066,82 +43050,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"DMCANotice"> | Date | string
   }
 
-  export type AuthorSubscriptionWhereInput = {
-    AND?: AuthorSubscriptionWhereInput | AuthorSubscriptionWhereInput[]
-    OR?: AuthorSubscriptionWhereInput[]
-    NOT?: AuthorSubscriptionWhereInput | AuthorSubscriptionWhereInput[]
-    id?: StringFilter<"AuthorSubscription"> | string
-    subscriberId?: StringFilter<"AuthorSubscription"> | string
-    authorId?: StringFilter<"AuthorSubscription"> | string
-    tier?: StringFilter<"AuthorSubscription"> | string
-    monthlyPrice?: FloatFilter<"AuthorSubscription"> | number
-    renewalDate?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    subscribedAt?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    updatedAt?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    subscriber?: XOR<UserScalarRelationFilter, UserWhereInput>
-    author?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }
-
-  export type AuthorSubscriptionOrderByWithRelationInput = {
-    id?: SortOrder
-    subscriberId?: SortOrder
-    authorId?: SortOrder
-    tier?: SortOrder
-    monthlyPrice?: SortOrder
-    renewalDate?: SortOrder
-    subscribedAt?: SortOrder
-    updatedAt?: SortOrder
-    subscriber?: UserOrderByWithRelationInput
-    author?: UserOrderByWithRelationInput
-  }
-
-  export type AuthorSubscriptionWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    subscriberId_authorId?: AuthorSubscriptionSubscriberIdAuthorIdCompoundUniqueInput
-    AND?: AuthorSubscriptionWhereInput | AuthorSubscriptionWhereInput[]
-    OR?: AuthorSubscriptionWhereInput[]
-    NOT?: AuthorSubscriptionWhereInput | AuthorSubscriptionWhereInput[]
-    subscriberId?: StringFilter<"AuthorSubscription"> | string
-    authorId?: StringFilter<"AuthorSubscription"> | string
-    tier?: StringFilter<"AuthorSubscription"> | string
-    monthlyPrice?: FloatFilter<"AuthorSubscription"> | number
-    renewalDate?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    subscribedAt?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    updatedAt?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    subscriber?: XOR<UserScalarRelationFilter, UserWhereInput>
-    author?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id" | "subscriberId_authorId">
-
-  export type AuthorSubscriptionOrderByWithAggregationInput = {
-    id?: SortOrder
-    subscriberId?: SortOrder
-    authorId?: SortOrder
-    tier?: SortOrder
-    monthlyPrice?: SortOrder
-    renewalDate?: SortOrder
-    subscribedAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: AuthorSubscriptionCountOrderByAggregateInput
-    _avg?: AuthorSubscriptionAvgOrderByAggregateInput
-    _max?: AuthorSubscriptionMaxOrderByAggregateInput
-    _min?: AuthorSubscriptionMinOrderByAggregateInput
-    _sum?: AuthorSubscriptionSumOrderByAggregateInput
-  }
-
-  export type AuthorSubscriptionScalarWhereWithAggregatesInput = {
-    AND?: AuthorSubscriptionScalarWhereWithAggregatesInput | AuthorSubscriptionScalarWhereWithAggregatesInput[]
-    OR?: AuthorSubscriptionScalarWhereWithAggregatesInput[]
-    NOT?: AuthorSubscriptionScalarWhereWithAggregatesInput | AuthorSubscriptionScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"AuthorSubscription"> | string
-    subscriberId?: StringWithAggregatesFilter<"AuthorSubscription"> | string
-    authorId?: StringWithAggregatesFilter<"AuthorSubscription"> | string
-    tier?: StringWithAggregatesFilter<"AuthorSubscription"> | string
-    monthlyPrice?: FloatWithAggregatesFilter<"AuthorSubscription"> | number
-    renewalDate?: DateTimeWithAggregatesFilter<"AuthorSubscription"> | Date | string
-    subscribedAt?: DateTimeWithAggregatesFilter<"AuthorSubscription"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"AuthorSubscription"> | Date | string
-  }
-
   export type StoryPromotionWhereInput = {
     AND?: StoryPromotionWhereInput | StoryPromotionWhereInput[]
     OR?: StoryPromotionWhereInput[]
@@ -43382,6 +43290,88 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Universe"> | Date | string
   }
 
+  export type SubscriptionTransactionWhereInput = {
+    AND?: SubscriptionTransactionWhereInput | SubscriptionTransactionWhereInput[]
+    OR?: SubscriptionTransactionWhereInput[]
+    NOT?: SubscriptionTransactionWhereInput | SubscriptionTransactionWhereInput[]
+    id?: StringFilter<"SubscriptionTransaction"> | string
+    userId?: StringFilter<"SubscriptionTransaction"> | string
+    plan?: StringFilter<"SubscriptionTransaction"> | string
+    duration?: IntFilter<"SubscriptionTransaction"> | number
+    amount?: FloatFilter<"SubscriptionTransaction"> | number
+    senderNumber?: StringFilter<"SubscriptionTransaction"> | string
+    transactionId?: StringFilter<"SubscriptionTransaction"> | string
+    status?: StringFilter<"SubscriptionTransaction"> | string
+    createdAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
+    updatedAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type SubscriptionTransactionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    plan?: SortOrder
+    duration?: SortOrder
+    amount?: SortOrder
+    senderNumber?: SortOrder
+    transactionId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type SubscriptionTransactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    transactionId?: string
+    AND?: SubscriptionTransactionWhereInput | SubscriptionTransactionWhereInput[]
+    OR?: SubscriptionTransactionWhereInput[]
+    NOT?: SubscriptionTransactionWhereInput | SubscriptionTransactionWhereInput[]
+    userId?: StringFilter<"SubscriptionTransaction"> | string
+    plan?: StringFilter<"SubscriptionTransaction"> | string
+    duration?: IntFilter<"SubscriptionTransaction"> | number
+    amount?: FloatFilter<"SubscriptionTransaction"> | number
+    senderNumber?: StringFilter<"SubscriptionTransaction"> | string
+    status?: StringFilter<"SubscriptionTransaction"> | string
+    createdAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
+    updatedAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "transactionId">
+
+  export type SubscriptionTransactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    plan?: SortOrder
+    duration?: SortOrder
+    amount?: SortOrder
+    senderNumber?: SortOrder
+    transactionId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SubscriptionTransactionCountOrderByAggregateInput
+    _avg?: SubscriptionTransactionAvgOrderByAggregateInput
+    _max?: SubscriptionTransactionMaxOrderByAggregateInput
+    _min?: SubscriptionTransactionMinOrderByAggregateInput
+    _sum?: SubscriptionTransactionSumOrderByAggregateInput
+  }
+
+  export type SubscriptionTransactionScalarWhereWithAggregatesInput = {
+    AND?: SubscriptionTransactionScalarWhereWithAggregatesInput | SubscriptionTransactionScalarWhereWithAggregatesInput[]
+    OR?: SubscriptionTransactionScalarWhereWithAggregatesInput[]
+    NOT?: SubscriptionTransactionScalarWhereWithAggregatesInput | SubscriptionTransactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SubscriptionTransaction"> | string
+    userId?: StringWithAggregatesFilter<"SubscriptionTransaction"> | string
+    plan?: StringWithAggregatesFilter<"SubscriptionTransaction"> | string
+    duration?: IntWithAggregatesFilter<"SubscriptionTransaction"> | number
+    amount?: FloatWithAggregatesFilter<"SubscriptionTransaction"> | number
+    senderNumber?: StringWithAggregatesFilter<"SubscriptionTransaction"> | string
+    transactionId?: StringWithAggregatesFilter<"SubscriptionTransaction"> | string
+    status?: StringWithAggregatesFilter<"SubscriptionTransaction"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"SubscriptionTransaction"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SubscriptionTransaction"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     firebaseUid: string
@@ -43427,14 +43417,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -43482,14 +43471,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -43537,14 +43525,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -43592,14 +43579,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -45630,81 +45616,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AuthorSubscriptionCreateInput = {
-    id?: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-    subscriber: UserCreateNestedOneWithoutAuthorSubscriptionsInput
-    author: UserCreateNestedOneWithoutAuthorSubscribersToInput
-  }
-
-  export type AuthorSubscriptionUncheckedCreateInput = {
-    id?: string
-    subscriberId: string
-    authorId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AuthorSubscriptionUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscriber?: UserUpdateOneRequiredWithoutAuthorSubscriptionsNestedInput
-    author?: UserUpdateOneRequiredWithoutAuthorSubscribersToNestedInput
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    subscriberId?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AuthorSubscriptionCreateManyInput = {
-    id?: string
-    subscriberId: string
-    authorId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AuthorSubscriptionUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    subscriberId?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type StoryPromotionCreateInput = {
     id?: string
     tier: string
@@ -45964,6 +45875,96 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SubscriptionTransactionCreateInput = {
+    id?: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutSubscriptionTransactionsInput
+  }
+
+  export type SubscriptionTransactionUncheckedCreateInput = {
+    id?: string
+    userId: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SubscriptionTransactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutSubscriptionTransactionsNestedInput
+  }
+
+  export type SubscriptionTransactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SubscriptionTransactionCreateManyInput = {
+    id?: string
+    userId: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SubscriptionTransactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SubscriptionTransactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -46179,12 +46180,6 @@ export namespace Prisma {
     none?: ShareActivityWhereInput
   }
 
-  export type AuthorSubscriptionListRelationFilter = {
-    every?: AuthorSubscriptionWhereInput
-    some?: AuthorSubscriptionWhereInput
-    none?: AuthorSubscriptionWhereInput
-  }
-
   export type GiftMembershipListRelationFilter = {
     every?: GiftMembershipWhereInput
     some?: GiftMembershipWhereInput
@@ -46212,6 +46207,12 @@ export namespace Prisma {
     every?: NotificationWhereInput
     some?: NotificationWhereInput
     none?: NotificationWhereInput
+  }
+
+  export type SubscriptionTransactionListRelationFilter = {
+    every?: SubscriptionTransactionWhereInput
+    some?: SubscriptionTransactionWhereInput
+    none?: SubscriptionTransactionWhereInput
   }
 
   export type SortOrderInput = {
@@ -46303,10 +46304,6 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
-  export type AuthorSubscriptionOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type GiftMembershipOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -46320,6 +46317,10 @@ export namespace Prisma {
   }
 
   export type NotificationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SubscriptionTransactionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -47726,68 +47727,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type AuthorSubscriptionSubscriberIdAuthorIdCompoundUniqueInput = {
-    subscriberId: string
-    authorId: string
-  }
-
-  export type AuthorSubscriptionCountOrderByAggregateInput = {
-    id?: SortOrder
-    subscriberId?: SortOrder
-    authorId?: SortOrder
-    tier?: SortOrder
-    monthlyPrice?: SortOrder
-    renewalDate?: SortOrder
-    subscribedAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type AuthorSubscriptionAvgOrderByAggregateInput = {
-    monthlyPrice?: SortOrder
-  }
-
-  export type AuthorSubscriptionMaxOrderByAggregateInput = {
-    id?: SortOrder
-    subscriberId?: SortOrder
-    authorId?: SortOrder
-    tier?: SortOrder
-    monthlyPrice?: SortOrder
-    renewalDate?: SortOrder
-    subscribedAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type AuthorSubscriptionMinOrderByAggregateInput = {
-    id?: SortOrder
-    subscriberId?: SortOrder
-    authorId?: SortOrder
-    tier?: SortOrder
-    monthlyPrice?: SortOrder
-    renewalDate?: SortOrder
-    subscribedAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type AuthorSubscriptionSumOrderByAggregateInput = {
-    monthlyPrice?: SortOrder
-  }
-
-  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel>
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedFloatFilter<$PrismaModel>
-    _min?: NestedFloatFilter<$PrismaModel>
-    _max?: NestedFloatFilter<$PrismaModel>
-  }
-
   export type StoryPromotionCountOrderByAggregateInput = {
     id?: SortOrder
     storyId?: SortOrder
@@ -47827,6 +47766,22 @@ export namespace Prisma {
 
   export type StoryPromotionSumOrderByAggregateInput = {
     cost?: SortOrder
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
   }
 
   export type GiftMembershipCountOrderByAggregateInput = {
@@ -47915,6 +47870,55 @@ export namespace Prisma {
     userId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type SubscriptionTransactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    plan?: SortOrder
+    duration?: SortOrder
+    amount?: SortOrder
+    senderNumber?: SortOrder
+    transactionId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SubscriptionTransactionAvgOrderByAggregateInput = {
+    duration?: SortOrder
+    amount?: SortOrder
+  }
+
+  export type SubscriptionTransactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    plan?: SortOrder
+    duration?: SortOrder
+    amount?: SortOrder
+    senderNumber?: SortOrder
+    transactionId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SubscriptionTransactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    plan?: SortOrder
+    duration?: SortOrder
+    amount?: SortOrder
+    senderNumber?: SortOrder
+    transactionId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SubscriptionTransactionSumOrderByAggregateInput = {
+    duration?: SortOrder
+    amount?: SortOrder
   }
 
   export type UserCreatesubGenresInput = {
@@ -48097,20 +48101,6 @@ export namespace Prisma {
     connect?: ShareActivityWhereUniqueInput | ShareActivityWhereUniqueInput[]
   }
 
-  export type AuthorSubscriptionCreateNestedManyWithoutSubscriberInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutSubscriberInput, AuthorSubscriptionUncheckedCreateWithoutSubscriberInput> | AuthorSubscriptionCreateWithoutSubscriberInput[] | AuthorSubscriptionUncheckedCreateWithoutSubscriberInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutSubscriberInput | AuthorSubscriptionCreateOrConnectWithoutSubscriberInput[]
-    createMany?: AuthorSubscriptionCreateManySubscriberInputEnvelope
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-  }
-
-  export type AuthorSubscriptionCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutAuthorInput, AuthorSubscriptionUncheckedCreateWithoutAuthorInput> | AuthorSubscriptionCreateWithoutAuthorInput[] | AuthorSubscriptionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutAuthorInput | AuthorSubscriptionCreateOrConnectWithoutAuthorInput[]
-    createMany?: AuthorSubscriptionCreateManyAuthorInputEnvelope
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-  }
-
   export type GiftMembershipCreateNestedManyWithoutSentByUserInput = {
     create?: XOR<GiftMembershipCreateWithoutSentByUserInput, GiftMembershipUncheckedCreateWithoutSentByUserInput> | GiftMembershipCreateWithoutSentByUserInput[] | GiftMembershipUncheckedCreateWithoutSentByUserInput[]
     connectOrCreate?: GiftMembershipCreateOrConnectWithoutSentByUserInput | GiftMembershipCreateOrConnectWithoutSentByUserInput[]
@@ -48150,6 +48140,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type SubscriptionTransactionCreateNestedManyWithoutUserInput = {
+    create?: XOR<SubscriptionTransactionCreateWithoutUserInput, SubscriptionTransactionUncheckedCreateWithoutUserInput> | SubscriptionTransactionCreateWithoutUserInput[] | SubscriptionTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SubscriptionTransactionCreateOrConnectWithoutUserInput | SubscriptionTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: SubscriptionTransactionCreateManyUserInputEnvelope
+    connect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
   }
 
   export type BookUncheckedCreateNestedManyWithoutUploadedByInput = {
@@ -48320,20 +48317,6 @@ export namespace Prisma {
     connect?: ShareActivityWhereUniqueInput | ShareActivityWhereUniqueInput[]
   }
 
-  export type AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutSubscriberInput, AuthorSubscriptionUncheckedCreateWithoutSubscriberInput> | AuthorSubscriptionCreateWithoutSubscriberInput[] | AuthorSubscriptionUncheckedCreateWithoutSubscriberInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutSubscriberInput | AuthorSubscriptionCreateOrConnectWithoutSubscriberInput[]
-    createMany?: AuthorSubscriptionCreateManySubscriberInputEnvelope
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-  }
-
-  export type AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutAuthorInput, AuthorSubscriptionUncheckedCreateWithoutAuthorInput> | AuthorSubscriptionCreateWithoutAuthorInput[] | AuthorSubscriptionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutAuthorInput | AuthorSubscriptionCreateOrConnectWithoutAuthorInput[]
-    createMany?: AuthorSubscriptionCreateManyAuthorInputEnvelope
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-  }
-
   export type GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput = {
     create?: XOR<GiftMembershipCreateWithoutSentByUserInput, GiftMembershipUncheckedCreateWithoutSentByUserInput> | GiftMembershipCreateWithoutSentByUserInput[] | GiftMembershipUncheckedCreateWithoutSentByUserInput[]
     connectOrCreate?: GiftMembershipCreateOrConnectWithoutSentByUserInput | GiftMembershipCreateOrConnectWithoutSentByUserInput[]
@@ -48373,6 +48356,13 @@ export namespace Prisma {
     connectOrCreate?: NotificationCreateOrConnectWithoutUserInput | NotificationCreateOrConnectWithoutUserInput[]
     createMany?: NotificationCreateManyUserInputEnvelope
     connect?: NotificationWhereUniqueInput | NotificationWhereUniqueInput[]
+  }
+
+  export type SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<SubscriptionTransactionCreateWithoutUserInput, SubscriptionTransactionUncheckedCreateWithoutUserInput> | SubscriptionTransactionCreateWithoutUserInput[] | SubscriptionTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SubscriptionTransactionCreateOrConnectWithoutUserInput | SubscriptionTransactionCreateOrConnectWithoutUserInput[]
+    createMany?: SubscriptionTransactionCreateManyUserInputEnvelope
+    connect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -48762,34 +48752,6 @@ export namespace Prisma {
     deleteMany?: ShareActivityScalarWhereInput | ShareActivityScalarWhereInput[]
   }
 
-  export type AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutSubscriberInput, AuthorSubscriptionUncheckedCreateWithoutSubscriberInput> | AuthorSubscriptionCreateWithoutSubscriberInput[] | AuthorSubscriptionUncheckedCreateWithoutSubscriberInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutSubscriberInput | AuthorSubscriptionCreateOrConnectWithoutSubscriberInput[]
-    upsert?: AuthorSubscriptionUpsertWithWhereUniqueWithoutSubscriberInput | AuthorSubscriptionUpsertWithWhereUniqueWithoutSubscriberInput[]
-    createMany?: AuthorSubscriptionCreateManySubscriberInputEnvelope
-    set?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    disconnect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    delete?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    update?: AuthorSubscriptionUpdateWithWhereUniqueWithoutSubscriberInput | AuthorSubscriptionUpdateWithWhereUniqueWithoutSubscriberInput[]
-    updateMany?: AuthorSubscriptionUpdateManyWithWhereWithoutSubscriberInput | AuthorSubscriptionUpdateManyWithWhereWithoutSubscriberInput[]
-    deleteMany?: AuthorSubscriptionScalarWhereInput | AuthorSubscriptionScalarWhereInput[]
-  }
-
-  export type AuthorSubscriptionUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutAuthorInput, AuthorSubscriptionUncheckedCreateWithoutAuthorInput> | AuthorSubscriptionCreateWithoutAuthorInput[] | AuthorSubscriptionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutAuthorInput | AuthorSubscriptionCreateOrConnectWithoutAuthorInput[]
-    upsert?: AuthorSubscriptionUpsertWithWhereUniqueWithoutAuthorInput | AuthorSubscriptionUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: AuthorSubscriptionCreateManyAuthorInputEnvelope
-    set?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    disconnect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    delete?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    update?: AuthorSubscriptionUpdateWithWhereUniqueWithoutAuthorInput | AuthorSubscriptionUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: AuthorSubscriptionUpdateManyWithWhereWithoutAuthorInput | AuthorSubscriptionUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: AuthorSubscriptionScalarWhereInput | AuthorSubscriptionScalarWhereInput[]
-  }
-
   export type GiftMembershipUpdateManyWithoutSentByUserNestedInput = {
     create?: XOR<GiftMembershipCreateWithoutSentByUserInput, GiftMembershipUncheckedCreateWithoutSentByUserInput> | GiftMembershipCreateWithoutSentByUserInput[] | GiftMembershipUncheckedCreateWithoutSentByUserInput[]
     connectOrCreate?: GiftMembershipCreateOrConnectWithoutSentByUserInput | GiftMembershipCreateOrConnectWithoutSentByUserInput[]
@@ -48868,6 +48830,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type SubscriptionTransactionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SubscriptionTransactionCreateWithoutUserInput, SubscriptionTransactionUncheckedCreateWithoutUserInput> | SubscriptionTransactionCreateWithoutUserInput[] | SubscriptionTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SubscriptionTransactionCreateOrConnectWithoutUserInput | SubscriptionTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: SubscriptionTransactionUpsertWithWhereUniqueWithoutUserInput | SubscriptionTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SubscriptionTransactionCreateManyUserInputEnvelope
+    set?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    disconnect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    delete?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    connect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    update?: SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput | SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SubscriptionTransactionUpdateManyWithWhereWithoutUserInput | SubscriptionTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SubscriptionTransactionScalarWhereInput | SubscriptionTransactionScalarWhereInput[]
   }
 
   export type BookUncheckedUpdateManyWithoutUploadedByNestedInput = {
@@ -49206,34 +49182,6 @@ export namespace Prisma {
     deleteMany?: ShareActivityScalarWhereInput | ShareActivityScalarWhereInput[]
   }
 
-  export type AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutSubscriberInput, AuthorSubscriptionUncheckedCreateWithoutSubscriberInput> | AuthorSubscriptionCreateWithoutSubscriberInput[] | AuthorSubscriptionUncheckedCreateWithoutSubscriberInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutSubscriberInput | AuthorSubscriptionCreateOrConnectWithoutSubscriberInput[]
-    upsert?: AuthorSubscriptionUpsertWithWhereUniqueWithoutSubscriberInput | AuthorSubscriptionUpsertWithWhereUniqueWithoutSubscriberInput[]
-    createMany?: AuthorSubscriptionCreateManySubscriberInputEnvelope
-    set?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    disconnect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    delete?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    update?: AuthorSubscriptionUpdateWithWhereUniqueWithoutSubscriberInput | AuthorSubscriptionUpdateWithWhereUniqueWithoutSubscriberInput[]
-    updateMany?: AuthorSubscriptionUpdateManyWithWhereWithoutSubscriberInput | AuthorSubscriptionUpdateManyWithWhereWithoutSubscriberInput[]
-    deleteMany?: AuthorSubscriptionScalarWhereInput | AuthorSubscriptionScalarWhereInput[]
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput = {
-    create?: XOR<AuthorSubscriptionCreateWithoutAuthorInput, AuthorSubscriptionUncheckedCreateWithoutAuthorInput> | AuthorSubscriptionCreateWithoutAuthorInput[] | AuthorSubscriptionUncheckedCreateWithoutAuthorInput[]
-    connectOrCreate?: AuthorSubscriptionCreateOrConnectWithoutAuthorInput | AuthorSubscriptionCreateOrConnectWithoutAuthorInput[]
-    upsert?: AuthorSubscriptionUpsertWithWhereUniqueWithoutAuthorInput | AuthorSubscriptionUpsertWithWhereUniqueWithoutAuthorInput[]
-    createMany?: AuthorSubscriptionCreateManyAuthorInputEnvelope
-    set?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    disconnect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    delete?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    connect?: AuthorSubscriptionWhereUniqueInput | AuthorSubscriptionWhereUniqueInput[]
-    update?: AuthorSubscriptionUpdateWithWhereUniqueWithoutAuthorInput | AuthorSubscriptionUpdateWithWhereUniqueWithoutAuthorInput[]
-    updateMany?: AuthorSubscriptionUpdateManyWithWhereWithoutAuthorInput | AuthorSubscriptionUpdateManyWithWhereWithoutAuthorInput[]
-    deleteMany?: AuthorSubscriptionScalarWhereInput | AuthorSubscriptionScalarWhereInput[]
-  }
-
   export type GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput = {
     create?: XOR<GiftMembershipCreateWithoutSentByUserInput, GiftMembershipUncheckedCreateWithoutSentByUserInput> | GiftMembershipCreateWithoutSentByUserInput[] | GiftMembershipUncheckedCreateWithoutSentByUserInput[]
     connectOrCreate?: GiftMembershipCreateOrConnectWithoutSentByUserInput | GiftMembershipCreateOrConnectWithoutSentByUserInput[]
@@ -49312,6 +49260,20 @@ export namespace Prisma {
     update?: NotificationUpdateWithWhereUniqueWithoutUserInput | NotificationUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: NotificationUpdateManyWithWhereWithoutUserInput | NotificationUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: NotificationScalarWhereInput | NotificationScalarWhereInput[]
+  }
+
+  export type SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<SubscriptionTransactionCreateWithoutUserInput, SubscriptionTransactionUncheckedCreateWithoutUserInput> | SubscriptionTransactionCreateWithoutUserInput[] | SubscriptionTransactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: SubscriptionTransactionCreateOrConnectWithoutUserInput | SubscriptionTransactionCreateOrConnectWithoutUserInput[]
+    upsert?: SubscriptionTransactionUpsertWithWhereUniqueWithoutUserInput | SubscriptionTransactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: SubscriptionTransactionCreateManyUserInputEnvelope
+    set?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    disconnect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    delete?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    connect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+    update?: SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput | SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: SubscriptionTransactionUpdateManyWithWhereWithoutUserInput | SubscriptionTransactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: SubscriptionTransactionScalarWhereInput | SubscriptionTransactionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutNotificationsInput = {
@@ -50793,16 +50755,10 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDmcaNoticesInput, UserUpdateWithoutDmcaNoticesInput>, UserUncheckedUpdateWithoutDmcaNoticesInput>
   }
 
-  export type UserCreateNestedOneWithoutAuthorSubscriptionsInput = {
-    create?: XOR<UserCreateWithoutAuthorSubscriptionsInput, UserUncheckedCreateWithoutAuthorSubscriptionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAuthorSubscriptionsInput
-    connect?: UserWhereUniqueInput
-  }
-
-  export type UserCreateNestedOneWithoutAuthorSubscribersToInput = {
-    create?: XOR<UserCreateWithoutAuthorSubscribersToInput, UserUncheckedCreateWithoutAuthorSubscribersToInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAuthorSubscribersToInput
-    connect?: UserWhereUniqueInput
+  export type StoryCreateNestedOneWithoutPromotionsInput = {
+    create?: XOR<StoryCreateWithoutPromotionsInput, StoryUncheckedCreateWithoutPromotionsInput>
+    connectOrCreate?: StoryCreateOrConnectWithoutPromotionsInput
+    connect?: StoryWhereUniqueInput
   }
 
   export type FloatFieldUpdateOperationsInput = {
@@ -50811,28 +50767,6 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
-  }
-
-  export type UserUpdateOneRequiredWithoutAuthorSubscriptionsNestedInput = {
-    create?: XOR<UserCreateWithoutAuthorSubscriptionsInput, UserUncheckedCreateWithoutAuthorSubscriptionsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAuthorSubscriptionsInput
-    upsert?: UserUpsertWithoutAuthorSubscriptionsInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthorSubscriptionsInput, UserUpdateWithoutAuthorSubscriptionsInput>, UserUncheckedUpdateWithoutAuthorSubscriptionsInput>
-  }
-
-  export type UserUpdateOneRequiredWithoutAuthorSubscribersToNestedInput = {
-    create?: XOR<UserCreateWithoutAuthorSubscribersToInput, UserUncheckedCreateWithoutAuthorSubscribersToInput>
-    connectOrCreate?: UserCreateOrConnectWithoutAuthorSubscribersToInput
-    upsert?: UserUpsertWithoutAuthorSubscribersToInput
-    connect?: UserWhereUniqueInput
-    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAuthorSubscribersToInput, UserUpdateWithoutAuthorSubscribersToInput>, UserUncheckedUpdateWithoutAuthorSubscribersToInput>
-  }
-
-  export type StoryCreateNestedOneWithoutPromotionsInput = {
-    create?: XOR<StoryCreateWithoutPromotionsInput, StoryUncheckedCreateWithoutPromotionsInput>
-    connectOrCreate?: StoryCreateOrConnectWithoutPromotionsInput
-    connect?: StoryWhereUniqueInput
   }
 
   export type StoryUpdateOneRequiredWithoutPromotionsNestedInput = {
@@ -50927,6 +50861,20 @@ export namespace Prisma {
     update?: StoryUpdateWithWhereUniqueWithoutUniverseInput | StoryUpdateWithWhereUniqueWithoutUniverseInput[]
     updateMany?: StoryUpdateManyWithWhereWithoutUniverseInput | StoryUpdateManyWithWhereWithoutUniverseInput[]
     deleteMany?: StoryScalarWhereInput | StoryScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutSubscriptionTransactionsInput = {
+    create?: XOR<UserCreateWithoutSubscriptionTransactionsInput, UserUncheckedCreateWithoutSubscriptionTransactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSubscriptionTransactionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutSubscriptionTransactionsNestedInput = {
+    create?: XOR<UserCreateWithoutSubscriptionTransactionsInput, UserUncheckedCreateWithoutSubscriptionTransactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutSubscriptionTransactionsInput
+    upsert?: UserUpsertWithoutSubscriptionTransactionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSubscriptionTransactionsInput, UserUpdateWithoutSubscriptionTransactionsInput>, UserUncheckedUpdateWithoutSubscriptionTransactionsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -52026,66 +51974,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type AuthorSubscriptionCreateWithoutSubscriberInput = {
-    id?: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-    author: UserCreateNestedOneWithoutAuthorSubscribersToInput
-  }
-
-  export type AuthorSubscriptionUncheckedCreateWithoutSubscriberInput = {
-    id?: string
-    authorId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AuthorSubscriptionCreateOrConnectWithoutSubscriberInput = {
-    where: AuthorSubscriptionWhereUniqueInput
-    create: XOR<AuthorSubscriptionCreateWithoutSubscriberInput, AuthorSubscriptionUncheckedCreateWithoutSubscriberInput>
-  }
-
-  export type AuthorSubscriptionCreateManySubscriberInputEnvelope = {
-    data: AuthorSubscriptionCreateManySubscriberInput | AuthorSubscriptionCreateManySubscriberInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type AuthorSubscriptionCreateWithoutAuthorInput = {
-    id?: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-    subscriber: UserCreateNestedOneWithoutAuthorSubscriptionsInput
-  }
-
-  export type AuthorSubscriptionUncheckedCreateWithoutAuthorInput = {
-    id?: string
-    subscriberId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AuthorSubscriptionCreateOrConnectWithoutAuthorInput = {
-    where: AuthorSubscriptionWhereUniqueInput
-    create: XOR<AuthorSubscriptionCreateWithoutAuthorInput, AuthorSubscriptionUncheckedCreateWithoutAuthorInput>
-  }
-
-  export type AuthorSubscriptionCreateManyAuthorInputEnvelope = {
-    data: AuthorSubscriptionCreateManyAuthorInput | AuthorSubscriptionCreateManyAuthorInput[]
-    skipDuplicates?: boolean
-  }
-
   export type GiftMembershipCreateWithoutSentByUserInput = {
     id?: string
     code: string
@@ -52274,6 +52162,40 @@ export namespace Prisma {
 
   export type NotificationCreateManyUserInputEnvelope = {
     data: NotificationCreateManyUserInput | NotificationCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SubscriptionTransactionCreateWithoutUserInput = {
+    id?: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SubscriptionTransactionUncheckedCreateWithoutUserInput = {
+    id?: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SubscriptionTransactionCreateOrConnectWithoutUserInput = {
+    where: SubscriptionTransactionWhereUniqueInput
+    create: XOR<SubscriptionTransactionCreateWithoutUserInput, SubscriptionTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SubscriptionTransactionCreateManyUserInputEnvelope = {
+    data: SubscriptionTransactionCreateManyUserInput | SubscriptionTransactionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -52946,52 +52868,6 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ShareActivity"> | Date | string
   }
 
-  export type AuthorSubscriptionUpsertWithWhereUniqueWithoutSubscriberInput = {
-    where: AuthorSubscriptionWhereUniqueInput
-    update: XOR<AuthorSubscriptionUpdateWithoutSubscriberInput, AuthorSubscriptionUncheckedUpdateWithoutSubscriberInput>
-    create: XOR<AuthorSubscriptionCreateWithoutSubscriberInput, AuthorSubscriptionUncheckedCreateWithoutSubscriberInput>
-  }
-
-  export type AuthorSubscriptionUpdateWithWhereUniqueWithoutSubscriberInput = {
-    where: AuthorSubscriptionWhereUniqueInput
-    data: XOR<AuthorSubscriptionUpdateWithoutSubscriberInput, AuthorSubscriptionUncheckedUpdateWithoutSubscriberInput>
-  }
-
-  export type AuthorSubscriptionUpdateManyWithWhereWithoutSubscriberInput = {
-    where: AuthorSubscriptionScalarWhereInput
-    data: XOR<AuthorSubscriptionUpdateManyMutationInput, AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberInput>
-  }
-
-  export type AuthorSubscriptionScalarWhereInput = {
-    AND?: AuthorSubscriptionScalarWhereInput | AuthorSubscriptionScalarWhereInput[]
-    OR?: AuthorSubscriptionScalarWhereInput[]
-    NOT?: AuthorSubscriptionScalarWhereInput | AuthorSubscriptionScalarWhereInput[]
-    id?: StringFilter<"AuthorSubscription"> | string
-    subscriberId?: StringFilter<"AuthorSubscription"> | string
-    authorId?: StringFilter<"AuthorSubscription"> | string
-    tier?: StringFilter<"AuthorSubscription"> | string
-    monthlyPrice?: FloatFilter<"AuthorSubscription"> | number
-    renewalDate?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    subscribedAt?: DateTimeFilter<"AuthorSubscription"> | Date | string
-    updatedAt?: DateTimeFilter<"AuthorSubscription"> | Date | string
-  }
-
-  export type AuthorSubscriptionUpsertWithWhereUniqueWithoutAuthorInput = {
-    where: AuthorSubscriptionWhereUniqueInput
-    update: XOR<AuthorSubscriptionUpdateWithoutAuthorInput, AuthorSubscriptionUncheckedUpdateWithoutAuthorInput>
-    create: XOR<AuthorSubscriptionCreateWithoutAuthorInput, AuthorSubscriptionUncheckedCreateWithoutAuthorInput>
-  }
-
-  export type AuthorSubscriptionUpdateWithWhereUniqueWithoutAuthorInput = {
-    where: AuthorSubscriptionWhereUniqueInput
-    data: XOR<AuthorSubscriptionUpdateWithoutAuthorInput, AuthorSubscriptionUncheckedUpdateWithoutAuthorInput>
-  }
-
-  export type AuthorSubscriptionUpdateManyWithWhereWithoutAuthorInput = {
-    where: AuthorSubscriptionScalarWhereInput
-    data: XOR<AuthorSubscriptionUpdateManyMutationInput, AuthorSubscriptionUncheckedUpdateManyWithoutAuthorInput>
-  }
-
   export type GiftMembershipUpsertWithWhereUniqueWithoutSentByUserInput = {
     where: GiftMembershipWhereUniqueInput
     update: XOR<GiftMembershipUpdateWithoutSentByUserInput, GiftMembershipUncheckedUpdateWithoutSentByUserInput>
@@ -53163,6 +53039,38 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Notification"> | Date | string
   }
 
+  export type SubscriptionTransactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: SubscriptionTransactionWhereUniqueInput
+    update: XOR<SubscriptionTransactionUpdateWithoutUserInput, SubscriptionTransactionUncheckedUpdateWithoutUserInput>
+    create: XOR<SubscriptionTransactionCreateWithoutUserInput, SubscriptionTransactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: SubscriptionTransactionWhereUniqueInput
+    data: XOR<SubscriptionTransactionUpdateWithoutUserInput, SubscriptionTransactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type SubscriptionTransactionUpdateManyWithWhereWithoutUserInput = {
+    where: SubscriptionTransactionScalarWhereInput
+    data: XOR<SubscriptionTransactionUpdateManyMutationInput, SubscriptionTransactionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type SubscriptionTransactionScalarWhereInput = {
+    AND?: SubscriptionTransactionScalarWhereInput | SubscriptionTransactionScalarWhereInput[]
+    OR?: SubscriptionTransactionScalarWhereInput[]
+    NOT?: SubscriptionTransactionScalarWhereInput | SubscriptionTransactionScalarWhereInput[]
+    id?: StringFilter<"SubscriptionTransaction"> | string
+    userId?: StringFilter<"SubscriptionTransaction"> | string
+    plan?: StringFilter<"SubscriptionTransaction"> | string
+    duration?: IntFilter<"SubscriptionTransaction"> | number
+    amount?: FloatFilter<"SubscriptionTransaction"> | number
+    senderNumber?: StringFilter<"SubscriptionTransaction"> | string
+    transactionId?: StringFilter<"SubscriptionTransaction"> | string
+    status?: StringFilter<"SubscriptionTransaction"> | string
+    createdAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
+    updatedAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
+  }
+
   export type UserCreateWithoutNotificationsInput = {
     id?: string
     firebaseUid: string
@@ -53208,13 +53116,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -53262,13 +53169,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -53332,13 +53238,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -53386,13 +53291,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutBooksInput = {
@@ -53439,14 +53343,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBooksInput = {
@@ -53493,14 +53396,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBooksInput = {
@@ -53677,14 +53579,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBooksInput = {
@@ -53731,14 +53632,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BookReviewUpsertWithWhereUniqueWithoutBookInput = {
@@ -53892,14 +53792,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBookReviewsInput = {
@@ -53946,14 +53845,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBookReviewsInput = {
@@ -54065,14 +53963,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookReviewsInput = {
@@ -54119,14 +54016,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BookCreateWithoutSavesInput = {
@@ -54216,14 +54112,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBookSavesInput = {
@@ -54270,14 +54165,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBookSavesInput = {
@@ -54389,14 +54283,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookSavesInput = {
@@ -54443,14 +54336,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutStoriesInput = {
@@ -54497,14 +54389,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStoriesInput = {
@@ -54551,14 +54442,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStoriesInput = {
@@ -54880,14 +54770,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStoriesInput = {
@@ -54934,14 +54823,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UniverseUpsertWithoutStoriesInput = {
@@ -55373,14 +55261,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStoryReactionsInput = {
@@ -55427,14 +55314,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStoryReactionsInput = {
@@ -55566,14 +55452,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStoryReactionsInput = {
@@ -55620,14 +55505,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCommentsInput = {
@@ -55674,14 +55558,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -55728,14 +55611,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -55963,14 +55845,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -56017,14 +55898,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryUpsertWithoutCommentsInput = {
@@ -56238,14 +56118,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowingInput = {
@@ -56292,14 +56171,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFollowingInput = {
@@ -56351,14 +56229,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowersInput = {
@@ -56405,14 +56282,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFollowersInput = {
@@ -56475,14 +56351,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFollowingInput = {
@@ -56529,14 +56404,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutFollowersInput = {
@@ -56594,14 +56468,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFollowersInput = {
@@ -56648,14 +56521,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutReadingLogsInput = {
@@ -56702,14 +56574,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReadingLogsInput = {
@@ -56756,14 +56627,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReadingLogsInput = {
@@ -56826,14 +56696,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReadingLogsInput = {
@@ -56880,14 +56749,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserAchievementCreateWithoutAchievementInput = {
@@ -56972,14 +56840,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAchievementsInput = {
@@ -57026,14 +56893,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAchievementsInput = {
@@ -57119,14 +56985,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAchievementsInput = {
@@ -57173,14 +57038,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AchievementUpsertWithoutUsersInput = {
@@ -57256,14 +57120,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubsOwnedInput = {
@@ -57310,14 +57173,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubsOwnedInput = {
@@ -57458,14 +57320,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubsOwnedInput = {
@@ -57512,14 +57373,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubMemberUpsertWithWhereUniqueWithoutClubInput = {
@@ -57651,14 +57511,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubMembershipsInput = {
@@ -57705,14 +57564,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubMembershipsInput = {
@@ -57818,14 +57676,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubMembershipsInput = {
@@ -57872,14 +57729,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubCreateWithoutBannedUsersInput = {
@@ -57963,14 +57819,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubBansInput = {
@@ -58017,14 +57872,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubBansInput = {
@@ -58130,14 +57984,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubBansInput = {
@@ -58184,14 +58037,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubCreateWithoutDiscussionsInput = {
@@ -58275,14 +58127,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubDiscussionsInput = {
@@ -58329,14 +58180,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubDiscussionsInput = {
@@ -58442,14 +58292,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubDiscussionsInput = {
@@ -58496,14 +58345,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryCreateWithoutBetaReadersInput = {
@@ -58613,14 +58461,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBetaReadsInput = {
@@ -58667,14 +58514,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBetaReadsInput = {
@@ -58806,14 +58652,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBetaReadsInput = {
@@ -58860,14 +58705,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutNewsletterSubscribersInput = {
@@ -58914,14 +58758,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNewsletterSubscribersInput = {
@@ -58968,14 +58811,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNewsletterSubscribersInput = {
@@ -59027,14 +58869,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNewsletterSubsInput = {
@@ -59081,14 +58922,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNewsletterSubsInput = {
@@ -59151,14 +58991,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNewsletterSubscribersInput = {
@@ -59205,14 +59044,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutNewsletterSubsInput = {
@@ -59270,14 +59108,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNewsletterSubsInput = {
@@ -59324,14 +59161,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutTipsSentInput = {
@@ -59378,14 +59214,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTipsSentInput = {
@@ -59432,14 +59267,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTipsSentInput = {
@@ -59491,14 +59325,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTipsReceivedInput = {
@@ -59545,14 +59378,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTipsReceivedInput = {
@@ -59678,14 +59510,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTipsSentInput = {
@@ -59732,14 +59563,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutTipsReceivedInput = {
@@ -59797,14 +59627,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTipsReceivedInput = {
@@ -59851,14 +59680,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryUpsertWithoutTipsInput = {
@@ -60017,14 +59845,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAnnotationsInput = {
@@ -60071,14 +59898,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAnnotationsInput = {
@@ -60190,14 +60016,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAnnotationsInput = {
@@ -60244,14 +60069,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutScheduledChaptersInput = {
@@ -60298,14 +60122,13 @@ export namespace Prisma {
     annotations?: BookAnnotationCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutScheduledChaptersInput = {
@@ -60352,14 +60175,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutScheduledChaptersInput = {
@@ -60422,14 +60244,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutScheduledChaptersInput = {
@@ -60476,14 +60297,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryCreateWithoutInlineCommentsInput = {
@@ -60593,14 +60413,13 @@ export namespace Prisma {
     annotations?: BookAnnotationCreateNestedManyWithoutUserInput
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInlineCommentsInput = {
@@ -60647,14 +60466,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInlineCommentsInput = {
@@ -60849,14 +60667,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInlineCommentsInput = {
@@ -60903,14 +60720,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type InlineCommentUpsertWithoutRepliesInput = {
@@ -61071,14 +60887,13 @@ export namespace Prisma {
     annotations?: BookAnnotationCreateNestedManyWithoutUserInput
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutShareActivitiesInput = {
@@ -61125,14 +60940,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutShareActivitiesInput = {
@@ -61264,14 +61078,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShareActivitiesInput = {
@@ -61318,14 +61131,13 @@ export namespace Prisma {
     annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutOnboardingQuizInput = {
@@ -61373,13 +61185,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOnboardingQuizInput = {
@@ -61427,13 +61238,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOnboardingQuizInput = {
@@ -61497,13 +61307,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOnboardingQuizInput = {
@@ -61551,13 +61360,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutContentReportsInput = {
@@ -61605,13 +61413,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutContentReportsInput = {
@@ -61659,13 +61466,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutContentReportsInput = {
@@ -61729,13 +61535,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContentReportsInput = {
@@ -61783,13 +61588,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutDmcaNoticesInput = {
@@ -61837,13 +61641,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDmcaNoticesInput = {
@@ -61891,13 +61694,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDmcaNoticesInput = {
@@ -61961,13 +61763,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDmcaNoticesInput = {
@@ -62015,477 +61816,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserCreateWithoutAuthorSubscriptionsInput = {
-    id?: string
-    firebaseUid: string
-    email: string
-    username: string
-    displayName?: string | null
-    avatarUrl?: string | null
-    bio?: string | null
-    role?: $Enums.Role
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    dateOfBirth?: Date | string | null
-    membershipTier?: string | null
-    membershipExpiry?: Date | string | null
-    subGenres?: UserCreatesubGenresInput | string[]
-    mood?: string | null
-    contentWarnings?: UserCreatecontentWarningsInput | string[]
-    ageRating?: number | null
-    tags?: UserCreatetagsInput | string[]
-    reactionCount?: number
-    description?: string | null
-    books?: BookCreateNestedManyWithoutUploadedByInput
-    bookReviews?: BookReviewCreateNestedManyWithoutUserInput
-    bookSaves?: BookSaveCreateNestedManyWithoutUserInput
-    universes?: UniverseCreateNestedManyWithoutUserInput
-    stories?: StoryCreateNestedManyWithoutAuthorInput
-    storyReactions?: StoryReactionCreateNestedManyWithoutUserInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    followers?: FollowCreateNestedManyWithoutFollowingInput
-    following?: FollowCreateNestedManyWithoutFollowerInput
-    readingLogs?: ReadingLogCreateNestedManyWithoutUserInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
-    clubMemberships?: ClubMemberCreateNestedManyWithoutUserInput
-    clubDiscussions?: ClubDiscussionCreateNestedManyWithoutAuthorInput
-    clubsOwned?: ClubCreateNestedManyWithoutOwnerInput
-    clubBans?: ClubBanCreateNestedManyWithoutUserInput
-    betaReads?: BetaReaderCreateNestedManyWithoutUserInput
-    newsletterSubscribers?: NewsletterSubscriberCreateNestedManyWithoutAuthorInput
-    newsletterSubs?: NewsletterSubscriberCreateNestedManyWithoutSubscriberInput
-    tipsSent?: TipCreateNestedManyWithoutSenderInput
-    tipsReceived?: TipCreateNestedManyWithoutReceiverInput
-    annotations?: BookAnnotationCreateNestedManyWithoutUserInput
-    scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
-    inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
-    shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
-    giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
-    giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
-    onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
-    contentReports?: ContentReportCreateNestedManyWithoutReporterInput
-    dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutAuthorSubscriptionsInput = {
-    id?: string
-    firebaseUid: string
-    email: string
-    username: string
-    displayName?: string | null
-    avatarUrl?: string | null
-    bio?: string | null
-    role?: $Enums.Role
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    dateOfBirth?: Date | string | null
-    membershipTier?: string | null
-    membershipExpiry?: Date | string | null
-    subGenres?: UserCreatesubGenresInput | string[]
-    mood?: string | null
-    contentWarnings?: UserCreatecontentWarningsInput | string[]
-    ageRating?: number | null
-    tags?: UserCreatetagsInput | string[]
-    reactionCount?: number
-    description?: string | null
-    books?: BookUncheckedCreateNestedManyWithoutUploadedByInput
-    bookReviews?: BookReviewUncheckedCreateNestedManyWithoutUserInput
-    bookSaves?: BookSaveUncheckedCreateNestedManyWithoutUserInput
-    universes?: UniverseUncheckedCreateNestedManyWithoutUserInput
-    stories?: StoryUncheckedCreateNestedManyWithoutAuthorInput
-    storyReactions?: StoryReactionUncheckedCreateNestedManyWithoutUserInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    followers?: FollowUncheckedCreateNestedManyWithoutFollowingInput
-    following?: FollowUncheckedCreateNestedManyWithoutFollowerInput
-    readingLogs?: ReadingLogUncheckedCreateNestedManyWithoutUserInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
-    clubMemberships?: ClubMemberUncheckedCreateNestedManyWithoutUserInput
-    clubDiscussions?: ClubDiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    clubsOwned?: ClubUncheckedCreateNestedManyWithoutOwnerInput
-    clubBans?: ClubBanUncheckedCreateNestedManyWithoutUserInput
-    betaReads?: BetaReaderUncheckedCreateNestedManyWithoutUserInput
-    newsletterSubscribers?: NewsletterSubscriberUncheckedCreateNestedManyWithoutAuthorInput
-    newsletterSubs?: NewsletterSubscriberUncheckedCreateNestedManyWithoutSubscriberInput
-    tipsSent?: TipUncheckedCreateNestedManyWithoutSenderInput
-    tipsReceived?: TipUncheckedCreateNestedManyWithoutReceiverInput
-    annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
-    scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
-    inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
-    shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
-    giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
-    giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
-    onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
-    contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
-    dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutAuthorSubscriptionsInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAuthorSubscriptionsInput, UserUncheckedCreateWithoutAuthorSubscriptionsInput>
-  }
-
-  export type UserCreateWithoutAuthorSubscribersToInput = {
-    id?: string
-    firebaseUid: string
-    email: string
-    username: string
-    displayName?: string | null
-    avatarUrl?: string | null
-    bio?: string | null
-    role?: $Enums.Role
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    dateOfBirth?: Date | string | null
-    membershipTier?: string | null
-    membershipExpiry?: Date | string | null
-    subGenres?: UserCreatesubGenresInput | string[]
-    mood?: string | null
-    contentWarnings?: UserCreatecontentWarningsInput | string[]
-    ageRating?: number | null
-    tags?: UserCreatetagsInput | string[]
-    reactionCount?: number
-    description?: string | null
-    books?: BookCreateNestedManyWithoutUploadedByInput
-    bookReviews?: BookReviewCreateNestedManyWithoutUserInput
-    bookSaves?: BookSaveCreateNestedManyWithoutUserInput
-    universes?: UniverseCreateNestedManyWithoutUserInput
-    stories?: StoryCreateNestedManyWithoutAuthorInput
-    storyReactions?: StoryReactionCreateNestedManyWithoutUserInput
-    comments?: CommentCreateNestedManyWithoutAuthorInput
-    followers?: FollowCreateNestedManyWithoutFollowingInput
-    following?: FollowCreateNestedManyWithoutFollowerInput
-    readingLogs?: ReadingLogCreateNestedManyWithoutUserInput
-    achievements?: UserAchievementCreateNestedManyWithoutUserInput
-    clubMemberships?: ClubMemberCreateNestedManyWithoutUserInput
-    clubDiscussions?: ClubDiscussionCreateNestedManyWithoutAuthorInput
-    clubsOwned?: ClubCreateNestedManyWithoutOwnerInput
-    clubBans?: ClubBanCreateNestedManyWithoutUserInput
-    betaReads?: BetaReaderCreateNestedManyWithoutUserInput
-    newsletterSubscribers?: NewsletterSubscriberCreateNestedManyWithoutAuthorInput
-    newsletterSubs?: NewsletterSubscriberCreateNestedManyWithoutSubscriberInput
-    tipsSent?: TipCreateNestedManyWithoutSenderInput
-    tipsReceived?: TipCreateNestedManyWithoutReceiverInput
-    annotations?: BookAnnotationCreateNestedManyWithoutUserInput
-    scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
-    inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
-    shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
-    giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
-    onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
-    contentReports?: ContentReportCreateNestedManyWithoutReporterInput
-    dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
-    notifications?: NotificationCreateNestedManyWithoutUserInput
-  }
-
-  export type UserUncheckedCreateWithoutAuthorSubscribersToInput = {
-    id?: string
-    firebaseUid: string
-    email: string
-    username: string
-    displayName?: string | null
-    avatarUrl?: string | null
-    bio?: string | null
-    role?: $Enums.Role
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    dateOfBirth?: Date | string | null
-    membershipTier?: string | null
-    membershipExpiry?: Date | string | null
-    subGenres?: UserCreatesubGenresInput | string[]
-    mood?: string | null
-    contentWarnings?: UserCreatecontentWarningsInput | string[]
-    ageRating?: number | null
-    tags?: UserCreatetagsInput | string[]
-    reactionCount?: number
-    description?: string | null
-    books?: BookUncheckedCreateNestedManyWithoutUploadedByInput
-    bookReviews?: BookReviewUncheckedCreateNestedManyWithoutUserInput
-    bookSaves?: BookSaveUncheckedCreateNestedManyWithoutUserInput
-    universes?: UniverseUncheckedCreateNestedManyWithoutUserInput
-    stories?: StoryUncheckedCreateNestedManyWithoutAuthorInput
-    storyReactions?: StoryReactionUncheckedCreateNestedManyWithoutUserInput
-    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
-    followers?: FollowUncheckedCreateNestedManyWithoutFollowingInput
-    following?: FollowUncheckedCreateNestedManyWithoutFollowerInput
-    readingLogs?: ReadingLogUncheckedCreateNestedManyWithoutUserInput
-    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
-    clubMemberships?: ClubMemberUncheckedCreateNestedManyWithoutUserInput
-    clubDiscussions?: ClubDiscussionUncheckedCreateNestedManyWithoutAuthorInput
-    clubsOwned?: ClubUncheckedCreateNestedManyWithoutOwnerInput
-    clubBans?: ClubBanUncheckedCreateNestedManyWithoutUserInput
-    betaReads?: BetaReaderUncheckedCreateNestedManyWithoutUserInput
-    newsletterSubscribers?: NewsletterSubscriberUncheckedCreateNestedManyWithoutAuthorInput
-    newsletterSubs?: NewsletterSubscriberUncheckedCreateNestedManyWithoutSubscriberInput
-    tipsSent?: TipUncheckedCreateNestedManyWithoutSenderInput
-    tipsReceived?: TipUncheckedCreateNestedManyWithoutReceiverInput
-    annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
-    scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
-    inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
-    shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
-    giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
-    onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
-    contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
-    dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
-    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
-  }
-
-  export type UserCreateOrConnectWithoutAuthorSubscribersToInput = {
-    where: UserWhereUniqueInput
-    create: XOR<UserCreateWithoutAuthorSubscribersToInput, UserUncheckedCreateWithoutAuthorSubscribersToInput>
-  }
-
-  export type UserUpsertWithoutAuthorSubscriptionsInput = {
-    update: XOR<UserUpdateWithoutAuthorSubscriptionsInput, UserUncheckedUpdateWithoutAuthorSubscriptionsInput>
-    create: XOR<UserCreateWithoutAuthorSubscriptionsInput, UserUncheckedCreateWithoutAuthorSubscriptionsInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutAuthorSubscriptionsInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutAuthorSubscriptionsInput, UserUncheckedUpdateWithoutAuthorSubscriptionsInput>
-  }
-
-  export type UserUpdateWithoutAuthorSubscriptionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    firebaseUid?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    displayName?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
-    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    subGenres?: UserUpdatesubGenresInput | string[]
-    mood?: NullableStringFieldUpdateOperationsInput | string | null
-    contentWarnings?: UserUpdatecontentWarningsInput | string[]
-    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
-    tags?: UserUpdatetagsInput | string[]
-    reactionCount?: IntFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    books?: BookUpdateManyWithoutUploadedByNestedInput
-    bookReviews?: BookReviewUpdateManyWithoutUserNestedInput
-    bookSaves?: BookSaveUpdateManyWithoutUserNestedInput
-    universes?: UniverseUpdateManyWithoutUserNestedInput
-    stories?: StoryUpdateManyWithoutAuthorNestedInput
-    storyReactions?: StoryReactionUpdateManyWithoutUserNestedInput
-    comments?: CommentUpdateManyWithoutAuthorNestedInput
-    followers?: FollowUpdateManyWithoutFollowingNestedInput
-    following?: FollowUpdateManyWithoutFollowerNestedInput
-    readingLogs?: ReadingLogUpdateManyWithoutUserNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
-    clubMemberships?: ClubMemberUpdateManyWithoutUserNestedInput
-    clubDiscussions?: ClubDiscussionUpdateManyWithoutAuthorNestedInput
-    clubsOwned?: ClubUpdateManyWithoutOwnerNestedInput
-    clubBans?: ClubBanUpdateManyWithoutUserNestedInput
-    betaReads?: BetaReaderUpdateManyWithoutUserNestedInput
-    newsletterSubscribers?: NewsletterSubscriberUpdateManyWithoutAuthorNestedInput
-    newsletterSubs?: NewsletterSubscriberUpdateManyWithoutSubscriberNestedInput
-    tipsSent?: TipUpdateManyWithoutSenderNestedInput
-    tipsReceived?: TipUpdateManyWithoutReceiverNestedInput
-    annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
-    scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
-    inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
-    shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
-    giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
-    giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
-    onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
-    contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
-    dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutAuthorSubscriptionsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    firebaseUid?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    displayName?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
-    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    subGenres?: UserUpdatesubGenresInput | string[]
-    mood?: NullableStringFieldUpdateOperationsInput | string | null
-    contentWarnings?: UserUpdatecontentWarningsInput | string[]
-    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
-    tags?: UserUpdatetagsInput | string[]
-    reactionCount?: IntFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    books?: BookUncheckedUpdateManyWithoutUploadedByNestedInput
-    bookReviews?: BookReviewUncheckedUpdateManyWithoutUserNestedInput
-    bookSaves?: BookSaveUncheckedUpdateManyWithoutUserNestedInput
-    universes?: UniverseUncheckedUpdateManyWithoutUserNestedInput
-    stories?: StoryUncheckedUpdateManyWithoutAuthorNestedInput
-    storyReactions?: StoryReactionUncheckedUpdateManyWithoutUserNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
-    followers?: FollowUncheckedUpdateManyWithoutFollowingNestedInput
-    following?: FollowUncheckedUpdateManyWithoutFollowerNestedInput
-    readingLogs?: ReadingLogUncheckedUpdateManyWithoutUserNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
-    clubMemberships?: ClubMemberUncheckedUpdateManyWithoutUserNestedInput
-    clubDiscussions?: ClubDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
-    clubsOwned?: ClubUncheckedUpdateManyWithoutOwnerNestedInput
-    clubBans?: ClubBanUncheckedUpdateManyWithoutUserNestedInput
-    betaReads?: BetaReaderUncheckedUpdateManyWithoutUserNestedInput
-    newsletterSubscribers?: NewsletterSubscriberUncheckedUpdateManyWithoutAuthorNestedInput
-    newsletterSubs?: NewsletterSubscriberUncheckedUpdateManyWithoutSubscriberNestedInput
-    tipsSent?: TipUncheckedUpdateManyWithoutSenderNestedInput
-    tipsReceived?: TipUncheckedUpdateManyWithoutReceiverNestedInput
-    annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
-    scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
-    inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
-    shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
-    giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
-    giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
-    onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
-    contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
-    dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUpsertWithoutAuthorSubscribersToInput = {
-    update: XOR<UserUpdateWithoutAuthorSubscribersToInput, UserUncheckedUpdateWithoutAuthorSubscribersToInput>
-    create: XOR<UserCreateWithoutAuthorSubscribersToInput, UserUncheckedCreateWithoutAuthorSubscribersToInput>
-    where?: UserWhereInput
-  }
-
-  export type UserUpdateToOneWithWhereWithoutAuthorSubscribersToInput = {
-    where?: UserWhereInput
-    data: XOR<UserUpdateWithoutAuthorSubscribersToInput, UserUncheckedUpdateWithoutAuthorSubscribersToInput>
-  }
-
-  export type UserUpdateWithoutAuthorSubscribersToInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    firebaseUid?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    displayName?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
-    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    subGenres?: UserUpdatesubGenresInput | string[]
-    mood?: NullableStringFieldUpdateOperationsInput | string | null
-    contentWarnings?: UserUpdatecontentWarningsInput | string[]
-    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
-    tags?: UserUpdatetagsInput | string[]
-    reactionCount?: IntFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    books?: BookUpdateManyWithoutUploadedByNestedInput
-    bookReviews?: BookReviewUpdateManyWithoutUserNestedInput
-    bookSaves?: BookSaveUpdateManyWithoutUserNestedInput
-    universes?: UniverseUpdateManyWithoutUserNestedInput
-    stories?: StoryUpdateManyWithoutAuthorNestedInput
-    storyReactions?: StoryReactionUpdateManyWithoutUserNestedInput
-    comments?: CommentUpdateManyWithoutAuthorNestedInput
-    followers?: FollowUpdateManyWithoutFollowingNestedInput
-    following?: FollowUpdateManyWithoutFollowerNestedInput
-    readingLogs?: ReadingLogUpdateManyWithoutUserNestedInput
-    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
-    clubMemberships?: ClubMemberUpdateManyWithoutUserNestedInput
-    clubDiscussions?: ClubDiscussionUpdateManyWithoutAuthorNestedInput
-    clubsOwned?: ClubUpdateManyWithoutOwnerNestedInput
-    clubBans?: ClubBanUpdateManyWithoutUserNestedInput
-    betaReads?: BetaReaderUpdateManyWithoutUserNestedInput
-    newsletterSubscribers?: NewsletterSubscriberUpdateManyWithoutAuthorNestedInput
-    newsletterSubs?: NewsletterSubscriberUpdateManyWithoutSubscriberNestedInput
-    tipsSent?: TipUpdateManyWithoutSenderNestedInput
-    tipsReceived?: TipUpdateManyWithoutReceiverNestedInput
-    annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
-    scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
-    inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
-    shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
-    giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
-    onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
-    contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
-    dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
-    notifications?: NotificationUpdateManyWithoutUserNestedInput
-  }
-
-  export type UserUncheckedUpdateWithoutAuthorSubscribersToInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    firebaseUid?: StringFieldUpdateOperationsInput | string
-    email?: StringFieldUpdateOperationsInput | string
-    username?: StringFieldUpdateOperationsInput | string
-    displayName?: NullableStringFieldUpdateOperationsInput | string | null
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    bio?: NullableStringFieldUpdateOperationsInput | string | null
-    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
-    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    subGenres?: UserUpdatesubGenresInput | string[]
-    mood?: NullableStringFieldUpdateOperationsInput | string | null
-    contentWarnings?: UserUpdatecontentWarningsInput | string[]
-    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
-    tags?: UserUpdatetagsInput | string[]
-    reactionCount?: IntFieldUpdateOperationsInput | number
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    books?: BookUncheckedUpdateManyWithoutUploadedByNestedInput
-    bookReviews?: BookReviewUncheckedUpdateManyWithoutUserNestedInput
-    bookSaves?: BookSaveUncheckedUpdateManyWithoutUserNestedInput
-    universes?: UniverseUncheckedUpdateManyWithoutUserNestedInput
-    stories?: StoryUncheckedUpdateManyWithoutAuthorNestedInput
-    storyReactions?: StoryReactionUncheckedUpdateManyWithoutUserNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
-    followers?: FollowUncheckedUpdateManyWithoutFollowingNestedInput
-    following?: FollowUncheckedUpdateManyWithoutFollowerNestedInput
-    readingLogs?: ReadingLogUncheckedUpdateManyWithoutUserNestedInput
-    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
-    clubMemberships?: ClubMemberUncheckedUpdateManyWithoutUserNestedInput
-    clubDiscussions?: ClubDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
-    clubsOwned?: ClubUncheckedUpdateManyWithoutOwnerNestedInput
-    clubBans?: ClubBanUncheckedUpdateManyWithoutUserNestedInput
-    betaReads?: BetaReaderUncheckedUpdateManyWithoutUserNestedInput
-    newsletterSubscribers?: NewsletterSubscriberUncheckedUpdateManyWithoutAuthorNestedInput
-    newsletterSubs?: NewsletterSubscriberUncheckedUpdateManyWithoutSubscriberNestedInput
-    tipsSent?: TipUncheckedUpdateManyWithoutSenderNestedInput
-    tipsReceived?: TipUncheckedUpdateManyWithoutReceiverNestedInput
-    annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
-    scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
-    inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
-    shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
-    giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
-    onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
-    contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
-    dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
-    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryCreateWithoutPromotionsInput = {
@@ -62665,13 +62001,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGiftsSentInput = {
@@ -62719,13 +62054,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGiftsSentInput = {
@@ -62778,13 +62112,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGiftsReceivedInput = {
@@ -62832,13 +62165,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGiftsReceivedInput = {
@@ -62902,13 +62234,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGiftsSentInput = {
@@ -62956,13 +62287,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutGiftsReceivedInput = {
@@ -63021,13 +62351,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGiftsReceivedInput = {
@@ -63075,13 +62404,12 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutUniversesInput = {
@@ -63128,14 +62456,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUniversesInput = {
@@ -63182,14 +62509,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
     inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
     shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedCreateNestedManyWithoutSubscriberInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedCreateNestedManyWithoutAuthorInput
     giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
     giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
     onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUniversesInput = {
@@ -63320,14 +62646,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUniversesInput = {
@@ -63374,14 +62699,13 @@ export namespace Prisma {
     scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
-    authorSubscriptions?: AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberNestedInput
-    authorSubscribersTo?: AuthorSubscriptionUncheckedUpdateManyWithoutAuthorNestedInput
     giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
     giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
     onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryUpsertWithWhereUniqueWithoutUniverseInput = {
@@ -63398,6 +62722,234 @@ export namespace Prisma {
   export type StoryUpdateManyWithWhereWithoutUniverseInput = {
     where: StoryScalarWhereInput
     data: XOR<StoryUpdateManyMutationInput, StoryUncheckedUpdateManyWithoutUniverseInput>
+  }
+
+  export type UserCreateWithoutSubscriptionTransactionsInput = {
+    id?: string
+    firebaseUid: string
+    email: string
+    username: string
+    displayName?: string | null
+    avatarUrl?: string | null
+    bio?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dateOfBirth?: Date | string | null
+    membershipTier?: string | null
+    membershipExpiry?: Date | string | null
+    subGenres?: UserCreatesubGenresInput | string[]
+    mood?: string | null
+    contentWarnings?: UserCreatecontentWarningsInput | string[]
+    ageRating?: number | null
+    tags?: UserCreatetagsInput | string[]
+    reactionCount?: number
+    description?: string | null
+    books?: BookCreateNestedManyWithoutUploadedByInput
+    bookReviews?: BookReviewCreateNestedManyWithoutUserInput
+    bookSaves?: BookSaveCreateNestedManyWithoutUserInput
+    universes?: UniverseCreateNestedManyWithoutUserInput
+    stories?: StoryCreateNestedManyWithoutAuthorInput
+    storyReactions?: StoryReactionCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    followers?: FollowCreateNestedManyWithoutFollowingInput
+    following?: FollowCreateNestedManyWithoutFollowerInput
+    readingLogs?: ReadingLogCreateNestedManyWithoutUserInput
+    achievements?: UserAchievementCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMemberCreateNestedManyWithoutUserInput
+    clubDiscussions?: ClubDiscussionCreateNestedManyWithoutAuthorInput
+    clubsOwned?: ClubCreateNestedManyWithoutOwnerInput
+    clubBans?: ClubBanCreateNestedManyWithoutUserInput
+    betaReads?: BetaReaderCreateNestedManyWithoutUserInput
+    newsletterSubscribers?: NewsletterSubscriberCreateNestedManyWithoutAuthorInput
+    newsletterSubs?: NewsletterSubscriberCreateNestedManyWithoutSubscriberInput
+    tipsSent?: TipCreateNestedManyWithoutSenderInput
+    tipsReceived?: TipCreateNestedManyWithoutReceiverInput
+    annotations?: BookAnnotationCreateNestedManyWithoutUserInput
+    scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
+    inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
+    shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
+    giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
+    giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
+    onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
+    contentReports?: ContentReportCreateNestedManyWithoutReporterInput
+    dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutSubscriptionTransactionsInput = {
+    id?: string
+    firebaseUid: string
+    email: string
+    username: string
+    displayName?: string | null
+    avatarUrl?: string | null
+    bio?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dateOfBirth?: Date | string | null
+    membershipTier?: string | null
+    membershipExpiry?: Date | string | null
+    subGenres?: UserCreatesubGenresInput | string[]
+    mood?: string | null
+    contentWarnings?: UserCreatecontentWarningsInput | string[]
+    ageRating?: number | null
+    tags?: UserCreatetagsInput | string[]
+    reactionCount?: number
+    description?: string | null
+    books?: BookUncheckedCreateNestedManyWithoutUploadedByInput
+    bookReviews?: BookReviewUncheckedCreateNestedManyWithoutUserInput
+    bookSaves?: BookSaveUncheckedCreateNestedManyWithoutUserInput
+    universes?: UniverseUncheckedCreateNestedManyWithoutUserInput
+    stories?: StoryUncheckedCreateNestedManyWithoutAuthorInput
+    storyReactions?: StoryReactionUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    followers?: FollowUncheckedCreateNestedManyWithoutFollowingInput
+    following?: FollowUncheckedCreateNestedManyWithoutFollowerInput
+    readingLogs?: ReadingLogUncheckedCreateNestedManyWithoutUserInput
+    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMemberUncheckedCreateNestedManyWithoutUserInput
+    clubDiscussions?: ClubDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    clubsOwned?: ClubUncheckedCreateNestedManyWithoutOwnerInput
+    clubBans?: ClubBanUncheckedCreateNestedManyWithoutUserInput
+    betaReads?: BetaReaderUncheckedCreateNestedManyWithoutUserInput
+    newsletterSubscribers?: NewsletterSubscriberUncheckedCreateNestedManyWithoutAuthorInput
+    newsletterSubs?: NewsletterSubscriberUncheckedCreateNestedManyWithoutSubscriberInput
+    tipsSent?: TipUncheckedCreateNestedManyWithoutSenderInput
+    tipsReceived?: TipUncheckedCreateNestedManyWithoutReceiverInput
+    annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
+    scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
+    inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
+    shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
+    giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
+    giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
+    onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
+    contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutSubscriptionTransactionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutSubscriptionTransactionsInput, UserUncheckedCreateWithoutSubscriptionTransactionsInput>
+  }
+
+  export type UserUpsertWithoutSubscriptionTransactionsInput = {
+    update: XOR<UserUpdateWithoutSubscriptionTransactionsInput, UserUncheckedUpdateWithoutSubscriptionTransactionsInput>
+    create: XOR<UserCreateWithoutSubscriptionTransactionsInput, UserUncheckedCreateWithoutSubscriptionTransactionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutSubscriptionTransactionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutSubscriptionTransactionsInput, UserUncheckedUpdateWithoutSubscriptionTransactionsInput>
+  }
+
+  export type UserUpdateWithoutSubscriptionTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firebaseUid?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
+    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subGenres?: UserUpdatesubGenresInput | string[]
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    contentWarnings?: UserUpdatecontentWarningsInput | string[]
+    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: UserUpdatetagsInput | string[]
+    reactionCount?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    books?: BookUpdateManyWithoutUploadedByNestedInput
+    bookReviews?: BookReviewUpdateManyWithoutUserNestedInput
+    bookSaves?: BookSaveUpdateManyWithoutUserNestedInput
+    universes?: UniverseUpdateManyWithoutUserNestedInput
+    stories?: StoryUpdateManyWithoutAuthorNestedInput
+    storyReactions?: StoryReactionUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    followers?: FollowUpdateManyWithoutFollowingNestedInput
+    following?: FollowUpdateManyWithoutFollowerNestedInput
+    readingLogs?: ReadingLogUpdateManyWithoutUserNestedInput
+    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMemberUpdateManyWithoutUserNestedInput
+    clubDiscussions?: ClubDiscussionUpdateManyWithoutAuthorNestedInput
+    clubsOwned?: ClubUpdateManyWithoutOwnerNestedInput
+    clubBans?: ClubBanUpdateManyWithoutUserNestedInput
+    betaReads?: BetaReaderUpdateManyWithoutUserNestedInput
+    newsletterSubscribers?: NewsletterSubscriberUpdateManyWithoutAuthorNestedInput
+    newsletterSubs?: NewsletterSubscriberUpdateManyWithoutSubscriberNestedInput
+    tipsSent?: TipUpdateManyWithoutSenderNestedInput
+    tipsReceived?: TipUpdateManyWithoutReceiverNestedInput
+    annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
+    scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
+    inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
+    shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
+    giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
+    giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
+    onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
+    contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
+    dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutSubscriptionTransactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firebaseUid?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
+    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subGenres?: UserUpdatesubGenresInput | string[]
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    contentWarnings?: UserUpdatecontentWarningsInput | string[]
+    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: UserUpdatetagsInput | string[]
+    reactionCount?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    books?: BookUncheckedUpdateManyWithoutUploadedByNestedInput
+    bookReviews?: BookReviewUncheckedUpdateManyWithoutUserNestedInput
+    bookSaves?: BookSaveUncheckedUpdateManyWithoutUserNestedInput
+    universes?: UniverseUncheckedUpdateManyWithoutUserNestedInput
+    stories?: StoryUncheckedUpdateManyWithoutAuthorNestedInput
+    storyReactions?: StoryReactionUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    followers?: FollowUncheckedUpdateManyWithoutFollowingNestedInput
+    following?: FollowUncheckedUpdateManyWithoutFollowerNestedInput
+    readingLogs?: ReadingLogUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMemberUncheckedUpdateManyWithoutUserNestedInput
+    clubDiscussions?: ClubDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    clubsOwned?: ClubUncheckedUpdateManyWithoutOwnerNestedInput
+    clubBans?: ClubBanUncheckedUpdateManyWithoutUserNestedInput
+    betaReads?: BetaReaderUncheckedUpdateManyWithoutUserNestedInput
+    newsletterSubscribers?: NewsletterSubscriberUncheckedUpdateManyWithoutAuthorNestedInput
+    newsletterSubs?: NewsletterSubscriberUncheckedUpdateManyWithoutSubscriberNestedInput
+    tipsSent?: TipUncheckedUpdateManyWithoutSenderNestedInput
+    tipsReceived?: TipUncheckedUpdateManyWithoutReceiverNestedInput
+    annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
+    scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
+    inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
+    giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
+    giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
+    onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
+    contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BookCreateManyUploadedByInput = {
@@ -63625,26 +63177,6 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type AuthorSubscriptionCreateManySubscriberInput = {
-    id?: string
-    authorId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AuthorSubscriptionCreateManyAuthorInput = {
-    id?: string
-    subscriberId: string
-    tier: string
-    monthlyPrice: number
-    renewalDate: Date | string
-    subscribedAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type GiftMembershipCreateManySentByUserInput = {
     id?: string
     code: string
@@ -63701,6 +63233,18 @@ export namespace Prisma {
     link?: string | null
     isRead?: boolean
     createdAt?: Date | string
+  }
+
+  export type SubscriptionTransactionCreateManyUserInput = {
+    id?: string
+    plan: string
+    duration: number
+    amount: number
+    senderNumber: string
+    transactionId: string
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type BookUpdateWithoutUploadedByInput = {
@@ -64414,66 +63958,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AuthorSubscriptionUpdateWithoutSubscriberInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    author?: UserUpdateOneRequiredWithoutAuthorSubscribersToNestedInput
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateWithoutSubscriberInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateManyWithoutSubscriberInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    authorId?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AuthorSubscriptionUpdateWithoutAuthorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscriber?: UserUpdateOneRequiredWithoutAuthorSubscriptionsNestedInput
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateWithoutAuthorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    subscriberId?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AuthorSubscriptionUncheckedUpdateManyWithoutAuthorInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    subscriberId?: StringFieldUpdateOperationsInput | string
-    tier?: StringFieldUpdateOperationsInput | string
-    monthlyPrice?: FloatFieldUpdateOperationsInput | number
-    renewalDate?: DateTimeFieldUpdateOperationsInput | Date | string
-    subscribedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type GiftMembershipUpdateWithoutSentByUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
@@ -64646,6 +64130,42 @@ export namespace Prisma {
     link?: NullableStringFieldUpdateOperationsInput | string | null
     isRead?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SubscriptionTransactionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SubscriptionTransactionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SubscriptionTransactionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    plan?: StringFieldUpdateOperationsInput | string
+    duration?: IntFieldUpdateOperationsInput | number
+    amount?: FloatFieldUpdateOperationsInput | number
+    senderNumber?: StringFieldUpdateOperationsInput | string
+    transactionId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type BookReviewCreateManyBookInput = {

@@ -97,18 +97,18 @@ model User {
   description      String?
 
   // Relationships to new models
-  annotations         BookAnnotation[]
-  scheduledChapters   ScheduledChapter[]
-  inlineComments      InlineComment[]
-  shareActivities     ShareActivity[]
-  authorSubscriptions AuthorSubscription[] @relation("subscriber")
-  authorSubscribersTo AuthorSubscription[] @relation("author")
-  giftsSent           GiftMembership[]     @relation("sender")
-  giftsReceived       GiftMembership[]     @relation("receiver")
-  onboardingQuiz      OnboardingQuiz?
-  contentReports      ContentReport[]      @relation("reporter")
-  dmcaNotices         DMCANotice[]         @relation("dmca_submitter")
-  notifications       Notification[]       @relation("user_notifications")
+  annotations       BookAnnotation[]
+  scheduledChapters ScheduledChapter[]
+  inlineComments    InlineComment[]
+  shareActivities   ShareActivity[]
+
+  giftsSent                GiftMembership[]          @relation("sender")
+  giftsReceived            GiftMembership[]          @relation("receiver")
+  onboardingQuiz           OnboardingQuiz?
+  contentReports           ContentReport[]           @relation("reporter")
+  dmcaNotices              DMCANotice[]              @relation("dmca_submitter")
+  notifications            Notification[]            @relation("user_notifications")
+  subscriptionTransactions SubscriptionTransaction[]
 
   @@map("users")
 }
@@ -582,24 +582,6 @@ model DMCANotice {
   @@map("dmca_notices")
 }
 
-model AuthorSubscription {
-  id           String   @id @default(cuid())
-  subscriberId String   @map("subscriber_id")
-  authorId     String   @map("author_id")
-  tier         String // BASIC, PREMIUM, VIP
-  monthlyPrice Float    @map("monthly_price")
-  renewalDate  DateTime @map("renewal_date")
-  subscribedAt DateTime @default(now()) @map("subscribed_at")
-  updatedAt    DateTime @updatedAt @map("updated_at")
-
-  subscriber User @relation("subscriber", fields: [subscriberId], references: [id], onDelete: Cascade)
-  author     User @relation("author", fields: [authorId], references: [id], onDelete: Cascade)
-
-  @@unique([subscriberId, authorId])
-  @@index([authorId])
-  @@map("author_subscriptions")
-}
-
 model StoryPromotion {
   id        String   @id @default(cuid())
   storyId   String   @map("story_id")
@@ -652,4 +634,21 @@ model Universe {
 
   @@index([userId])
   @@map("universes")
+}
+
+model SubscriptionTransaction {
+  id            String   @id @default(cuid())
+  userId        String   @map("user_id")
+  plan          String // PRO or CREATOR
+  duration      Int // in months
+  amount        Float
+  senderNumber  String   @map("sender_number")
+  transactionId String   @unique @map("transaction_id")
+  status        String   @default("PENDING") // PENDING, APPROVED, DECLINED
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscription_transactions")
 }

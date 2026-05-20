@@ -35,7 +35,6 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
           stories: true,
           comments: true,
           achievements: { include: { achievement: true } },
-          authorSubscriptions: { include: { author: true } },
           newsletterSubs: { include: { author: true } },
           dmcaNotices: true,
         },

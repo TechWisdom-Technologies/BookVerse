@@ -29,6 +29,10 @@ import {
   Mail,
   Layers,
   Send,
+  Menu,
+  X,
+  Sparkles,
+  Star,
 } from "lucide-react";
 
 // Navigation item type
@@ -140,6 +144,16 @@ export function Navbar() {
   const { user, dbUser, loading, signOut } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLibrarianOpen, setIsLibrarianOpen] = useState(false);
+
+  useEffect(() => {
+    const handleState = (e: Event) => {
+      setIsLibrarianOpen((e as CustomEvent).detail);
+    };
+    window.addEventListener("ai-librarian-state", handleState);
+    return () => window.removeEventListener("ai-librarian-state", handleState);
+  }, []);
 
   useEffect(() => {
     if (user && !loading) {
@@ -156,6 +170,11 @@ export function Navbar() {
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
+
+  const isPro = !!(
+    dbUser?.membershipTier &&
+    (!dbUser.membershipExpiry || new Date(dbUser.membershipExpiry).getTime() > Date.now())
+  );
 
   // Build dynamic nav arrays based on auth state
   const dynamicAuthLeftItems: NavItem[] = [
@@ -176,6 +195,223 @@ export function Navbar() {
 
   return (
     <>
+      {/* Mobile Navigation Dock (mobile-only) */}
+      <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[400px]" aria-label="Mobile navigation">
+        <div className="flex items-center justify-around px-3 py-2 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-2xl rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-zinc-100 dark:border-zinc-800/80 transition-all">
+          
+          {user ? (
+            <>
+              {/* Library */}
+              <NavButton
+                href="/library"
+                icon={Library}
+                label="Library"
+                isActive={isActive("/library")}
+              />
+
+              {/* Notifications */}
+              <NavButton
+                href="/notifications"
+                icon={Bell}
+                label="Notifications"
+                isActive={isActive("/notifications")}
+                hasBadge={unreadCount > 0}
+              />
+
+              {/* Home centerpiece */}
+              <Link
+                href="/"
+                className="group relative flex items-center justify-center mx-1"
+              >
+                <div className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 border ${isActive("/")
+                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md"
+                  : "bg-zinc-50 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-500 border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white"
+                  }`}>
+                  <Home className={`transition-all duration-300 ${isActive("/") ? "scale-110" : "group-hover:scale-110"}`} size={20} strokeWidth={isActive("/") ? 2.5 : 2} />
+                </div>
+              </Link>
+
+              {/* Write */}
+              <NavButton
+                href="/write"
+                icon={PenLine}
+                label="Write"
+                isActive={isActive("/write")}
+              />
+
+              {/* AI Librarian Toggle Button */}
+              <button
+                onClick={() => window.dispatchEvent(new Event("toggle-ai-librarian"))}
+                className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105"
+                aria-label="Toggle AI Librarian"
+              >
+                <div className={`absolute inset-0 rounded-full transition-all duration-300 ${isLibrarianOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"}`} />
+                <Sparkles size={20} className={`relative z-10 transition-all duration-300 ${isLibrarianOpen ? "text-zinc-900 dark:text-white scale-110" : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white"}`} />
+              </button>
+
+              {/* Profile Avatar Trigger */}
+              {loading ? (
+                <div className="w-11 h-11 rounded-full bg-zinc-50 dark:bg-zinc-900 animate-pulse animate-in fade-in" />
+              ) : (
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105"
+                  aria-label="Open profile menu"
+                >
+                  <div className={`absolute inset-0 rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
+                    }`} />
+                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500">
+                    {dbUser?.avatarUrl ? (
+                      <img
+                        src={dbUser.avatarUrl}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 font-bold text-[9px] uppercase">
+                        {dbUser?.username?.[0]?.toUpperCase() || <User size={14} />}
+                      </div>
+                    )}
+                  </div>
+                  {dbUser?.role === "ADMIN" ? (
+                    <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-zinc-900 dark:bg-white rounded-full border border-white dark:border-zinc-950 flex items-center justify-center">
+                      <Crown size={6} className="text-white dark:text-zinc-900" />
+                    </div>
+                  ) : isPro ? (
+                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-500 rounded-full border border-white dark:border-zinc-950 flex items-center justify-center shadow-sm">
+                      <Star size={6} className="text-white fill-white" />
+                    </div>
+                  ) : null}
+                </button>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Library */}
+              <NavButton
+                href="/library"
+                icon={Library}
+                label="Library"
+                isActive={isActive("/library")}
+              />
+
+              {/* Search */}
+              <NavButton
+                href="/search"
+                icon={Search}
+                label="Search"
+                isActive={isActive("/search")}
+              />
+
+              {/* Home centerpiece */}
+              <Link
+                href="/"
+                className="group relative flex items-center justify-center mx-1"
+              >
+                <div className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 border ${isActive("/")
+                  ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md"
+                  : "bg-zinc-50 dark:bg-zinc-900 text-zinc-400 dark:text-zinc-500 border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white"
+                  }`}>
+                  <Home className={`transition-all duration-300 ${isActive("/") ? "scale-110" : "group-hover:scale-110"}`} size={20} strokeWidth={isActive("/") ? 2.5 : 2} />
+                </div>
+              </Link>
+
+              {/* Support */}
+              <NavButton
+                href="/support"
+                icon={HelpCircle}
+                label="Support"
+                isActive={isActive("/support")}
+              />
+
+              {/* AI Librarian Toggle Button */}
+              <button
+                onClick={() => window.dispatchEvent(new Event("toggle-ai-librarian"))}
+                className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105"
+                aria-label="Toggle AI Librarian"
+              >
+                <div className={`absolute inset-0 rounded-full transition-all duration-300 ${isLibrarianOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"}`} />
+                <Sparkles size={20} className={`relative z-10 transition-all duration-300 ${isLibrarianOpen ? "text-zinc-900 dark:text-white scale-110" : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white"}`} />
+              </button>
+
+              {/* Mobile Sidebar Menu Trigger */}
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105"
+                aria-label="Open navigation menu"
+              >
+                <div className="absolute inset-0 rounded-full bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800 transition-all duration-300" />
+                <Menu size={20} className="relative z-10 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white" />
+              </button>
+            </>
+          )}
+
+        </div>
+      </nav>
+
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-zinc-950/40 backdrop-blur-sm"
+            onClick={() => setMobileOpen(false)}
+          />
+          <aside className="fixed top-3 left-3 bottom-3 z-50 w-[min(88vw,20rem)] sm:w-80 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-3xl shadow-2xl p-4 animate-in slide-in-from-left duration-300 ease-out">
+            <div className="flex items-center justify-between mb-4">
+              <Link href="/" onClick={() => setMobileOpen(false)} className="font-bold uppercase tracking-widest">Home</Link>
+              <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-2">
+                <X size={20} />
+              </button>
+            </div>
+
+            <nav className="space-y-2 overflow-y-auto h-[calc(100%-64px)] pr-2">
+              <div>
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Main</h3>
+                {leftItems.map((item) => (
+                  <DropdownItem
+                    key={item.href}
+                    href={item.href}
+                    icon={item.icon}
+                    label={item.label}
+                    onClick={() => setMobileOpen(false)}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-3">
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Explore</h3>
+                {rightItems.map((item) => (
+                  <DropdownItem
+                    key={item.href}
+                    href={item.href}
+                    icon={item.icon}
+                    label={item.label}
+                    onClick={() => setMobileOpen(false)}
+                  />
+                ))}
+              </div>
+
+              <div className="mt-3">
+                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Account</h3>
+                {loading ? (
+                  <div className="h-10 w-full bg-zinc-50 dark:bg-zinc-900 animate-pulse rounded" />
+                ) : user ? (
+                  <>
+                    <DropdownItem href={`/profile/${dbUser?.username || ""}`} icon={User} label="My Profile" onClick={() => setMobileOpen(false)} />
+                    <DropdownItem href="/settings" icon={Settings} label="Settings" onClick={() => setMobileOpen(false)} />
+                  </>
+                ) : (
+                  <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 px-4 py-3 rounded text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white">
+                    <div className="w-8 h-8 rounded flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 text-zinc-300">
+                      <User size={14} />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Sign In</span>
+                  </Link>
+                )}
+              </div>
+            </nav>
+          </aside>
+        </>
+      )}
       {/* Profile Sidebar */}
       {profileOpen && user && (
         <>
@@ -233,6 +469,47 @@ export function Navbar() {
 
               {/* Menu */}
               <div className="flex-1 overflow-y-auto py-6 px-4 space-y-6">
+                {/* Mobile-only Explore Section */}
+                <div className="md:hidden border-b border-zinc-100 dark:border-zinc-900 pb-6">
+                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Explore</h3>
+                  <DropdownItem
+                    href="/stories"
+                    icon={Feather}
+                    label="Stories"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/universes"
+                    icon={Globe}
+                    label="Universes"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/clubs"
+                    icon={User}
+                    label="Clubs"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/search"
+                    icon={Search}
+                    label="Search"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/activity-feed"
+                    icon={MessageSquare}
+                    label="Feed"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/support"
+                    icon={HelpCircle}
+                    label="Support"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                </div>
+
                 {/* Account */}
                 <div>
                   <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Account</h3>
@@ -365,8 +642,8 @@ export function Navbar() {
         </>
       )}
 
-      {/* Bottom Navigation Dock */}
-      <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+      {/* Bottom Navigation Dock (desktop/tablet) */}
+      <nav className="hidden md:flex fixed bottom-8 left-1/2 -translate-x-1/2 z-50" aria-label="Bottom navigation">
         <div className="flex items-center gap-1.5 px-2.5 py-2.5 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-2xl rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-zinc-100 dark:border-zinc-800 transition-all">
 
           {/* Left side items */}
@@ -417,6 +694,33 @@ export function Navbar() {
               />
             ))}
 
+            {/* AI Librarian Toggle Button */}
+            <button
+              onClick={() => window.dispatchEvent(new Event("toggle-ai-librarian"))}
+              className="group relative flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300"
+              aria-label="Toggle AI Librarian"
+            >
+              <div className={`absolute inset-0 rounded-full transition-all duration-300 ${isLibrarianOpen
+                ? "bg-zinc-900/10 dark:bg-white/10 scale-100"
+                : "bg-transparent scale-90 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800 group-hover:scale-100"
+                }`} />
+              <Sparkles
+                size={20}
+                className={`transition-all duration-300 relative z-10 ${isLibrarianOpen
+                  ? "text-zinc-900 dark:text-white scale-110"
+                  : "text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white group-hover:scale-105"
+                  }`}
+              />
+              {/* Tooltip */}
+              <div className={`absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-200 pointer-events-none ${isLibrarianOpen
+                ? "opacity-0 translate-y-1"
+                : "opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0"
+                }`}>
+                <div className="absolute inset-0 bg-zinc-900 dark:bg-white rounded shadow-md" />
+                <span className="relative text-white dark:text-zinc-900">AI Librarian</span>
+              </div>
+            </button>
+
             {/* Profile / Sign In */}
             {loading ? (
               <div className="w-11 h-11 rounded-full bg-zinc-50 dark:bg-zinc-900 animate-pulse ml-1" />
@@ -440,11 +744,15 @@ export function Navbar() {
                     </div>
                   )}
                 </div>
-                {dbUser?.role === "ADMIN" && (
+                {dbUser?.role === "ADMIN" ? (
                   <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-zinc-900 dark:bg-white rounded-full border-2 border-white dark:border-zinc-950 flex items-center justify-center">
                     <Crown size={7} className="text-white dark:text-zinc-900" />
                   </div>
-                )}
+                ) : isPro ? (
+                  <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-white dark:border-zinc-950 flex items-center justify-center shadow-sm">
+                    <Star size={7} className="text-white fill-white" />
+                  </div>
+                ) : null}
 
                 {/* Profile Tooltip */}
                 <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-200 pointer-events-none opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0">
