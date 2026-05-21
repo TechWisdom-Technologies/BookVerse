@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, Search, Trash2, BookOpen, Plus, ArrowLeft, ShieldCheck, Activity } from "lucide-react";
+import { Loader2, Search, Trash2, BookOpen, Plus, ArrowLeft, ShieldCheck, CheckSquare, Square, XCircle } from "lucide-react";
 
 interface Book {
   id: string;
@@ -26,6 +26,8 @@ export default function AdminBooksPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
 
   useEffect(() => { fetchBooks(); }, [page, search]);
 
@@ -38,20 +40,63 @@ export default function AdminBooksPage() {
         setBooks(data.books);
         setTotalPages(data.totalPages);
       }
-    } finally { setLoading(false); }
+    } finally {
+      setLoading(false);
+      setSelectedIds(new Set());
+    }
   };
 
   const handleDelete = async (bookId: string) => {
-    if (!confirm("Execute volume purge? This archival record will be permanently deleted.")) return;
+    if (!confirm("Execute volume purge? This archival record and its files will be permanently deleted from storage.")) return;
     try {
       const res = await fetch("/api/admin/books", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ bookId }),
       });
-      if (res.ok) { setBooks(books.filter((b) => b.id !== bookId)); }
+      if (res.ok) { setBooks(books.filter((b) => b.id !== bookId)); setSelectedIds(prev => { const n = new Set(prev); n.delete(bookId); return n; }); }
     } catch (error) { console.error("Failed to delete book:", error); }
   };
+
+  const handleBulkDelete = async () => {
+    if (selectedIds.size === 0) return;
+    if (!confirm(`Permanently delete ${selectedIds.size} selected book(s) and their files from storage? This cannot be undone.`)) return;
+    setBulkDeleting(true);
+    try {
+      const res = await fetch("/api/admin/books", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bookIds: Array.from(selectedIds) }),
+      });
+      if (res.ok) {
+        setBooks(books.filter((b) => !selectedIds.has(b.id)));
+        setSelectedIds(new Set());
+      }
+    } catch (error) {
+      console.error("Failed to bulk delete books:", error);
+    } finally {
+      setBulkDeleting(false);
+    }
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === books.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(books.map(b => b.id)));
+    }
+  };
+
+  const allSelected = books.length > 0 && selectedIds.size === books.length;
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
@@ -88,9 +133,30 @@ export default function AdminBooksPage() {
               onKeyDown={(e) => e.key === "Enter" && setPage(1)}
             />
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800 font-mono">
-            <ShieldCheck className="w-3 h-3 text-zinc-300" />
-            Audit Mode Active
+          <div className="flex items-center gap-3">
+            {selectedIds.size > 0 && (
+              <button
+                onClick={handleBulkDelete}
+                disabled={bulkDeleting}
+                className="flex items-center gap-2 px-4 py-1.5 text-[9px] font-bold uppercase tracking-widest text-rose-600 bg-rose-500/5 hover:bg-rose-500/10 rounded border border-rose-200 dark:border-rose-900/50 transition-all disabled:opacity-50"
+              >
+                {bulkDeleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+                Delete {selectedIds.size} selected
+              </button>
+            )}
+            {selectedIds.size > 0 && (
+              <button
+                onClick={() => setSelectedIds(new Set())}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all"
+              >
+                <XCircle className="w-3 h-3" />
+                Clear
+              </button>
+            )}
+            <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800 font-mono">
+              <ShieldCheck className="w-3 h-3 text-zinc-300" />
+              Audit Mode Active
+            </div>
           </div>
         </div>
 
@@ -109,6 +175,11 @@ export default function AdminBooksPage() {
               <table className="w-full text-left">
                 <thead>
                   <tr className="border-b border-zinc-100 dark:border-zinc-900">
+                    <th className="py-4 px-4 w-10">
+                      <button onClick={toggleSelectAll} className="text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                        {allSelected ? <CheckSquare className="w-4 h-4" /> : <Square className="w-4 h-4" />}
+                      </button>
+                    </th>
                     <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Volume Record</th>
                     <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Classification</th>
                     <th className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">Archivist</th>
@@ -118,7 +189,12 @@ export default function AdminBooksPage() {
                 </thead>
                 <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900">
                   {books.map((book) => (
-                    <tr key={book.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                    <tr key={book.id} className={`group transition-colors ${selectedIds.has(book.id) ? "bg-zinc-50 dark:bg-zinc-900/80" : "hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50"}`}>
+                      <td className="py-4 px-4">
+                        <button onClick={() => toggleSelect(book.id)} className="text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                          {selectedIds.has(book.id) ? <CheckSquare className="w-4 h-4 text-zinc-900 dark:text-white" /> : <Square className="w-4 h-4" />}
+                        </button>
+                      </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <div className="relative h-12 w-9 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">

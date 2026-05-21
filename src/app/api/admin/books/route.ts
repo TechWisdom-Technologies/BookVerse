@@ -3,6 +3,34 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
 import { removeBook } from "@/lib/meilisearch";
+import { deleteFromR2 } from "@/lib/r2";
+
+/** Extract the R2 object key from a full public URL */
+function extractR2Key(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    const publicBase = process.env.CLOUDFLARE_R2_PUBLIC_URL?.replace(/\/+$/, "");
+    if (publicBase && url.startsWith(publicBase)) {
+      return url.slice(publicBase.length + 1); // remove leading slash
+    }
+    // Fallback: try to extract path after the domain
+    const parsed = new URL(url);
+    return parsed.pathname.replace(/^\/+/, "");
+  } catch {
+    return null;
+  }
+}
+
+/** Safely delete an R2 object by its public URL */
+async function safeDeleteR2(url: string | null) {
+  const key = extractR2Key(url);
+  if (!key) return;
+  try {
+    await deleteFromR2(key);
+  } catch (error) {
+    console.warn(`Failed to delete R2 object (key: ${key}):`, error);
+  }
+}
 
 export async function GET(request: Request) {
   try {
@@ -73,21 +101,42 @@ export async function DELETE(request: Request) {
     }
 
     const body = await request.json();
-    const { bookId } = body;
+    const { bookId, bookIds } = body;
 
-    if (!bookId) {
+    // Support bulk delete (bookIds array) OR single delete (bookId string)
+    const idsToDelete: string[] = bookIds && Array.isArray(bookIds) ? bookIds : bookId ? [bookId] : [];
+
+    if (idsToDelete.length === 0) {
       return NextResponse.json(
-        { error: "bookId is required" },
+        { error: "bookId or bookIds is required" },
         { status: 400 }
       );
     }
 
-    // Remove from Meilisearch index
-    void removeBook(bookId);
+    // Fetch the books to get their file URLs for R2 cleanup
+    const booksToDelete = await prisma.book.findMany({
+      where: { id: { in: idsToDelete } },
+      select: { id: true, fileUrl: true, coverUrl: true },
+    });
 
-    await prisma.book.delete({ where: { id: bookId } });
+    if (booksToDelete.length === 0) {
+      return NextResponse.json({ error: "No books found" }, { status: 404 });
+    }
 
-    return new NextResponse(null, { status: 204 });
+    // Delete from database first
+    await prisma.book.deleteMany({ where: { id: { in: idsToDelete } } });
+
+    // Remove from Meilisearch index and R2 storage (fire-and-forget, don't block response)
+    for (const book of booksToDelete) {
+      void removeBook(book.id);
+      void safeDeleteR2(book.fileUrl);
+      void safeDeleteR2(book.coverUrl);
+    }
+
+    return NextResponse.json({
+      message: `Successfully deleted ${booksToDelete.length} book(s)`,
+      deletedCount: booksToDelete.length,
+    });
   } catch (error) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -97,7 +146,7 @@ export async function DELETE(request: Request) {
     }
     console.error("DELETE /api/admin/books error:", error);
     return NextResponse.json(
-      { error: "Failed to delete book" },
+      { error: "Failed to delete book(s)" },
       { status: 500 }
     );
   }
