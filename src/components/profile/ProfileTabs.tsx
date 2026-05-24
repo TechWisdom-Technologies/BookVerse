@@ -12,7 +12,7 @@ interface Book {
   coverUrl: string | null;
   genre: string;
   downloadCount: number;
-  createdAt: string;
+  createdAt: string | Date;
   _count: { reviews: number };
 }
 
@@ -22,7 +22,7 @@ interface Story {
   coverUrl: string | null;
   summary: string | null;
   viewCount: number;
-  createdAt: string;
+  createdAt: string | Date;
   _count: {
     chapters: number;
     reactions: number;
