@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Library, Plus, Loader2, Trash2, Sparkles, Rocket, Globe, ChevronRight, BookOpen, Eye, ArrowLeft, Layers, Globe2 } from 'lucide-react';
+import { Library, Plus, Loader2, Trash2, Sparkles, Rocket, Globe, ChevronRight, BookOpen, Eye, ArrowLeft, Layers, Globe2, Pencil, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/components/auth/AuthProvider';
 
@@ -28,6 +28,8 @@ export default function UniverseStudioPage() {
   const [universes, setUniverses] = useState<Universe[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [editingUniverse, setEditingUniverse] = useState<Universe | null>(null);
   
   // Form State
   const [name, setName] = useState('');
@@ -53,27 +55,80 @@ export default function UniverseStudioPage() {
     } finally { setLoading(false); }
   };
 
-  const handleCreateUniverse = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) { toast.error('Name required.'); return; }
-    try {
-      setIsCreating(true);
-      const res = await fetch('/api/universes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: name.trim(),
-          description: description.trim() || null,
-          genre,
-          coverUrl: coverUrl.trim() || null,
-        }),
-      });
-      if (res.ok) {
-        toast.success('Universe created.');
-        setName(''); setDescription(''); setGenre('Fantasy'); setCoverUrl('');
-        fetchMyUniverses();
+    
+    if (editingUniverse) {
+      try {
+        setIsUpdating(true);
+        const res = await fetch(`/api/universes/${editingUniverse.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            description: description.trim() || null,
+            genre,
+            coverUrl: coverUrl.trim() || null,
+          }),
+        });
+        if (res.ok) {
+          toast.success('Universe updated.');
+          handleCancelEdit();
+          fetchMyUniverses();
+        } else {
+          const data = await res.json();
+          toast.error(data.error || 'Failed to update universe.');
+        }
+      } catch (err) {
+        toast.error('Failed to update universe.');
+      } finally {
+        setIsUpdating(false);
       }
-    } finally { setIsCreating(false); }
+    } else {
+      try {
+        setIsCreating(true);
+        const res = await fetch('/api/universes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name.trim(),
+            description: description.trim() || null,
+            genre,
+            coverUrl: coverUrl.trim() || null,
+          }),
+        });
+        if (res.ok) {
+          toast.success('Universe created.');
+          setName(''); setDescription(''); setGenre('Fantasy'); setCoverUrl('');
+          fetchMyUniverses();
+        } else {
+          const data = await res.json();
+          toast.error(data.error || 'Failed to create universe.');
+        }
+      } catch (err) {
+        toast.error('Failed to create universe.');
+      } finally {
+        setIsCreating(false);
+      }
+    }
+  };
+
+  const handleStartEdit = (universe: Universe) => {
+    setEditingUniverse(universe);
+    setName(universe.name || '');
+    setDescription(universe.description || '');
+    setGenre(universe.genre || 'Fantasy');
+    setCoverUrl(universe.coverUrl || '');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUniverse(null);
+    setName('');
+    setDescription('');
+    setGenre('Fantasy');
+    setCoverUrl('');
   };
 
   const handleDeleteUniverse = async (universeId: string) => {
@@ -113,15 +168,36 @@ export default function UniverseStudioPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-16">
-          {/* Creation Form */}
+          {/* Creation / Editing Form */}
           <aside>
-            <div className="p-10 border border-zinc-100 dark:border-zinc-900 bg-zinc-50/10 rounded sticky top-24 shadow-sm">
-              <div className="flex items-center gap-2 mb-8 pb-4 border-b border-zinc-100 dark:border-zinc-900">
-                <Plus className="w-3.5 h-3.5 text-zinc-300" />
-                <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">Create Universe</h2>
+            <div className={`p-10 border rounded sticky top-24 shadow-sm transition-all duration-300 ${
+              editingUniverse 
+                ? 'border-indigo-500/30 dark:border-indigo-400/30 bg-indigo-500/5 shadow-indigo-500/5' 
+                : 'border-zinc-100 dark:border-zinc-900 bg-zinc-50/10'
+            }`}>
+              <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-100 dark:border-zinc-900">
+                <div className="flex items-center gap-2">
+                  {editingUniverse ? (
+                    <Pencil className="w-3.5 h-3.5 text-indigo-400" />
+                  ) : (
+                    <Plus className="w-3.5 h-3.5 text-zinc-300" />
+                  )}
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">
+                    {editingUniverse ? "Edit Universe" : "Create Universe"}
+                  </h2>
+                </div>
+                {editingUniverse && (
+                  <button 
+                    onClick={handleCancelEdit} 
+                    className="p-1 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors rounded hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    title="Cancel Edit"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
               
-              <form onSubmit={handleCreateUniverse} className="space-y-6">
+              <form onSubmit={handleFormSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Universe Name</label>
                   <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. My Epic Fantasy World" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
@@ -150,9 +226,34 @@ export default function UniverseStudioPage() {
                   </div>
                 </div>
 
-                <button type="submit" disabled={isCreating} className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center justify-center gap-2 border border-zinc-900 dark:border-white shadow-md">
-                  {isCreating ? <Loader2 className="w-4 h-4 animate-spin" /> : "Create Universe"}
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    type="submit" 
+                    disabled={isCreating || isUpdating} 
+                    className={`flex-1 py-4 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center justify-center gap-2 border shadow-md ${
+                      editingUniverse 
+                        ? 'bg-indigo-600 hover:bg-indigo-700 text-white border-indigo-600' 
+                        : 'bg-zinc-900 dark:bg-white hover:bg-zinc-800 dark:hover:bg-zinc-100 text-white dark:text-zinc-900 border-zinc-900 dark:border-white'
+                    }`}
+                  >
+                    {isCreating || isUpdating ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : editingUniverse ? (
+                      "Save Changes"
+                    ) : (
+                      "Create Universe"
+                    )}
+                  </button>
+                  {editingUniverse && (
+                    <button 
+                      type="button" 
+                      onClick={handleCancelEdit} 
+                      className="px-4 py-4 bg-transparent text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded border border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all animate-in fade-in slide-in-from-left-2 duration-200"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </form>
             </div>
           </aside>
@@ -175,7 +276,14 @@ export default function UniverseStudioPage() {
             ) : (
               <div className="space-y-6">
                 {universes.map((u) => (
-                  <div key={u.id} className="p-8 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all group relative overflow-hidden shadow-sm">
+                  <div 
+                    key={u.id} 
+                    className={`p-8 border rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all duration-300 group relative overflow-hidden shadow-sm ${
+                      editingUniverse?.id === u.id 
+                        ? 'border-indigo-500 dark:border-indigo-400 shadow-md ring-1 ring-indigo-500 dark:ring-indigo-400' 
+                        : 'border-zinc-100 dark:border-zinc-900'
+                    }`}
+                  >
                     {u.coverUrl && (
                       <div className="absolute top-0 right-0 w-48 h-full opacity-5 pointer-events-none">
                         <img src={u.coverUrl} alt="" className="w-full h-full object-cover" />
@@ -200,9 +308,26 @@ export default function UniverseStudioPage() {
                           {u.description && <p className="text-[11px] text-zinc-500 font-medium leading-relaxed line-clamp-2 max-w-2xl italic">“{u.description}”</p>}
                         </div>
                         
-                        <button onClick={() => handleDeleteUniverse(u.id)} className="p-2 text-zinc-200 hover:text-rose-500 hover:bg-rose-500/5 transition-all rounded">
-                          <Trash2 className="w-5 h-5" />
-                        </button>
+                        <div className="flex items-center gap-1 shrink-0">
+                          <button 
+                            onClick={() => handleStartEdit(u)} 
+                            className={`p-2 rounded transition-all ${
+                              editingUniverse?.id === u.id
+                                ? 'text-indigo-500 bg-indigo-500/10'
+                                : 'text-zinc-400 hover:text-indigo-500 hover:bg-indigo-500/5'
+                            }`}
+                            title="Edit Universe"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteUniverse(u.id)} 
+                            className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 transition-all rounded"
+                            title="Delete Universe"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="flex items-center justify-between pt-8 border-t border-zinc-50 dark:border-zinc-900">

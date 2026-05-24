@@ -81,7 +81,7 @@ export async function PATCH(
       where: { id: universeId },
       data: {
         name: name?.trim() || universe.name,
-        description: description?.trim() || universe.description,
+        description: description !== undefined ? (description?.trim() || null) : universe.description,
         genre: genre?.trim() || universe.genre,
         coverUrl: coverUrl !== undefined ? (coverUrl?.trim() || null) : universe.coverUrl,
       },
