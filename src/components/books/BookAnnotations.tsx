@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { getFriendlyErrorMessage } from '@/lib/friendly-errors';
 import { BookmarkIcon, Highlighter, Trash2 } from 'lucide-react';
 
 interface Annotation {
@@ -76,7 +77,7 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
       setHighlightedText('');
       toast.success('Annotation added');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to add annotation');
+      toast.error(getFriendlyErrorMessage(error, 'Failed to add annotation. Please try again.'));
     } finally {
       setSaving(false);
     }

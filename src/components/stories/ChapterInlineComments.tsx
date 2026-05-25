@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { MessageSquare, Send } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 interface InlineComment {
@@ -54,7 +55,7 @@ export function ChapterInlineComments({ storyId, chapterId }: { storyId: string;
       setContent("");
       setSpoilerAlert(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to comment");
+      toast.error(getFriendlyErrorMessage(error, "Failed to post comment. Please try again."));
     } finally {
       setLoading(false);
     }

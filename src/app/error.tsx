@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { AlertTriangle, Home, RotateCcw, Terminal } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 
 export default function ErrorPage({
   error,
@@ -14,6 +15,11 @@ export default function ErrorPage({
   useEffect(() => {
     console.error("Application error:", error);
   }, [error]);
+
+  const friendlyMessage = useMemo(
+    () => getFriendlyErrorMessage(error, "Something unexpected happened. Please try again or return home."),
+    [error]
+  );
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-6 py-12 bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100">
@@ -51,8 +57,8 @@ export default function ErrorPage({
             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Diagnostic Data</span>
           </div>
           <div className="text-[10px] font-mono text-zinc-500 break-all leading-relaxed">
-            {error.message || "Unknown execution failure detected."}
-            {error.digest && <div className="mt-2 pt-2 border-t border-zinc-50 dark:border-zinc-900 text-[9px] text-zinc-400">DIGEST_ID: {error.digest}</div>}
+            {friendlyMessage}
+            {error.digest && <div className="mt-2 pt-2 border-t border-zinc-50 dark:border-zinc-900 text-[9px] text-zinc-400">REF: {error.digest}</div>}
           </div>
         </div>
 

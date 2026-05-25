@@ -4,6 +4,7 @@ import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Coffee, Loader2, X, Heart } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 interface TipAuthorDialogProps {
@@ -58,7 +59,7 @@ export function TipAuthorDialog({ authorId, authorName, storyId }: TipAuthorDial
       // Redirect to Stripe
       window.location.href = data.url;
     } catch (error: any) {
-      toast.error(error.message || "Failed to initiate checkout");
+      toast.error(getFriendlyErrorMessage(error, "Failed to initiate checkout. Please try again."));
       setIsProcessing(false);
     }
   };

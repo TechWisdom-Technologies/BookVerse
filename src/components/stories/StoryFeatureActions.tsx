@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AlertTriangle, Eye, Loader2, Share2, ShieldAlert } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 interface StoryFeatureActionsProps {
@@ -42,7 +43,7 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
     try {
       await submitJson("/api/content-reports", { storyId, reason: reportReason }, "Report submitted");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to report");
+      toast.error(getFriendlyErrorMessage(error, "Failed to submit report. Please try again."));
     } finally {
       setLoading(null);
     }
@@ -56,7 +57,7 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
       setDmca({ originalWorkTitle: "", originalWorkAuthor: "", copyrightHolder: "", description: "" });
       setDmcaOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to submit DMCA");
+      toast.error(getFriendlyErrorMessage(error, "Failed to submit DMCA notice. Please try again."));
     } finally {
       setLoading(null);
     }
@@ -68,7 +69,7 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
     try {
       await submitJson(`/api/stories/${storyId}/beta-readers`, {}, "You joined the beta reader list");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to join beta readers");
+      toast.error(getFriendlyErrorMessage(error, "Failed to join beta readers. Please try again."));
     } finally {
       setLoading(null);
     }
@@ -79,7 +80,7 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
     try {
       await submitJson(`/api/stories/${storyId}/share-card`, { platform }, "Share activity logged");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to log share");
+      toast.error(getFriendlyErrorMessage(error, "Failed to share story. Please try again."));
     } finally {
       setLoading(null);
     }

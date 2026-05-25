@@ -5,6 +5,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useRouter } from "next/navigation";
 import { Send, Mail, Loader2, ArrowLeft, Radio } from "lucide-react";
 import Link from "next/link";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 export default function NewsletterPage() {
@@ -47,7 +48,7 @@ export default function NewsletterPage() {
       toast.success(`Newsletter sent to ${data.sentCount} subscribers.`, { id: toastId });
       setSubject(""); setContent("");
     } catch (error: any) {
-      toast.error(error.message, { id: toastId });
+      toast.error(getFriendlyErrorMessage(error, "Failed to send newsletter. Please try again."), { id: toastId });
     } finally {
       setIsSending(false);
     }

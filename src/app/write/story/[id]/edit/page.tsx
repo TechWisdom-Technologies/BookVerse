@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/shared/FileUpload";
 import { AuthorStoryTools } from "@/components/stories/AuthorStoryTools";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import { toast } from "react-hot-toast";
 import ChapterList, {
   type ChapterItem,
@@ -190,7 +191,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
       }
     } catch (err: any) {
       console.error(err);
-      toast.error(err.message || "Something went wrong.");
+      toast.error(getFriendlyErrorMessage(err, "Failed to save settings. Please try again."));
     } finally { setSavingMeta(false); }
   };
 

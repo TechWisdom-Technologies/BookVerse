@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Mail, Loader2, Check } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
@@ -44,7 +45,7 @@ export function NewsletterSubscribeButton({ authorId, initialIsSubscribed }: New
       router.refresh();
     } catch (error) {
       console.error(error);
-      toast.error(error instanceof Error ? error.message : "An error occurred");
+      toast.error(getFriendlyErrorMessage(error, "Failed to update subscription. Please try again."));
     } finally {
       setIsLoading(false);
     }

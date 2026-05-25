@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { getFriendlyErrorMessage } from '@/lib/friendly-errors';
 
 export function GiftRedemptionForm() {
   const [code, setCode] = useState('');
@@ -27,7 +28,7 @@ export function GiftRedemptionForm() {
       toast.success(`✨ Redeemed! ${data.membershipTier} membership activated!`);
       setCode('');
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to redeem gift');
+      toast.error(getFriendlyErrorMessage(error, 'Failed to redeem gift. Please check your code and try again.'));
     } finally {
       setLoading(false);
     }

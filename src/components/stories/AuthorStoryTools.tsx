@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { CalendarClock, Loader2, Megaphone, Users } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 interface BetaReader {
@@ -52,7 +53,7 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
       await post(`/api/stories/${storyId}/schedule`, { chapterNumber, releaseDateTime }, "Chapter scheduled");
       setReleaseDateTime("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to schedule");
+      toast.error(getFriendlyErrorMessage(error, "Failed to schedule chapter. Please try again."));
     } finally {
       setLoading(null);
     }
@@ -67,7 +68,7 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
         duration: promotionDuration,
       }, "Story promotion started");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to promote story");
+      toast.error(getFriendlyErrorMessage(error, "Failed to promote story. Please try again."));
     } finally {
       setLoading(null);
     }

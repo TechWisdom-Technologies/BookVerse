@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Star, Download, Bookmark, BookOpen, Globe, Languages } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 interface Book {
@@ -48,7 +49,7 @@ export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookD
       setSaved(!saved);
       toast.success(saved ? "Removed from library" : "Added to library");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error saving book");
+      toast.error(getFriendlyErrorMessage(err, "Failed to save book. Please try again."));
     } finally {
       setSavingState(false);
     }

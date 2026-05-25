@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import { bookSchema } from "@/lib/validators";
 import { FileUpload } from "@/components/shared/FileUpload";
 
@@ -107,7 +108,7 @@ export function BookUploadForm() {
       router.push(`/library/${result.book.id}`);
       router.refresh();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Upload failed.");
+      toast.error(getFriendlyErrorMessage(error, "Upload failed. Please try again."));
     } finally {
       setSubmitting(false);
     }

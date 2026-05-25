@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Sparkles, Loader2, Image as ImageIcon, Check, Radio, Terminal, AlertCircle, BookmarkCheck } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import { toast } from "react-hot-toast";
 
 interface AiCoverGeneratorProps {
@@ -32,7 +33,7 @@ export function AiCoverGenerator({ onCoverGenerated }: AiCoverGeneratorProps) {
       setGeneratedUrl(data.url);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Failed to make cover. Please try again.");
+      setError(getFriendlyErrorMessage(err, "Failed to generate cover. Please try again."));
     } finally {
       setIsGenerating(false);
     }

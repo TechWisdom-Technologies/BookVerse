@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useRouter } from "next/navigation";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
 interface ReviewFormProps {
@@ -55,7 +56,7 @@ export function ReviewForm({
       onReviewSubmitted?.();
       setComment("");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error posting review");
+      toast.error(getFriendlyErrorMessage(err, "Failed to post review. Please try again."));
     } finally {
       setSubmitting(false);
     }

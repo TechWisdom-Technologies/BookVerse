@@ -9,6 +9,7 @@ import {
   Minus,
   Plus,
 } from "lucide-react";
+import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import type { PDFDocumentProxy, RenderTask } from "pdfjs-dist";
 
 interface PdfReaderProps {
@@ -70,7 +71,7 @@ export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
       } catch (err: any) {
         if (cancelled) return;
         console.error("PDF Load Error:", err);
-        setError(`Unable to load this PDF: ${err.message || "Unknown error"}`);
+        setError(getFriendlyErrorMessage(err, "Unable to load this PDF. Please try again or use a different file."));
         setLoading(false);
       }
     };
@@ -122,7 +123,7 @@ export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
       } catch (err: any) {
         if (err?.name === "RenderingCancelledException" || cancelled) return;
         console.error(`Page ${pageNum} error:`, err);
-        setError(`Rendering error: ${err.message}`);
+        setError(getFriendlyErrorMessage(err, "There was a problem displaying this page. Please try refreshing."));
       } finally {
         if (!cancelled) setRendering(false);
       }
