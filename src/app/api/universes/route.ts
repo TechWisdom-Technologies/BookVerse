@@ -7,11 +7,18 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
     const search = searchParams.get('search');
+    const onlyMine = searchParams.get('onlyMine') === 'true';
 
     let where: any = {};
 
     if (userId) {
       where.userId = userId;
+    } else if (onlyMine) {
+      const user = await getAuth();
+      if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      }
+      where.userId = user.id;
     }
 
     if (search) {

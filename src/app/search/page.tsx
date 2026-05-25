@@ -11,7 +11,7 @@ function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const typeParam = (searchParams.get("type") as "all" | "books" | "stories") || "all";
+  const typeParam = (searchParams.get("type") as "all" | "books" | "stories" | "universes" | "authors") || "all";
   const pageParam = parseInt(searchParams.get("page") || "1", 10);
 
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -58,7 +58,7 @@ function SearchContent() {
     }
   };
 
-  const handleTypeChange = (newType: "all" | "books" | "stories") => {
+  const handleTypeChange = (newType: "all" | "books" | "stories" | "universes" | "authors") => {
     router.push(`/search?q=${encodeURIComponent(query)}&type=${newType}`);
   };
 
@@ -78,7 +78,7 @@ function SearchContent() {
             </button>
             <div>
               <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Search BookVerse.</h1>
-              <p className="text-sm text-zinc-500 max-w-xl font-medium">Find stories, books, and authors across the entire platform.</p>
+              <p className="text-sm text-zinc-500 max-w-xl font-medium">Find stories, books, universes, and authors across the entire platform.</p>
             </div>
           </div>
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 px-4 py-2 border border-zinc-100 dark:border-zinc-800 rounded">
@@ -95,7 +95,7 @@ function SearchContent() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Type title, author, or keywords..."
+              placeholder="Type title, author, universe, or keywords..."
               className="w-full pl-14 pr-28 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-sm font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all shadow-sm"
             />
             <button
@@ -109,8 +109,8 @@ function SearchContent() {
 
         {/* Filter Tabs */}
         {query.trim() && (
-          <div className="flex items-center justify-center gap-4 mb-16">
-            {(["all", "books", "stories"] as const).map((t) => (
+          <div className="flex items-center justify-center gap-4 mb-16 flex-wrap">
+            {(["all", "books", "stories", "universes", "authors"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => handleTypeChange(t)}

@@ -117,7 +117,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
 
     const fetchAvailableUniverses = async () => {
       try {
-        const res = await fetch("/api/universes");
+        const res = await fetch("/api/universes?onlyMine=true");
         if (res.ok) {
           const data = await res.json();
           setAvailableUniverses(data);

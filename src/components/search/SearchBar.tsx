@@ -2,17 +2,22 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Search, X, BookOpen, FileText, Loader2 } from "lucide-react";
+import { Search, X, BookOpen, FileText, Loader2, Globe, User } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
 import Image from "next/image";
 import Link from "next/link";
 
 interface Suggestion {
   id: string;
-  _type: "book" | "story";
-  title: string;
+  _type: "book" | "story" | "universe" | "author";
+  title?: string;
+  name?: string;
   authorName?: string;
+  creatorName?: string;
   coverUrl?: string | null;
+  username?: string;
+  displayName?: string | null;
+  avatarUrl?: string | null;
 }
 
 export function SearchBar() {
@@ -35,13 +40,15 @@ export function SearchBar() {
 
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}&limit=6`);
+        const res = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}&limit=8`);
         if (res.ok) {
           const data = await res.json();
-          // Take top 3 books and top 3 stories
-          const books = data.results.filter((r: Suggestion) => r._type === "book").slice(0, 3);
-          const stories = data.results.filter((r: Suggestion) => r._type === "story").slice(0, 3);
-          setSuggestions([...books, ...stories]);
+          // Take top matching items
+          const books = data.results.filter((r: any) => r._type === "book").slice(0, 2);
+          const stories = data.results.filter((r: any) => r._type === "story").slice(0, 2);
+          const universes = data.results.filter((r: any) => r._type === "universe").slice(0, 2);
+          const authors = data.results.filter((r: any) => r._type === "author").slice(0, 2);
+          setSuggestions([...books, ...stories, ...universes, ...authors]);
         }
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
@@ -101,7 +108,7 @@ export function SearchBar() {
               setIsOpen(true);
             }}
             onFocus={() => setIsOpen(true)}
-            placeholder="Search books and stories..."
+            placeholder="Search books, stories, worlds..."
             className="w-full rounded-full border border-zinc-200 bg-white py-2 pl-10 pr-10 text-sm text-zinc-900 placeholder-zinc-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder-zinc-500"
           />
           {query && (
@@ -118,7 +125,7 @@ export function SearchBar() {
 
       {/* Suggestions Dropdown */}
       {isOpen && (hasSuggestions || isLoading) && (
-        <div className="absolute top-full z-50 mt-2 w-full rounded-xl border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-700 dark:bg-zinc-800">
+        <div className="absolute top-full z-50 mt-2 w-full rounded-xl border border-zinc-200 bg-white py-2 shadow-lg dark:border-zinc-700 dark:bg-zinc-800 max-h-[420px] overflow-y-auto">
           {isLoading ? (
             <div className="flex items-center justify-center py-4">
               <Loader2 className="h-5 w-5 animate-spin text-zinc-400" />
@@ -144,7 +151,7 @@ export function SearchBar() {
                           {book.coverUrl ? (
                             <Image
                               src={book.coverUrl}
-                              alt={book.title}
+                              alt={book.title || ""}
                               fill
                               className="object-cover"
                             />
@@ -152,7 +159,7 @@ export function SearchBar() {
                             <BookOpen className="h-4 w-4 m-auto text-zinc-400" />
                           )}
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
                             {book.title}
                           </p>
@@ -167,7 +174,7 @@ export function SearchBar() {
 
               {/* Stories Section */}
               {suggestions.some((s) => s._type === "story") && (
-                <div className="px-3 py-2">
+                <div className="px-3 py-2 border-t border-zinc-50 dark:border-zinc-750">
                   <p className="mb-2 text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400">
                     Stories
                   </p>
@@ -184,7 +191,7 @@ export function SearchBar() {
                           {story.coverUrl ? (
                             <Image
                               src={story.coverUrl}
-                              alt={story.title}
+                              alt={story.title || ""}
                               fill
                               className="object-cover"
                             />
@@ -192,12 +199,92 @@ export function SearchBar() {
                             <FileText className="h-4 w-4 m-auto text-zinc-400" />
                           )}
                         </div>
-                        <div className="min-w-0">
+                        <div className="min-w-0 flex-1">
                           <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
                             {story.title}
                           </p>
                           <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
                             by {story.authorName}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              )}
+
+              {/* Universes Section */}
+              {suggestions.some((s) => s._type === "universe") && (
+                <div className="px-3 py-2 border-t border-zinc-50 dark:border-zinc-750">
+                  <p className="mb-2 text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400">
+                    Universes
+                  </p>
+                  {suggestions
+                    .filter((s) => s._type === "universe")
+                    .map((uni) => (
+                      <Link
+                        key={uni.id}
+                        href={`/universes/${uni.id}`}
+                        onClick={handleSuggestionClick}
+                        className="flex items-center gap-3 rounded-lg p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                      >
+                        <div className="relative h-10 w-7 flex-shrink-0 overflow-hidden rounded bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center">
+                          {uni.coverUrl ? (
+                            <Image
+                              src={uni.coverUrl}
+                              alt={uni.name || ""}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <Globe className="h-4 w-4 text-zinc-400" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                            {uni.name}
+                          </p>
+                          <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                            by {uni.creatorName}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                </div>
+              )}
+
+              {/* Authors Section */}
+              {suggestions.some((s) => s._type === "author") && (
+                <div className="px-3 py-2 border-t border-zinc-50 dark:border-zinc-750">
+                  <p className="mb-2 text-xs font-semibold uppercase text-zinc-500 dark:text-zinc-400">
+                    Authors
+                  </p>
+                  {suggestions
+                    .filter((s) => s._type === "author")
+                    .map((author) => (
+                      <Link
+                        key={author.id}
+                        href={`/profile/${author.username}`}
+                        onClick={handleSuggestionClick}
+                        className="flex items-center gap-3 rounded-lg p-2 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                      >
+                        <div className="relative h-8 w-8 flex-shrink-0 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700 flex items-center justify-center border border-zinc-100 dark:border-zinc-800">
+                          {author.avatarUrl ? (
+                            <Image
+                              src={author.avatarUrl}
+                              alt={author.displayName || author.username || ""}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <User className="h-4 w-4 text-zinc-400" />
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                            {author.displayName || author.username}
+                          </p>
+                          <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                            @{author.username}
                           </p>
                         </div>
                       </Link>
