@@ -109,6 +109,7 @@ model User {
   dmcaNotices              DMCANotice[]             @relation("dmca_submitter")
   notifications            Notification[]           @relation("user_notifications")
   subscriptionTransactions SubscriptionTransaction[]
+  readingProgress          ReadingProgress[]
 
   @@map("users")
 }
@@ -235,6 +236,7 @@ model StoryChapter {
   updatedAt    DateTime      @updatedAt @map("updated_at")
 
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  polls Poll[]
 
   @@unique([storyId, chapterOrder])
   @@map("story_chapters")
@@ -656,3 +658,55 @@ model SubscriptionTransaction {
 
   @@map("subscription_transactions")
 }
+
+model Poll {
+  id        String       @id @default(cuid())
+  chapterId String       @map("chapter_id")
+  question  String
+  expiresAt DateTime?    @map("expires_at")
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+
+  chapter   StoryChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  options   PollOption[]
+
+  @@map("polls")
+}
+
+model PollOption {
+  id     String     @id @default(cuid())
+  pollId String     @map("poll_id")
+  text   String
+
+  poll   Poll       @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  votes  PollVote[]
+
+  @@map("poll_options")
+}
+
+model PollVote {
+  id       String     @id @default(cuid())
+  userId   String     @map("user_id")
+  optionId String     @map("option_id")
+
+  option   PollOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, optionId])
+  @@map("poll_votes")
+}
+
+model ReadingProgress {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  storyId     String   @map("story_id")
+  chapterId   String   @map("chapter_id")
+  percentage  Float    @default(0)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, storyId])
+  @@map("reading_progress")
+}
+

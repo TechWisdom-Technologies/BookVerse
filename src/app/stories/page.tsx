@@ -5,8 +5,23 @@ import { StoryGrid } from "@/components/stories/StoryGrid";
 import { StoryFilters } from "@/components/stories/StoryFilters";
 import { Pagination } from "@/components/shared/Pagination";
 import type { Prisma } from "@prisma/client";
+import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
+import { cookies } from "next/headers";
+import { adminAuth } from "@/lib/firebase-admin";
+import { ContinueReadingDashboard } from "@/components/home/ContinueReadingDashboard";
 
 export const dynamic = "force-dynamic";
+
+async function getCurrentUserId() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("firebase-token")?.value;
+    if (!token) return null;
+    const decoded = await adminAuth.verifyIdToken(token);
+    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
+    return user?.id ?? null;
+  } catch { return null; }
+}
 
 const storyGenres = [
   "Adventure", "Fantasy", "Fiction", "Horror", "Mystery", "Romance", "Science Fiction", "Thriller",
@@ -43,7 +58,9 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
         ? { reactions: { _count: "desc" } }
         : { createdAt: "desc" };
 
-  const [stories, total] = await Promise.all([
+  const currentUserId = await getCurrentUserId();
+
+  const [stories, total, recentProgress, recentBookBookmarks] = await Promise.all([
     prisma.story.findMany({
       where,
       include: {
@@ -55,7 +72,68 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
       take: limit,
     }),
     prisma.story.count({ where }),
+    currentUserId
+      ? prisma.readingProgress.findMany({
+          where: { userId: currentUserId },
+          orderBy: { updatedAt: "desc" },
+          take: 10,
+        })
+      : Promise.resolve([]),
+    currentUserId
+      ? prisma.bookAnnotation.findMany({
+          where: { userId: currentUserId, type: "BOOKMARK" },
+          orderBy: { updatedAt: "desc" },
+          take: 10,
+          include: {
+            book: true,
+          },
+        })
+      : Promise.resolve([]),
   ]);
+
+  // Fetch stories for recent progress manually to avoid relation dynamic compilation issues
+  const progressStoryIds = recentProgress.map((p) => p.storyId);
+  const storiesForProgress = progressStoryIds.length > 0
+    ? await prisma.story.findMany({
+        where: { id: { in: progressStoryIds } },
+        include: {
+          author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+          chapters: {
+            orderBy: { chapterOrder: "asc" },
+            select: { id: true, title: true, chapterOrder: true },
+          },
+          _count: { select: { chapters: true, reactions: true, comments: true } },
+        },
+      })
+    : [];
+
+  const recentProgressWithStories = recentProgress.map((prog) => {
+    const story = storiesForProgress.find((s) => s.id === prog.storyId);
+    if (!story) return null;
+
+    const currentChapterIndex = story.chapters.findIndex((c) => c.id === prog.chapterId);
+    const isLastChapter = currentChapterIndex === story.chapters.length - 1;
+    const nextChapter = currentChapterIndex < story.chapters.length - 1 ? story.chapters[currentChapterIndex + 1] : null;
+    
+    const isCompleted = prog.percentage >= 98 && isLastChapter;
+
+    return {
+      ...prog,
+      story,
+      nextChapter,
+      isCompleted,
+    };
+  })
+  .filter((item): item is NonNullable<typeof item> => !!item && !item.isCompleted)
+  .slice(0, 4); // Show only the last 4 incomplete read stories!
+
+  const uniqueBookBookmarksMap = new Map();
+  recentBookBookmarks.forEach((bookmark) => {
+    if (!uniqueBookBookmarksMap.has(bookmark.bookId)) {
+      uniqueBookBookmarksMap.set(bookmark.bookId, bookmark);
+    }
+  });
+  const uniqueBookBookmarks = Array.from(uniqueBookBookmarksMap.values()).slice(0, 4); // Show only the last 4 bookmarked books!
 
   const totalPages = Math.ceil(total / limit);
   const serializedStories = stories.map((story) => ({
@@ -84,6 +162,17 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
             Start a Story
           </Link>
         </header>
+
+        {/* Dynamic Curation Engine */}
+        <div className="mb-16">
+          <StoryRecommendations />
+        </div>
+
+        {/* Continue Reading Section */}
+        <ContinueReadingDashboard
+          initialStories={recentProgressWithStories}
+          initialBooks={uniqueBookBookmarks}
+        />
 
         {/* Simple Filters */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">

@@ -7,10 +7,32 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
-    // TODO: Implement polls feature
-    // For now, return empty array
-    return NextResponse.json([]);
+    const { id: storyId } = await params;
+    const { searchParams } = new URL(req.url);
+    const chapterId = searchParams.get('chapterId');
+
+    if (!chapterId) {
+      return NextResponse.json({ error: 'Chapter ID is required' }, { status: 400 });
+    }
+
+    // Fetch polls for this chapter
+    const polls = await prisma.poll.findMany({
+      where: { chapterId },
+      include: {
+        options: {
+          include: {
+            votes: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'asc' },
+    });
+
+    return NextResponse.json(polls);
   } catch (error) {
     console.error('Error fetching polls:', error);
     return NextResponse.json({ error: 'Failed to fetch polls' }, { status: 500 });
@@ -22,14 +44,14 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await params;
+    const { id: storyId } = await params;
     const user = await getAuth();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const story = await prisma.story.findUnique({
-      where: { id },
+      where: { id: storyId },
       select: { authorId: true },
     });
 
@@ -41,8 +63,45 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    // TODO: Implement polls creation
-    return NextResponse.json({ error: 'Polls not yet implemented' }, { status: 501 });
+    const { chapterId, question, options, expiresAt } = await req.json();
+
+    if (!chapterId || !question || !Array.isArray(options) || options.length < 2) {
+      return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
+    }
+
+    // Check if chapter exists and belongs to this story
+    const chapter = await prisma.storyChapter.findFirst({
+      where: { id: chapterId, storyId },
+    });
+
+    if (!chapter) {
+      return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
+    }
+
+    // Create poll along with options
+    const poll = await prisma.poll.create({
+      data: {
+        chapterId,
+        question,
+        expiresAt: expiresAt ? new Date(expiresAt) : null,
+        options: {
+          create: options.map((opt: string) => ({ text: opt })),
+        },
+      },
+      include: {
+        options: {
+          include: {
+            votes: {
+              select: {
+                userId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(poll);
   } catch (error) {
     console.error('Error creating poll:', error);
     return NextResponse.json({ error: 'Failed to create poll' }, { status: 500 });

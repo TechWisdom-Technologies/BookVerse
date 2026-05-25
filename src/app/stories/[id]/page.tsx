@@ -4,13 +4,14 @@ import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactionType } from "@prisma/client";
-import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft } from "lucide-react";
+import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft, Clock } from "lucide-react";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { ReactionBar } from "@/components/stories/ReactionBar";
 import { StoryViewTracker } from "@/components/stories/StoryViewTracker";
 import { TipAuthorDialog } from "@/components/stories/TipAuthorDialog";
 import { StoryFeatureActions } from "@/components/stories/StoryFeatureActions";
 import { PromotionBadge } from "@/components/promotions/PromotionBadge";
+import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -43,6 +44,27 @@ async function getCurrentUserId() {
   } catch { return null; }
 }
 
+function estimateReadingTime(content: any): number {
+  if (!content) return 1;
+  
+  function countWords(node: any): number {
+    if (!node) return 0;
+    let count = 0;
+    if (node.type === "text" && typeof node.text === "string") {
+      count += node.text.trim().split(/\s+/).filter(Boolean).length;
+    }
+    if (node.content && Array.isArray(node.content)) {
+      for (const child of node.content) {
+        count += countWords(child);
+      }
+    }
+    return count;
+  }
+
+  const words = countWords(content);
+  return Math.max(1, Math.ceil(words / 200));
+}
+
 export default async function StoryDetailPage({ params }: StoryPageProps) {
   const { id } = await params;
   const currentUserId = await getCurrentUserId();
@@ -51,7 +73,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     where: { id },
     include: {
       author: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true, _count: { select: { followers: true, following: true } } } },
-      chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true } },
+      chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true, content: true } },
       promotions: {
         where: { status: "ACTIVE", endDate: { gt: new Date() } },
         orderBy: { endDate: "asc" },
@@ -62,6 +84,21 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
   });
 
   if (!story || !story.published) notFound();
+
+  const readingProgress = currentUserId
+    ? await prisma.readingProgress.findUnique({
+        where: {
+          userId_storyId: {
+            userId: currentUserId,
+            storyId: id,
+          },
+        },
+      })
+    : null;
+
+  const resumeChapter = readingProgress
+    ? story.chapters.find((c) => c.id === readingProgress.chapterId)
+    : null;
 
   const reactionCounts = await prisma.storyReaction.groupBy({ by: ["reactionType"], where: { storyId: id }, _count: true });
   const reactions: Record<ReactionType, number> = { LIKE: 0, LOVE: 0, FIRE: 0, CRY: 0, WOW: 0 };
@@ -151,9 +188,16 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               <BookOpen className="w-3.5 h-3.5" /> Narrative Chapters
             </h2>
             {story.chapters.length > 0 && (
-              <Link href={`/stories/${story.id}/chapters/${story.chapters[0].id}`} className="px-5 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
-                Start Reading
-              </Link>
+              <div className="flex gap-3">
+                {resumeChapter ? (
+                  <Link href={`/stories/${story.id}/chapters/${resumeChapter.id}`} className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[10px] font-bold uppercase tracking-widest rounded transition-all shadow hover:shadow-md">
+                    Resume ({Math.round(readingProgress!.percentage)}%)
+                  </Link>
+                ) : null}
+                <Link href={`/stories/${story.id}/chapters/${story.chapters[0].id}`} className="px-5 py-2 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
+                  Start From Beginning
+                </Link>
+              </div>
             )}
           </div>
 
@@ -161,19 +205,28 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             <p className="text-xs font-medium text-zinc-400 italic">No historical records in the chapter registry.</p>
           ) : (
             <div className="grid grid-cols-1 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
-              {story.chapters.map((chapter) => (
-                <Link key={chapter.id} href={`/stories/${story.id}/chapters/${chapter.id}`} className="flex items-center justify-between p-5 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all group">
-                  <div className="flex items-center gap-4">
-                    <span className="text-[10px] font-bold font-mono text-zinc-300">
-                      {chapter.chapterOrder.toString().padStart(2, '0')}
-                    </span>
-                    <span className="text-sm font-bold tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
-                      {chapter.title}
-                    </span>
-                  </div>
-                  <ChevronRight className="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
-                </Link>
-              ))}
+              {story.chapters.map((chapter) => {
+                const readTime = estimateReadingTime(chapter.content);
+                return (
+                  <Link key={chapter.id} href={`/stories/${story.id}/chapters/${chapter.id}`} className="flex items-center justify-between p-5 bg-white dark:bg-zinc-950 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-all group">
+                    <div className="flex items-center gap-4">
+                      <span className="text-[10px] font-bold font-mono text-zinc-300">
+                        {chapter.chapterOrder.toString().padStart(2, '0')}
+                      </span>
+                      <span className="text-sm font-bold tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
+                        {chapter.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[9px] font-mono text-zinc-400 font-bold uppercase tracking-wider flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-zinc-300" />
+                        {readTime} min read
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors" />
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </section>
@@ -186,6 +239,11 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           </div>
           <CommentSection storyId={story.id} currentUserId={currentUserId ?? undefined} />
         </section>
+
+        {/* Dynamic Recommendations Engine */}
+        <div className="mt-20">
+          <StoryRecommendations />
+        </div>
 
         <StoryFeatureActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
       </div>

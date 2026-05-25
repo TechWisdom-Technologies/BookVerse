@@ -466,6 +466,37 @@ exports.Prisma.SubscriptionTransactionScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PollScalarFieldEnum = {
+  id: 'id',
+  chapterId: 'chapterId',
+  question: 'question',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PollOptionScalarFieldEnum = {
+  id: 'id',
+  pollId: 'pollId',
+  text: 'text'
+};
+
+exports.Prisma.PollVoteScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  optionId: 'optionId'
+};
+
+exports.Prisma.ReadingProgressScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  storyId: 'storyId',
+  chapterId: 'chapterId',
+  percentage: 'percentage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -566,7 +597,11 @@ exports.Prisma.ModelName = {
   StoryPromotion: 'StoryPromotion',
   GiftMembership: 'GiftMembership',
   Universe: 'Universe',
-  SubscriptionTransaction: 'SubscriptionTransaction'
+  SubscriptionTransaction: 'SubscriptionTransaction',
+  Poll: 'Poll',
+  PollOption: 'PollOption',
+  PollVote: 'PollVote',
+  ReadingProgress: 'ReadingProgress'
 };
 
 /**

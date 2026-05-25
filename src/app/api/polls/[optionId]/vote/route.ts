@@ -13,8 +13,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const anyPrisma = prisma as any;
-    const option = await anyPrisma.pollOption.findUnique({
+    const option = await prisma.pollOption.findUnique({
       where: { id: optionId },
       include: { poll: true },
     });
@@ -28,9 +27,9 @@ export async function POST(
     }
 
     // Check if user already voted on this poll
-    const existingVote = await anyPrisma.pollVote.findFirst({
+    const existingVote = await prisma.pollVote.findFirst({
       where: {
-        userId: user.uid,
+        userId: user.id,
         option: {
           pollId: option.pollId,
         },
@@ -39,17 +38,17 @@ export async function POST(
 
     if (existingVote) {
       // Remove existing vote and add new one
-      await anyPrisma.pollVote.delete({ where: { id: existingVote.id } });
+      await prisma.pollVote.delete({ where: { id: existingVote.id } });
     }
 
-    const vote = await anyPrisma.pollVote.create({
+    await prisma.pollVote.create({
       data: {
-        userId: user.uid,
+        userId: user.id,
         optionId: optionId,
       },
     });
 
-    const updatedOption = await anyPrisma.pollOption.findUnique({
+    const updatedOption = await prisma.pollOption.findUnique({
       where: { id: optionId },
       include: {
         votes: { select: { userId: true } },

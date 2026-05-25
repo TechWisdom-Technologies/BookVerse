@@ -168,6 +168,26 @@ export type Universe = $Result.DefaultSelection<Prisma.$UniversePayload>
  * 
  */
 export type SubscriptionTransaction = $Result.DefaultSelection<Prisma.$SubscriptionTransactionPayload>
+/**
+ * Model Poll
+ * 
+ */
+export type Poll = $Result.DefaultSelection<Prisma.$PollPayload>
+/**
+ * Model PollOption
+ * 
+ */
+export type PollOption = $Result.DefaultSelection<Prisma.$PollOptionPayload>
+/**
+ * Model PollVote
+ * 
+ */
+export type PollVote = $Result.DefaultSelection<Prisma.$PollVotePayload>
+/**
+ * Model ReadingProgress
+ * 
+ */
+export type ReadingProgress = $Result.DefaultSelection<Prisma.$ReadingProgressPayload>
 
 /**
  * Enums
@@ -701,6 +721,46 @@ export class PrismaClient<
     * ```
     */
   get subscriptionTransaction(): Prisma.SubscriptionTransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.poll`: Exposes CRUD operations for the **Poll** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Polls
+    * const polls = await prisma.poll.findMany()
+    * ```
+    */
+  get poll(): Prisma.PollDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pollOption`: Exposes CRUD operations for the **PollOption** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PollOptions
+    * const pollOptions = await prisma.pollOption.findMany()
+    * ```
+    */
+  get pollOption(): Prisma.PollOptionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.pollVote`: Exposes CRUD operations for the **PollVote** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PollVotes
+    * const pollVotes = await prisma.pollVote.findMany()
+    * ```
+    */
+  get pollVote(): Prisma.PollVoteDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.readingProgress`: Exposes CRUD operations for the **ReadingProgress** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ReadingProgresses
+    * const readingProgresses = await prisma.readingProgress.findMany()
+    * ```
+    */
+  get readingProgress(): Prisma.ReadingProgressDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1171,7 +1231,11 @@ export namespace Prisma {
     StoryPromotion: 'StoryPromotion',
     GiftMembership: 'GiftMembership',
     Universe: 'Universe',
-    SubscriptionTransaction: 'SubscriptionTransaction'
+    SubscriptionTransaction: 'SubscriptionTransaction',
+    Poll: 'Poll',
+    PollOption: 'PollOption',
+    PollVote: 'PollVote',
+    ReadingProgress: 'ReadingProgress'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1187,7 +1251,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "notification" | "book" | "bookReview" | "bookSave" | "story" | "storyChapter" | "storyReaction" | "comment" | "follow" | "readingLog" | "achievement" | "userAchievement" | "club" | "clubMember" | "clubBan" | "clubDiscussion" | "betaReader" | "newsletterSubscriber" | "tip" | "bookAnnotation" | "scheduledChapter" | "inlineComment" | "shareActivity" | "onboardingQuiz" | "contentReport" | "dMCANotice" | "storyPromotion" | "giftMembership" | "universe" | "subscriptionTransaction"
+      modelProps: "user" | "notification" | "book" | "bookReview" | "bookSave" | "story" | "storyChapter" | "storyReaction" | "comment" | "follow" | "readingLog" | "achievement" | "userAchievement" | "club" | "clubMember" | "clubBan" | "clubDiscussion" | "betaReader" | "newsletterSubscriber" | "tip" | "bookAnnotation" | "scheduledChapter" | "inlineComment" | "shareActivity" | "onboardingQuiz" | "contentReport" | "dMCANotice" | "storyPromotion" | "giftMembership" | "universe" | "subscriptionTransaction" | "poll" | "pollOption" | "pollVote" | "readingProgress"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3485,6 +3549,302 @@ export namespace Prisma {
           }
         }
       }
+      Poll: {
+        payload: Prisma.$PollPayload<ExtArgs>
+        fields: Prisma.PollFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PollFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PollFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>
+          }
+          findFirst: {
+            args: Prisma.PollFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PollFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>
+          }
+          findMany: {
+            args: Prisma.PollFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>[]
+          }
+          create: {
+            args: Prisma.PollCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>
+          }
+          createMany: {
+            args: Prisma.PollCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PollCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>[]
+          }
+          delete: {
+            args: Prisma.PollDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>
+          }
+          update: {
+            args: Prisma.PollUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>
+          }
+          deleteMany: {
+            args: Prisma.PollDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PollUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PollUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>[]
+          }
+          upsert: {
+            args: Prisma.PollUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollPayload>
+          }
+          aggregate: {
+            args: Prisma.PollAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePoll>
+          }
+          groupBy: {
+            args: Prisma.PollGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PollGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PollCountArgs<ExtArgs>
+            result: $Utils.Optional<PollCountAggregateOutputType> | number
+          }
+        }
+      }
+      PollOption: {
+        payload: Prisma.$PollOptionPayload<ExtArgs>
+        fields: Prisma.PollOptionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PollOptionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PollOptionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>
+          }
+          findFirst: {
+            args: Prisma.PollOptionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PollOptionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>
+          }
+          findMany: {
+            args: Prisma.PollOptionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>[]
+          }
+          create: {
+            args: Prisma.PollOptionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>
+          }
+          createMany: {
+            args: Prisma.PollOptionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PollOptionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>[]
+          }
+          delete: {
+            args: Prisma.PollOptionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>
+          }
+          update: {
+            args: Prisma.PollOptionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>
+          }
+          deleteMany: {
+            args: Prisma.PollOptionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PollOptionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PollOptionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>[]
+          }
+          upsert: {
+            args: Prisma.PollOptionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollOptionPayload>
+          }
+          aggregate: {
+            args: Prisma.PollOptionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePollOption>
+          }
+          groupBy: {
+            args: Prisma.PollOptionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PollOptionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PollOptionCountArgs<ExtArgs>
+            result: $Utils.Optional<PollOptionCountAggregateOutputType> | number
+          }
+        }
+      }
+      PollVote: {
+        payload: Prisma.$PollVotePayload<ExtArgs>
+        fields: Prisma.PollVoteFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PollVoteFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PollVoteFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>
+          }
+          findFirst: {
+            args: Prisma.PollVoteFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PollVoteFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>
+          }
+          findMany: {
+            args: Prisma.PollVoteFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>[]
+          }
+          create: {
+            args: Prisma.PollVoteCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>
+          }
+          createMany: {
+            args: Prisma.PollVoteCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PollVoteCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>[]
+          }
+          delete: {
+            args: Prisma.PollVoteDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>
+          }
+          update: {
+            args: Prisma.PollVoteUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>
+          }
+          deleteMany: {
+            args: Prisma.PollVoteDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PollVoteUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PollVoteUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>[]
+          }
+          upsert: {
+            args: Prisma.PollVoteUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PollVotePayload>
+          }
+          aggregate: {
+            args: Prisma.PollVoteAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePollVote>
+          }
+          groupBy: {
+            args: Prisma.PollVoteGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PollVoteGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PollVoteCountArgs<ExtArgs>
+            result: $Utils.Optional<PollVoteCountAggregateOutputType> | number
+          }
+        }
+      }
+      ReadingProgress: {
+        payload: Prisma.$ReadingProgressPayload<ExtArgs>
+        fields: Prisma.ReadingProgressFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ReadingProgressFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ReadingProgressFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>
+          }
+          findFirst: {
+            args: Prisma.ReadingProgressFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ReadingProgressFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>
+          }
+          findMany: {
+            args: Prisma.ReadingProgressFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>[]
+          }
+          create: {
+            args: Prisma.ReadingProgressCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>
+          }
+          createMany: {
+            args: Prisma.ReadingProgressCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ReadingProgressCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>[]
+          }
+          delete: {
+            args: Prisma.ReadingProgressDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>
+          }
+          update: {
+            args: Prisma.ReadingProgressUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>
+          }
+          deleteMany: {
+            args: Prisma.ReadingProgressDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ReadingProgressUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ReadingProgressUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>[]
+          }
+          upsert: {
+            args: Prisma.ReadingProgressUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ReadingProgressPayload>
+          }
+          aggregate: {
+            args: Prisma.ReadingProgressAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateReadingProgress>
+          }
+          groupBy: {
+            args: Prisma.ReadingProgressGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ReadingProgressGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ReadingProgressCountArgs<ExtArgs>
+            result: $Utils.Optional<ReadingProgressCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3604,6 +3964,10 @@ export namespace Prisma {
     giftMembership?: GiftMembershipOmit
     universe?: UniverseOmit
     subscriptionTransaction?: SubscriptionTransactionOmit
+    poll?: PollOmit
+    pollOption?: PollOptionOmit
+    pollVote?: PollVoteOmit
+    readingProgress?: ReadingProgressOmit
   }
 
   /* Types for Logging */
@@ -3728,6 +4092,7 @@ export namespace Prisma {
     dmcaNotices: number
     notifications: number
     subscriptionTransactions: number
+    readingProgress: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3761,6 +4126,7 @@ export namespace Prisma {
     dmcaNotices?: boolean | UserCountOutputTypeCountDmcaNoticesArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
     subscriptionTransactions?: boolean | UserCountOutputTypeCountSubscriptionTransactionsArgs
+    readingProgress?: boolean | UserCountOutputTypeCountReadingProgressArgs
   }
 
   // Custom InputTypes
@@ -3984,6 +4350,13 @@ export namespace Prisma {
     where?: SubscriptionTransactionWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReadingProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReadingProgressWhereInput
+  }
+
 
   /**
    * Count Type BookCountOutputType
@@ -4134,6 +4507,37 @@ export namespace Prisma {
    */
   export type StoryCountOutputTypeCountPromotionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StoryPromotionWhereInput
+  }
+
+
+  /**
+   * Count Type StoryChapterCountOutputType
+   */
+
+  export type StoryChapterCountOutputType = {
+    polls: number
+  }
+
+  export type StoryChapterCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    polls?: boolean | StoryChapterCountOutputTypeCountPollsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * StoryChapterCountOutputType without action
+   */
+  export type StoryChapterCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StoryChapterCountOutputType
+     */
+    select?: StoryChapterCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * StoryChapterCountOutputType without action
+   */
+  export type StoryChapterCountOutputTypeCountPollsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PollWhereInput
   }
 
 
@@ -4307,6 +4711,68 @@ export namespace Prisma {
    */
   export type UniverseCountOutputTypeCountStoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StoryWhereInput
+  }
+
+
+  /**
+   * Count Type PollCountOutputType
+   */
+
+  export type PollCountOutputType = {
+    options: number
+  }
+
+  export type PollCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    options?: boolean | PollCountOutputTypeCountOptionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PollCountOutputType without action
+   */
+  export type PollCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollCountOutputType
+     */
+    select?: PollCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PollCountOutputType without action
+   */
+  export type PollCountOutputTypeCountOptionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PollOptionWhereInput
+  }
+
+
+  /**
+   * Count Type PollOptionCountOutputType
+   */
+
+  export type PollOptionCountOutputType = {
+    votes: number
+  }
+
+  export type PollOptionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    votes?: boolean | PollOptionCountOutputTypeCountVotesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * PollOptionCountOutputType without action
+   */
+  export type PollOptionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOptionCountOutputType
+     */
+    select?: PollOptionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * PollOptionCountOutputType without action
+   */
+  export type PollOptionCountOutputTypeCountVotesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PollVoteWhereInput
   }
 
 
@@ -4655,6 +5121,7 @@ export namespace Prisma {
     dmcaNotices?: boolean | User$dmcaNoticesArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     subscriptionTransactions?: boolean | User$subscriptionTransactionsArgs<ExtArgs>
+    readingProgress?: boolean | User$readingProgressArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4760,6 +5227,7 @@ export namespace Prisma {
     dmcaNotices?: boolean | User$dmcaNoticesArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     subscriptionTransactions?: boolean | User$subscriptionTransactionsArgs<ExtArgs>
+    readingProgress?: boolean | User$readingProgressArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4799,6 +5267,7 @@ export namespace Prisma {
       dmcaNotices: Prisma.$DMCANoticePayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       subscriptionTransactions: Prisma.$SubscriptionTransactionPayload<ExtArgs>[]
+      readingProgress: Prisma.$ReadingProgressPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5246,6 +5715,7 @@ export namespace Prisma {
     dmcaNotices<T extends User$dmcaNoticesArgs<ExtArgs> = {}>(args?: Subset<T, User$dmcaNoticesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DMCANoticePayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     subscriptionTransactions<T extends User$subscriptionTransactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$subscriptionTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubscriptionTransactionPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
+    readingProgress<T extends User$readingProgressArgs<ExtArgs> = {}>(args?: Subset<T, User$readingProgressArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6407,6 +6877,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: SubscriptionTransactionScalarFieldEnum | SubscriptionTransactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.readingProgress
+   */
+  export type User$readingProgressArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    where?: ReadingProgressWhereInput
+    orderBy?: ReadingProgressOrderByWithRelationInput | ReadingProgressOrderByWithRelationInput[]
+    cursor?: ReadingProgressWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ReadingProgressScalarFieldEnum | ReadingProgressScalarFieldEnum[]
   }
 
   /**
@@ -12699,6 +13193,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     story?: boolean | StoryDefaultArgs<ExtArgs>
+    polls?: boolean | StoryChapter$pollsArgs<ExtArgs>
+    _count?: boolean | StoryChapterCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["storyChapter"]>
 
   export type StoryChapterSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -12742,6 +13238,8 @@ export namespace Prisma {
   export type StoryChapterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "storyId" | "title" | "content" | "chapterNumber" | "chapterOrder" | "status" | "createdAt" | "updatedAt", ExtArgs["result"]["storyChapter"]>
   export type StoryChapterInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     story?: boolean | StoryDefaultArgs<ExtArgs>
+    polls?: boolean | StoryChapter$pollsArgs<ExtArgs>
+    _count?: boolean | StoryChapterCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type StoryChapterIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     story?: boolean | StoryDefaultArgs<ExtArgs>
@@ -12754,6 +13252,7 @@ export namespace Prisma {
     name: "StoryChapter"
     objects: {
       story: Prisma.$StoryPayload<ExtArgs>
+      polls: Prisma.$PollPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -13160,6 +13659,7 @@ export namespace Prisma {
   export interface Prisma__StoryChapterClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     story<T extends StoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StoryDefaultArgs<ExtArgs>>): Prisma__StoryClient<$Result.GetResult<Prisma.$StoryPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    polls<T extends StoryChapter$pollsArgs<ExtArgs> = {}>(args?: Subset<T, StoryChapter$pollsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -13579,6 +14079,30 @@ export namespace Prisma {
      * Filter which StoryChapters to delete
      */
     where?: StoryChapterWhereInput
+  }
+
+  /**
+   * StoryChapter.polls
+   */
+  export type StoryChapter$pollsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    where?: PollWhereInput
+    orderBy?: PollOrderByWithRelationInput | PollOrderByWithRelationInput[]
+    cursor?: PollWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PollScalarFieldEnum | PollScalarFieldEnum[]
   }
 
   /**
@@ -40244,6 +40768,4271 @@ export namespace Prisma {
 
 
   /**
+   * Model Poll
+   */
+
+  export type AggregatePoll = {
+    _count: PollCountAggregateOutputType | null
+    _min: PollMinAggregateOutputType | null
+    _max: PollMaxAggregateOutputType | null
+  }
+
+  export type PollMinAggregateOutputType = {
+    id: string | null
+    chapterId: string | null
+    question: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PollMaxAggregateOutputType = {
+    id: string | null
+    chapterId: string | null
+    question: string | null
+    expiresAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PollCountAggregateOutputType = {
+    id: number
+    chapterId: number
+    question: number
+    expiresAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PollMinAggregateInputType = {
+    id?: true
+    chapterId?: true
+    question?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PollMaxAggregateInputType = {
+    id?: true
+    chapterId?: true
+    question?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PollCountAggregateInputType = {
+    id?: true
+    chapterId?: true
+    question?: true
+    expiresAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PollAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Poll to aggregate.
+     */
+    where?: PollWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Polls to fetch.
+     */
+    orderBy?: PollOrderByWithRelationInput | PollOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PollWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Polls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Polls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Polls
+    **/
+    _count?: true | PollCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PollMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PollMaxAggregateInputType
+  }
+
+  export type GetPollAggregateType<T extends PollAggregateArgs> = {
+        [P in keyof T & keyof AggregatePoll]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePoll[P]>
+      : GetScalarType<T[P], AggregatePoll[P]>
+  }
+
+
+
+
+  export type PollGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PollWhereInput
+    orderBy?: PollOrderByWithAggregationInput | PollOrderByWithAggregationInput[]
+    by: PollScalarFieldEnum[] | PollScalarFieldEnum
+    having?: PollScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PollCountAggregateInputType | true
+    _min?: PollMinAggregateInputType
+    _max?: PollMaxAggregateInputType
+  }
+
+  export type PollGroupByOutputType = {
+    id: string
+    chapterId: string
+    question: string
+    expiresAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: PollCountAggregateOutputType | null
+    _min: PollMinAggregateOutputType | null
+    _max: PollMaxAggregateOutputType | null
+  }
+
+  type GetPollGroupByPayload<T extends PollGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PollGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PollGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PollGroupByOutputType[P]>
+            : GetScalarType<T[P], PollGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PollSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    chapterId?: boolean
+    question?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    chapter?: boolean | StoryChapterDefaultArgs<ExtArgs>
+    options?: boolean | Poll$optionsArgs<ExtArgs>
+    _count?: boolean | PollCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["poll"]>
+
+  export type PollSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    chapterId?: boolean
+    question?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    chapter?: boolean | StoryChapterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["poll"]>
+
+  export type PollSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    chapterId?: boolean
+    question?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    chapter?: boolean | StoryChapterDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["poll"]>
+
+  export type PollSelectScalar = {
+    id?: boolean
+    chapterId?: boolean
+    question?: boolean
+    expiresAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PollOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "chapterId" | "question" | "expiresAt" | "createdAt" | "updatedAt", ExtArgs["result"]["poll"]>
+  export type PollInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    chapter?: boolean | StoryChapterDefaultArgs<ExtArgs>
+    options?: boolean | Poll$optionsArgs<ExtArgs>
+    _count?: boolean | PollCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PollIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    chapter?: boolean | StoryChapterDefaultArgs<ExtArgs>
+  }
+  export type PollIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    chapter?: boolean | StoryChapterDefaultArgs<ExtArgs>
+  }
+
+  export type $PollPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Poll"
+    objects: {
+      chapter: Prisma.$StoryChapterPayload<ExtArgs>
+      options: Prisma.$PollOptionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      chapterId: string
+      question: string
+      expiresAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["poll"]>
+    composites: {}
+  }
+
+  type PollGetPayload<S extends boolean | null | undefined | PollDefaultArgs> = $Result.GetResult<Prisma.$PollPayload, S>
+
+  type PollCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PollFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PollCountAggregateInputType | true
+    }
+
+  export interface PollDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Poll'], meta: { name: 'Poll' } }
+    /**
+     * Find zero or one Poll that matches the filter.
+     * @param {PollFindUniqueArgs} args - Arguments to find a Poll
+     * @example
+     * // Get one Poll
+     * const poll = await prisma.poll.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PollFindUniqueArgs>(args: SelectSubset<T, PollFindUniqueArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one Poll that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PollFindUniqueOrThrowArgs} args - Arguments to find a Poll
+     * @example
+     * // Get one Poll
+     * const poll = await prisma.poll.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PollFindUniqueOrThrowArgs>(args: SelectSubset<T, PollFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first Poll that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollFindFirstArgs} args - Arguments to find a Poll
+     * @example
+     * // Get one Poll
+     * const poll = await prisma.poll.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PollFindFirstArgs>(args?: SelectSubset<T, PollFindFirstArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first Poll that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollFindFirstOrThrowArgs} args - Arguments to find a Poll
+     * @example
+     * // Get one Poll
+     * const poll = await prisma.poll.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PollFindFirstOrThrowArgs>(args?: SelectSubset<T, PollFindFirstOrThrowArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more Polls that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Polls
+     * const polls = await prisma.poll.findMany()
+     * 
+     * // Get first 10 Polls
+     * const polls = await prisma.poll.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pollWithIdOnly = await prisma.poll.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PollFindManyArgs>(args?: SelectSubset<T, PollFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a Poll.
+     * @param {PollCreateArgs} args - Arguments to create a Poll.
+     * @example
+     * // Create one Poll
+     * const Poll = await prisma.poll.create({
+     *   data: {
+     *     // ... data to create a Poll
+     *   }
+     * })
+     * 
+     */
+    create<T extends PollCreateArgs>(args: SelectSubset<T, PollCreateArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many Polls.
+     * @param {PollCreateManyArgs} args - Arguments to create many Polls.
+     * @example
+     * // Create many Polls
+     * const poll = await prisma.poll.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PollCreateManyArgs>(args?: SelectSubset<T, PollCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Polls and returns the data saved in the database.
+     * @param {PollCreateManyAndReturnArgs} args - Arguments to create many Polls.
+     * @example
+     * // Create many Polls
+     * const poll = await prisma.poll.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Polls and only return the `id`
+     * const pollWithIdOnly = await prisma.poll.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PollCreateManyAndReturnArgs>(args?: SelectSubset<T, PollCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a Poll.
+     * @param {PollDeleteArgs} args - Arguments to delete one Poll.
+     * @example
+     * // Delete one Poll
+     * const Poll = await prisma.poll.delete({
+     *   where: {
+     *     // ... filter to delete one Poll
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PollDeleteArgs>(args: SelectSubset<T, PollDeleteArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one Poll.
+     * @param {PollUpdateArgs} args - Arguments to update one Poll.
+     * @example
+     * // Update one Poll
+     * const poll = await prisma.poll.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PollUpdateArgs>(args: SelectSubset<T, PollUpdateArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more Polls.
+     * @param {PollDeleteManyArgs} args - Arguments to filter Polls to delete.
+     * @example
+     * // Delete a few Polls
+     * const { count } = await prisma.poll.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PollDeleteManyArgs>(args?: SelectSubset<T, PollDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Polls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Polls
+     * const poll = await prisma.poll.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PollUpdateManyArgs>(args: SelectSubset<T, PollUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Polls and returns the data updated in the database.
+     * @param {PollUpdateManyAndReturnArgs} args - Arguments to update many Polls.
+     * @example
+     * // Update many Polls
+     * const poll = await prisma.poll.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Polls and only return the `id`
+     * const pollWithIdOnly = await prisma.poll.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PollUpdateManyAndReturnArgs>(args: SelectSubset<T, PollUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one Poll.
+     * @param {PollUpsertArgs} args - Arguments to update or create a Poll.
+     * @example
+     * // Update or create a Poll
+     * const poll = await prisma.poll.upsert({
+     *   create: {
+     *     // ... data to create a Poll
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Poll we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PollUpsertArgs>(args: SelectSubset<T, PollUpsertArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of Polls.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollCountArgs} args - Arguments to filter Polls to count.
+     * @example
+     * // Count the number of Polls
+     * const count = await prisma.poll.count({
+     *   where: {
+     *     // ... the filter for the Polls we want to count
+     *   }
+     * })
+    **/
+    count<T extends PollCountArgs>(
+      args?: Subset<T, PollCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PollCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Poll.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PollAggregateArgs>(args: Subset<T, PollAggregateArgs>): Prisma.PrismaPromise<GetPollAggregateType<T>>
+
+    /**
+     * Group by Poll.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PollGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PollGroupByArgs['orderBy'] }
+        : { orderBy?: PollGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PollGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPollGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Poll model
+   */
+  readonly fields: PollFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Poll.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PollClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    chapter<T extends StoryChapterDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StoryChapterDefaultArgs<ExtArgs>>): Prisma__StoryChapterClient<$Result.GetResult<Prisma.$StoryChapterPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    options<T extends Poll$optionsArgs<ExtArgs> = {}>(args?: Subset<T, Poll$optionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Poll model
+   */ 
+  interface PollFieldRefs {
+    readonly id: FieldRef<"Poll", 'String'>
+    readonly chapterId: FieldRef<"Poll", 'String'>
+    readonly question: FieldRef<"Poll", 'String'>
+    readonly expiresAt: FieldRef<"Poll", 'DateTime'>
+    readonly createdAt: FieldRef<"Poll", 'DateTime'>
+    readonly updatedAt: FieldRef<"Poll", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Poll findUnique
+   */
+  export type PollFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * Filter, which Poll to fetch.
+     */
+    where: PollWhereUniqueInput
+  }
+
+  /**
+   * Poll findUniqueOrThrow
+   */
+  export type PollFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * Filter, which Poll to fetch.
+     */
+    where: PollWhereUniqueInput
+  }
+
+  /**
+   * Poll findFirst
+   */
+  export type PollFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * Filter, which Poll to fetch.
+     */
+    where?: PollWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Polls to fetch.
+     */
+    orderBy?: PollOrderByWithRelationInput | PollOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Polls.
+     */
+    cursor?: PollWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Polls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Polls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Polls.
+     */
+    distinct?: PollScalarFieldEnum | PollScalarFieldEnum[]
+  }
+
+  /**
+   * Poll findFirstOrThrow
+   */
+  export type PollFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * Filter, which Poll to fetch.
+     */
+    where?: PollWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Polls to fetch.
+     */
+    orderBy?: PollOrderByWithRelationInput | PollOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Polls.
+     */
+    cursor?: PollWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Polls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Polls.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Polls.
+     */
+    distinct?: PollScalarFieldEnum | PollScalarFieldEnum[]
+  }
+
+  /**
+   * Poll findMany
+   */
+  export type PollFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * Filter, which Polls to fetch.
+     */
+    where?: PollWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Polls to fetch.
+     */
+    orderBy?: PollOrderByWithRelationInput | PollOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Polls.
+     */
+    cursor?: PollWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Polls from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Polls.
+     */
+    skip?: number
+    distinct?: PollScalarFieldEnum | PollScalarFieldEnum[]
+  }
+
+  /**
+   * Poll create
+   */
+  export type PollCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Poll.
+     */
+    data: XOR<PollCreateInput, PollUncheckedCreateInput>
+  }
+
+  /**
+   * Poll createMany
+   */
+  export type PollCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Polls.
+     */
+    data: PollCreateManyInput | PollCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Poll createManyAndReturn
+   */
+  export type PollCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * The data used to create many Polls.
+     */
+    data: PollCreateManyInput | PollCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Poll update
+   */
+  export type PollUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Poll.
+     */
+    data: XOR<PollUpdateInput, PollUncheckedUpdateInput>
+    /**
+     * Choose, which Poll to update.
+     */
+    where: PollWhereUniqueInput
+  }
+
+  /**
+   * Poll updateMany
+   */
+  export type PollUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Polls.
+     */
+    data: XOR<PollUpdateManyMutationInput, PollUncheckedUpdateManyInput>
+    /**
+     * Filter which Polls to update
+     */
+    where?: PollWhereInput
+  }
+
+  /**
+   * Poll updateManyAndReturn
+   */
+  export type PollUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * The data used to update Polls.
+     */
+    data: XOR<PollUpdateManyMutationInput, PollUncheckedUpdateManyInput>
+    /**
+     * Filter which Polls to update
+     */
+    where?: PollWhereInput
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Poll upsert
+   */
+  export type PollUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Poll to update in case it exists.
+     */
+    where: PollWhereUniqueInput
+    /**
+     * In case the Poll found by the `where` argument doesn't exist, create a new Poll with this data.
+     */
+    create: XOR<PollCreateInput, PollUncheckedCreateInput>
+    /**
+     * In case the Poll was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PollUpdateInput, PollUncheckedUpdateInput>
+  }
+
+  /**
+   * Poll delete
+   */
+  export type PollDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+    /**
+     * Filter which Poll to delete.
+     */
+    where: PollWhereUniqueInput
+  }
+
+  /**
+   * Poll deleteMany
+   */
+  export type PollDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Polls to delete
+     */
+    where?: PollWhereInput
+  }
+
+  /**
+   * Poll.options
+   */
+  export type Poll$optionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    where?: PollOptionWhereInput
+    orderBy?: PollOptionOrderByWithRelationInput | PollOptionOrderByWithRelationInput[]
+    cursor?: PollOptionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PollOptionScalarFieldEnum | PollOptionScalarFieldEnum[]
+  }
+
+  /**
+   * Poll without action
+   */
+  export type PollDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Poll
+     */
+    select?: PollSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Poll
+     */
+    omit?: PollOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PollOption
+   */
+
+  export type AggregatePollOption = {
+    _count: PollOptionCountAggregateOutputType | null
+    _min: PollOptionMinAggregateOutputType | null
+    _max: PollOptionMaxAggregateOutputType | null
+  }
+
+  export type PollOptionMinAggregateOutputType = {
+    id: string | null
+    pollId: string | null
+    text: string | null
+  }
+
+  export type PollOptionMaxAggregateOutputType = {
+    id: string | null
+    pollId: string | null
+    text: string | null
+  }
+
+  export type PollOptionCountAggregateOutputType = {
+    id: number
+    pollId: number
+    text: number
+    _all: number
+  }
+
+
+  export type PollOptionMinAggregateInputType = {
+    id?: true
+    pollId?: true
+    text?: true
+  }
+
+  export type PollOptionMaxAggregateInputType = {
+    id?: true
+    pollId?: true
+    text?: true
+  }
+
+  export type PollOptionCountAggregateInputType = {
+    id?: true
+    pollId?: true
+    text?: true
+    _all?: true
+  }
+
+  export type PollOptionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PollOption to aggregate.
+     */
+    where?: PollOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollOptions to fetch.
+     */
+    orderBy?: PollOptionOrderByWithRelationInput | PollOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PollOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PollOptions
+    **/
+    _count?: true | PollOptionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PollOptionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PollOptionMaxAggregateInputType
+  }
+
+  export type GetPollOptionAggregateType<T extends PollOptionAggregateArgs> = {
+        [P in keyof T & keyof AggregatePollOption]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePollOption[P]>
+      : GetScalarType<T[P], AggregatePollOption[P]>
+  }
+
+
+
+
+  export type PollOptionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PollOptionWhereInput
+    orderBy?: PollOptionOrderByWithAggregationInput | PollOptionOrderByWithAggregationInput[]
+    by: PollOptionScalarFieldEnum[] | PollOptionScalarFieldEnum
+    having?: PollOptionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PollOptionCountAggregateInputType | true
+    _min?: PollOptionMinAggregateInputType
+    _max?: PollOptionMaxAggregateInputType
+  }
+
+  export type PollOptionGroupByOutputType = {
+    id: string
+    pollId: string
+    text: string
+    _count: PollOptionCountAggregateOutputType | null
+    _min: PollOptionMinAggregateOutputType | null
+    _max: PollOptionMaxAggregateOutputType | null
+  }
+
+  type GetPollOptionGroupByPayload<T extends PollOptionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PollOptionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PollOptionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PollOptionGroupByOutputType[P]>
+            : GetScalarType<T[P], PollOptionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PollOptionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pollId?: boolean
+    text?: boolean
+    poll?: boolean | PollDefaultArgs<ExtArgs>
+    votes?: boolean | PollOption$votesArgs<ExtArgs>
+    _count?: boolean | PollOptionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pollOption"]>
+
+  export type PollOptionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pollId?: boolean
+    text?: boolean
+    poll?: boolean | PollDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pollOption"]>
+
+  export type PollOptionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    pollId?: boolean
+    text?: boolean
+    poll?: boolean | PollDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pollOption"]>
+
+  export type PollOptionSelectScalar = {
+    id?: boolean
+    pollId?: boolean
+    text?: boolean
+  }
+
+  export type PollOptionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "pollId" | "text", ExtArgs["result"]["pollOption"]>
+  export type PollOptionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    poll?: boolean | PollDefaultArgs<ExtArgs>
+    votes?: boolean | PollOption$votesArgs<ExtArgs>
+    _count?: boolean | PollOptionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type PollOptionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    poll?: boolean | PollDefaultArgs<ExtArgs>
+  }
+  export type PollOptionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    poll?: boolean | PollDefaultArgs<ExtArgs>
+  }
+
+  export type $PollOptionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PollOption"
+    objects: {
+      poll: Prisma.$PollPayload<ExtArgs>
+      votes: Prisma.$PollVotePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      pollId: string
+      text: string
+    }, ExtArgs["result"]["pollOption"]>
+    composites: {}
+  }
+
+  type PollOptionGetPayload<S extends boolean | null | undefined | PollOptionDefaultArgs> = $Result.GetResult<Prisma.$PollOptionPayload, S>
+
+  type PollOptionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PollOptionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PollOptionCountAggregateInputType | true
+    }
+
+  export interface PollOptionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PollOption'], meta: { name: 'PollOption' } }
+    /**
+     * Find zero or one PollOption that matches the filter.
+     * @param {PollOptionFindUniqueArgs} args - Arguments to find a PollOption
+     * @example
+     * // Get one PollOption
+     * const pollOption = await prisma.pollOption.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PollOptionFindUniqueArgs>(args: SelectSubset<T, PollOptionFindUniqueArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one PollOption that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PollOptionFindUniqueOrThrowArgs} args - Arguments to find a PollOption
+     * @example
+     * // Get one PollOption
+     * const pollOption = await prisma.pollOption.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PollOptionFindUniqueOrThrowArgs>(args: SelectSubset<T, PollOptionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first PollOption that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionFindFirstArgs} args - Arguments to find a PollOption
+     * @example
+     * // Get one PollOption
+     * const pollOption = await prisma.pollOption.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PollOptionFindFirstArgs>(args?: SelectSubset<T, PollOptionFindFirstArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first PollOption that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionFindFirstOrThrowArgs} args - Arguments to find a PollOption
+     * @example
+     * // Get one PollOption
+     * const pollOption = await prisma.pollOption.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PollOptionFindFirstOrThrowArgs>(args?: SelectSubset<T, PollOptionFindFirstOrThrowArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more PollOptions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PollOptions
+     * const pollOptions = await prisma.pollOption.findMany()
+     * 
+     * // Get first 10 PollOptions
+     * const pollOptions = await prisma.pollOption.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pollOptionWithIdOnly = await prisma.pollOption.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PollOptionFindManyArgs>(args?: SelectSubset<T, PollOptionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a PollOption.
+     * @param {PollOptionCreateArgs} args - Arguments to create a PollOption.
+     * @example
+     * // Create one PollOption
+     * const PollOption = await prisma.pollOption.create({
+     *   data: {
+     *     // ... data to create a PollOption
+     *   }
+     * })
+     * 
+     */
+    create<T extends PollOptionCreateArgs>(args: SelectSubset<T, PollOptionCreateArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many PollOptions.
+     * @param {PollOptionCreateManyArgs} args - Arguments to create many PollOptions.
+     * @example
+     * // Create many PollOptions
+     * const pollOption = await prisma.pollOption.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PollOptionCreateManyArgs>(args?: SelectSubset<T, PollOptionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PollOptions and returns the data saved in the database.
+     * @param {PollOptionCreateManyAndReturnArgs} args - Arguments to create many PollOptions.
+     * @example
+     * // Create many PollOptions
+     * const pollOption = await prisma.pollOption.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PollOptions and only return the `id`
+     * const pollOptionWithIdOnly = await prisma.pollOption.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PollOptionCreateManyAndReturnArgs>(args?: SelectSubset<T, PollOptionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a PollOption.
+     * @param {PollOptionDeleteArgs} args - Arguments to delete one PollOption.
+     * @example
+     * // Delete one PollOption
+     * const PollOption = await prisma.pollOption.delete({
+     *   where: {
+     *     // ... filter to delete one PollOption
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PollOptionDeleteArgs>(args: SelectSubset<T, PollOptionDeleteArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one PollOption.
+     * @param {PollOptionUpdateArgs} args - Arguments to update one PollOption.
+     * @example
+     * // Update one PollOption
+     * const pollOption = await prisma.pollOption.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PollOptionUpdateArgs>(args: SelectSubset<T, PollOptionUpdateArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more PollOptions.
+     * @param {PollOptionDeleteManyArgs} args - Arguments to filter PollOptions to delete.
+     * @example
+     * // Delete a few PollOptions
+     * const { count } = await prisma.pollOption.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PollOptionDeleteManyArgs>(args?: SelectSubset<T, PollOptionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PollOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PollOptions
+     * const pollOption = await prisma.pollOption.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PollOptionUpdateManyArgs>(args: SelectSubset<T, PollOptionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PollOptions and returns the data updated in the database.
+     * @param {PollOptionUpdateManyAndReturnArgs} args - Arguments to update many PollOptions.
+     * @example
+     * // Update many PollOptions
+     * const pollOption = await prisma.pollOption.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PollOptions and only return the `id`
+     * const pollOptionWithIdOnly = await prisma.pollOption.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PollOptionUpdateManyAndReturnArgs>(args: SelectSubset<T, PollOptionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one PollOption.
+     * @param {PollOptionUpsertArgs} args - Arguments to update or create a PollOption.
+     * @example
+     * // Update or create a PollOption
+     * const pollOption = await prisma.pollOption.upsert({
+     *   create: {
+     *     // ... data to create a PollOption
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PollOption we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PollOptionUpsertArgs>(args: SelectSubset<T, PollOptionUpsertArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of PollOptions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionCountArgs} args - Arguments to filter PollOptions to count.
+     * @example
+     * // Count the number of PollOptions
+     * const count = await prisma.pollOption.count({
+     *   where: {
+     *     // ... the filter for the PollOptions we want to count
+     *   }
+     * })
+    **/
+    count<T extends PollOptionCountArgs>(
+      args?: Subset<T, PollOptionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PollOptionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PollOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PollOptionAggregateArgs>(args: Subset<T, PollOptionAggregateArgs>): Prisma.PrismaPromise<GetPollOptionAggregateType<T>>
+
+    /**
+     * Group by PollOption.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollOptionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PollOptionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PollOptionGroupByArgs['orderBy'] }
+        : { orderBy?: PollOptionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PollOptionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPollOptionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PollOption model
+   */
+  readonly fields: PollOptionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PollOption.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PollOptionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    poll<T extends PollDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PollDefaultArgs<ExtArgs>>): Prisma__PollClient<$Result.GetResult<Prisma.$PollPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    votes<T extends PollOption$votesArgs<ExtArgs> = {}>(args?: Subset<T, PollOption$votesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findMany", ClientOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PollOption model
+   */ 
+  interface PollOptionFieldRefs {
+    readonly id: FieldRef<"PollOption", 'String'>
+    readonly pollId: FieldRef<"PollOption", 'String'>
+    readonly text: FieldRef<"PollOption", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PollOption findUnique
+   */
+  export type PollOptionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which PollOption to fetch.
+     */
+    where: PollOptionWhereUniqueInput
+  }
+
+  /**
+   * PollOption findUniqueOrThrow
+   */
+  export type PollOptionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which PollOption to fetch.
+     */
+    where: PollOptionWhereUniqueInput
+  }
+
+  /**
+   * PollOption findFirst
+   */
+  export type PollOptionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which PollOption to fetch.
+     */
+    where?: PollOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollOptions to fetch.
+     */
+    orderBy?: PollOptionOrderByWithRelationInput | PollOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PollOptions.
+     */
+    cursor?: PollOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PollOptions.
+     */
+    distinct?: PollOptionScalarFieldEnum | PollOptionScalarFieldEnum[]
+  }
+
+  /**
+   * PollOption findFirstOrThrow
+   */
+  export type PollOptionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which PollOption to fetch.
+     */
+    where?: PollOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollOptions to fetch.
+     */
+    orderBy?: PollOptionOrderByWithRelationInput | PollOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PollOptions.
+     */
+    cursor?: PollOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollOptions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PollOptions.
+     */
+    distinct?: PollOptionScalarFieldEnum | PollOptionScalarFieldEnum[]
+  }
+
+  /**
+   * PollOption findMany
+   */
+  export type PollOptionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * Filter, which PollOptions to fetch.
+     */
+    where?: PollOptionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollOptions to fetch.
+     */
+    orderBy?: PollOptionOrderByWithRelationInput | PollOptionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PollOptions.
+     */
+    cursor?: PollOptionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollOptions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollOptions.
+     */
+    skip?: number
+    distinct?: PollOptionScalarFieldEnum | PollOptionScalarFieldEnum[]
+  }
+
+  /**
+   * PollOption create
+   */
+  export type PollOptionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PollOption.
+     */
+    data: XOR<PollOptionCreateInput, PollOptionUncheckedCreateInput>
+  }
+
+  /**
+   * PollOption createMany
+   */
+  export type PollOptionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PollOptions.
+     */
+    data: PollOptionCreateManyInput | PollOptionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PollOption createManyAndReturn
+   */
+  export type PollOptionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * The data used to create many PollOptions.
+     */
+    data: PollOptionCreateManyInput | PollOptionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PollOption update
+   */
+  export type PollOptionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PollOption.
+     */
+    data: XOR<PollOptionUpdateInput, PollOptionUncheckedUpdateInput>
+    /**
+     * Choose, which PollOption to update.
+     */
+    where: PollOptionWhereUniqueInput
+  }
+
+  /**
+   * PollOption updateMany
+   */
+  export type PollOptionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PollOptions.
+     */
+    data: XOR<PollOptionUpdateManyMutationInput, PollOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which PollOptions to update
+     */
+    where?: PollOptionWhereInput
+  }
+
+  /**
+   * PollOption updateManyAndReturn
+   */
+  export type PollOptionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * The data used to update PollOptions.
+     */
+    data: XOR<PollOptionUpdateManyMutationInput, PollOptionUncheckedUpdateManyInput>
+    /**
+     * Filter which PollOptions to update
+     */
+    where?: PollOptionWhereInput
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PollOption upsert
+   */
+  export type PollOptionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PollOption to update in case it exists.
+     */
+    where: PollOptionWhereUniqueInput
+    /**
+     * In case the PollOption found by the `where` argument doesn't exist, create a new PollOption with this data.
+     */
+    create: XOR<PollOptionCreateInput, PollOptionUncheckedCreateInput>
+    /**
+     * In case the PollOption was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PollOptionUpdateInput, PollOptionUncheckedUpdateInput>
+  }
+
+  /**
+   * PollOption delete
+   */
+  export type PollOptionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+    /**
+     * Filter which PollOption to delete.
+     */
+    where: PollOptionWhereUniqueInput
+  }
+
+  /**
+   * PollOption deleteMany
+   */
+  export type PollOptionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PollOptions to delete
+     */
+    where?: PollOptionWhereInput
+  }
+
+  /**
+   * PollOption.votes
+   */
+  export type PollOption$votesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    where?: PollVoteWhereInput
+    orderBy?: PollVoteOrderByWithRelationInput | PollVoteOrderByWithRelationInput[]
+    cursor?: PollVoteWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PollVoteScalarFieldEnum | PollVoteScalarFieldEnum[]
+  }
+
+  /**
+   * PollOption without action
+   */
+  export type PollOptionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollOption
+     */
+    select?: PollOptionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollOption
+     */
+    omit?: PollOptionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollOptionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model PollVote
+   */
+
+  export type AggregatePollVote = {
+    _count: PollVoteCountAggregateOutputType | null
+    _min: PollVoteMinAggregateOutputType | null
+    _max: PollVoteMaxAggregateOutputType | null
+  }
+
+  export type PollVoteMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    optionId: string | null
+  }
+
+  export type PollVoteMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    optionId: string | null
+  }
+
+  export type PollVoteCountAggregateOutputType = {
+    id: number
+    userId: number
+    optionId: number
+    _all: number
+  }
+
+
+  export type PollVoteMinAggregateInputType = {
+    id?: true
+    userId?: true
+    optionId?: true
+  }
+
+  export type PollVoteMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    optionId?: true
+  }
+
+  export type PollVoteCountAggregateInputType = {
+    id?: true
+    userId?: true
+    optionId?: true
+    _all?: true
+  }
+
+  export type PollVoteAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PollVote to aggregate.
+     */
+    where?: PollVoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollVotes to fetch.
+     */
+    orderBy?: PollVoteOrderByWithRelationInput | PollVoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PollVoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollVotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollVotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PollVotes
+    **/
+    _count?: true | PollVoteCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PollVoteMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PollVoteMaxAggregateInputType
+  }
+
+  export type GetPollVoteAggregateType<T extends PollVoteAggregateArgs> = {
+        [P in keyof T & keyof AggregatePollVote]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePollVote[P]>
+      : GetScalarType<T[P], AggregatePollVote[P]>
+  }
+
+
+
+
+  export type PollVoteGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PollVoteWhereInput
+    orderBy?: PollVoteOrderByWithAggregationInput | PollVoteOrderByWithAggregationInput[]
+    by: PollVoteScalarFieldEnum[] | PollVoteScalarFieldEnum
+    having?: PollVoteScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PollVoteCountAggregateInputType | true
+    _min?: PollVoteMinAggregateInputType
+    _max?: PollVoteMaxAggregateInputType
+  }
+
+  export type PollVoteGroupByOutputType = {
+    id: string
+    userId: string
+    optionId: string
+    _count: PollVoteCountAggregateOutputType | null
+    _min: PollVoteMinAggregateOutputType | null
+    _max: PollVoteMaxAggregateOutputType | null
+  }
+
+  type GetPollVoteGroupByPayload<T extends PollVoteGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PollVoteGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PollVoteGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PollVoteGroupByOutputType[P]>
+            : GetScalarType<T[P], PollVoteGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PollVoteSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    optionId?: boolean
+    option?: boolean | PollOptionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pollVote"]>
+
+  export type PollVoteSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    optionId?: boolean
+    option?: boolean | PollOptionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pollVote"]>
+
+  export type PollVoteSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    optionId?: boolean
+    option?: boolean | PollOptionDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["pollVote"]>
+
+  export type PollVoteSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    optionId?: boolean
+  }
+
+  export type PollVoteOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "optionId", ExtArgs["result"]["pollVote"]>
+  export type PollVoteInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    option?: boolean | PollOptionDefaultArgs<ExtArgs>
+  }
+  export type PollVoteIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    option?: boolean | PollOptionDefaultArgs<ExtArgs>
+  }
+  export type PollVoteIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    option?: boolean | PollOptionDefaultArgs<ExtArgs>
+  }
+
+  export type $PollVotePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PollVote"
+    objects: {
+      option: Prisma.$PollOptionPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      optionId: string
+    }, ExtArgs["result"]["pollVote"]>
+    composites: {}
+  }
+
+  type PollVoteGetPayload<S extends boolean | null | undefined | PollVoteDefaultArgs> = $Result.GetResult<Prisma.$PollVotePayload, S>
+
+  type PollVoteCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PollVoteFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PollVoteCountAggregateInputType | true
+    }
+
+  export interface PollVoteDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PollVote'], meta: { name: 'PollVote' } }
+    /**
+     * Find zero or one PollVote that matches the filter.
+     * @param {PollVoteFindUniqueArgs} args - Arguments to find a PollVote
+     * @example
+     * // Get one PollVote
+     * const pollVote = await prisma.pollVote.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PollVoteFindUniqueArgs>(args: SelectSubset<T, PollVoteFindUniqueArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one PollVote that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PollVoteFindUniqueOrThrowArgs} args - Arguments to find a PollVote
+     * @example
+     * // Get one PollVote
+     * const pollVote = await prisma.pollVote.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PollVoteFindUniqueOrThrowArgs>(args: SelectSubset<T, PollVoteFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first PollVote that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteFindFirstArgs} args - Arguments to find a PollVote
+     * @example
+     * // Get one PollVote
+     * const pollVote = await prisma.pollVote.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PollVoteFindFirstArgs>(args?: SelectSubset<T, PollVoteFindFirstArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first PollVote that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteFindFirstOrThrowArgs} args - Arguments to find a PollVote
+     * @example
+     * // Get one PollVote
+     * const pollVote = await prisma.pollVote.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PollVoteFindFirstOrThrowArgs>(args?: SelectSubset<T, PollVoteFindFirstOrThrowArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more PollVotes that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PollVotes
+     * const pollVotes = await prisma.pollVote.findMany()
+     * 
+     * // Get first 10 PollVotes
+     * const pollVotes = await prisma.pollVote.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const pollVoteWithIdOnly = await prisma.pollVote.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PollVoteFindManyArgs>(args?: SelectSubset<T, PollVoteFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a PollVote.
+     * @param {PollVoteCreateArgs} args - Arguments to create a PollVote.
+     * @example
+     * // Create one PollVote
+     * const PollVote = await prisma.pollVote.create({
+     *   data: {
+     *     // ... data to create a PollVote
+     *   }
+     * })
+     * 
+     */
+    create<T extends PollVoteCreateArgs>(args: SelectSubset<T, PollVoteCreateArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many PollVotes.
+     * @param {PollVoteCreateManyArgs} args - Arguments to create many PollVotes.
+     * @example
+     * // Create many PollVotes
+     * const pollVote = await prisma.pollVote.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PollVoteCreateManyArgs>(args?: SelectSubset<T, PollVoteCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PollVotes and returns the data saved in the database.
+     * @param {PollVoteCreateManyAndReturnArgs} args - Arguments to create many PollVotes.
+     * @example
+     * // Create many PollVotes
+     * const pollVote = await prisma.pollVote.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PollVotes and only return the `id`
+     * const pollVoteWithIdOnly = await prisma.pollVote.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PollVoteCreateManyAndReturnArgs>(args?: SelectSubset<T, PollVoteCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a PollVote.
+     * @param {PollVoteDeleteArgs} args - Arguments to delete one PollVote.
+     * @example
+     * // Delete one PollVote
+     * const PollVote = await prisma.pollVote.delete({
+     *   where: {
+     *     // ... filter to delete one PollVote
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PollVoteDeleteArgs>(args: SelectSubset<T, PollVoteDeleteArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one PollVote.
+     * @param {PollVoteUpdateArgs} args - Arguments to update one PollVote.
+     * @example
+     * // Update one PollVote
+     * const pollVote = await prisma.pollVote.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PollVoteUpdateArgs>(args: SelectSubset<T, PollVoteUpdateArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more PollVotes.
+     * @param {PollVoteDeleteManyArgs} args - Arguments to filter PollVotes to delete.
+     * @example
+     * // Delete a few PollVotes
+     * const { count } = await prisma.pollVote.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PollVoteDeleteManyArgs>(args?: SelectSubset<T, PollVoteDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PollVotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PollVotes
+     * const pollVote = await prisma.pollVote.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PollVoteUpdateManyArgs>(args: SelectSubset<T, PollVoteUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PollVotes and returns the data updated in the database.
+     * @param {PollVoteUpdateManyAndReturnArgs} args - Arguments to update many PollVotes.
+     * @example
+     * // Update many PollVotes
+     * const pollVote = await prisma.pollVote.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PollVotes and only return the `id`
+     * const pollVoteWithIdOnly = await prisma.pollVote.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PollVoteUpdateManyAndReturnArgs>(args: SelectSubset<T, PollVoteUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one PollVote.
+     * @param {PollVoteUpsertArgs} args - Arguments to update or create a PollVote.
+     * @example
+     * // Update or create a PollVote
+     * const pollVote = await prisma.pollVote.upsert({
+     *   create: {
+     *     // ... data to create a PollVote
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PollVote we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PollVoteUpsertArgs>(args: SelectSubset<T, PollVoteUpsertArgs<ExtArgs>>): Prisma__PollVoteClient<$Result.GetResult<Prisma.$PollVotePayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of PollVotes.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteCountArgs} args - Arguments to filter PollVotes to count.
+     * @example
+     * // Count the number of PollVotes
+     * const count = await prisma.pollVote.count({
+     *   where: {
+     *     // ... the filter for the PollVotes we want to count
+     *   }
+     * })
+    **/
+    count<T extends PollVoteCountArgs>(
+      args?: Subset<T, PollVoteCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PollVoteCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PollVote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PollVoteAggregateArgs>(args: Subset<T, PollVoteAggregateArgs>): Prisma.PrismaPromise<GetPollVoteAggregateType<T>>
+
+    /**
+     * Group by PollVote.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PollVoteGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PollVoteGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PollVoteGroupByArgs['orderBy'] }
+        : { orderBy?: PollVoteGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PollVoteGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPollVoteGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PollVote model
+   */
+  readonly fields: PollVoteFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PollVote.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PollVoteClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    option<T extends PollOptionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PollOptionDefaultArgs<ExtArgs>>): Prisma__PollOptionClient<$Result.GetResult<Prisma.$PollOptionPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PollVote model
+   */ 
+  interface PollVoteFieldRefs {
+    readonly id: FieldRef<"PollVote", 'String'>
+    readonly userId: FieldRef<"PollVote", 'String'>
+    readonly optionId: FieldRef<"PollVote", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PollVote findUnique
+   */
+  export type PollVoteFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * Filter, which PollVote to fetch.
+     */
+    where: PollVoteWhereUniqueInput
+  }
+
+  /**
+   * PollVote findUniqueOrThrow
+   */
+  export type PollVoteFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * Filter, which PollVote to fetch.
+     */
+    where: PollVoteWhereUniqueInput
+  }
+
+  /**
+   * PollVote findFirst
+   */
+  export type PollVoteFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * Filter, which PollVote to fetch.
+     */
+    where?: PollVoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollVotes to fetch.
+     */
+    orderBy?: PollVoteOrderByWithRelationInput | PollVoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PollVotes.
+     */
+    cursor?: PollVoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollVotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollVotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PollVotes.
+     */
+    distinct?: PollVoteScalarFieldEnum | PollVoteScalarFieldEnum[]
+  }
+
+  /**
+   * PollVote findFirstOrThrow
+   */
+  export type PollVoteFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * Filter, which PollVote to fetch.
+     */
+    where?: PollVoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollVotes to fetch.
+     */
+    orderBy?: PollVoteOrderByWithRelationInput | PollVoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PollVotes.
+     */
+    cursor?: PollVoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollVotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollVotes.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PollVotes.
+     */
+    distinct?: PollVoteScalarFieldEnum | PollVoteScalarFieldEnum[]
+  }
+
+  /**
+   * PollVote findMany
+   */
+  export type PollVoteFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * Filter, which PollVotes to fetch.
+     */
+    where?: PollVoteWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PollVotes to fetch.
+     */
+    orderBy?: PollVoteOrderByWithRelationInput | PollVoteOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PollVotes.
+     */
+    cursor?: PollVoteWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PollVotes from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PollVotes.
+     */
+    skip?: number
+    distinct?: PollVoteScalarFieldEnum | PollVoteScalarFieldEnum[]
+  }
+
+  /**
+   * PollVote create
+   */
+  export type PollVoteCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PollVote.
+     */
+    data: XOR<PollVoteCreateInput, PollVoteUncheckedCreateInput>
+  }
+
+  /**
+   * PollVote createMany
+   */
+  export type PollVoteCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PollVotes.
+     */
+    data: PollVoteCreateManyInput | PollVoteCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PollVote createManyAndReturn
+   */
+  export type PollVoteCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * The data used to create many PollVotes.
+     */
+    data: PollVoteCreateManyInput | PollVoteCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PollVote update
+   */
+  export type PollVoteUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PollVote.
+     */
+    data: XOR<PollVoteUpdateInput, PollVoteUncheckedUpdateInput>
+    /**
+     * Choose, which PollVote to update.
+     */
+    where: PollVoteWhereUniqueInput
+  }
+
+  /**
+   * PollVote updateMany
+   */
+  export type PollVoteUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PollVotes.
+     */
+    data: XOR<PollVoteUpdateManyMutationInput, PollVoteUncheckedUpdateManyInput>
+    /**
+     * Filter which PollVotes to update
+     */
+    where?: PollVoteWhereInput
+  }
+
+  /**
+   * PollVote updateManyAndReturn
+   */
+  export type PollVoteUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * The data used to update PollVotes.
+     */
+    data: XOR<PollVoteUpdateManyMutationInput, PollVoteUncheckedUpdateManyInput>
+    /**
+     * Filter which PollVotes to update
+     */
+    where?: PollVoteWhereInput
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PollVote upsert
+   */
+  export type PollVoteUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PollVote to update in case it exists.
+     */
+    where: PollVoteWhereUniqueInput
+    /**
+     * In case the PollVote found by the `where` argument doesn't exist, create a new PollVote with this data.
+     */
+    create: XOR<PollVoteCreateInput, PollVoteUncheckedCreateInput>
+    /**
+     * In case the PollVote was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PollVoteUpdateInput, PollVoteUncheckedUpdateInput>
+  }
+
+  /**
+   * PollVote delete
+   */
+  export type PollVoteDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+    /**
+     * Filter which PollVote to delete.
+     */
+    where: PollVoteWhereUniqueInput
+  }
+
+  /**
+   * PollVote deleteMany
+   */
+  export type PollVoteDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PollVotes to delete
+     */
+    where?: PollVoteWhereInput
+  }
+
+  /**
+   * PollVote without action
+   */
+  export type PollVoteDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PollVote
+     */
+    select?: PollVoteSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PollVote
+     */
+    omit?: PollVoteOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PollVoteInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ReadingProgress
+   */
+
+  export type AggregateReadingProgress = {
+    _count: ReadingProgressCountAggregateOutputType | null
+    _avg: ReadingProgressAvgAggregateOutputType | null
+    _sum: ReadingProgressSumAggregateOutputType | null
+    _min: ReadingProgressMinAggregateOutputType | null
+    _max: ReadingProgressMaxAggregateOutputType | null
+  }
+
+  export type ReadingProgressAvgAggregateOutputType = {
+    percentage: number | null
+  }
+
+  export type ReadingProgressSumAggregateOutputType = {
+    percentage: number | null
+  }
+
+  export type ReadingProgressMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    storyId: string | null
+    chapterId: string | null
+    percentage: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ReadingProgressMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    storyId: string | null
+    chapterId: string | null
+    percentage: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ReadingProgressCountAggregateOutputType = {
+    id: number
+    userId: number
+    storyId: number
+    chapterId: number
+    percentage: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ReadingProgressAvgAggregateInputType = {
+    percentage?: true
+  }
+
+  export type ReadingProgressSumAggregateInputType = {
+    percentage?: true
+  }
+
+  export type ReadingProgressMinAggregateInputType = {
+    id?: true
+    userId?: true
+    storyId?: true
+    chapterId?: true
+    percentage?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ReadingProgressMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    storyId?: true
+    chapterId?: true
+    percentage?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ReadingProgressCountAggregateInputType = {
+    id?: true
+    userId?: true
+    storyId?: true
+    chapterId?: true
+    percentage?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ReadingProgressAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ReadingProgress to aggregate.
+     */
+    where?: ReadingProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReadingProgresses to fetch.
+     */
+    orderBy?: ReadingProgressOrderByWithRelationInput | ReadingProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ReadingProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReadingProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReadingProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ReadingProgresses
+    **/
+    _count?: true | ReadingProgressCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ReadingProgressAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ReadingProgressSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ReadingProgressMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ReadingProgressMaxAggregateInputType
+  }
+
+  export type GetReadingProgressAggregateType<T extends ReadingProgressAggregateArgs> = {
+        [P in keyof T & keyof AggregateReadingProgress]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateReadingProgress[P]>
+      : GetScalarType<T[P], AggregateReadingProgress[P]>
+  }
+
+
+
+
+  export type ReadingProgressGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ReadingProgressWhereInput
+    orderBy?: ReadingProgressOrderByWithAggregationInput | ReadingProgressOrderByWithAggregationInput[]
+    by: ReadingProgressScalarFieldEnum[] | ReadingProgressScalarFieldEnum
+    having?: ReadingProgressScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ReadingProgressCountAggregateInputType | true
+    _avg?: ReadingProgressAvgAggregateInputType
+    _sum?: ReadingProgressSumAggregateInputType
+    _min?: ReadingProgressMinAggregateInputType
+    _max?: ReadingProgressMaxAggregateInputType
+  }
+
+  export type ReadingProgressGroupByOutputType = {
+    id: string
+    userId: string
+    storyId: string
+    chapterId: string
+    percentage: number
+    createdAt: Date
+    updatedAt: Date
+    _count: ReadingProgressCountAggregateOutputType | null
+    _avg: ReadingProgressAvgAggregateOutputType | null
+    _sum: ReadingProgressSumAggregateOutputType | null
+    _min: ReadingProgressMinAggregateOutputType | null
+    _max: ReadingProgressMaxAggregateOutputType | null
+  }
+
+  type GetReadingProgressGroupByPayload<T extends ReadingProgressGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ReadingProgressGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ReadingProgressGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ReadingProgressGroupByOutputType[P]>
+            : GetScalarType<T[P], ReadingProgressGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ReadingProgressSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    storyId?: boolean
+    chapterId?: boolean
+    percentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["readingProgress"]>
+
+  export type ReadingProgressSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    storyId?: boolean
+    chapterId?: boolean
+    percentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["readingProgress"]>
+
+  export type ReadingProgressSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    storyId?: boolean
+    chapterId?: boolean
+    percentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["readingProgress"]>
+
+  export type ReadingProgressSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    storyId?: boolean
+    chapterId?: boolean
+    percentage?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ReadingProgressOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "storyId" | "chapterId" | "percentage" | "createdAt" | "updatedAt", ExtArgs["result"]["readingProgress"]>
+  export type ReadingProgressInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ReadingProgressIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ReadingProgressIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $ReadingProgressPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ReadingProgress"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      storyId: string
+      chapterId: string
+      percentage: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["readingProgress"]>
+    composites: {}
+  }
+
+  type ReadingProgressGetPayload<S extends boolean | null | undefined | ReadingProgressDefaultArgs> = $Result.GetResult<Prisma.$ReadingProgressPayload, S>
+
+  type ReadingProgressCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ReadingProgressFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ReadingProgressCountAggregateInputType | true
+    }
+
+  export interface ReadingProgressDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ReadingProgress'], meta: { name: 'ReadingProgress' } }
+    /**
+     * Find zero or one ReadingProgress that matches the filter.
+     * @param {ReadingProgressFindUniqueArgs} args - Arguments to find a ReadingProgress
+     * @example
+     * // Get one ReadingProgress
+     * const readingProgress = await prisma.readingProgress.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ReadingProgressFindUniqueArgs>(args: SelectSubset<T, ReadingProgressFindUniqueArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "findUnique", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find one ReadingProgress that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ReadingProgressFindUniqueOrThrowArgs} args - Arguments to find a ReadingProgress
+     * @example
+     * // Get one ReadingProgress
+     * const readingProgress = await prisma.readingProgress.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ReadingProgressFindUniqueOrThrowArgs>(args: SelectSubset<T, ReadingProgressFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first ReadingProgress that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressFindFirstArgs} args - Arguments to find a ReadingProgress
+     * @example
+     * // Get one ReadingProgress
+     * const readingProgress = await prisma.readingProgress.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ReadingProgressFindFirstArgs>(args?: SelectSubset<T, ReadingProgressFindFirstArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "findFirst", ClientOptions> | null, null, ExtArgs, ClientOptions>
+
+    /**
+     * Find the first ReadingProgress that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressFindFirstOrThrowArgs} args - Arguments to find a ReadingProgress
+     * @example
+     * // Get one ReadingProgress
+     * const readingProgress = await prisma.readingProgress.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ReadingProgressFindFirstOrThrowArgs>(args?: SelectSubset<T, ReadingProgressFindFirstOrThrowArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "findFirstOrThrow", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Find zero or more ReadingProgresses that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ReadingProgresses
+     * const readingProgresses = await prisma.readingProgress.findMany()
+     * 
+     * // Get first 10 ReadingProgresses
+     * const readingProgresses = await prisma.readingProgress.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const readingProgressWithIdOnly = await prisma.readingProgress.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ReadingProgressFindManyArgs>(args?: SelectSubset<T, ReadingProgressFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "findMany", ClientOptions>>
+
+    /**
+     * Create a ReadingProgress.
+     * @param {ReadingProgressCreateArgs} args - Arguments to create a ReadingProgress.
+     * @example
+     * // Create one ReadingProgress
+     * const ReadingProgress = await prisma.readingProgress.create({
+     *   data: {
+     *     // ... data to create a ReadingProgress
+     *   }
+     * })
+     * 
+     */
+    create<T extends ReadingProgressCreateArgs>(args: SelectSubset<T, ReadingProgressCreateArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "create", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Create many ReadingProgresses.
+     * @param {ReadingProgressCreateManyArgs} args - Arguments to create many ReadingProgresses.
+     * @example
+     * // Create many ReadingProgresses
+     * const readingProgress = await prisma.readingProgress.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ReadingProgressCreateManyArgs>(args?: SelectSubset<T, ReadingProgressCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ReadingProgresses and returns the data saved in the database.
+     * @param {ReadingProgressCreateManyAndReturnArgs} args - Arguments to create many ReadingProgresses.
+     * @example
+     * // Create many ReadingProgresses
+     * const readingProgress = await prisma.readingProgress.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ReadingProgresses and only return the `id`
+     * const readingProgressWithIdOnly = await prisma.readingProgress.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ReadingProgressCreateManyAndReturnArgs>(args?: SelectSubset<T, ReadingProgressCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "createManyAndReturn", ClientOptions>>
+
+    /**
+     * Delete a ReadingProgress.
+     * @param {ReadingProgressDeleteArgs} args - Arguments to delete one ReadingProgress.
+     * @example
+     * // Delete one ReadingProgress
+     * const ReadingProgress = await prisma.readingProgress.delete({
+     *   where: {
+     *     // ... filter to delete one ReadingProgress
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ReadingProgressDeleteArgs>(args: SelectSubset<T, ReadingProgressDeleteArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "delete", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Update one ReadingProgress.
+     * @param {ReadingProgressUpdateArgs} args - Arguments to update one ReadingProgress.
+     * @example
+     * // Update one ReadingProgress
+     * const readingProgress = await prisma.readingProgress.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ReadingProgressUpdateArgs>(args: SelectSubset<T, ReadingProgressUpdateArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "update", ClientOptions>, never, ExtArgs, ClientOptions>
+
+    /**
+     * Delete zero or more ReadingProgresses.
+     * @param {ReadingProgressDeleteManyArgs} args - Arguments to filter ReadingProgresses to delete.
+     * @example
+     * // Delete a few ReadingProgresses
+     * const { count } = await prisma.readingProgress.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ReadingProgressDeleteManyArgs>(args?: SelectSubset<T, ReadingProgressDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ReadingProgresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ReadingProgresses
+     * const readingProgress = await prisma.readingProgress.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ReadingProgressUpdateManyArgs>(args: SelectSubset<T, ReadingProgressUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ReadingProgresses and returns the data updated in the database.
+     * @param {ReadingProgressUpdateManyAndReturnArgs} args - Arguments to update many ReadingProgresses.
+     * @example
+     * // Update many ReadingProgresses
+     * const readingProgress = await prisma.readingProgress.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ReadingProgresses and only return the `id`
+     * const readingProgressWithIdOnly = await prisma.readingProgress.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ReadingProgressUpdateManyAndReturnArgs>(args: SelectSubset<T, ReadingProgressUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "updateManyAndReturn", ClientOptions>>
+
+    /**
+     * Create or update one ReadingProgress.
+     * @param {ReadingProgressUpsertArgs} args - Arguments to update or create a ReadingProgress.
+     * @example
+     * // Update or create a ReadingProgress
+     * const readingProgress = await prisma.readingProgress.upsert({
+     *   create: {
+     *     // ... data to create a ReadingProgress
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ReadingProgress we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ReadingProgressUpsertArgs>(args: SelectSubset<T, ReadingProgressUpsertArgs<ExtArgs>>): Prisma__ReadingProgressClient<$Result.GetResult<Prisma.$ReadingProgressPayload<ExtArgs>, T, "upsert", ClientOptions>, never, ExtArgs, ClientOptions>
+
+
+    /**
+     * Count the number of ReadingProgresses.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressCountArgs} args - Arguments to filter ReadingProgresses to count.
+     * @example
+     * // Count the number of ReadingProgresses
+     * const count = await prisma.readingProgress.count({
+     *   where: {
+     *     // ... the filter for the ReadingProgresses we want to count
+     *   }
+     * })
+    **/
+    count<T extends ReadingProgressCountArgs>(
+      args?: Subset<T, ReadingProgressCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ReadingProgressCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ReadingProgress.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ReadingProgressAggregateArgs>(args: Subset<T, ReadingProgressAggregateArgs>): Prisma.PrismaPromise<GetReadingProgressAggregateType<T>>
+
+    /**
+     * Group by ReadingProgress.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ReadingProgressGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ReadingProgressGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ReadingProgressGroupByArgs['orderBy'] }
+        : { orderBy?: ReadingProgressGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ReadingProgressGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetReadingProgressGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ReadingProgress model
+   */
+  readonly fields: ReadingProgressFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ReadingProgress.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ReadingProgressClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", ClientOptions> | Null, Null, ExtArgs, ClientOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ReadingProgress model
+   */ 
+  interface ReadingProgressFieldRefs {
+    readonly id: FieldRef<"ReadingProgress", 'String'>
+    readonly userId: FieldRef<"ReadingProgress", 'String'>
+    readonly storyId: FieldRef<"ReadingProgress", 'String'>
+    readonly chapterId: FieldRef<"ReadingProgress", 'String'>
+    readonly percentage: FieldRef<"ReadingProgress", 'Float'>
+    readonly createdAt: FieldRef<"ReadingProgress", 'DateTime'>
+    readonly updatedAt: FieldRef<"ReadingProgress", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ReadingProgress findUnique
+   */
+  export type ReadingProgressFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which ReadingProgress to fetch.
+     */
+    where: ReadingProgressWhereUniqueInput
+  }
+
+  /**
+   * ReadingProgress findUniqueOrThrow
+   */
+  export type ReadingProgressFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which ReadingProgress to fetch.
+     */
+    where: ReadingProgressWhereUniqueInput
+  }
+
+  /**
+   * ReadingProgress findFirst
+   */
+  export type ReadingProgressFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which ReadingProgress to fetch.
+     */
+    where?: ReadingProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReadingProgresses to fetch.
+     */
+    orderBy?: ReadingProgressOrderByWithRelationInput | ReadingProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ReadingProgresses.
+     */
+    cursor?: ReadingProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReadingProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReadingProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReadingProgresses.
+     */
+    distinct?: ReadingProgressScalarFieldEnum | ReadingProgressScalarFieldEnum[]
+  }
+
+  /**
+   * ReadingProgress findFirstOrThrow
+   */
+  export type ReadingProgressFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which ReadingProgress to fetch.
+     */
+    where?: ReadingProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReadingProgresses to fetch.
+     */
+    orderBy?: ReadingProgressOrderByWithRelationInput | ReadingProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ReadingProgresses.
+     */
+    cursor?: ReadingProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReadingProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReadingProgresses.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ReadingProgresses.
+     */
+    distinct?: ReadingProgressScalarFieldEnum | ReadingProgressScalarFieldEnum[]
+  }
+
+  /**
+   * ReadingProgress findMany
+   */
+  export type ReadingProgressFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * Filter, which ReadingProgresses to fetch.
+     */
+    where?: ReadingProgressWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ReadingProgresses to fetch.
+     */
+    orderBy?: ReadingProgressOrderByWithRelationInput | ReadingProgressOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ReadingProgresses.
+     */
+    cursor?: ReadingProgressWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ReadingProgresses from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ReadingProgresses.
+     */
+    skip?: number
+    distinct?: ReadingProgressScalarFieldEnum | ReadingProgressScalarFieldEnum[]
+  }
+
+  /**
+   * ReadingProgress create
+   */
+  export type ReadingProgressCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ReadingProgress.
+     */
+    data: XOR<ReadingProgressCreateInput, ReadingProgressUncheckedCreateInput>
+  }
+
+  /**
+   * ReadingProgress createMany
+   */
+  export type ReadingProgressCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ReadingProgresses.
+     */
+    data: ReadingProgressCreateManyInput | ReadingProgressCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ReadingProgress createManyAndReturn
+   */
+  export type ReadingProgressCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * The data used to create many ReadingProgresses.
+     */
+    data: ReadingProgressCreateManyInput | ReadingProgressCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ReadingProgress update
+   */
+  export type ReadingProgressUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ReadingProgress.
+     */
+    data: XOR<ReadingProgressUpdateInput, ReadingProgressUncheckedUpdateInput>
+    /**
+     * Choose, which ReadingProgress to update.
+     */
+    where: ReadingProgressWhereUniqueInput
+  }
+
+  /**
+   * ReadingProgress updateMany
+   */
+  export type ReadingProgressUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ReadingProgresses.
+     */
+    data: XOR<ReadingProgressUpdateManyMutationInput, ReadingProgressUncheckedUpdateManyInput>
+    /**
+     * Filter which ReadingProgresses to update
+     */
+    where?: ReadingProgressWhereInput
+  }
+
+  /**
+   * ReadingProgress updateManyAndReturn
+   */
+  export type ReadingProgressUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * The data used to update ReadingProgresses.
+     */
+    data: XOR<ReadingProgressUpdateManyMutationInput, ReadingProgressUncheckedUpdateManyInput>
+    /**
+     * Filter which ReadingProgresses to update
+     */
+    where?: ReadingProgressWhereInput
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ReadingProgress upsert
+   */
+  export type ReadingProgressUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ReadingProgress to update in case it exists.
+     */
+    where: ReadingProgressWhereUniqueInput
+    /**
+     * In case the ReadingProgress found by the `where` argument doesn't exist, create a new ReadingProgress with this data.
+     */
+    create: XOR<ReadingProgressCreateInput, ReadingProgressUncheckedCreateInput>
+    /**
+     * In case the ReadingProgress was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ReadingProgressUpdateInput, ReadingProgressUncheckedUpdateInput>
+  }
+
+  /**
+   * ReadingProgress delete
+   */
+  export type ReadingProgressDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+    /**
+     * Filter which ReadingProgress to delete.
+     */
+    where: ReadingProgressWhereUniqueInput
+  }
+
+  /**
+   * ReadingProgress deleteMany
+   */
+  export type ReadingProgressDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ReadingProgresses to delete
+     */
+    where?: ReadingProgressWhereInput
+  }
+
+  /**
+   * ReadingProgress without action
+   */
+  export type ReadingProgressDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ReadingProgress
+     */
+    select?: ReadingProgressSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ReadingProgress
+     */
+    omit?: ReadingProgressOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ReadingProgressInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -40699,6 +45488,49 @@ export namespace Prisma {
   export type SubscriptionTransactionScalarFieldEnum = (typeof SubscriptionTransactionScalarFieldEnum)[keyof typeof SubscriptionTransactionScalarFieldEnum]
 
 
+  export const PollScalarFieldEnum: {
+    id: 'id',
+    chapterId: 'chapterId',
+    question: 'question',
+    expiresAt: 'expiresAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PollScalarFieldEnum = (typeof PollScalarFieldEnum)[keyof typeof PollScalarFieldEnum]
+
+
+  export const PollOptionScalarFieldEnum: {
+    id: 'id',
+    pollId: 'pollId',
+    text: 'text'
+  };
+
+  export type PollOptionScalarFieldEnum = (typeof PollOptionScalarFieldEnum)[keyof typeof PollOptionScalarFieldEnum]
+
+
+  export const PollVoteScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    optionId: 'optionId'
+  };
+
+  export type PollVoteScalarFieldEnum = (typeof PollVoteScalarFieldEnum)[keyof typeof PollVoteScalarFieldEnum]
+
+
+  export const ReadingProgressScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    storyId: 'storyId',
+    chapterId: 'chapterId',
+    percentage: 'percentage',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ReadingProgressScalarFieldEnum = (typeof ReadingProgressScalarFieldEnum)[keyof typeof ReadingProgressScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -40971,6 +45803,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeListRelationFilter
     notifications?: NotificationListRelationFilter
     subscriptionTransactions?: SubscriptionTransactionListRelationFilter
+    readingProgress?: ReadingProgressListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -41025,6 +45858,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
     subscriptionTransactions?: SubscriptionTransactionOrderByRelationAggregateInput
+    readingProgress?: ReadingProgressOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -41082,6 +45916,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeListRelationFilter
     notifications?: NotificationListRelationFilter
     subscriptionTransactions?: SubscriptionTransactionListRelationFilter
+    readingProgress?: ReadingProgressListRelationFilter
   }, "id" | "firebaseUid" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -41605,6 +46440,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"StoryChapter"> | Date | string
     updatedAt?: DateTimeFilter<"StoryChapter"> | Date | string
     story?: XOR<StoryScalarRelationFilter, StoryWhereInput>
+    polls?: PollListRelationFilter
   }
 
   export type StoryChapterOrderByWithRelationInput = {
@@ -41618,6 +46454,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     story?: StoryOrderByWithRelationInput
+    polls?: PollOrderByRelationAggregateInput
   }
 
   export type StoryChapterWhereUniqueInput = Prisma.AtLeast<{
@@ -41635,6 +46472,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"StoryChapter"> | Date | string
     updatedAt?: DateTimeFilter<"StoryChapter"> | Date | string
     story?: XOR<StoryScalarRelationFilter, StoryWhereInput>
+    polls?: PollListRelationFilter
   }, "id" | "storyId_chapterOrder">
 
   export type StoryChapterOrderByWithAggregationInput = {
@@ -43372,6 +48210,231 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"SubscriptionTransaction"> | Date | string
   }
 
+  export type PollWhereInput = {
+    AND?: PollWhereInput | PollWhereInput[]
+    OR?: PollWhereInput[]
+    NOT?: PollWhereInput | PollWhereInput[]
+    id?: StringFilter<"Poll"> | string
+    chapterId?: StringFilter<"Poll"> | string
+    question?: StringFilter<"Poll"> | string
+    expiresAt?: DateTimeNullableFilter<"Poll"> | Date | string | null
+    createdAt?: DateTimeFilter<"Poll"> | Date | string
+    updatedAt?: DateTimeFilter<"Poll"> | Date | string
+    chapter?: XOR<StoryChapterScalarRelationFilter, StoryChapterWhereInput>
+    options?: PollOptionListRelationFilter
+  }
+
+  export type PollOrderByWithRelationInput = {
+    id?: SortOrder
+    chapterId?: SortOrder
+    question?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    chapter?: StoryChapterOrderByWithRelationInput
+    options?: PollOptionOrderByRelationAggregateInput
+  }
+
+  export type PollWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PollWhereInput | PollWhereInput[]
+    OR?: PollWhereInput[]
+    NOT?: PollWhereInput | PollWhereInput[]
+    chapterId?: StringFilter<"Poll"> | string
+    question?: StringFilter<"Poll"> | string
+    expiresAt?: DateTimeNullableFilter<"Poll"> | Date | string | null
+    createdAt?: DateTimeFilter<"Poll"> | Date | string
+    updatedAt?: DateTimeFilter<"Poll"> | Date | string
+    chapter?: XOR<StoryChapterScalarRelationFilter, StoryChapterWhereInput>
+    options?: PollOptionListRelationFilter
+  }, "id">
+
+  export type PollOrderByWithAggregationInput = {
+    id?: SortOrder
+    chapterId?: SortOrder
+    question?: SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PollCountOrderByAggregateInput
+    _max?: PollMaxOrderByAggregateInput
+    _min?: PollMinOrderByAggregateInput
+  }
+
+  export type PollScalarWhereWithAggregatesInput = {
+    AND?: PollScalarWhereWithAggregatesInput | PollScalarWhereWithAggregatesInput[]
+    OR?: PollScalarWhereWithAggregatesInput[]
+    NOT?: PollScalarWhereWithAggregatesInput | PollScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Poll"> | string
+    chapterId?: StringWithAggregatesFilter<"Poll"> | string
+    question?: StringWithAggregatesFilter<"Poll"> | string
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"Poll"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Poll"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Poll"> | Date | string
+  }
+
+  export type PollOptionWhereInput = {
+    AND?: PollOptionWhereInput | PollOptionWhereInput[]
+    OR?: PollOptionWhereInput[]
+    NOT?: PollOptionWhereInput | PollOptionWhereInput[]
+    id?: StringFilter<"PollOption"> | string
+    pollId?: StringFilter<"PollOption"> | string
+    text?: StringFilter<"PollOption"> | string
+    poll?: XOR<PollScalarRelationFilter, PollWhereInput>
+    votes?: PollVoteListRelationFilter
+  }
+
+  export type PollOptionOrderByWithRelationInput = {
+    id?: SortOrder
+    pollId?: SortOrder
+    text?: SortOrder
+    poll?: PollOrderByWithRelationInput
+    votes?: PollVoteOrderByRelationAggregateInput
+  }
+
+  export type PollOptionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: PollOptionWhereInput | PollOptionWhereInput[]
+    OR?: PollOptionWhereInput[]
+    NOT?: PollOptionWhereInput | PollOptionWhereInput[]
+    pollId?: StringFilter<"PollOption"> | string
+    text?: StringFilter<"PollOption"> | string
+    poll?: XOR<PollScalarRelationFilter, PollWhereInput>
+    votes?: PollVoteListRelationFilter
+  }, "id">
+
+  export type PollOptionOrderByWithAggregationInput = {
+    id?: SortOrder
+    pollId?: SortOrder
+    text?: SortOrder
+    _count?: PollOptionCountOrderByAggregateInput
+    _max?: PollOptionMaxOrderByAggregateInput
+    _min?: PollOptionMinOrderByAggregateInput
+  }
+
+  export type PollOptionScalarWhereWithAggregatesInput = {
+    AND?: PollOptionScalarWhereWithAggregatesInput | PollOptionScalarWhereWithAggregatesInput[]
+    OR?: PollOptionScalarWhereWithAggregatesInput[]
+    NOT?: PollOptionScalarWhereWithAggregatesInput | PollOptionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PollOption"> | string
+    pollId?: StringWithAggregatesFilter<"PollOption"> | string
+    text?: StringWithAggregatesFilter<"PollOption"> | string
+  }
+
+  export type PollVoteWhereInput = {
+    AND?: PollVoteWhereInput | PollVoteWhereInput[]
+    OR?: PollVoteWhereInput[]
+    NOT?: PollVoteWhereInput | PollVoteWhereInput[]
+    id?: StringFilter<"PollVote"> | string
+    userId?: StringFilter<"PollVote"> | string
+    optionId?: StringFilter<"PollVote"> | string
+    option?: XOR<PollOptionScalarRelationFilter, PollOptionWhereInput>
+  }
+
+  export type PollVoteOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    optionId?: SortOrder
+    option?: PollOptionOrderByWithRelationInput
+  }
+
+  export type PollVoteWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_optionId?: PollVoteUserIdOptionIdCompoundUniqueInput
+    AND?: PollVoteWhereInput | PollVoteWhereInput[]
+    OR?: PollVoteWhereInput[]
+    NOT?: PollVoteWhereInput | PollVoteWhereInput[]
+    userId?: StringFilter<"PollVote"> | string
+    optionId?: StringFilter<"PollVote"> | string
+    option?: XOR<PollOptionScalarRelationFilter, PollOptionWhereInput>
+  }, "id" | "userId_optionId">
+
+  export type PollVoteOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    optionId?: SortOrder
+    _count?: PollVoteCountOrderByAggregateInput
+    _max?: PollVoteMaxOrderByAggregateInput
+    _min?: PollVoteMinOrderByAggregateInput
+  }
+
+  export type PollVoteScalarWhereWithAggregatesInput = {
+    AND?: PollVoteScalarWhereWithAggregatesInput | PollVoteScalarWhereWithAggregatesInput[]
+    OR?: PollVoteScalarWhereWithAggregatesInput[]
+    NOT?: PollVoteScalarWhereWithAggregatesInput | PollVoteScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PollVote"> | string
+    userId?: StringWithAggregatesFilter<"PollVote"> | string
+    optionId?: StringWithAggregatesFilter<"PollVote"> | string
+  }
+
+  export type ReadingProgressWhereInput = {
+    AND?: ReadingProgressWhereInput | ReadingProgressWhereInput[]
+    OR?: ReadingProgressWhereInput[]
+    NOT?: ReadingProgressWhereInput | ReadingProgressWhereInput[]
+    id?: StringFilter<"ReadingProgress"> | string
+    userId?: StringFilter<"ReadingProgress"> | string
+    storyId?: StringFilter<"ReadingProgress"> | string
+    chapterId?: StringFilter<"ReadingProgress"> | string
+    percentage?: FloatFilter<"ReadingProgress"> | number
+    createdAt?: DateTimeFilter<"ReadingProgress"> | Date | string
+    updatedAt?: DateTimeFilter<"ReadingProgress"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type ReadingProgressOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    storyId?: SortOrder
+    chapterId?: SortOrder
+    percentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type ReadingProgressWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_storyId?: ReadingProgressUserIdStoryIdCompoundUniqueInput
+    AND?: ReadingProgressWhereInput | ReadingProgressWhereInput[]
+    OR?: ReadingProgressWhereInput[]
+    NOT?: ReadingProgressWhereInput | ReadingProgressWhereInput[]
+    userId?: StringFilter<"ReadingProgress"> | string
+    storyId?: StringFilter<"ReadingProgress"> | string
+    chapterId?: StringFilter<"ReadingProgress"> | string
+    percentage?: FloatFilter<"ReadingProgress"> | number
+    createdAt?: DateTimeFilter<"ReadingProgress"> | Date | string
+    updatedAt?: DateTimeFilter<"ReadingProgress"> | Date | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_storyId">
+
+  export type ReadingProgressOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    storyId?: SortOrder
+    chapterId?: SortOrder
+    percentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ReadingProgressCountOrderByAggregateInput
+    _avg?: ReadingProgressAvgOrderByAggregateInput
+    _max?: ReadingProgressMaxOrderByAggregateInput
+    _min?: ReadingProgressMinOrderByAggregateInput
+    _sum?: ReadingProgressSumOrderByAggregateInput
+  }
+
+  export type ReadingProgressScalarWhereWithAggregatesInput = {
+    AND?: ReadingProgressScalarWhereWithAggregatesInput | ReadingProgressScalarWhereWithAggregatesInput[]
+    OR?: ReadingProgressScalarWhereWithAggregatesInput[]
+    NOT?: ReadingProgressScalarWhereWithAggregatesInput | ReadingProgressScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ReadingProgress"> | string
+    userId?: StringWithAggregatesFilter<"ReadingProgress"> | string
+    storyId?: StringWithAggregatesFilter<"ReadingProgress"> | string
+    chapterId?: StringWithAggregatesFilter<"ReadingProgress"> | string
+    percentage?: FloatWithAggregatesFilter<"ReadingProgress"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ReadingProgress"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ReadingProgress"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     firebaseUid: string
@@ -43424,6 +48487,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -43478,6 +48542,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -43532,6 +48597,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -43586,6 +48652,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -44162,6 +49229,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     story: StoryCreateNestedOneWithoutChaptersInput
+    polls?: PollCreateNestedManyWithoutChapterInput
   }
 
   export type StoryChapterUncheckedCreateInput = {
@@ -44174,6 +49242,7 @@ export namespace Prisma {
     status?: $Enums.ChapterStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    polls?: PollUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type StoryChapterUpdateInput = {
@@ -44186,6 +49255,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     story?: StoryUpdateOneRequiredWithoutChaptersNestedInput
+    polls?: PollUpdateManyWithoutChapterNestedInput
   }
 
   export type StoryChapterUncheckedUpdateInput = {
@@ -44198,6 +49268,7 @@ export namespace Prisma {
     status?: EnumChapterStatusFieldUpdateOperationsInput | $Enums.ChapterStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    polls?: PollUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type StoryChapterCreateManyInput = {
@@ -45965,6 +51036,227 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PollCreateInput = {
+    id?: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapter: StoryChapterCreateNestedOneWithoutPollsInput
+    options?: PollOptionCreateNestedManyWithoutPollInput
+  }
+
+  export type PollUncheckedCreateInput = {
+    id?: string
+    chapterId: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    options?: PollOptionUncheckedCreateNestedManyWithoutPollInput
+  }
+
+  export type PollUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chapter?: StoryChapterUpdateOneRequiredWithoutPollsNestedInput
+    options?: PollOptionUpdateManyWithoutPollNestedInput
+  }
+
+  export type PollUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    options?: PollOptionUncheckedUpdateManyWithoutPollNestedInput
+  }
+
+  export type PollCreateManyInput = {
+    id?: string
+    chapterId: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PollUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PollUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PollOptionCreateInput = {
+    id?: string
+    text: string
+    poll: PollCreateNestedOneWithoutOptionsInput
+    votes?: PollVoteCreateNestedManyWithoutOptionInput
+  }
+
+  export type PollOptionUncheckedCreateInput = {
+    id?: string
+    pollId: string
+    text: string
+    votes?: PollVoteUncheckedCreateNestedManyWithoutOptionInput
+  }
+
+  export type PollOptionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    poll?: PollUpdateOneRequiredWithoutOptionsNestedInput
+    votes?: PollVoteUpdateManyWithoutOptionNestedInput
+  }
+
+  export type PollOptionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pollId?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    votes?: PollVoteUncheckedUpdateManyWithoutOptionNestedInput
+  }
+
+  export type PollOptionCreateManyInput = {
+    id?: string
+    pollId: string
+    text: string
+  }
+
+  export type PollOptionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollOptionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pollId?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollVoteCreateInput = {
+    id?: string
+    userId: string
+    option: PollOptionCreateNestedOneWithoutVotesInput
+  }
+
+  export type PollVoteUncheckedCreateInput = {
+    id?: string
+    userId: string
+    optionId: string
+  }
+
+  export type PollVoteUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    option?: PollOptionUpdateOneRequiredWithoutVotesNestedInput
+  }
+
+  export type PollVoteUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    optionId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollVoteCreateManyInput = {
+    id?: string
+    userId: string
+    optionId: string
+  }
+
+  export type PollVoteUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollVoteUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    optionId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ReadingProgressCreateInput = {
+    id?: string
+    storyId: string
+    chapterId: string
+    percentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutReadingProgressInput
+  }
+
+  export type ReadingProgressUncheckedCreateInput = {
+    id?: string
+    userId: string
+    storyId: string
+    chapterId: string
+    percentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReadingProgressUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutReadingProgressNestedInput
+  }
+
+  export type ReadingProgressUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReadingProgressCreateManyInput = {
+    id?: string
+    userId: string
+    storyId: string
+    chapterId: string
+    percentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReadingProgressUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReadingProgressUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -46215,6 +51507,12 @@ export namespace Prisma {
     none?: SubscriptionTransactionWhereInput
   }
 
+  export type ReadingProgressListRelationFilter = {
+    every?: ReadingProgressWhereInput
+    some?: ReadingProgressWhereInput
+    none?: ReadingProgressWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -46321,6 +51619,10 @@ export namespace Prisma {
   }
 
   export type SubscriptionTransactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ReadingProgressOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -46829,6 +52131,16 @@ export namespace Prisma {
   export type StoryScalarRelationFilter = {
     is?: StoryWhereInput
     isNot?: StoryWhereInput
+  }
+
+  export type PollListRelationFilter = {
+    every?: PollWhereInput
+    some?: PollWhereInput
+    none?: PollWhereInput
+  }
+
+  export type PollOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type StoryChapterStoryIdChapterOrderCompoundUniqueInput = {
@@ -47921,6 +53233,152 @@ export namespace Prisma {
     amount?: SortOrder
   }
 
+  export type StoryChapterScalarRelationFilter = {
+    is?: StoryChapterWhereInput
+    isNot?: StoryChapterWhereInput
+  }
+
+  export type PollOptionListRelationFilter = {
+    every?: PollOptionWhereInput
+    some?: PollOptionWhereInput
+    none?: PollOptionWhereInput
+  }
+
+  export type PollOptionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PollCountOrderByAggregateInput = {
+    id?: SortOrder
+    chapterId?: SortOrder
+    question?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PollMaxOrderByAggregateInput = {
+    id?: SortOrder
+    chapterId?: SortOrder
+    question?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PollMinOrderByAggregateInput = {
+    id?: SortOrder
+    chapterId?: SortOrder
+    question?: SortOrder
+    expiresAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PollScalarRelationFilter = {
+    is?: PollWhereInput
+    isNot?: PollWhereInput
+  }
+
+  export type PollVoteListRelationFilter = {
+    every?: PollVoteWhereInput
+    some?: PollVoteWhereInput
+    none?: PollVoteWhereInput
+  }
+
+  export type PollVoteOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PollOptionCountOrderByAggregateInput = {
+    id?: SortOrder
+    pollId?: SortOrder
+    text?: SortOrder
+  }
+
+  export type PollOptionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    pollId?: SortOrder
+    text?: SortOrder
+  }
+
+  export type PollOptionMinOrderByAggregateInput = {
+    id?: SortOrder
+    pollId?: SortOrder
+    text?: SortOrder
+  }
+
+  export type PollOptionScalarRelationFilter = {
+    is?: PollOptionWhereInput
+    isNot?: PollOptionWhereInput
+  }
+
+  export type PollVoteUserIdOptionIdCompoundUniqueInput = {
+    userId: string
+    optionId: string
+  }
+
+  export type PollVoteCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    optionId?: SortOrder
+  }
+
+  export type PollVoteMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    optionId?: SortOrder
+  }
+
+  export type PollVoteMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    optionId?: SortOrder
+  }
+
+  export type ReadingProgressUserIdStoryIdCompoundUniqueInput = {
+    userId: string
+    storyId: string
+  }
+
+  export type ReadingProgressCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    storyId?: SortOrder
+    chapterId?: SortOrder
+    percentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ReadingProgressAvgOrderByAggregateInput = {
+    percentage?: SortOrder
+  }
+
+  export type ReadingProgressMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    storyId?: SortOrder
+    chapterId?: SortOrder
+    percentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ReadingProgressMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    storyId?: SortOrder
+    chapterId?: SortOrder
+    percentage?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ReadingProgressSumOrderByAggregateInput = {
+    percentage?: SortOrder
+  }
+
   export type UserCreatesubGenresInput = {
     set: string[]
   }
@@ -48149,6 +53607,13 @@ export namespace Prisma {
     connect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
   }
 
+  export type ReadingProgressCreateNestedManyWithoutUserInput = {
+    create?: XOR<ReadingProgressCreateWithoutUserInput, ReadingProgressUncheckedCreateWithoutUserInput> | ReadingProgressCreateWithoutUserInput[] | ReadingProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ReadingProgressCreateOrConnectWithoutUserInput | ReadingProgressCreateOrConnectWithoutUserInput[]
+    createMany?: ReadingProgressCreateManyUserInputEnvelope
+    connect?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+  }
+
   export type BookUncheckedCreateNestedManyWithoutUploadedByInput = {
     create?: XOR<BookCreateWithoutUploadedByInput, BookUncheckedCreateWithoutUploadedByInput> | BookCreateWithoutUploadedByInput[] | BookUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: BookCreateOrConnectWithoutUploadedByInput | BookCreateOrConnectWithoutUploadedByInput[]
@@ -48363,6 +53828,13 @@ export namespace Prisma {
     connectOrCreate?: SubscriptionTransactionCreateOrConnectWithoutUserInput | SubscriptionTransactionCreateOrConnectWithoutUserInput[]
     createMany?: SubscriptionTransactionCreateManyUserInputEnvelope
     connect?: SubscriptionTransactionWhereUniqueInput | SubscriptionTransactionWhereUniqueInput[]
+  }
+
+  export type ReadingProgressUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ReadingProgressCreateWithoutUserInput, ReadingProgressUncheckedCreateWithoutUserInput> | ReadingProgressCreateWithoutUserInput[] | ReadingProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ReadingProgressCreateOrConnectWithoutUserInput | ReadingProgressCreateOrConnectWithoutUserInput[]
+    createMany?: ReadingProgressCreateManyUserInputEnvelope
+    connect?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -48846,6 +54318,20 @@ export namespace Prisma {
     deleteMany?: SubscriptionTransactionScalarWhereInput | SubscriptionTransactionScalarWhereInput[]
   }
 
+  export type ReadingProgressUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ReadingProgressCreateWithoutUserInput, ReadingProgressUncheckedCreateWithoutUserInput> | ReadingProgressCreateWithoutUserInput[] | ReadingProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ReadingProgressCreateOrConnectWithoutUserInput | ReadingProgressCreateOrConnectWithoutUserInput[]
+    upsert?: ReadingProgressUpsertWithWhereUniqueWithoutUserInput | ReadingProgressUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ReadingProgressCreateManyUserInputEnvelope
+    set?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    disconnect?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    delete?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    connect?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    update?: ReadingProgressUpdateWithWhereUniqueWithoutUserInput | ReadingProgressUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ReadingProgressUpdateManyWithWhereWithoutUserInput | ReadingProgressUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ReadingProgressScalarWhereInput | ReadingProgressScalarWhereInput[]
+  }
+
   export type BookUncheckedUpdateManyWithoutUploadedByNestedInput = {
     create?: XOR<BookCreateWithoutUploadedByInput, BookUncheckedCreateWithoutUploadedByInput> | BookCreateWithoutUploadedByInput[] | BookUncheckedCreateWithoutUploadedByInput[]
     connectOrCreate?: BookCreateOrConnectWithoutUploadedByInput | BookCreateOrConnectWithoutUploadedByInput[]
@@ -49274,6 +54760,20 @@ export namespace Prisma {
     update?: SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput | SubscriptionTransactionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: SubscriptionTransactionUpdateManyWithWhereWithoutUserInput | SubscriptionTransactionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: SubscriptionTransactionScalarWhereInput | SubscriptionTransactionScalarWhereInput[]
+  }
+
+  export type ReadingProgressUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ReadingProgressCreateWithoutUserInput, ReadingProgressUncheckedCreateWithoutUserInput> | ReadingProgressCreateWithoutUserInput[] | ReadingProgressUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ReadingProgressCreateOrConnectWithoutUserInput | ReadingProgressCreateOrConnectWithoutUserInput[]
+    upsert?: ReadingProgressUpsertWithWhereUniqueWithoutUserInput | ReadingProgressUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ReadingProgressCreateManyUserInputEnvelope
+    set?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    disconnect?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    delete?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    connect?: ReadingProgressWhereUniqueInput | ReadingProgressWhereUniqueInput[]
+    update?: ReadingProgressUpdateWithWhereUniqueWithoutUserInput | ReadingProgressUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ReadingProgressUpdateManyWithWhereWithoutUserInput | ReadingProgressUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ReadingProgressScalarWhereInput | ReadingProgressScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutNotificationsInput = {
@@ -49935,6 +55435,20 @@ export namespace Prisma {
     connect?: StoryWhereUniqueInput
   }
 
+  export type PollCreateNestedManyWithoutChapterInput = {
+    create?: XOR<PollCreateWithoutChapterInput, PollUncheckedCreateWithoutChapterInput> | PollCreateWithoutChapterInput[] | PollUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: PollCreateOrConnectWithoutChapterInput | PollCreateOrConnectWithoutChapterInput[]
+    createMany?: PollCreateManyChapterInputEnvelope
+    connect?: PollWhereUniqueInput | PollWhereUniqueInput[]
+  }
+
+  export type PollUncheckedCreateNestedManyWithoutChapterInput = {
+    create?: XOR<PollCreateWithoutChapterInput, PollUncheckedCreateWithoutChapterInput> | PollCreateWithoutChapterInput[] | PollUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: PollCreateOrConnectWithoutChapterInput | PollCreateOrConnectWithoutChapterInput[]
+    createMany?: PollCreateManyChapterInputEnvelope
+    connect?: PollWhereUniqueInput | PollWhereUniqueInput[]
+  }
+
   export type EnumChapterStatusFieldUpdateOperationsInput = {
     set?: $Enums.ChapterStatus
   }
@@ -49945,6 +55459,34 @@ export namespace Prisma {
     upsert?: StoryUpsertWithoutChaptersInput
     connect?: StoryWhereUniqueInput
     update?: XOR<XOR<StoryUpdateToOneWithWhereWithoutChaptersInput, StoryUpdateWithoutChaptersInput>, StoryUncheckedUpdateWithoutChaptersInput>
+  }
+
+  export type PollUpdateManyWithoutChapterNestedInput = {
+    create?: XOR<PollCreateWithoutChapterInput, PollUncheckedCreateWithoutChapterInput> | PollCreateWithoutChapterInput[] | PollUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: PollCreateOrConnectWithoutChapterInput | PollCreateOrConnectWithoutChapterInput[]
+    upsert?: PollUpsertWithWhereUniqueWithoutChapterInput | PollUpsertWithWhereUniqueWithoutChapterInput[]
+    createMany?: PollCreateManyChapterInputEnvelope
+    set?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    disconnect?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    delete?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    connect?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    update?: PollUpdateWithWhereUniqueWithoutChapterInput | PollUpdateWithWhereUniqueWithoutChapterInput[]
+    updateMany?: PollUpdateManyWithWhereWithoutChapterInput | PollUpdateManyWithWhereWithoutChapterInput[]
+    deleteMany?: PollScalarWhereInput | PollScalarWhereInput[]
+  }
+
+  export type PollUncheckedUpdateManyWithoutChapterNestedInput = {
+    create?: XOR<PollCreateWithoutChapterInput, PollUncheckedCreateWithoutChapterInput> | PollCreateWithoutChapterInput[] | PollUncheckedCreateWithoutChapterInput[]
+    connectOrCreate?: PollCreateOrConnectWithoutChapterInput | PollCreateOrConnectWithoutChapterInput[]
+    upsert?: PollUpsertWithWhereUniqueWithoutChapterInput | PollUpsertWithWhereUniqueWithoutChapterInput[]
+    createMany?: PollCreateManyChapterInputEnvelope
+    set?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    disconnect?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    delete?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    connect?: PollWhereUniqueInput | PollWhereUniqueInput[]
+    update?: PollUpdateWithWhereUniqueWithoutChapterInput | PollUpdateWithWhereUniqueWithoutChapterInput[]
+    updateMany?: PollUpdateManyWithWhereWithoutChapterInput | PollUpdateManyWithWhereWithoutChapterInput[]
+    deleteMany?: PollScalarWhereInput | PollScalarWhereInput[]
   }
 
   export type StoryCreateNestedOneWithoutReactionsInput = {
@@ -50875,6 +56417,146 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutSubscriptionTransactionsInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutSubscriptionTransactionsInput, UserUpdateWithoutSubscriptionTransactionsInput>, UserUncheckedUpdateWithoutSubscriptionTransactionsInput>
+  }
+
+  export type StoryChapterCreateNestedOneWithoutPollsInput = {
+    create?: XOR<StoryChapterCreateWithoutPollsInput, StoryChapterUncheckedCreateWithoutPollsInput>
+    connectOrCreate?: StoryChapterCreateOrConnectWithoutPollsInput
+    connect?: StoryChapterWhereUniqueInput
+  }
+
+  export type PollOptionCreateNestedManyWithoutPollInput = {
+    create?: XOR<PollOptionCreateWithoutPollInput, PollOptionUncheckedCreateWithoutPollInput> | PollOptionCreateWithoutPollInput[] | PollOptionUncheckedCreateWithoutPollInput[]
+    connectOrCreate?: PollOptionCreateOrConnectWithoutPollInput | PollOptionCreateOrConnectWithoutPollInput[]
+    createMany?: PollOptionCreateManyPollInputEnvelope
+    connect?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+  }
+
+  export type PollOptionUncheckedCreateNestedManyWithoutPollInput = {
+    create?: XOR<PollOptionCreateWithoutPollInput, PollOptionUncheckedCreateWithoutPollInput> | PollOptionCreateWithoutPollInput[] | PollOptionUncheckedCreateWithoutPollInput[]
+    connectOrCreate?: PollOptionCreateOrConnectWithoutPollInput | PollOptionCreateOrConnectWithoutPollInput[]
+    createMany?: PollOptionCreateManyPollInputEnvelope
+    connect?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+  }
+
+  export type StoryChapterUpdateOneRequiredWithoutPollsNestedInput = {
+    create?: XOR<StoryChapterCreateWithoutPollsInput, StoryChapterUncheckedCreateWithoutPollsInput>
+    connectOrCreate?: StoryChapterCreateOrConnectWithoutPollsInput
+    upsert?: StoryChapterUpsertWithoutPollsInput
+    connect?: StoryChapterWhereUniqueInput
+    update?: XOR<XOR<StoryChapterUpdateToOneWithWhereWithoutPollsInput, StoryChapterUpdateWithoutPollsInput>, StoryChapterUncheckedUpdateWithoutPollsInput>
+  }
+
+  export type PollOptionUpdateManyWithoutPollNestedInput = {
+    create?: XOR<PollOptionCreateWithoutPollInput, PollOptionUncheckedCreateWithoutPollInput> | PollOptionCreateWithoutPollInput[] | PollOptionUncheckedCreateWithoutPollInput[]
+    connectOrCreate?: PollOptionCreateOrConnectWithoutPollInput | PollOptionCreateOrConnectWithoutPollInput[]
+    upsert?: PollOptionUpsertWithWhereUniqueWithoutPollInput | PollOptionUpsertWithWhereUniqueWithoutPollInput[]
+    createMany?: PollOptionCreateManyPollInputEnvelope
+    set?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    disconnect?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    delete?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    connect?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    update?: PollOptionUpdateWithWhereUniqueWithoutPollInput | PollOptionUpdateWithWhereUniqueWithoutPollInput[]
+    updateMany?: PollOptionUpdateManyWithWhereWithoutPollInput | PollOptionUpdateManyWithWhereWithoutPollInput[]
+    deleteMany?: PollOptionScalarWhereInput | PollOptionScalarWhereInput[]
+  }
+
+  export type PollOptionUncheckedUpdateManyWithoutPollNestedInput = {
+    create?: XOR<PollOptionCreateWithoutPollInput, PollOptionUncheckedCreateWithoutPollInput> | PollOptionCreateWithoutPollInput[] | PollOptionUncheckedCreateWithoutPollInput[]
+    connectOrCreate?: PollOptionCreateOrConnectWithoutPollInput | PollOptionCreateOrConnectWithoutPollInput[]
+    upsert?: PollOptionUpsertWithWhereUniqueWithoutPollInput | PollOptionUpsertWithWhereUniqueWithoutPollInput[]
+    createMany?: PollOptionCreateManyPollInputEnvelope
+    set?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    disconnect?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    delete?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    connect?: PollOptionWhereUniqueInput | PollOptionWhereUniqueInput[]
+    update?: PollOptionUpdateWithWhereUniqueWithoutPollInput | PollOptionUpdateWithWhereUniqueWithoutPollInput[]
+    updateMany?: PollOptionUpdateManyWithWhereWithoutPollInput | PollOptionUpdateManyWithWhereWithoutPollInput[]
+    deleteMany?: PollOptionScalarWhereInput | PollOptionScalarWhereInput[]
+  }
+
+  export type PollCreateNestedOneWithoutOptionsInput = {
+    create?: XOR<PollCreateWithoutOptionsInput, PollUncheckedCreateWithoutOptionsInput>
+    connectOrCreate?: PollCreateOrConnectWithoutOptionsInput
+    connect?: PollWhereUniqueInput
+  }
+
+  export type PollVoteCreateNestedManyWithoutOptionInput = {
+    create?: XOR<PollVoteCreateWithoutOptionInput, PollVoteUncheckedCreateWithoutOptionInput> | PollVoteCreateWithoutOptionInput[] | PollVoteUncheckedCreateWithoutOptionInput[]
+    connectOrCreate?: PollVoteCreateOrConnectWithoutOptionInput | PollVoteCreateOrConnectWithoutOptionInput[]
+    createMany?: PollVoteCreateManyOptionInputEnvelope
+    connect?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+  }
+
+  export type PollVoteUncheckedCreateNestedManyWithoutOptionInput = {
+    create?: XOR<PollVoteCreateWithoutOptionInput, PollVoteUncheckedCreateWithoutOptionInput> | PollVoteCreateWithoutOptionInput[] | PollVoteUncheckedCreateWithoutOptionInput[]
+    connectOrCreate?: PollVoteCreateOrConnectWithoutOptionInput | PollVoteCreateOrConnectWithoutOptionInput[]
+    createMany?: PollVoteCreateManyOptionInputEnvelope
+    connect?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+  }
+
+  export type PollUpdateOneRequiredWithoutOptionsNestedInput = {
+    create?: XOR<PollCreateWithoutOptionsInput, PollUncheckedCreateWithoutOptionsInput>
+    connectOrCreate?: PollCreateOrConnectWithoutOptionsInput
+    upsert?: PollUpsertWithoutOptionsInput
+    connect?: PollWhereUniqueInput
+    update?: XOR<XOR<PollUpdateToOneWithWhereWithoutOptionsInput, PollUpdateWithoutOptionsInput>, PollUncheckedUpdateWithoutOptionsInput>
+  }
+
+  export type PollVoteUpdateManyWithoutOptionNestedInput = {
+    create?: XOR<PollVoteCreateWithoutOptionInput, PollVoteUncheckedCreateWithoutOptionInput> | PollVoteCreateWithoutOptionInput[] | PollVoteUncheckedCreateWithoutOptionInput[]
+    connectOrCreate?: PollVoteCreateOrConnectWithoutOptionInput | PollVoteCreateOrConnectWithoutOptionInput[]
+    upsert?: PollVoteUpsertWithWhereUniqueWithoutOptionInput | PollVoteUpsertWithWhereUniqueWithoutOptionInput[]
+    createMany?: PollVoteCreateManyOptionInputEnvelope
+    set?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    disconnect?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    delete?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    connect?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    update?: PollVoteUpdateWithWhereUniqueWithoutOptionInput | PollVoteUpdateWithWhereUniqueWithoutOptionInput[]
+    updateMany?: PollVoteUpdateManyWithWhereWithoutOptionInput | PollVoteUpdateManyWithWhereWithoutOptionInput[]
+    deleteMany?: PollVoteScalarWhereInput | PollVoteScalarWhereInput[]
+  }
+
+  export type PollVoteUncheckedUpdateManyWithoutOptionNestedInput = {
+    create?: XOR<PollVoteCreateWithoutOptionInput, PollVoteUncheckedCreateWithoutOptionInput> | PollVoteCreateWithoutOptionInput[] | PollVoteUncheckedCreateWithoutOptionInput[]
+    connectOrCreate?: PollVoteCreateOrConnectWithoutOptionInput | PollVoteCreateOrConnectWithoutOptionInput[]
+    upsert?: PollVoteUpsertWithWhereUniqueWithoutOptionInput | PollVoteUpsertWithWhereUniqueWithoutOptionInput[]
+    createMany?: PollVoteCreateManyOptionInputEnvelope
+    set?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    disconnect?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    delete?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    connect?: PollVoteWhereUniqueInput | PollVoteWhereUniqueInput[]
+    update?: PollVoteUpdateWithWhereUniqueWithoutOptionInput | PollVoteUpdateWithWhereUniqueWithoutOptionInput[]
+    updateMany?: PollVoteUpdateManyWithWhereWithoutOptionInput | PollVoteUpdateManyWithWhereWithoutOptionInput[]
+    deleteMany?: PollVoteScalarWhereInput | PollVoteScalarWhereInput[]
+  }
+
+  export type PollOptionCreateNestedOneWithoutVotesInput = {
+    create?: XOR<PollOptionCreateWithoutVotesInput, PollOptionUncheckedCreateWithoutVotesInput>
+    connectOrCreate?: PollOptionCreateOrConnectWithoutVotesInput
+    connect?: PollOptionWhereUniqueInput
+  }
+
+  export type PollOptionUpdateOneRequiredWithoutVotesNestedInput = {
+    create?: XOR<PollOptionCreateWithoutVotesInput, PollOptionUncheckedCreateWithoutVotesInput>
+    connectOrCreate?: PollOptionCreateOrConnectWithoutVotesInput
+    upsert?: PollOptionUpsertWithoutVotesInput
+    connect?: PollOptionWhereUniqueInput
+    update?: XOR<XOR<PollOptionUpdateToOneWithWhereWithoutVotesInput, PollOptionUpdateWithoutVotesInput>, PollOptionUncheckedUpdateWithoutVotesInput>
+  }
+
+  export type UserCreateNestedOneWithoutReadingProgressInput = {
+    create?: XOR<UserCreateWithoutReadingProgressInput, UserUncheckedCreateWithoutReadingProgressInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReadingProgressInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutReadingProgressNestedInput = {
+    create?: XOR<UserCreateWithoutReadingProgressInput, UserUncheckedCreateWithoutReadingProgressInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReadingProgressInput
+    upsert?: UserUpsertWithoutReadingProgressInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReadingProgressInput, UserUpdateWithoutReadingProgressInput>, UserUncheckedUpdateWithoutReadingProgressInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -52199,6 +57881,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ReadingProgressCreateWithoutUserInput = {
+    id?: string
+    storyId: string
+    chapterId: string
+    percentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReadingProgressUncheckedCreateWithoutUserInput = {
+    id?: string
+    storyId: string
+    chapterId: string
+    percentage?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReadingProgressCreateOrConnectWithoutUserInput = {
+    where: ReadingProgressWhereUniqueInput
+    create: XOR<ReadingProgressCreateWithoutUserInput, ReadingProgressUncheckedCreateWithoutUserInput>
+  }
+
+  export type ReadingProgressCreateManyUserInputEnvelope = {
+    data: ReadingProgressCreateManyUserInput | ReadingProgressCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type BookUpsertWithWhereUniqueWithoutUploadedByInput = {
     where: BookWhereUniqueInput
     update: XOR<BookUpdateWithoutUploadedByInput, BookUncheckedUpdateWithoutUploadedByInput>
@@ -53071,6 +58781,35 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"SubscriptionTransaction"> | Date | string
   }
 
+  export type ReadingProgressUpsertWithWhereUniqueWithoutUserInput = {
+    where: ReadingProgressWhereUniqueInput
+    update: XOR<ReadingProgressUpdateWithoutUserInput, ReadingProgressUncheckedUpdateWithoutUserInput>
+    create: XOR<ReadingProgressCreateWithoutUserInput, ReadingProgressUncheckedCreateWithoutUserInput>
+  }
+
+  export type ReadingProgressUpdateWithWhereUniqueWithoutUserInput = {
+    where: ReadingProgressWhereUniqueInput
+    data: XOR<ReadingProgressUpdateWithoutUserInput, ReadingProgressUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ReadingProgressUpdateManyWithWhereWithoutUserInput = {
+    where: ReadingProgressScalarWhereInput
+    data: XOR<ReadingProgressUpdateManyMutationInput, ReadingProgressUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ReadingProgressScalarWhereInput = {
+    AND?: ReadingProgressScalarWhereInput | ReadingProgressScalarWhereInput[]
+    OR?: ReadingProgressScalarWhereInput[]
+    NOT?: ReadingProgressScalarWhereInput | ReadingProgressScalarWhereInput[]
+    id?: StringFilter<"ReadingProgress"> | string
+    userId?: StringFilter<"ReadingProgress"> | string
+    storyId?: StringFilter<"ReadingProgress"> | string
+    chapterId?: StringFilter<"ReadingProgress"> | string
+    percentage?: FloatFilter<"ReadingProgress"> | number
+    createdAt?: DateTimeFilter<"ReadingProgress"> | Date | string
+    updatedAt?: DateTimeFilter<"ReadingProgress"> | Date | string
+  }
+
   export type UserCreateWithoutNotificationsInput = {
     id?: string
     firebaseUid: string
@@ -53122,6 +58861,7 @@ export namespace Prisma {
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -53175,6 +58915,7 @@ export namespace Prisma {
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -53244,6 +58985,7 @@ export namespace Prisma {
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -53297,6 +59039,7 @@ export namespace Prisma {
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutBooksInput = {
@@ -53350,6 +59093,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBooksInput = {
@@ -53403,6 +59147,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBooksInput = {
@@ -53586,6 +59331,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBooksInput = {
@@ -53639,6 +59385,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BookReviewUpsertWithWhereUniqueWithoutBookInput = {
@@ -53799,6 +59546,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBookReviewsInput = {
@@ -53852,6 +59600,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBookReviewsInput = {
@@ -53970,6 +59719,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookReviewsInput = {
@@ -54023,6 +59773,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BookCreateWithoutSavesInput = {
@@ -54119,6 +59870,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBookSavesInput = {
@@ -54172,6 +59924,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBookSavesInput = {
@@ -54290,6 +60043,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBookSavesInput = {
@@ -54343,6 +60097,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutStoriesInput = {
@@ -54396,6 +60151,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStoriesInput = {
@@ -54449,6 +60205,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStoriesInput = {
@@ -54492,6 +60249,7 @@ export namespace Prisma {
     status?: $Enums.ChapterStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    polls?: PollCreateNestedManyWithoutChapterInput
   }
 
   export type StoryChapterUncheckedCreateWithoutStoryInput = {
@@ -54503,6 +60261,7 @@ export namespace Prisma {
     status?: $Enums.ChapterStatus
     createdAt?: Date | string
     updatedAt?: Date | string
+    polls?: PollUncheckedCreateNestedManyWithoutChapterInput
   }
 
   export type StoryChapterCreateOrConnectWithoutStoryInput = {
@@ -54777,6 +60536,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStoriesInput = {
@@ -54830,6 +60590,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UniverseUpsertWithoutStoriesInput = {
@@ -55085,6 +60846,34 @@ export namespace Prisma {
     create: XOR<StoryCreateWithoutChaptersInput, StoryUncheckedCreateWithoutChaptersInput>
   }
 
+  export type PollCreateWithoutChapterInput = {
+    id?: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    options?: PollOptionCreateNestedManyWithoutPollInput
+  }
+
+  export type PollUncheckedCreateWithoutChapterInput = {
+    id?: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    options?: PollOptionUncheckedCreateNestedManyWithoutPollInput
+  }
+
+  export type PollCreateOrConnectWithoutChapterInput = {
+    where: PollWhereUniqueInput
+    create: XOR<PollCreateWithoutChapterInput, PollUncheckedCreateWithoutChapterInput>
+  }
+
+  export type PollCreateManyChapterInputEnvelope = {
+    data: PollCreateManyChapterInput | PollCreateManyChapterInput[]
+    skipDuplicates?: boolean
+  }
+
   export type StoryUpsertWithoutChaptersInput = {
     update: XOR<StoryUpdateWithoutChaptersInput, StoryUncheckedUpdateWithoutChaptersInput>
     create: XOR<StoryCreateWithoutChaptersInput, StoryUncheckedCreateWithoutChaptersInput>
@@ -55152,6 +60941,34 @@ export namespace Prisma {
     inlineComments?: InlineCommentUncheckedUpdateManyWithoutStoryNestedInput
     shareActivities?: ShareActivityUncheckedUpdateManyWithoutStoryNestedInput
     promotions?: StoryPromotionUncheckedUpdateManyWithoutStoryNestedInput
+  }
+
+  export type PollUpsertWithWhereUniqueWithoutChapterInput = {
+    where: PollWhereUniqueInput
+    update: XOR<PollUpdateWithoutChapterInput, PollUncheckedUpdateWithoutChapterInput>
+    create: XOR<PollCreateWithoutChapterInput, PollUncheckedCreateWithoutChapterInput>
+  }
+
+  export type PollUpdateWithWhereUniqueWithoutChapterInput = {
+    where: PollWhereUniqueInput
+    data: XOR<PollUpdateWithoutChapterInput, PollUncheckedUpdateWithoutChapterInput>
+  }
+
+  export type PollUpdateManyWithWhereWithoutChapterInput = {
+    where: PollScalarWhereInput
+    data: XOR<PollUpdateManyMutationInput, PollUncheckedUpdateManyWithoutChapterInput>
+  }
+
+  export type PollScalarWhereInput = {
+    AND?: PollScalarWhereInput | PollScalarWhereInput[]
+    OR?: PollScalarWhereInput[]
+    NOT?: PollScalarWhereInput | PollScalarWhereInput[]
+    id?: StringFilter<"Poll"> | string
+    chapterId?: StringFilter<"Poll"> | string
+    question?: StringFilter<"Poll"> | string
+    expiresAt?: DateTimeNullableFilter<"Poll"> | Date | string | null
+    createdAt?: DateTimeFilter<"Poll"> | Date | string
+    updatedAt?: DateTimeFilter<"Poll"> | Date | string
   }
 
   export type StoryCreateWithoutReactionsInput = {
@@ -55268,6 +61085,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutStoryReactionsInput = {
@@ -55321,6 +61139,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutStoryReactionsInput = {
@@ -55459,6 +61278,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutStoryReactionsInput = {
@@ -55512,6 +61332,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutCommentsInput = {
@@ -55565,6 +61386,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -55618,6 +61440,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -55852,6 +61675,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -55905,6 +61729,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryUpsertWithoutCommentsInput = {
@@ -56125,6 +61950,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowingInput = {
@@ -56178,6 +62004,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFollowingInput = {
@@ -56236,6 +62063,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutFollowersInput = {
@@ -56289,6 +62117,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutFollowersInput = {
@@ -56358,6 +62187,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFollowingInput = {
@@ -56411,6 +62241,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutFollowersInput = {
@@ -56475,6 +62306,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutFollowersInput = {
@@ -56528,6 +62360,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutReadingLogsInput = {
@@ -56581,6 +62414,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReadingLogsInput = {
@@ -56634,6 +62468,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReadingLogsInput = {
@@ -56703,6 +62538,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReadingLogsInput = {
@@ -56756,6 +62592,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserAchievementCreateWithoutAchievementInput = {
@@ -56847,6 +62684,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAchievementsInput = {
@@ -56900,6 +62738,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAchievementsInput = {
@@ -56992,6 +62831,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAchievementsInput = {
@@ -57045,6 +62885,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type AchievementUpsertWithoutUsersInput = {
@@ -57127,6 +62968,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubsOwnedInput = {
@@ -57180,6 +63022,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubsOwnedInput = {
@@ -57327,6 +63170,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubsOwnedInput = {
@@ -57380,6 +63224,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubMemberUpsertWithWhereUniqueWithoutClubInput = {
@@ -57518,6 +63363,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubMembershipsInput = {
@@ -57571,6 +63417,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubMembershipsInput = {
@@ -57683,6 +63530,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubMembershipsInput = {
@@ -57736,6 +63584,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubCreateWithoutBannedUsersInput = {
@@ -57826,6 +63675,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubBansInput = {
@@ -57879,6 +63729,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubBansInput = {
@@ -57991,6 +63842,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubBansInput = {
@@ -58044,6 +63896,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ClubCreateWithoutDiscussionsInput = {
@@ -58134,6 +63987,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutClubDiscussionsInput = {
@@ -58187,6 +64041,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutClubDiscussionsInput = {
@@ -58299,6 +64154,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutClubDiscussionsInput = {
@@ -58352,6 +64208,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryCreateWithoutBetaReadersInput = {
@@ -58468,6 +64325,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutBetaReadsInput = {
@@ -58521,6 +64379,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutBetaReadsInput = {
@@ -58659,6 +64518,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutBetaReadsInput = {
@@ -58712,6 +64572,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutNewsletterSubscribersInput = {
@@ -58765,6 +64626,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNewsletterSubscribersInput = {
@@ -58818,6 +64680,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNewsletterSubscribersInput = {
@@ -58876,6 +64739,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNewsletterSubsInput = {
@@ -58929,6 +64793,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNewsletterSubsInput = {
@@ -58998,6 +64863,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNewsletterSubscribersInput = {
@@ -59051,6 +64917,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutNewsletterSubsInput = {
@@ -59115,6 +64982,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNewsletterSubsInput = {
@@ -59168,6 +65036,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutTipsSentInput = {
@@ -59221,6 +65090,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTipsSentInput = {
@@ -59274,6 +65144,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTipsSentInput = {
@@ -59332,6 +65203,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTipsReceivedInput = {
@@ -59385,6 +65257,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTipsReceivedInput = {
@@ -59517,6 +65390,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTipsSentInput = {
@@ -59570,6 +65444,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutTipsReceivedInput = {
@@ -59634,6 +65509,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTipsReceivedInput = {
@@ -59687,6 +65563,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryUpsertWithoutTipsInput = {
@@ -59852,6 +65729,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAnnotationsInput = {
@@ -59905,6 +65783,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAnnotationsInput = {
@@ -60023,6 +65902,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAnnotationsInput = {
@@ -60076,6 +65956,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutScheduledChaptersInput = {
@@ -60129,6 +66010,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutScheduledChaptersInput = {
@@ -60182,6 +66064,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutScheduledChaptersInput = {
@@ -60251,6 +66134,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutScheduledChaptersInput = {
@@ -60304,6 +66188,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryCreateWithoutInlineCommentsInput = {
@@ -60420,6 +66305,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutInlineCommentsInput = {
@@ -60473,6 +66359,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutInlineCommentsInput = {
@@ -60674,6 +66561,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInlineCommentsInput = {
@@ -60727,6 +66615,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type InlineCommentUpsertWithoutRepliesInput = {
@@ -60894,6 +66783,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutShareActivitiesInput = {
@@ -60947,6 +66837,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutShareActivitiesInput = {
@@ -61085,6 +66976,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutShareActivitiesInput = {
@@ -61138,6 +67030,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutOnboardingQuizInput = {
@@ -61191,6 +67084,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutOnboardingQuizInput = {
@@ -61244,6 +67138,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutOnboardingQuizInput = {
@@ -61313,6 +67208,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOnboardingQuizInput = {
@@ -61366,6 +67262,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutContentReportsInput = {
@@ -61419,6 +67316,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutContentReportsInput = {
@@ -61472,6 +67370,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutContentReportsInput = {
@@ -61541,6 +67440,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutContentReportsInput = {
@@ -61594,6 +67494,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutDmcaNoticesInput = {
@@ -61647,6 +67548,7 @@ export namespace Prisma {
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDmcaNoticesInput = {
@@ -61700,6 +67602,7 @@ export namespace Prisma {
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDmcaNoticesInput = {
@@ -61769,6 +67672,7 @@ export namespace Prisma {
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDmcaNoticesInput = {
@@ -61822,6 +67726,7 @@ export namespace Prisma {
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryCreateWithoutPromotionsInput = {
@@ -62007,6 +67912,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGiftsSentInput = {
@@ -62060,6 +67966,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGiftsSentInput = {
@@ -62118,6 +68025,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutGiftsReceivedInput = {
@@ -62171,6 +68079,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutGiftsReceivedInput = {
@@ -62240,6 +68149,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGiftsSentInput = {
@@ -62293,6 +68203,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserUpsertWithoutGiftsReceivedInput = {
@@ -62357,6 +68268,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutGiftsReceivedInput = {
@@ -62410,6 +68322,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutUniversesInput = {
@@ -62463,6 +68376,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutUniversesInput = {
@@ -62516,6 +68430,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutUniversesInput = {
@@ -62653,6 +68568,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutUniversesInput = {
@@ -62706,6 +68622,7 @@ export namespace Prisma {
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type StoryUpsertWithWhereUniqueWithoutUniverseInput = {
@@ -62775,6 +68692,7 @@ export namespace Prisma {
     contentReports?: ContentReportCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSubscriptionTransactionsInput = {
@@ -62828,6 +68746,7 @@ export namespace Prisma {
     contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
     dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    readingProgress?: ReadingProgressUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSubscriptionTransactionsInput = {
@@ -62897,6 +68816,7 @@ export namespace Prisma {
     contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSubscriptionTransactionsInput = {
@@ -62950,6 +68870,487 @@ export namespace Prisma {
     contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
     dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    readingProgress?: ReadingProgressUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type StoryChapterCreateWithoutPollsInput = {
+    id?: string
+    title: string
+    content?: NullableJsonNullValueInput | InputJsonValue
+    chapterNumber: number
+    chapterOrder: number
+    status?: $Enums.ChapterStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    story: StoryCreateNestedOneWithoutChaptersInput
+  }
+
+  export type StoryChapterUncheckedCreateWithoutPollsInput = {
+    id?: string
+    storyId: string
+    title: string
+    content?: NullableJsonNullValueInput | InputJsonValue
+    chapterNumber: number
+    chapterOrder: number
+    status?: $Enums.ChapterStatus
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StoryChapterCreateOrConnectWithoutPollsInput = {
+    where: StoryChapterWhereUniqueInput
+    create: XOR<StoryChapterCreateWithoutPollsInput, StoryChapterUncheckedCreateWithoutPollsInput>
+  }
+
+  export type PollOptionCreateWithoutPollInput = {
+    id?: string
+    text: string
+    votes?: PollVoteCreateNestedManyWithoutOptionInput
+  }
+
+  export type PollOptionUncheckedCreateWithoutPollInput = {
+    id?: string
+    text: string
+    votes?: PollVoteUncheckedCreateNestedManyWithoutOptionInput
+  }
+
+  export type PollOptionCreateOrConnectWithoutPollInput = {
+    where: PollOptionWhereUniqueInput
+    create: XOR<PollOptionCreateWithoutPollInput, PollOptionUncheckedCreateWithoutPollInput>
+  }
+
+  export type PollOptionCreateManyPollInputEnvelope = {
+    data: PollOptionCreateManyPollInput | PollOptionCreateManyPollInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type StoryChapterUpsertWithoutPollsInput = {
+    update: XOR<StoryChapterUpdateWithoutPollsInput, StoryChapterUncheckedUpdateWithoutPollsInput>
+    create: XOR<StoryChapterCreateWithoutPollsInput, StoryChapterUncheckedCreateWithoutPollsInput>
+    where?: StoryChapterWhereInput
+  }
+
+  export type StoryChapterUpdateToOneWithWhereWithoutPollsInput = {
+    where?: StoryChapterWhereInput
+    data: XOR<StoryChapterUpdateWithoutPollsInput, StoryChapterUncheckedUpdateWithoutPollsInput>
+  }
+
+  export type StoryChapterUpdateWithoutPollsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableJsonNullValueInput | InputJsonValue
+    chapterNumber?: IntFieldUpdateOperationsInput | number
+    chapterOrder?: IntFieldUpdateOperationsInput | number
+    status?: EnumChapterStatusFieldUpdateOperationsInput | $Enums.ChapterStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: StoryUpdateOneRequiredWithoutChaptersNestedInput
+  }
+
+  export type StoryChapterUncheckedUpdateWithoutPollsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: NullableJsonNullValueInput | InputJsonValue
+    chapterNumber?: IntFieldUpdateOperationsInput | number
+    chapterOrder?: IntFieldUpdateOperationsInput | number
+    status?: EnumChapterStatusFieldUpdateOperationsInput | $Enums.ChapterStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PollOptionUpsertWithWhereUniqueWithoutPollInput = {
+    where: PollOptionWhereUniqueInput
+    update: XOR<PollOptionUpdateWithoutPollInput, PollOptionUncheckedUpdateWithoutPollInput>
+    create: XOR<PollOptionCreateWithoutPollInput, PollOptionUncheckedCreateWithoutPollInput>
+  }
+
+  export type PollOptionUpdateWithWhereUniqueWithoutPollInput = {
+    where: PollOptionWhereUniqueInput
+    data: XOR<PollOptionUpdateWithoutPollInput, PollOptionUncheckedUpdateWithoutPollInput>
+  }
+
+  export type PollOptionUpdateManyWithWhereWithoutPollInput = {
+    where: PollOptionScalarWhereInput
+    data: XOR<PollOptionUpdateManyMutationInput, PollOptionUncheckedUpdateManyWithoutPollInput>
+  }
+
+  export type PollOptionScalarWhereInput = {
+    AND?: PollOptionScalarWhereInput | PollOptionScalarWhereInput[]
+    OR?: PollOptionScalarWhereInput[]
+    NOT?: PollOptionScalarWhereInput | PollOptionScalarWhereInput[]
+    id?: StringFilter<"PollOption"> | string
+    pollId?: StringFilter<"PollOption"> | string
+    text?: StringFilter<"PollOption"> | string
+  }
+
+  export type PollCreateWithoutOptionsInput = {
+    id?: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    chapter: StoryChapterCreateNestedOneWithoutPollsInput
+  }
+
+  export type PollUncheckedCreateWithoutOptionsInput = {
+    id?: string
+    chapterId: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PollCreateOrConnectWithoutOptionsInput = {
+    where: PollWhereUniqueInput
+    create: XOR<PollCreateWithoutOptionsInput, PollUncheckedCreateWithoutOptionsInput>
+  }
+
+  export type PollVoteCreateWithoutOptionInput = {
+    id?: string
+    userId: string
+  }
+
+  export type PollVoteUncheckedCreateWithoutOptionInput = {
+    id?: string
+    userId: string
+  }
+
+  export type PollVoteCreateOrConnectWithoutOptionInput = {
+    where: PollVoteWhereUniqueInput
+    create: XOR<PollVoteCreateWithoutOptionInput, PollVoteUncheckedCreateWithoutOptionInput>
+  }
+
+  export type PollVoteCreateManyOptionInputEnvelope = {
+    data: PollVoteCreateManyOptionInput | PollVoteCreateManyOptionInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PollUpsertWithoutOptionsInput = {
+    update: XOR<PollUpdateWithoutOptionsInput, PollUncheckedUpdateWithoutOptionsInput>
+    create: XOR<PollCreateWithoutOptionsInput, PollUncheckedCreateWithoutOptionsInput>
+    where?: PollWhereInput
+  }
+
+  export type PollUpdateToOneWithWhereWithoutOptionsInput = {
+    where?: PollWhereInput
+    data: XOR<PollUpdateWithoutOptionsInput, PollUncheckedUpdateWithoutOptionsInput>
+  }
+
+  export type PollUpdateWithoutOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    chapter?: StoryChapterUpdateOneRequiredWithoutPollsNestedInput
+  }
+
+  export type PollUncheckedUpdateWithoutOptionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PollVoteUpsertWithWhereUniqueWithoutOptionInput = {
+    where: PollVoteWhereUniqueInput
+    update: XOR<PollVoteUpdateWithoutOptionInput, PollVoteUncheckedUpdateWithoutOptionInput>
+    create: XOR<PollVoteCreateWithoutOptionInput, PollVoteUncheckedCreateWithoutOptionInput>
+  }
+
+  export type PollVoteUpdateWithWhereUniqueWithoutOptionInput = {
+    where: PollVoteWhereUniqueInput
+    data: XOR<PollVoteUpdateWithoutOptionInput, PollVoteUncheckedUpdateWithoutOptionInput>
+  }
+
+  export type PollVoteUpdateManyWithWhereWithoutOptionInput = {
+    where: PollVoteScalarWhereInput
+    data: XOR<PollVoteUpdateManyMutationInput, PollVoteUncheckedUpdateManyWithoutOptionInput>
+  }
+
+  export type PollVoteScalarWhereInput = {
+    AND?: PollVoteScalarWhereInput | PollVoteScalarWhereInput[]
+    OR?: PollVoteScalarWhereInput[]
+    NOT?: PollVoteScalarWhereInput | PollVoteScalarWhereInput[]
+    id?: StringFilter<"PollVote"> | string
+    userId?: StringFilter<"PollVote"> | string
+    optionId?: StringFilter<"PollVote"> | string
+  }
+
+  export type PollOptionCreateWithoutVotesInput = {
+    id?: string
+    text: string
+    poll: PollCreateNestedOneWithoutOptionsInput
+  }
+
+  export type PollOptionUncheckedCreateWithoutVotesInput = {
+    id?: string
+    pollId: string
+    text: string
+  }
+
+  export type PollOptionCreateOrConnectWithoutVotesInput = {
+    where: PollOptionWhereUniqueInput
+    create: XOR<PollOptionCreateWithoutVotesInput, PollOptionUncheckedCreateWithoutVotesInput>
+  }
+
+  export type PollOptionUpsertWithoutVotesInput = {
+    update: XOR<PollOptionUpdateWithoutVotesInput, PollOptionUncheckedUpdateWithoutVotesInput>
+    create: XOR<PollOptionCreateWithoutVotesInput, PollOptionUncheckedCreateWithoutVotesInput>
+    where?: PollOptionWhereInput
+  }
+
+  export type PollOptionUpdateToOneWithWhereWithoutVotesInput = {
+    where?: PollOptionWhereInput
+    data: XOR<PollOptionUpdateWithoutVotesInput, PollOptionUncheckedUpdateWithoutVotesInput>
+  }
+
+  export type PollOptionUpdateWithoutVotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    poll?: PollUpdateOneRequiredWithoutOptionsNestedInput
+  }
+
+  export type PollOptionUncheckedUpdateWithoutVotesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    pollId?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type UserCreateWithoutReadingProgressInput = {
+    id?: string
+    firebaseUid: string
+    email: string
+    username: string
+    displayName?: string | null
+    avatarUrl?: string | null
+    bio?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dateOfBirth?: Date | string | null
+    membershipTier?: string | null
+    membershipExpiry?: Date | string | null
+    subGenres?: UserCreatesubGenresInput | string[]
+    mood?: string | null
+    contentWarnings?: UserCreatecontentWarningsInput | string[]
+    ageRating?: number | null
+    tags?: UserCreatetagsInput | string[]
+    reactionCount?: number
+    description?: string | null
+    books?: BookCreateNestedManyWithoutUploadedByInput
+    bookReviews?: BookReviewCreateNestedManyWithoutUserInput
+    bookSaves?: BookSaveCreateNestedManyWithoutUserInput
+    universes?: UniverseCreateNestedManyWithoutUserInput
+    stories?: StoryCreateNestedManyWithoutAuthorInput
+    storyReactions?: StoryReactionCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutAuthorInput
+    followers?: FollowCreateNestedManyWithoutFollowingInput
+    following?: FollowCreateNestedManyWithoutFollowerInput
+    readingLogs?: ReadingLogCreateNestedManyWithoutUserInput
+    achievements?: UserAchievementCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMemberCreateNestedManyWithoutUserInput
+    clubDiscussions?: ClubDiscussionCreateNestedManyWithoutAuthorInput
+    clubsOwned?: ClubCreateNestedManyWithoutOwnerInput
+    clubBans?: ClubBanCreateNestedManyWithoutUserInput
+    betaReads?: BetaReaderCreateNestedManyWithoutUserInput
+    newsletterSubscribers?: NewsletterSubscriberCreateNestedManyWithoutAuthorInput
+    newsletterSubs?: NewsletterSubscriberCreateNestedManyWithoutSubscriberInput
+    tipsSent?: TipCreateNestedManyWithoutSenderInput
+    tipsReceived?: TipCreateNestedManyWithoutReceiverInput
+    annotations?: BookAnnotationCreateNestedManyWithoutUserInput
+    scheduledChapters?: ScheduledChapterCreateNestedManyWithoutUserInput
+    inlineComments?: InlineCommentCreateNestedManyWithoutAuthorInput
+    shareActivities?: ShareActivityCreateNestedManyWithoutUserInput
+    giftsSent?: GiftMembershipCreateNestedManyWithoutSentByUserInput
+    giftsReceived?: GiftMembershipCreateNestedManyWithoutRedeemedByUserInput
+    onboardingQuiz?: OnboardingQuizCreateNestedOneWithoutUserInput
+    contentReports?: ContentReportCreateNestedManyWithoutReporterInput
+    dmcaNotices?: DMCANoticeCreateNestedManyWithoutSubmittedByUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutReadingProgressInput = {
+    id?: string
+    firebaseUid: string
+    email: string
+    username: string
+    displayName?: string | null
+    avatarUrl?: string | null
+    bio?: string | null
+    role?: $Enums.Role
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    dateOfBirth?: Date | string | null
+    membershipTier?: string | null
+    membershipExpiry?: Date | string | null
+    subGenres?: UserCreatesubGenresInput | string[]
+    mood?: string | null
+    contentWarnings?: UserCreatecontentWarningsInput | string[]
+    ageRating?: number | null
+    tags?: UserCreatetagsInput | string[]
+    reactionCount?: number
+    description?: string | null
+    books?: BookUncheckedCreateNestedManyWithoutUploadedByInput
+    bookReviews?: BookReviewUncheckedCreateNestedManyWithoutUserInput
+    bookSaves?: BookSaveUncheckedCreateNestedManyWithoutUserInput
+    universes?: UniverseUncheckedCreateNestedManyWithoutUserInput
+    stories?: StoryUncheckedCreateNestedManyWithoutAuthorInput
+    storyReactions?: StoryReactionUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutAuthorInput
+    followers?: FollowUncheckedCreateNestedManyWithoutFollowingInput
+    following?: FollowUncheckedCreateNestedManyWithoutFollowerInput
+    readingLogs?: ReadingLogUncheckedCreateNestedManyWithoutUserInput
+    achievements?: UserAchievementUncheckedCreateNestedManyWithoutUserInput
+    clubMemberships?: ClubMemberUncheckedCreateNestedManyWithoutUserInput
+    clubDiscussions?: ClubDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    clubsOwned?: ClubUncheckedCreateNestedManyWithoutOwnerInput
+    clubBans?: ClubBanUncheckedCreateNestedManyWithoutUserInput
+    betaReads?: BetaReaderUncheckedCreateNestedManyWithoutUserInput
+    newsletterSubscribers?: NewsletterSubscriberUncheckedCreateNestedManyWithoutAuthorInput
+    newsletterSubs?: NewsletterSubscriberUncheckedCreateNestedManyWithoutSubscriberInput
+    tipsSent?: TipUncheckedCreateNestedManyWithoutSenderInput
+    tipsReceived?: TipUncheckedCreateNestedManyWithoutReceiverInput
+    annotations?: BookAnnotationUncheckedCreateNestedManyWithoutUserInput
+    scheduledChapters?: ScheduledChapterUncheckedCreateNestedManyWithoutUserInput
+    inlineComments?: InlineCommentUncheckedCreateNestedManyWithoutAuthorInput
+    shareActivities?: ShareActivityUncheckedCreateNestedManyWithoutUserInput
+    giftsSent?: GiftMembershipUncheckedCreateNestedManyWithoutSentByUserInput
+    giftsReceived?: GiftMembershipUncheckedCreateNestedManyWithoutRedeemedByUserInput
+    onboardingQuiz?: OnboardingQuizUncheckedCreateNestedOneWithoutUserInput
+    contentReports?: ContentReportUncheckedCreateNestedManyWithoutReporterInput
+    dmcaNotices?: DMCANoticeUncheckedCreateNestedManyWithoutSubmittedByUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutReadingProgressInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReadingProgressInput, UserUncheckedCreateWithoutReadingProgressInput>
+  }
+
+  export type UserUpsertWithoutReadingProgressInput = {
+    update: XOR<UserUpdateWithoutReadingProgressInput, UserUncheckedUpdateWithoutReadingProgressInput>
+    create: XOR<UserCreateWithoutReadingProgressInput, UserUncheckedCreateWithoutReadingProgressInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReadingProgressInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReadingProgressInput, UserUncheckedUpdateWithoutReadingProgressInput>
+  }
+
+  export type UserUpdateWithoutReadingProgressInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firebaseUid?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
+    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subGenres?: UserUpdatesubGenresInput | string[]
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    contentWarnings?: UserUpdatecontentWarningsInput | string[]
+    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: UserUpdatetagsInput | string[]
+    reactionCount?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    books?: BookUpdateManyWithoutUploadedByNestedInput
+    bookReviews?: BookReviewUpdateManyWithoutUserNestedInput
+    bookSaves?: BookSaveUpdateManyWithoutUserNestedInput
+    universes?: UniverseUpdateManyWithoutUserNestedInput
+    stories?: StoryUpdateManyWithoutAuthorNestedInput
+    storyReactions?: StoryReactionUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutAuthorNestedInput
+    followers?: FollowUpdateManyWithoutFollowingNestedInput
+    following?: FollowUpdateManyWithoutFollowerNestedInput
+    readingLogs?: ReadingLogUpdateManyWithoutUserNestedInput
+    achievements?: UserAchievementUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMemberUpdateManyWithoutUserNestedInput
+    clubDiscussions?: ClubDiscussionUpdateManyWithoutAuthorNestedInput
+    clubsOwned?: ClubUpdateManyWithoutOwnerNestedInput
+    clubBans?: ClubBanUpdateManyWithoutUserNestedInput
+    betaReads?: BetaReaderUpdateManyWithoutUserNestedInput
+    newsletterSubscribers?: NewsletterSubscriberUpdateManyWithoutAuthorNestedInput
+    newsletterSubs?: NewsletterSubscriberUpdateManyWithoutSubscriberNestedInput
+    tipsSent?: TipUpdateManyWithoutSenderNestedInput
+    tipsReceived?: TipUpdateManyWithoutReceiverNestedInput
+    annotations?: BookAnnotationUpdateManyWithoutUserNestedInput
+    scheduledChapters?: ScheduledChapterUpdateManyWithoutUserNestedInput
+    inlineComments?: InlineCommentUpdateManyWithoutAuthorNestedInput
+    shareActivities?: ShareActivityUpdateManyWithoutUserNestedInput
+    giftsSent?: GiftMembershipUpdateManyWithoutSentByUserNestedInput
+    giftsReceived?: GiftMembershipUpdateManyWithoutRedeemedByUserNestedInput
+    onboardingQuiz?: OnboardingQuizUpdateOneWithoutUserNestedInput
+    contentReports?: ContentReportUpdateManyWithoutReporterNestedInput
+    dmcaNotices?: DMCANoticeUpdateManyWithoutSubmittedByUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReadingProgressInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    firebaseUid?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    dateOfBirth?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    membershipTier?: NullableStringFieldUpdateOperationsInput | string | null
+    membershipExpiry?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    subGenres?: UserUpdatesubGenresInput | string[]
+    mood?: NullableStringFieldUpdateOperationsInput | string | null
+    contentWarnings?: UserUpdatecontentWarningsInput | string[]
+    ageRating?: NullableIntFieldUpdateOperationsInput | number | null
+    tags?: UserUpdatetagsInput | string[]
+    reactionCount?: IntFieldUpdateOperationsInput | number
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    books?: BookUncheckedUpdateManyWithoutUploadedByNestedInput
+    bookReviews?: BookReviewUncheckedUpdateManyWithoutUserNestedInput
+    bookSaves?: BookSaveUncheckedUpdateManyWithoutUserNestedInput
+    universes?: UniverseUncheckedUpdateManyWithoutUserNestedInput
+    stories?: StoryUncheckedUpdateManyWithoutAuthorNestedInput
+    storyReactions?: StoryReactionUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutAuthorNestedInput
+    followers?: FollowUncheckedUpdateManyWithoutFollowingNestedInput
+    following?: FollowUncheckedUpdateManyWithoutFollowerNestedInput
+    readingLogs?: ReadingLogUncheckedUpdateManyWithoutUserNestedInput
+    achievements?: UserAchievementUncheckedUpdateManyWithoutUserNestedInput
+    clubMemberships?: ClubMemberUncheckedUpdateManyWithoutUserNestedInput
+    clubDiscussions?: ClubDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    clubsOwned?: ClubUncheckedUpdateManyWithoutOwnerNestedInput
+    clubBans?: ClubBanUncheckedUpdateManyWithoutUserNestedInput
+    betaReads?: BetaReaderUncheckedUpdateManyWithoutUserNestedInput
+    newsletterSubscribers?: NewsletterSubscriberUncheckedUpdateManyWithoutAuthorNestedInput
+    newsletterSubs?: NewsletterSubscriberUncheckedUpdateManyWithoutSubscriberNestedInput
+    tipsSent?: TipUncheckedUpdateManyWithoutSenderNestedInput
+    tipsReceived?: TipUncheckedUpdateManyWithoutReceiverNestedInput
+    annotations?: BookAnnotationUncheckedUpdateManyWithoutUserNestedInput
+    scheduledChapters?: ScheduledChapterUncheckedUpdateManyWithoutUserNestedInput
+    inlineComments?: InlineCommentUncheckedUpdateManyWithoutAuthorNestedInput
+    shareActivities?: ShareActivityUncheckedUpdateManyWithoutUserNestedInput
+    giftsSent?: GiftMembershipUncheckedUpdateManyWithoutSentByUserNestedInput
+    giftsReceived?: GiftMembershipUncheckedUpdateManyWithoutRedeemedByUserNestedInput
+    onboardingQuiz?: OnboardingQuizUncheckedUpdateOneWithoutUserNestedInput
+    contentReports?: ContentReportUncheckedUpdateManyWithoutReporterNestedInput
+    dmcaNotices?: DMCANoticeUncheckedUpdateManyWithoutSubmittedByUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    subscriptionTransactions?: SubscriptionTransactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type BookCreateManyUploadedByInput = {
@@ -63243,6 +69644,15 @@ export namespace Prisma {
     senderNumber: string
     transactionId: string
     status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ReadingProgressCreateManyUserInput = {
+    id?: string
+    storyId: string
+    chapterId: string
+    percentage?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -64168,6 +70578,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ReadingProgressUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReadingProgressUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ReadingProgressUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    storyId?: StringFieldUpdateOperationsInput | string
+    chapterId?: StringFieldUpdateOperationsInput | string
+    percentage?: FloatFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type BookReviewCreateManyBookInput = {
     id?: string
     userId: string
@@ -64397,6 +70834,7 @@ export namespace Prisma {
     status?: EnumChapterStatusFieldUpdateOperationsInput | $Enums.ChapterStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    polls?: PollUpdateManyWithoutChapterNestedInput
   }
 
   export type StoryChapterUncheckedUpdateWithoutStoryInput = {
@@ -64408,6 +70846,7 @@ export namespace Prisma {
     status?: EnumChapterStatusFieldUpdateOperationsInput | $Enums.ChapterStatus
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    polls?: PollUncheckedUpdateManyWithoutChapterNestedInput
   }
 
   export type StoryChapterUncheckedUpdateManyWithoutStoryInput = {
@@ -64612,6 +71051,40 @@ export namespace Prisma {
     cost?: FloatFieldUpdateOperationsInput | number
     status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PollCreateManyChapterInput = {
+    id?: string
+    question: string
+    expiresAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PollUpdateWithoutChapterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    options?: PollOptionUpdateManyWithoutPollNestedInput
+  }
+
+  export type PollUncheckedUpdateWithoutChapterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    options?: PollOptionUncheckedUpdateManyWithoutPollNestedInput
+  }
+
+  export type PollUncheckedUpdateManyWithoutChapterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    question?: StringFieldUpdateOperationsInput | string
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentCreateManyParentInput = {
@@ -64920,6 +71393,48 @@ export namespace Prisma {
     tags?: StoryUpdatetagsInput | string[]
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PollOptionCreateManyPollInput = {
+    id?: string
+    text: string
+  }
+
+  export type PollOptionUpdateWithoutPollInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    votes?: PollVoteUpdateManyWithoutOptionNestedInput
+  }
+
+  export type PollOptionUncheckedUpdateWithoutPollInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+    votes?: PollVoteUncheckedUpdateManyWithoutOptionNestedInput
+  }
+
+  export type PollOptionUncheckedUpdateManyWithoutPollInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    text?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollVoteCreateManyOptionInput = {
+    id?: string
+    userId: string
+  }
+
+  export type PollVoteUpdateWithoutOptionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollVoteUncheckedUpdateWithoutOptionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type PollVoteUncheckedUpdateManyWithoutOptionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
 

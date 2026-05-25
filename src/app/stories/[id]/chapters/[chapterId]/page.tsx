@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { generateHTML } from "@tiptap/html";
@@ -11,6 +12,9 @@ import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
 import { TTSPlayer } from "@/components/stories/TTSPlayer";
 import { ChapterInlineComments } from "@/components/stories/ChapterInlineComments";
+import { ReadingProgressTracker } from "@/components/stories/ReadingProgressTracker";
+import { ChapterPollManager } from "@/components/stories/ChapterPollManager";
+import { adminAuth } from "@/lib/firebase-admin";
 
 interface ChapterReaderPageProps {
   params: Promise<{ id: string; chapterId: string; }>;
@@ -30,8 +34,41 @@ function renderChapterContent(content: unknown) {
   }
 }
 
+function estimateReadingTime(content: any): number {
+  if (!content) return 1;
+  
+  function countWords(node: any): number {
+    if (!node) return 0;
+    let clientWordCount = 0;
+    if (node.type === "text" && typeof node.text === "string") {
+      clientWordCount += node.text.trim().split(/\s+/).filter(Boolean).length;
+    }
+    if (node.content && Array.isArray(node.content)) {
+      for (const child of node.content) {
+        clientWordCount += countWords(child);
+      }
+    }
+    return clientWordCount;
+  }
+
+  const words = countWords(content);
+  return Math.max(1, Math.ceil(words / 200));
+}
+
+async function getCurrentUserId() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("firebase-token")?.value;
+    if (!token) return null;
+    const decoded = await adminAuth.verifyIdToken(token);
+    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
+    return user?.id ?? null;
+  } catch { return null; }
+}
+
 export default async function ChapterReaderPage({ params }: ChapterReaderPageProps) {
   const { id: storyId, chapterId } = await params;
+  const currentUserId = await getCurrentUserId();
 
   const chapter = await prisma.storyChapter.findUnique({
     where: { id: chapterId },
@@ -41,6 +78,9 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
   });
 
   if (!chapter || chapter.storyId !== storyId || !chapter.story.published) notFound();
+
+  const isAuthor = currentUserId === chapter.story.authorId;
+  const readTime = estimateReadingTime(chapter.content);
 
   const siblings = await prisma.storyChapter.findMany({
     where: { storyId },
@@ -75,8 +115,11 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
             <div>
               <h1 className="text-2xl font-bold tracking-tight mb-2">{chapter.title}</h1>
               <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
-                <Clock className="w-3 h-3" />
+                <Clock className="w-3 h-3 text-zinc-450" />
                 Updated {formatDate(chapter.updatedAt)}
+                <span className="text-zinc-600 dark:text-zinc-800">•</span>
+                <Clock className="w-3 h-3 text-blue-500" />
+                <span className="text-blue-500">{readTime} min read</span>
               </div>
             </div>
           </div>
@@ -91,6 +134,12 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
             <p className="text-xs font-medium text-zinc-400 italic">No narrative data transmitted for this record.</p>
           )}
         </article>
+
+        {currentUserId && (
+          <ReadingProgressTracker storyId={storyId} chapterId={chapterId} />
+        )}
+
+        <ChapterPollManager storyId={storyId} chapterId={chapterId} isAuthor={isAuthor} userId={currentUserId} />
 
         <ChapterInlineComments storyId={storyId} chapterId={chapterId} />
 

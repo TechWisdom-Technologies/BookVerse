@@ -2,6 +2,19 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { BookGrid } from "@/components/books/BookGrid";
 import type { Book } from "@prisma/client";
+import { cookies } from "next/headers";
+import { adminAuth } from "@/lib/firebase-admin";
+
+async function getCurrentUserId() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("firebase-token")?.value;
+    if (!token) return null;
+    const decoded = await adminAuth.verifyIdToken(token);
+    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
+    return user?.id ?? null;
+  } catch { return null; }
+}
 import {
   BookOpen,
   Search,
