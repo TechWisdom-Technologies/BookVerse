@@ -9,9 +9,10 @@ import { CommentSection } from "@/components/comments/CommentSection";
 import { ReactionBar } from "@/components/stories/ReactionBar";
 import { StoryViewTracker } from "@/components/stories/StoryViewTracker";
 import { TipAuthorDialog } from "@/components/stories/TipAuthorDialog";
-import { StoryFeatureActions } from "@/components/stories/StoryFeatureActions";
+import { StorySharingActions } from "@/components/stories/StorySharingActions";
 import { PromotionBadge } from "@/components/promotions/PromotionBadge";
 import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
+import { StoryModerationActions } from "@/components/stories/StoryModerationActions";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -181,6 +182,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           </div>
         </div>
 
+        <StorySharingActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
+
         {/* Chapters Section */}
         <section className="mb-20">
           <div className="flex items-center justify-between mb-8 pb-4 border-b border-zinc-50 dark:border-zinc-900">
@@ -245,7 +248,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           <StoryRecommendations />
         </div>
 
-        <StoryFeatureActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
+        <StoryModerationActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
       </div>
     </main>
   );

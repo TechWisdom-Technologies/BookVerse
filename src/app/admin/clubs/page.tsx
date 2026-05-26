@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Loader2, Search, Trash2, User, Users } from "lucide-react";
 
@@ -86,7 +85,7 @@ export default function AdminClubsPage() {
                         <div className="flex items-center gap-4">
                           <div className="relative h-12 w-9 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
                             {c.coverUrl ? (
-                              <Image src={c.coverUrl} alt={c.name} fill className="object-cover" />
+                              <img src={c.coverUrl} alt={c.name} className="absolute inset-0 w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center opacity-10"><User className="w-4 h-4" /></div>
                             )}

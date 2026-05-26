@@ -10,11 +10,44 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { recipientEmail, tier, duration } = body;
+    const { recipientEmail, tier, duration, senderNumber, transactionId } = body;
 
     if (!recipientEmail || !tier || !duration) {
       return NextResponse.json(
         { error: 'Recipient email, tier, and duration required' },
+        { status: 400 }
+      );
+    }
+
+    if (!senderNumber || typeof senderNumber !== 'string' || !senderNumber.trim()) {
+      return NextResponse.json(
+        { error: 'Sender Mobile Number is required.' },
+        { status: 400 }
+      );
+    }
+
+    if (!transactionId || typeof transactionId !== 'string' || !transactionId.trim()) {
+      return NextResponse.json(
+        { error: 'Transaction ID is required.' },
+        { status: 400 }
+      );
+    }
+
+    const cleanTxnId = transactionId.trim();
+
+    // Verify duplicate transaction submissions
+    const [existingTxn, existingGift] = await Promise.all([
+      prisma.subscriptionTransaction.findUnique({
+        where: { transactionId: cleanTxnId },
+      }),
+      prisma.giftMembership.findUnique({
+        where: { transactionId: cleanTxnId },
+      }),
+    ]);
+
+    if (existingTxn || existingGift) {
+      return NextResponse.json(
+        { error: 'This Transaction ID has already been submitted.' },
         { status: 400 }
       );
     }
@@ -32,18 +65,36 @@ export async function POST(req: Request) {
       CREATOR: 999,
     };
 
-    const gift = await prisma.giftMembership.create({
-      data: {
-        code: giftCode,
-        tier,
-        duration,
-        sentBy: user.id,
-        recipientEmail,
-        value: (tierPricing[tier] || 0) * duration,
-        expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
-        status: 'PENDING',
-      },
-    });
+    const value = (tierPricing[tier] || 0) * duration;
+
+    // Create both records inside a Prisma transaction
+    const [gift] = await prisma.$transaction([
+      prisma.giftMembership.create({
+        data: {
+          code: giftCode,
+          tier,
+          duration,
+          sentBy: user.id,
+          recipientEmail,
+          value,
+          expiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
+          status: 'PENDING_PAYMENT',
+          senderNumber: senderNumber.trim(),
+          transactionId: cleanTxnId,
+        },
+      }),
+      prisma.subscriptionTransaction.create({
+        data: {
+          userId: user.id,
+          plan: `GIFT_${tier}`,
+          duration,
+          amount: value,
+          senderNumber: senderNumber.trim(),
+          transactionId: cleanTxnId,
+          status: 'PENDING',
+        },
+      }),
+    ]);
 
     return NextResponse.json(gift, { status: 201 });
   } catch (error) {

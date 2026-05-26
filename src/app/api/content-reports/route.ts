@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { storyId, reason } = body;
+    const { storyId, reason, description } = body;
 
     if (!storyId || !reason) {
       return NextResponse.json(
@@ -29,6 +29,7 @@ export async function POST(req: Request) {
         reportedBy: user.id,
         storyId,
         reason,
+        description: description || null,
         status: 'PENDING',
       },
     });

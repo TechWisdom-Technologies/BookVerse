@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { BookOpen, Eye, FilePenLine, Heart, MessageSquare } from "lucide-react";
+import { BookOpen, Eye, FilePenLine, Heart, MessageSquare, TrendingUp, Sparkles, Award } from "lucide-react";
 
 interface StoryAuthor {
   id: string;
@@ -24,6 +24,9 @@ interface StoryCardData {
     reactions: number;
     comments: number;
   };
+  isTrendingPromo?: boolean;
+  isPromotedPromo?: boolean;
+  isFeaturedPromo?: boolean;
 }
 
 interface StoryCardProps {
@@ -35,6 +38,21 @@ export function StoryCard({ story }: StoryCardProps) {
     <Link href={`/stories/${story.id}`}>
       <div className="group cursor-pointer space-y-3 transition">
         <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-200 shadow-md transition group-hover:shadow-lg dark:bg-zinc-800">
+          {story.isFeaturedPromo && (
+            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow shadow-amber-500/30">
+              <Award className="w-2.5 h-2.5" /> Featured
+            </div>
+          )}
+          {story.isTrendingPromo && !story.isFeaturedPromo && (
+            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow shadow-rose-500/30">
+              <TrendingUp className="w-2.5 h-2.5" /> Trending
+            </div>
+          )}
+          {story.isPromotedPromo && !story.isFeaturedPromo && !story.isTrendingPromo && (
+            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-indigo-500 text-white text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow shadow-indigo-500/30">
+              <Sparkles className="w-2.5 h-2.5" /> Promoted
+            </div>
+          )}
           {story.coverUrl ? (
             <Image
               src={story.coverUrl}

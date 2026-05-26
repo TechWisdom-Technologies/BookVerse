@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Loader2, Search, Trash2, Eye, ShieldCheck, AlertCircle } from "lucide-react";
+import { Loader2, Search, Trash2, Eye, ShieldCheck, AlertCircle, FileText } from "lucide-react";
 
 interface DMCA {
   id: string;
@@ -33,7 +33,11 @@ export default function AdminDMCAPage() {
         const data = await res.json();
         setNotices(data.notices);
         setTotalPages(data.totalPages);
+      } else {
+        console.error("Failed to fetch DMCA notices:", res.status, await res.text());
       }
+    } catch (err) {
+      console.error("DMCA fetch error:", err);
     } finally { setLoading(false); }
   };
 
@@ -94,10 +98,10 @@ export default function AdminDMCAPage() {
                   {notices.map(n => (
                     <tr key={n.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                       <td className="py-4 px-6">
-                        <div className="flex flex-col">
-                          <div className="text-xs font-bold text-zinc-900 dark:text-white uppercase">{n.originalWorkTitle}</div>
+                        <Link href={`/admin/dmca/${n.id}`} className="flex flex-col">
+                          <div className="text-xs font-bold text-zinc-900 dark:text-white uppercase group-hover:text-indigo-500 transition-colors">{n.originalWorkTitle}</div>
                           <div className="text-[10px] text-zinc-400 uppercase mt-1">{n.copyrightHolder}{n.originalWorkAuthor ? ` — ${n.originalWorkAuthor}` : ''}</div>
-                        </div>
+                        </Link>
                       </td>
                       <td className="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">@{n.submittedByUser?.username || 'unknown'}</td>
                       <td className="py-4 px-6">
@@ -105,6 +109,7 @@ export default function AdminDMCAPage() {
                       </td>
                       <td className="py-4 px-6 text-right">
                         <div className="flex items-center justify-end gap-2">
+                          <Link href={`/admin/dmca/${n.id}`} title="View Details" className="p-2 text-zinc-300 hover:text-indigo-500 hover:bg-indigo-500/5 transition-all rounded"><FileText className="w-3.5 h-3.5" /></Link>
                           <button onClick={() => handleUpdateStatus(n.id, 'ACKNOWLEDGED')} title="Acknowledge" className="p-2 text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-all rounded"><Eye className="w-3.5 h-3.5" /></button>
                           <button onClick={() => handleUpdateStatus(n.id, 'RESOLVED')} title="Resolve" className="p-2 text-zinc-300 hover:text-emerald-500 hover:bg-emerald-500/5 transition-all rounded"><AlertCircle className="w-3.5 h-3.5" /></button>
                           <button onClick={() => handleDelete(n.id)} className="p-2 text-zinc-300 hover:text-rose-500 hover:bg-rose-500/5 transition-all rounded"><Trash2 className="w-3.5 h-3.5" /></button>

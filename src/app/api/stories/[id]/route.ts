@@ -5,6 +5,7 @@ import { storySchema } from "@/lib/validators";
 import { indexStory, removeStory } from "@/lib/meilisearch";
 import { Role, type ReactionType } from "@prisma/client";
 import { createNotification } from "@/lib/notifications";
+import { publishScheduledChapters } from "@/lib/publish-chapters";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -12,6 +13,9 @@ interface RouteParams {
 
 export async function GET(_request: Request, { params }: RouteParams) {
   try {
+    // Run scheduled chapter publisher in background
+    void publishScheduledChapters();
+
     const { id } = await params;
 
     const story = await prisma.story.findUnique({
@@ -49,17 +53,22 @@ export async function GET(_request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
 
-    // Don't expose unpublished stories to non-authors
+    let currentUser = null;
+    try {
+      const { dbUser } = await verifyToken();
+      currentUser = dbUser;
+    } catch {
+      // Not logged in
+    }
+
+    // Don't expose unpublished stories to non-authors/non-admins
     if (!story.published) {
-      try {
-        const { dbUser } = await verifyToken();
-        if (dbUser.id !== story.authorId && dbUser.role !== "ADMIN") {
-          return NextResponse.json({ error: "Story not found" }, { status: 404 });
-        }
-      } catch {
+      if (!currentUser || (currentUser.id !== story.authorId && currentUser.role !== "ADMIN")) {
         return NextResponse.json({ error: "Story not found" }, { status: 404 });
       }
     }
+
+    const isAuthor = currentUser ? (currentUser.id === story.authorId || currentUser.role === "ADMIN") : false;
 
     // Get reaction counts grouped by type
     const reactionCounts = await prisma.storyReaction.groupBy({
@@ -80,7 +89,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
       reactions[rc.reactionType] = rc._count;
     }
 
-    return NextResponse.json({ story, reactions });
+    return NextResponse.json({ story, reactions, isAuthor });
   } catch (error) {
     console.error("GET /api/stories/[id] error:", error);
     return NextResponse.json(
@@ -141,6 +150,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     if (body.coverUrl !== undefined) cleanBody.coverUrl = body.coverUrl || null;
     if (body.published !== undefined) cleanBody.published = body.published;
     if (body.universeId !== undefined) cleanBody.universeId = body.universeId || null;
+    if (body.seriesId !== undefined) cleanBody.seriesId = body.seriesId || null;
     if (body.subGenres !== undefined) cleanBody.subGenres = body.subGenres || [];
     if (body.mood !== undefined) cleanBody.mood = body.mood || null;
     if (body.contentWarnings !== undefined) cleanBody.contentWarnings = body.contentWarnings || [];
@@ -172,6 +182,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
             ? { connect: { id: parsed.universeId } }
             : { disconnect: true }
         }),
+        ...(parsed.seriesId !== undefined && {
+          series: parsed.seriesId
+            ? { connect: { id: parsed.seriesId } }
+            : { disconnect: true }
+        }),
         ...(parsed.sequenceNumber !== undefined && { sequenceNumber: parsed.sequenceNumber }),
         ...(parsed.subGenres !== undefined && { subGenres: parsed.subGenres }),
         ...(parsed.mood !== undefined && { mood: parsed.mood }),
@@ -186,6 +201,30 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         },
       },
     });
+
+    // Notify universe creator if co-author adds/publishes a story under their universe
+    if (story.universeId && story.published) {
+      try {
+        const universe = await prisma.universe.findUnique({
+          where: { id: story.universeId },
+          select: { userId: true, name: true },
+        });
+        if (universe && universe.userId !== story.authorId) {
+          const wasAlreadyPublishedUnderThisUniverse = existing.published && existing.universeId === story.universeId;
+          if (!wasAlreadyPublishedUnderThisUniverse) {
+            await createNotification({
+              userId: universe.userId,
+              type: "STORY_POST",
+              title: "New Collaborator Contribution!",
+              message: `${story.author.displayName || story.author.username} added a book "${story.title}" to your universe "${universe.name}"!`,
+              link: `/stories/${story.id}`,
+            });
+          }
+        }
+      } catch (notifErr) {
+        console.error("Failed to notify universe owner of co-author contribution:", notifErr);
+      }
+    }
 
     // Sync with Meilisearch when published status changes
     if (parsed.published === true && !existing.published) {

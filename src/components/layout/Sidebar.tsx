@@ -12,6 +12,9 @@ import {
   Globe,
   ChevronLeft,
   CreditCard,
+  ShieldAlert,
+  Library,
+  Headphones,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -27,9 +30,12 @@ const sidebarItems: SidebarItem[] = [
   { href: "/admin/books", label: "Books", icon: BookOpen },
   { href: "/admin/stories", label: "Stories", icon: FileText },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },
+  { href: "/admin/reports", label: "Safety Reports", icon: ShieldAlert },
   { href: "/admin/dmca", label: "DMCA", icon: AlertCircle },
   { href: "/admin/universes", label: "Universes", icon: Globe },
+  { href: "/admin/series", label: "Series", icon: Library },
   { href: "/admin/clubs", label: "Clubs", icon: Users },
+  { href: "/admin/support", label: "Support Tickets", icon: Headphones },
 ];
 
 interface SidebarProps {

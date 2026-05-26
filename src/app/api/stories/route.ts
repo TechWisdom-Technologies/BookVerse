@@ -3,9 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
 import { Prisma } from "@prisma/client";
+import { publishScheduledChapters } from "@/lib/publish-chapters";
 
 export async function GET(request: Request) {
   try {
+    // Dynamically publish any chapters scheduled for release
+    void publishScheduledChapters();
+
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(100, parseInt(searchParams.get("limit") || "12"));

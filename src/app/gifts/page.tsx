@@ -52,6 +52,7 @@ export default function GiftsPage() {
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'contact'>('none');
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
   const [senderNumber, setSenderNumber] = useState('');
+  const [transactionId, setTransactionId] = useState('');
   const [cardNumber, setCardNumber] = useState('');
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvc, setCardCvc] = useState('');
@@ -87,12 +88,17 @@ export default function GiftsPage() {
     setPaymentMethod('none');
     setWarningMsg(null);
     setSenderNumber('');
+    setTransactionId('');
     setShowPaymentModal(true);
   };
 
   const handleMockPayment = async () => {
     if (paymentMethod === 'contact' && !senderNumber.trim()) {
-      toast.error('Please enter your bkash / Nagad / sender mobile number');
+      toast.error('Please enter your bkash / Nagad sender mobile number');
+      return;
+    }
+    if (paymentMethod === 'contact' && !transactionId.trim()) {
+      toast.error('Please enter your payment Transaction ID (TxnID)');
       return;
     }
     
@@ -119,16 +125,19 @@ export default function GiftsPage() {
           recipientEmail: recipientEmail.trim(),
           tier: purchaseTier,
           duration,
+          senderNumber: senderNumber.trim(),
+          transactionId: transactionId.trim(),
         }),
       });
 
       if (res.ok) {
-        const newGift = await res.json();
         setPaymentStep('success');
         await new Promise(resolve => setTimeout(resolve, 1200));
         setShowPaymentModal(false);
-        toast.success(`✨ Success! Payment cleared. Code generated: ${newGift.code}`);
+        toast.success(`✨ Receipt submitted for verification! The gift code will activate once approved by our admin team.`);
         setRecipientEmail('');
+        setSenderNumber('');
+        setTransactionId('');
         setCardNumber('');
         setCardExpiry('');
         setCardCvc('');
@@ -588,17 +597,34 @@ export default function GiftsPage() {
                       <p className="text-[9px] text-zinc-500 font-medium italic">
                         After sending, enter your sender number or Transaction ID below to verify your purchase instantly.
                       </p>
-                    </div>
+                      
+                      <div className="space-y-4">
+                        {/* Input 1: Sender Mobile Number */}
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1 font-mono">Your bkash/Nagad Sender Number</label>
+                          <input 
+                            type="text" 
+                            value={senderNumber}
+                            onChange={e => setSenderNumber(e.target.value)}
+                            placeholder="e.g. 017XXXXXXXX"
+                            required
+                            className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white text-xs font-mono text-center tracking-wider text-white"
+                          />
+                        </div>
 
-                    <div className="space-y-2">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1">Your bkash/Nagad/Phone Number</label>
-                      <input 
-                        type="text" 
-                        value={senderNumber}
-                        onChange={e => setSenderNumber(e.target.value)}
-                        placeholder="e.g. 017XXXXXXXX or TxnID"
-                        className="w-full px-4 py-3.5 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white text-xs font-mono text-center tracking-wider text-white"
-                      />
+                        {/* Input 2: Transaction ID */}
+                        <div className="space-y-2">
+                          <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1 font-mono">Payment Transaction ID (TxnID)</label>
+                          <input 
+                            type="text" 
+                            value={transactionId}
+                            onChange={e => setTransactionId(e.target.value)}
+                            placeholder="e.g. A1B2C3D4E5"
+                            required
+                            className="w-full px-4 py-3 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white text-xs font-mono text-center tracking-wider text-white uppercase"
+                          />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="flex items-center gap-4">

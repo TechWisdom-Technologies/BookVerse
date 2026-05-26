@@ -22,6 +22,12 @@ type SyncedUser = {
   role: string;
   membershipTier?: string | null;
   membershipExpiry?: Date | string | null;
+  description?: string | null;
+  mood?: string | null;
+  subGenres?: string[];
+  tags?: string[];
+  adminInstruction?: string | null;
+  instructionSeen?: boolean;
   _count?: {
     followers: number;
     following: number;

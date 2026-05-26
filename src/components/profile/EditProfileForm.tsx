@@ -15,6 +15,10 @@ interface User {
   avatarUrl: string | null;
   bio: string | null;
   dateOfBirth?: string | Date | null;
+  description?: string | null;
+  mood?: string | null;
+  subGenres?: string[];
+  tags?: string[];
   _count?: {
     followers: number;
     following: number;
@@ -35,6 +39,10 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
   const [bio, setBio] = useState(user.bio || "");
   const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl || "");
   const [dateOfBirth, setDateOfBirth] = useState(user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().substring(0, 10) : "");
+  const [description, setDescription] = useState(user.description || "");
+  const [mood, setMood] = useState(user.mood || "");
+  const [subGenres, setSubGenres] = useState(user.subGenres ? user.subGenres.join(", ") : "");
+  const [tags, setTags] = useState(user.tags ? user.tags.join(", ") : "");
   const [usernameError, setUsernameError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,6 +111,9 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
       return;
     }
 
+    const subGenresArray = subGenres.split(",").map(s => s.trim()).filter(Boolean);
+    const tagsArray = tags.split(",").map(t => t.trim()).filter(Boolean);
+
     setIsLoading(true);
     try {
       const res = await fetch("/api/users/me", {
@@ -114,6 +125,10 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           bio: bio || null,
           avatarUrl: avatarUrl || user.avatarUrl,
           dateOfBirth: dateOfBirth || null,
+          description: description || null,
+          mood: mood || null,
+          subGenres: subGenresArray,
+          tags: tagsArray,
         }),
       });
 
@@ -238,20 +253,97 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             htmlFor="bio"
             className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
           >
-            Bio
+            Bio (Short summary)
           </label>
           <textarea
             id="bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
-            rows={4}
+            rows={2}
             maxLength={500}
             className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 resize-none"
-            placeholder="Tell us about yourself..."
+            placeholder="Tell us about yourself briefly..."
           />
           <p className="mt-3 text-right text-sm font-medium text-zinc-400">
             {bio.length} / 500
           </p>
+        </div>
+
+        {/* Extended Description */}
+        <div className="group">
+          <label
+            htmlFor="description"
+            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+          >
+            Extended Description (About)
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={5}
+            maxLength={1000}
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 resize-none"
+            placeholder="Write a longer description about your background, projects, or genres..."
+          />
+          <p className="mt-3 text-right text-sm font-medium text-zinc-400">
+            {description.length} / 1000
+          </p>
+        </div>
+
+        {/* Mood */}
+        <div className="group">
+          <label
+            htmlFor="mood"
+            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+          >
+            Current Mood / Status
+          </label>
+          <input
+            type="text"
+            id="mood"
+            value={mood}
+            onChange={(e) => setMood(e.target.value)}
+            maxLength={50}
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            placeholder="e.g. 📚 Reading intensively, 😊 Writing, ☕ Coffee lover"
+          />
+        </div>
+
+        {/* Subgenres */}
+        <div className="group">
+          <label
+            htmlFor="subGenres"
+            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+          >
+            Favorite Subgenres (Separated by commas)
+          </label>
+          <input
+            type="text"
+            id="subGenres"
+            value={subGenres}
+            onChange={(e) => setSubGenres(e.target.value)}
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            placeholder="e.g. Fantasy, Sci-Fi, Cyberpunk, Mystery"
+          />
+        </div>
+
+        {/* Tags */}
+        <div className="group">
+          <label
+            htmlFor="tags"
+            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+          >
+            Profile Tags (Separated by commas)
+          </label>
+          <input
+            type="text"
+            id="tags"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            placeholder="e.g. worldbuilder, darkfantasy, novelartist"
+          />
         </div>
         {/* Date of Birth */}
         <div className="group">

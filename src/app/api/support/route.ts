@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { sendSupportRequestEmail } from "@/lib/resend";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -9,6 +10,25 @@ export async function POST(request: Request) {
       return NextResponse.json(
         { error: "All support request fields (name, email, category, subject, message) are required." },
         { status: 400 }
+      );
+    }
+
+    // Save support request to database registry
+    try {
+      await prisma.supportTicket.create({
+        data: {
+          name,
+          email,
+          category,
+          subject,
+          message,
+        },
+      });
+    } catch (dbError) {
+      console.error("Failed to persist support ticket:", dbError);
+      return NextResponse.json(
+        { error: "Failed to record support ticket in database." },
+        { status: 500 }
       );
     }
 

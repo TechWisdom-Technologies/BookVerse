@@ -17,6 +17,7 @@ export const storySchema = z.object({
   summary: z.string().optional().nullable(),
   published: z.boolean().optional(),
   universeId: z.string().optional().nullable(),
+  seriesId: z.string().optional().nullable(),
   sequenceNumber: z.number().int().min(1).optional().nullable(),
   subGenres: z.array(z.string()).optional(),
   mood: z.string().optional().nullable(),
@@ -48,5 +49,10 @@ export const profileSchema = z.object({
   avatarUrl: z.string().url().optional().nullable(),
   bio: z.string().max(500).optional().nullable(),
   dateOfBirth: z.string().optional().nullable(),
+  description: z.string().max(1000).optional().nullable(),
+  mood: z.string().max(50).optional().nullable(),
+  subGenres: z.array(z.string()).optional(),
+  tags: z.array(z.string()).optional(),
+  instructionSeen: z.boolean().optional(),
 });
 

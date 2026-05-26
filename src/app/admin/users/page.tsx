@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+
 import { Loader2, Search, Trash2, User, ArrowLeft, ShieldCheck, Activity } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
@@ -135,7 +135,7 @@ export default function AdminUsersPage() {
                         <div className="flex items-center gap-4">
                           <div className="relative h-10 w-10 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
                             {user.avatarUrl ? (
-                              <Image src={user.avatarUrl} alt="" fill className="object-cover transition-all duration-500" />
+                              <img src={user.avatarUrl} alt="" className="absolute inset-0 w-full h-full object-cover transition-all duration-500" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-zinc-300 uppercase">
                                 {user.username.charAt(0)}

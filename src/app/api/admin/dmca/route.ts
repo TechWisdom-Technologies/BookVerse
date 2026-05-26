@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
+import { removeStory } from "@/lib/meilisearch";
+import { createNotification } from "@/lib/notifications";
 
 export async function GET(request: Request) {
   try {
@@ -67,6 +69,41 @@ export async function PATCH(request: Request) {
     }
 
     const notice = await prisma.dMCANotice.update({ where: { id: noticeId }, data: { status } });
+
+    // Handle Takedown if resolved
+    if (status === "RESOLVED") {
+      // 1. Unpublish story
+      await prisma.story.update({
+        where: { id: notice.storyId },
+        data: { published: false },
+      });
+
+      // 2. Remove from Meilisearch
+      try {
+        void removeStory(notice.storyId);
+      } catch (meiliError) {
+        console.error("Failed to remove story from Meilisearch index:", meiliError);
+      }
+
+      // 3. Send notification to the author
+      try {
+        const storyObj = await prisma.story.findUnique({
+          where: { id: notice.storyId },
+          select: { authorId: true, title: true },
+        });
+        if (storyObj) {
+          await createNotification({
+            userId: storyObj.authorId,
+            type: "DMCA_TAKEDOWN",
+            title: "DMCA Copyright Takedown Notice",
+            message: `Your story "${storyObj.title}" has been taken down due to a resolved DMCA copyright dispute.`,
+            link: `/stories/${notice.storyId}`,
+          });
+        }
+      } catch (notifError) {
+        console.error("Failed to dispatch DMCA notification:", notifError);
+      }
+    }
 
     return NextResponse.json({ notice });
   } catch (error) {

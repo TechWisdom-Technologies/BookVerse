@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Library, Plus, Loader2, Trash2, Sparkles, Rocket, Globe, ChevronRight, BookOpen, Eye, ArrowLeft, Layers, Globe2, Pencil, X } from 'lucide-react';
+import { Library, Plus, Loader2, Trash2, Sparkles, Rocket, Globe, ChevronRight, BookOpen, Eye, ArrowLeft, Layers, Globe2, Pencil, X, Users, UserMinus, UserPlus, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/components/auth/AuthProvider';
 
@@ -306,6 +306,7 @@ export default function UniverseStudioPage() {
                             {u.name}
                           </h3>
                           {u.description && <p className="text-[11px] text-zinc-500 font-medium leading-relaxed line-clamp-2 max-w-2xl italic">“{u.description}”</p>}
+                          <CollaboratorsSection universeId={u.id} />
                         </div>
                         
                         <div className="flex items-center gap-1 shrink-0">
@@ -347,5 +348,218 @@ export default function UniverseStudioPage() {
         </div>
       </div>
     </main>
+  );
+}
+
+function CollaboratorsSection({ universeId }: { universeId: string }) {
+  const [collaborators, setCollaborators] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newUsername, setNewUsername] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [removingUser, setRemovingUser] = useState<any | null>(null);
+  const [removingStories, setRemovingStories] = useState<any[]>([]);
+  const [loadingStories, setLoadingStories] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  useEffect(() => {
+    fetchCollaborators();
+  }, [universeId]);
+
+  const fetchCollaborators = async () => {
+    try {
+      const res = await fetch(`/api/universes/${universeId}/collaborators`);
+      if (res.ok) {
+        const data = await res.json();
+        setCollaborators(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddCollaborator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim()) return;
+    setAdding(true);
+    try {
+      const res = await fetch(`/api/universes/${universeId}/collaborators`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: newUsername.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Collaborator added successfully!");
+        setNewUsername("");
+        fetchCollaborators();
+      } else {
+        toast.error(data.error || "Failed to add collaborator.");
+      }
+    } catch (err) {
+      toast.error("Failed to add collaborator.");
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleStartRemoval = async (collab: any) => {
+    setRemovingUser(collab.user);
+    setLoadingStories(true);
+    setShowConfirm(true);
+    try {
+      const res = await fetch(`/api/universes/${universeId}/collaborators/${collab.user.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setRemovingStories(data);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingStories(false);
+    }
+  };
+
+  const handleConfirmRemoval = async () => {
+    if (!removingUser) return;
+    try {
+      const res = await fetch(`/api/universes/${universeId}/collaborators/${removingUser.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        toast.success("Collaborator and their universe stories removed successfully.");
+        setShowConfirm(false);
+        setRemovingUser(null);
+        setRemovingStories([]);
+        fetchCollaborators();
+      } else {
+        toast.error("Failed to remove collaborator.");
+      }
+    } catch (err) {
+      toast.error("Failed to remove collaborator.");
+    }
+  };
+
+  return (
+    <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-900 space-y-4">
+      <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+        <Users className="w-3.5 h-3.5" />
+        Co-Authors & Collaborators
+      </div>
+
+      {/* Add Form */}
+      <form onSubmit={handleAddCollaborator} className="flex gap-2">
+        <input
+          type="text"
+          value={newUsername}
+          onChange={(e) => setNewUsername(e.target.value)}
+          placeholder="Enter co-author username..."
+          className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+        />
+        <button
+          type="submit"
+          disabled={adding}
+          className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded flex items-center gap-1 hover:opacity-90 disabled:opacity-50"
+        >
+          {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
+          Add
+        </button>
+      </form>
+
+      {/* Collaborators List */}
+      {loading ? (
+        <div className="flex justify-center py-2">
+          <Loader2 className="w-4 h-4 animate-spin text-zinc-300" />
+        </div>
+      ) : collaborators.length === 0 ? (
+        <p className="text-[10px] text-zinc-400 italic">No co-authors added yet. Add collaborators to build this universe together!</p>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+          {collaborators.map((c) => (
+            <div key={c.id} className="flex items-center justify-between p-3 bg-zinc-50/50 dark:bg-zinc-900/10 border border-zinc-100/50 dark:border-zinc-800/50 rounded-md">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center font-bold text-[8px] text-zinc-400 overflow-hidden">
+                  {c.user.avatarUrl ? (
+                    <img src={c.user.avatarUrl} className="w-full h-full object-cover" />
+                  ) : (
+                    c.user.username[0].toUpperCase()
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold">{c.user.displayName || c.user.username}</span>
+                  <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest">@{c.user.username}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => handleStartRemoval(c)}
+                className="p-1.5 text-zinc-400 hover:text-rose-500 rounded transition-colors"
+                title="Remove Collaborator"
+              >
+                <UserMinus className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Warning/Confirmation Modal overlay */}
+      {showConfirm && removingUser && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-zinc-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 p-8 rounded-2xl shadow-2xl space-y-6">
+            <div className="flex items-center gap-3 text-rose-500">
+              <AlertTriangle className="w-6 h-6 animate-pulse" />
+              <h3 className="text-sm font-bold uppercase tracking-widest">Remove Co-Author?</h3>
+            </div>
+            
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              Are you sure you want to remove <strong className="text-zinc-900 dark:text-white">@{removingUser.username}</strong> from this universe? 
+              <br />
+              <span className="text-rose-500 font-bold">This will permanently delete (vanish) all stories they have written inside this universe!</span>
+            </p>
+
+            {/* Stories Warning List */}
+            <div className="space-y-3 bg-zinc-50 dark:bg-zinc-900/50 p-4 border border-zinc-100 dark:border-zinc-900 rounded-lg max-h-40 overflow-y-auto">
+              <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Linked stories to be deleted:</div>
+              {loadingStories ? (
+                <div className="flex justify-center py-4">
+                  <Loader2 className="w-4 h-4 animate-spin text-zinc-300" />
+                </div>
+              ) : removingStories.length === 0 ? (
+                <p className="text-[10px] text-zinc-400 italic">None detected (No stories will be deleted).</p>
+              ) : (
+                <div className="space-y-2">
+                  {removingStories.map((story) => (
+                    <div key={story.id} className="flex items-center gap-2 py-1 border-b border-zinc-100/50 dark:border-zinc-800/50 last:border-0">
+                      <div className="w-6 h-8 bg-zinc-100 dark:bg-zinc-850 rounded overflow-hidden shrink-0">
+                        {story.coverUrl && <img src={story.coverUrl} className="w-full h-full object-cover" />}
+                      </div>
+                      <span className="text-[10px] font-bold truncate">{story.title}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => { setShowConfirm(false); setRemovingUser(null); setRemovingStories([]); }}
+                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest border border-zinc-100 dark:border-zinc-800 rounded-lg text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmRemoval}
+                className="flex-1 py-3 text-[10px] font-bold uppercase tracking-widest bg-rose-500 text-white rounded-lg hover:bg-rose-600 transition-colors shadow-md shadow-rose-500/10"
+              >
+                Delete & Vanish
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

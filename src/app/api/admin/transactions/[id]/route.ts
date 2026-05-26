@@ -44,6 +44,220 @@ export async function POST(
       );
     }
 
+    if (txn.plan.startsWith("PROMOTION_")) {
+      const tier = txn.plan.replace("PROMOTION_", "");
+      
+      if (action === "APPROVE") {
+        const now = new Date();
+        const promo = await prisma.storyPromotion.findFirst({
+          where: { transactionId: txn.transactionId }
+        });
+
+        let newEndDate = now;
+        if (promo) {
+          const durationMs = promo.endDate.getTime() - promo.startDate.getTime();
+          newEndDate = new Date(now.getTime() + durationMs);
+        }
+
+        await prisma.$transaction([
+          prisma.subscriptionTransaction.update({
+            where: { id },
+            data: { status: "APPROVED" },
+          }),
+          prisma.storyPromotion.updateMany({
+            where: { transactionId: txn.transactionId },
+            data: {
+              status: "ACTIVE",
+              startDate: now,
+              endDate: newEndDate,
+            },
+          }),
+        ]);
+
+        const storyPromotion = await prisma.storyPromotion.findFirst({
+          where: { transactionId: txn.transactionId },
+          include: { story: true }
+        });
+
+        if (storyPromotion) {
+          await createNotification({
+            userId: txn.userId,
+            type: "PROMOTION_APPROVED",
+            title: `✨ Promotion Approved for "${storyPromotion.story.title}"!`,
+            message: `Your payment verification was successful. Your story is now promoted as ${tier} until ${newEndDate.toLocaleDateString()}.`,
+            link: `/stories/${storyPromotion.storyId}`,
+          });
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: "Promotion transaction approved and activated successfully.",
+        });
+      } else {
+        // DECLINE Action
+        await prisma.$transaction([
+          prisma.subscriptionTransaction.update({
+            where: { id },
+            data: { status: "DECLINED" },
+          }),
+          prisma.storyPromotion.updateMany({
+            where: { transactionId: txn.transactionId },
+            data: { status: "DECLINED" },
+          }),
+        ]);
+
+        const storyPromotion = await prisma.storyPromotion.findFirst({
+          where: { transactionId: txn.transactionId },
+          include: { story: true }
+        });
+
+        if (storyPromotion) {
+          await createNotification({
+            userId: txn.userId,
+            type: "PROMOTION_DECLINED",
+            title: "❌ Promotion Payment Failed",
+            message: `Your submitted promotion payment (TxnID: ${txn.transactionId}) for "${storyPromotion.story.title}" could not be verified by our administrative team.`,
+            link: `/write/story/${storyPromotion.storyId}/edit`,
+          });
+        }
+
+        return NextResponse.json({
+          success: true,
+          message: "Promotion transaction declined.",
+        });
+      }
+    }
+
+    if (txn.plan.startsWith("GIFT_")) {
+      const tier = txn.plan.replace("GIFT_", "");
+      
+      if (action === "APPROVE") {
+        await prisma.$transaction([
+          prisma.subscriptionTransaction.update({
+            where: { id },
+            data: { status: "APPROVED" },
+          }),
+          prisma.giftMembership.updateMany({
+            where: { transactionId: txn.transactionId },
+            data: { status: "PENDING" }, // Make redeemable
+          }),
+        ]);
+
+        await createNotification({
+          userId: txn.userId,
+          type: "GIFT_APPROVED",
+          title: `✨ Gift Membership Approved!`,
+          message: `Your payment verification was successful. Your recipient can now redeem the invite code under your registry.`,
+          link: `/gifts`,
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: "Gift transaction approved and invitation code activated successfully.",
+        });
+      } else {
+        // DECLINE Action
+        await prisma.$transaction([
+          prisma.subscriptionTransaction.update({
+            where: { id },
+            data: { status: "DECLINED" },
+          }),
+          prisma.giftMembership.updateMany({
+            where: { transactionId: txn.transactionId },
+            data: { status: "DECLINED" },
+          }),
+        ]);
+
+        await createNotification({
+          userId: txn.userId,
+          type: "GIFT_DECLINED",
+          title: "❌ Gift Membership Payment Failed",
+          message: `Your submitted gift payment (TxnID: ${txn.transactionId}) could not be verified by our administrative team.`,
+          link: `/gifts`,
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: "Gift transaction declined.",
+        });
+      }
+    }
+
+    if (txn.plan === "TIP") {
+      if (action === "APPROVE") {
+        const completedTip = await prisma.tip.findFirst({
+          where: { transactionId: txn.transactionId }
+        });
+
+        if (!completedTip) {
+          return NextResponse.json({ error: "Tip record not found" }, { status: 404 });
+        }
+
+        await prisma.$transaction([
+          prisma.subscriptionTransaction.update({
+            where: { id },
+            data: { status: "APPROVED" },
+          }),
+          prisma.tip.updateMany({
+            where: { transactionId: txn.transactionId },
+            data: { status: "COMPLETED" },
+          }),
+        ]);
+
+        // Notify author who received the tip
+        await createNotification({
+          userId: completedTip.receiverId,
+          type: "TIP",
+          title: "🎉 You received a Tip!",
+          message: `A reader sent you a tip of ৳${completedTip.amount} Taka. Your manual payment is approved and cleared!`,
+          link: `/profile`,
+        });
+
+        // Notify user who sent the tip
+        await createNotification({
+          userId: txn.userId,
+          type: "TIP_APPROVED",
+          title: "✨ Tipping Receipt Verified",
+          message: `Your manual tip payment of ৳${completedTip.amount} Taka was verified and successfully delivered to the author!`,
+          link: `/profile`,
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: "Tipping transaction approved and tip successfully cleared.",
+        });
+      } else {
+        // DECLINE Action
+        const completedTip = await prisma.tip.findFirst({
+          where: { transactionId: txn.transactionId }
+        });
+
+        await prisma.$transaction([
+          prisma.subscriptionTransaction.update({
+            where: { id },
+            data: { status: "DECLINED" },
+          }),
+          prisma.tip.updateMany({
+            where: { transactionId: txn.transactionId },
+            data: { status: "FAILED" },
+          }),
+        ]);
+
+        await createNotification({
+          userId: txn.userId,
+          type: "TIP_DECLINED",
+          title: "❌ Tip Payment Failed",
+          message: `Your submitted tip payment (TxnID: ${txn.transactionId}) could not be verified by our team.`,
+          link: `/profile`,
+        });
+
+        return NextResponse.json({
+          success: true,
+          message: "Tipping transaction declined.",
+        });
+      }
+    }
+
     if (action === "APPROVE") {
       // Calculate membership expiry: if they already have the same tier and it is active, extend it.
       const now = new Date();

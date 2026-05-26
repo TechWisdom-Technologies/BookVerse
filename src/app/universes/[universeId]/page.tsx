@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import { Globe, BookOpen, User, Flame, ArrowLeft, Share2, Sparkles, LayoutGrid, Loader2, Compass } from 'lucide-react';
+import { Globe, BookOpen, User, Flame, ArrowLeft, Share2, Sparkles, LayoutGrid, Loader2, Compass, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface Story {
@@ -47,6 +47,30 @@ export default function UniverseShowcasePage({ params }: { params: Promise<{ uni
   const { universeId } = use(params);
   const [universe, setUniverse] = useState<Universe | null>(null);
   const [loading, setLoading] = useState(true);
+  const [requesting, setRequesting] = useState(false);
+  const [requested, setRequested] = useState(false);
+
+  const handleRequestMoreBooks = async () => {
+    setRequesting(true);
+    try {
+      const res = await fetch('/api/book-requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ universeId }),
+      });
+      if (res.ok) {
+        toast.success("Thanks! Your request for more books in this universe has been sent to the author.");
+        setRequested(true);
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Failed to submit request.");
+      }
+    } catch (err) {
+      toast.error("Failed to submit request.");
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchUniverse = async () => {
@@ -146,9 +170,25 @@ export default function UniverseShowcasePage({ params }: { params: Promise<{ uni
                 <p className="text-[10px] font-bold uppercase">{universe.user.displayName || universe.user.username}</p>
               </div>
             </div>
-            <button className="flex items-center gap-2 text-[9px] font-bold text-zinc-300 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-colors">
-              <Share2 className="w-3 h-3" /> Broadcast Dossier
-            </button>
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <button
+                onClick={handleRequestMoreBooks}
+                disabled={requesting}
+                className="flex items-center gap-2 text-[9px] font-bold text-zinc-300 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-colors disabled:opacity-50"
+              >
+                {requesting ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : requested ? (
+                  <Check className="w-3 h-3 text-emerald-500" />
+                ) : (
+                  <Sparkles className="w-3 h-3" />
+                )}
+                {requested ? "Requested!" : "Request More Books"}
+              </button>
+              <button className="flex items-center gap-2 text-[9px] font-bold text-zinc-300 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-colors">
+                <Share2 className="w-3 h-3" /> Broadcast Dossier
+              </button>
+            </div>
           </div>
         </header>
 

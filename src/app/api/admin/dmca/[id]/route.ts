@@ -11,12 +11,37 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { id } = await params;
     const notice = await prisma.dMCANotice.findUnique({
       where: { id },
-      include: { submittedByUser: { select: { id: true, username: true } } },
+      include: {
+        submittedByUser: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+      },
     });
 
     if (!notice) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-    return NextResponse.json({ notice });
+    const story = await prisma.story.findUnique({
+      where: { id: notice.storyId },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            email: true,
+            avatarUrl: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({ notice, story });
   } catch (error) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -107,6 +107,14 @@ export default function WriteDashboardPage() {
               <GitBranch className="w-3.5 h-3.5" />
               My Universes
             </Link>
+            <Link href="/write/series" className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500 rounded border border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-2">
+              <Layers className="w-3.5 h-3.5" />
+              My Series
+            </Link>
+            <Link href="/write/requests" className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500 rounded border border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-2">
+              <MessageSquare className="w-3.5 h-3.5" />
+              Book Requests
+            </Link>
             <Link href="/write/newsletter" className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500 rounded border border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-2">
               <Mail className="w-3.5 h-3.5" />
               Newsletter

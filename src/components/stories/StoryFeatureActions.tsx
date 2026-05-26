@@ -78,7 +78,38 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
   const shareStory = async (platform: string) => {
     setLoading(`share-${platform}`);
     try {
+      // 1. Fetch sharing metadata from GET /api/stories/[id]/share-card
+      const metadataRes = await fetch(`/api/stories/${storyId}/share-card`);
+      if (!metadataRes.ok) throw new Error("Failed to fetch share card details");
+      const metadata = await metadataRes.json();
+
+      const storyUrl = metadata.url && !metadata.url.startsWith("undefined") 
+        ? metadata.url 
+        : `${window.location.origin}/stories/${storyId}`;
+      const shareText = metadata.shareText || `Check out this story on BookVerse!`;
+
+      // 2. Submit the POST log to database
       await submitJson(`/api/stories/${storyId}/share-card`, { platform }, "Share activity logged");
+
+      // 3. Open real platform sharing windows
+      const encodedUrl = encodeURIComponent(storyUrl);
+      const encodedText = encodeURIComponent(shareText);
+
+      if (platform.toLowerCase() === "twitter") {
+        window.open(`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`, "_blank", "width=600,height=400");
+      } else if (platform.toLowerCase() === "facebook") {
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`, "_blank", "width=600,height=400");
+      } else if (platform.toLowerCase() === "instagram") {
+        // Copy to clipboard
+        await navigator.clipboard.writeText(storyUrl);
+        toast.success("Link copied! Opening Instagram...");
+        window.open(`https://www.instagram.com/`, "_blank");
+      } else if (platform.toLowerCase() === "tiktok") {
+        // Copy to clipboard
+        await navigator.clipboard.writeText(storyUrl);
+        toast.success("Link copied! Opening TikTok...");
+        window.open(`https://www.tiktok.com/`, "_blank");
+      }
     } catch (error) {
       toast.error(getFriendlyErrorMessage(error, "Failed to share story. Please try again."));
     } finally {
@@ -142,9 +173,12 @@ export function StoryFeatureActions({ storyId, authorId, currentUserId }: StoryF
               Report
             </button>
           </div>
-          <button onClick={() => setDmcaOpen((value) => !value)} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+          <button
+            onClick={() => setDmcaOpen((value) => !value)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-red-100 dark:border-red-950/40 bg-red-50/10 dark:bg-red-950/5 hover:bg-red-500/5 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-bold uppercase tracking-widest rounded transition-all shadow-sm"
+          >
             <ShieldAlert className="h-3.5 w-3.5" />
-            DMCA Notice
+            File DMCA Notice
           </button>
           {dmcaOpen && (
             <div className="space-y-2">

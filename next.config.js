@@ -23,6 +23,18 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'image.pollinations.ai',
       },
+      {
+        protocol: 'https',
+        hostname: 's3.amazonaws.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'melliobrien.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.gstatic.com',
+      },
     ],
   },
 };

@@ -54,6 +54,7 @@ interface StoryData {
   updatedAt: string;
   chapters: ChapterItem[];
   universeId: string | null;
+  seriesId: string | null;
   sequenceNumber: number | null;
   subGenres: string[];
   mood: string | null;
@@ -80,6 +81,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   const [editSummary, setEditSummary] = useState("");
   const [editCoverUrl, setEditCoverUrl] = useState("");
   const [editUniverseId, setEditUniverseId] = useState<string | null>(null);
+  const [editSeriesId, setEditSeriesId] = useState<string | null>(null);
   const [editSequenceNumber, setEditSequenceNumber] = useState<number | null>(null);
   const [editSubGenres, setEditSubGenres] = useState<string[]>([]);
   const [editMood, setEditMood] = useState("");
@@ -88,6 +90,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   const [editTags, setEditTags] = useState<string[]>([]);
   const [editDescription, setEditDescription] = useState("");
   const [availableUniverses, setAvailableUniverses] = useState<any[]>([]);
+  const [availableSeries, setAvailableSeries] = useState<any[]>([]);
   const [savingMeta, setSavingMeta] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
 
@@ -97,6 +100,10 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         const res = await fetch(`/api/stories/${storyId}`);
         if (!res.ok) { router.push("/write"); return; }
         const data = await res.json();
+        if (!data.isAuthor) {
+          router.push("/write");
+          return;
+        }
         const storyData: StoryData = data.story;
         setStory(storyData);
         setChapters(storyData.chapters);
@@ -104,6 +111,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         setEditSummary(storyData.summary || "");
         setEditCoverUrl(storyData.coverUrl || "");
         setEditUniverseId(storyData.universeId);
+        setEditSeriesId(storyData.seriesId);
         setEditSequenceNumber(storyData.sequenceNumber ?? null);
         setEditSubGenres(storyData.subGenres || []);
         setEditMood(storyData.mood || "");
@@ -125,8 +133,19 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
       } catch (err) { console.error("Failed to fetch universes:", err); }
     };
 
+    const fetchAvailableSeries = async () => {
+      try {
+        const res = await fetch("/api/series?onlyMine=true");
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableSeries(data);
+        }
+      } catch (err) { console.error("Failed to fetch series:", err); }
+    };
+
     fetchStory();
     fetchAvailableUniverses();
+    fetchAvailableSeries();
   }, [storyId, router]);
 
   useEffect(() => {
@@ -169,6 +188,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
           summary: editSummary.trim() || null,
           coverUrl: editCoverUrl || null,
           universeId: editUniverseId || null,
+          seriesId: editSeriesId || null,
           sequenceNumber: editSequenceNumber || null,
           subGenres: editSubGenres,
           mood: editMood || null,
@@ -310,7 +330,22 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                       ))}
                     </select>
                   </div>
-                  {editUniverseId && (
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Associated Series</label>
+                    <select
+                      value={editSeriesId || ""}
+                      onChange={(e) => setEditSeriesId(e.target.value || null)}
+                      className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm appearance-none cursor-pointer"
+                    >
+                      <option value="">None (Standalone Story)</option>
+                      {availableSeries.map((ser) => (
+                        <option key={ser.id} value={ser.id}>
+                          {ser.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {(editUniverseId || editSeriesId) && (
                     <div className="space-y-2">
                       <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Sequence Number (Optional)</label>
                       <input

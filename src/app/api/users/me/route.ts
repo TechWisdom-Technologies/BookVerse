@@ -20,6 +20,12 @@ export async function GET() {
         dateOfBirth: true,
         role: true,
         createdAt: true,
+        description: true,
+        mood: true,
+        subGenres: true,
+        tags: true,
+        adminInstruction: true,
+        instructionSeen: true,
         _count: {
           select: {
             followers: true,
@@ -75,6 +81,11 @@ export async function PATCH(request: Request) {
     if (parsed.dateOfBirth !== undefined) {
       updateData.dateOfBirth = parsed.dateOfBirth ? new Date(parsed.dateOfBirth) : null;
     }
+    if (parsed.description !== undefined) updateData.description = parsed.description;
+    if (parsed.mood !== undefined) updateData.mood = parsed.mood;
+    if (parsed.subGenres !== undefined) updateData.subGenres = parsed.subGenres;
+    if (parsed.tags !== undefined) updateData.tags = parsed.tags;
+    if (parsed.instructionSeen !== undefined) updateData.instructionSeen = parsed.instructionSeen;
 
     const user = await prisma.user.update({
       where: { id: dbUser.id },
@@ -89,6 +100,12 @@ export async function PATCH(request: Request) {
         dateOfBirth: true,
         role: true,
         createdAt: true,
+        description: true,
+        mood: true,
+        subGenres: true,
+        tags: true,
+        adminInstruction: true,
+        instructionSeen: true,
         _count: {
           select: {
             followers: true,

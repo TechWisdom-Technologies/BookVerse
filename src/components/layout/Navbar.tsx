@@ -48,6 +48,7 @@ const leftNavItems: NavItem[] = [
   { href: "/library", label: "Library", icon: Library },
   { href: "/stories", label: "Stories", icon: Feather },
   { href: "/universes", label: "Universes", icon: Globe },
+  { href: "/series", label: "Series", icon: Layers },
   { href: "/clubs", label: "Clubs", icon: User },
 ];
 
@@ -123,18 +124,18 @@ function DropdownItem({ href, icon: Icon, label, highlight, onClick }: DropdownI
     <Link
       href={href}
       onClick={onClick}
-      className={`flex items-center gap-4 px-4 py-3 rounded transition-all duration-200 group ${highlight
-        ? "bg-zinc-50 dark:bg-zinc-900 text-zinc-900 dark:text-white"
-        : "text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white"
+      className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group border border-transparent ${highlight
+        ? "bg-gradient-to-r from-indigo-500/10 via-indigo-500/5 to-transparent text-indigo-650 dark:text-indigo-400 border-indigo-500/10 shadow-sm"
+        : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-gradient-to-r hover:from-zinc-50 hover:to-transparent dark:hover:from-zinc-900/50"
         }`}
     >
-      <div className={`w-8 h-8 rounded flex items-center justify-center transition-colors ${highlight
-        ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900"
-        : "bg-zinc-50 dark:bg-zinc-900 text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white"
+      <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 ${highlight
+        ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/25 scale-105"
+        : "bg-zinc-50 dark:bg-zinc-900 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
         }`}>
         <Icon size={14} />
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{label}</span>
+      <span className="text-[10px] font-black uppercase tracking-[0.2em] transition-transform duration-300 group-hover:translate-x-1">{label}</span>
     </Link>
   );
 }
@@ -419,12 +420,15 @@ export function Navbar() {
             className="fixed inset-0 z-40 bg-zinc-950/30 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setProfileOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-80 z-50 bg-white dark:bg-zinc-950 border-l border-zinc-100 dark:border-zinc-900 shadow-2xl animate-in slide-in-from-right duration-300 ease-out">
+          <div className="fixed top-0 right-0 h-full w-80 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-l border-zinc-100 dark:border-zinc-900 shadow-2xl animate-in slide-in-from-right duration-300 ease-out">
             <div className="h-full flex flex-col">
               {/* Header */}
-              <div className="p-6 border-b border-zinc-100 dark:border-zinc-900">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded overflow-hidden border border-zinc-100 dark:border-zinc-800">
+              <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+                
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md">
                     {dbUser?.avatarUrl ? (
                       <img
                         src={dbUser.avatarUrl}
@@ -438,11 +442,11 @@ export function Navbar() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm text-zinc-900 dark:text-white truncate uppercase tracking-tight">{dbUser?.displayName || dbUser?.username}</p>
+                    <p className="font-black text-sm text-zinc-900 dark:text-white truncate uppercase tracking-tight">{dbUser?.displayName || dbUser?.username}</p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">@{dbUser?.username}</span>
                       {dbUser?.role === "ADMIN" && (
-                        <span className="px-2 py-0.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[8px] font-bold uppercase tracking-widest rounded">
+                        <span className="px-2 py-0.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-[8px] font-black uppercase tracking-widest rounded-lg">
                           Admin
                         </span>
                       )}
@@ -451,18 +455,18 @@ export function Navbar() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-3 mt-6">
-                  <div className="text-center p-3 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800">
-                    <div className="font-bold text-sm text-zinc-900 dark:text-white">{dbUser?._count?.stories ?? 0}</div>
-                    <div className="text-[9px] uppercase tracking-widest text-zinc-300 font-bold">Stories</div>
+                <div className="grid grid-cols-3 gap-3 mt-6 relative z-10">
+                  <div className="text-center p-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/40 shadow-sm hover:scale-105 transition-all duration-300">
+                    <div className="font-black text-sm text-zinc-900 dark:text-white">{dbUser?._count?.stories ?? 0}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-zinc-450 font-bold">Stories</div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800">
-                    <div className="font-bold text-sm text-zinc-900 dark:text-white">{dbUser?._count?.followers ?? 0}</div>
-                    <div className="text-[9px] uppercase tracking-widest text-zinc-300 font-bold">Followers</div>
+                  <div className="text-center p-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/40 shadow-sm hover:scale-105 transition-all duration-300">
+                    <div className="font-black text-sm text-zinc-900 dark:text-white">{dbUser?._count?.followers ?? 0}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-zinc-450 font-bold">Followers</div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800">
-                    <div className="font-bold text-sm text-zinc-900 dark:text-white">{dbUser?._count?.following ?? 0}</div>
-                    <div className="text-[9px] uppercase tracking-widest text-zinc-300 font-bold">Following</div>
+                  <div className="text-center p-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/40 shadow-sm hover:scale-105 transition-all duration-300">
+                    <div className="font-black text-sm text-zinc-900 dark:text-white">{dbUser?._count?.following ?? 0}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-zinc-450 font-bold">Following</div>
                   </div>
                 </div>
               </div>
@@ -482,6 +486,12 @@ export function Navbar() {
                     href="/universes"
                     icon={Globe}
                     label="Universes"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/series"
+                    icon={Layers}
+                    label="Series"
                     onClick={() => setProfileOpen(false)}
                   />
                   <DropdownItem
@@ -510,13 +520,87 @@ export function Navbar() {
                   />
                 </div>
 
-                {/* Account */}
+                {/* Account Core */}
                 <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Account</h3>
+                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Registry</h3>
                   <DropdownItem
                     href={`/profile/${dbUser?.username || ""}`}
                     icon={User}
                     label="My Profile"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/dashboard"
+                    icon={Sparkles}
+                    label="Author Dashboard"
+                    highlight
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/author/analytics"
+                    icon={BarChart3}
+                    label="Analytics"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/shelf"
+                    icon={BookMarked}
+                    label="My Library"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                </div>
+
+                {/* Author Studio Menus */}
+                <div>
+                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Author</h3>
+                  <DropdownItem
+                    href="/write"
+                    icon={PenLine}
+                    label="Author Studio"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/new"
+                    icon={PlusCircle}
+                    label="New Story"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/universes"
+                    icon={Globe}
+                    label="Story Universes"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/write/series"
+                    icon={Layers}
+                    label="Story Series"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/author/newsletter"
+                    icon={Mail}
+                    label="Newsletter & Fans"
+                    highlight
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
+                    <DropdownItem
+                      href="/upload"
+                      icon={Upload}
+                      label="Upload Book"
+                      onClick={() => setProfileOpen(false)}
+                    />
+                  )}
+                </div>
+
+                {/* Activity & Support */}
+                <div>
+                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Activity & More</h3>
+                  <DropdownItem
+                    href="/reading-challenges"
+                    icon={Trophy}
+                    label="Challenges"
                     onClick={() => setProfileOpen(false)}
                   />
                   <DropdownItem
@@ -525,28 +609,6 @@ export function Navbar() {
                     label="Settings"
                     onClick={() => setProfileOpen(false)}
                   />
-                </div>
-
-                {/* Activity */}
-                <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Activity</h3>
-                  <DropdownItem
-                    href="/shelf"
-                    icon={BookMarked}
-                    label="My Library"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/reading-challenges"
-                    icon={Trophy}
-                    label="Challenges"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                </div>
-
-                {/* Rewards */}
-                <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">More</h3>
                   <DropdownItem
                     href="/premium"
                     icon={Premium}
@@ -560,56 +622,6 @@ export function Navbar() {
                     label="Gifts"
                     onClick={() => setProfileOpen(false)}
                   />
-                </div>
-
-                {/* Creator */}
-                <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Author</h3>
-                  <DropdownItem
-                    href="/write"
-                    icon={PenLine}
-                    label="Author Studio"
-                    highlight
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/new"
-                    icon={PlusCircle}
-                    label="New Story"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/universes"
-                    icon={Layers}
-                    label="Story Universes"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/author/analytics"
-                    icon={BarChart3}
-                    label="Analytics"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/author/newsletter"
-                    icon={Mail}
-                    label="Subscribers"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/newsletter"
-                    icon={Send}
-                    label="Send Newsletter"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
-                    <DropdownItem
-                      href="/upload"
-                      icon={Upload}
-                      label="Upload Book"
-                      onClick={() => setProfileOpen(false)}
-                    />
-                  )}
                   {dbUser?.role === "ADMIN" && (
                     <DropdownItem
                       href="/admin"

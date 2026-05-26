@@ -113,12 +113,16 @@ export default function AdminPage() {
             {[
               { href: "/admin/users", label: "User Registry", desc: "Access authorization and role management." },
               { href: "/admin/transactions", label: "Subscription Payments", desc: "Audit and verify manual premium upgrade transactions." },
+              { href: "/admin/promotions", label: "Promotion Payments", desc: "Audit and verify story promotion payment receipts." },
               { href: "/admin/books", label: "Volume Registry", desc: "Scholarly metadata and content moderation." },
               { href: "/admin/stories", label: "Creative Registry", desc: "Community world-record oversight." },
               { href: "/admin/comments", label: "Interaction Logs", desc: "Peer engagement and moderation protocol." },
               { href: "/admin/dmca", label: "DMCA Notices", desc: "Copyright claims and takedown tracking." },
+              { href: "/admin/reports", label: "Safety Reports", desc: "Manage user-flagged violations like hate speech, harassment, and explicit content." },
               { href: "/admin/universes", label: "Universes", desc: "Manage story universes and metadata." },
+              { href: "/admin/series", label: "Series", icon: "Library", desc: "Manage narrative series directories, sequences, and collections." },
               { href: "/admin/clubs", label: "Clubs", desc: "Community clubs and membership oversight." },
+              { href: "/admin/support", label: "Support Tickets", desc: "View, update, and manage user support inquiries and reports." },
             ].map((link) => (
               <Link
                 key={link.href}

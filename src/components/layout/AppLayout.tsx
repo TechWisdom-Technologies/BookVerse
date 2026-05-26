@@ -5,6 +5,7 @@ import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { AiLibrarianWidget } from "@/components/shared/AiLibrarianWidget";
 import { DevPhaseModal } from "@/components/shared/DevPhaseModal";
+import { AdminInstructionModal } from "@/components/shared/AdminInstructionModal";
 import { ReactNode } from "react";
 
 export function AppLayout({ children }: { children: ReactNode }) {
@@ -21,6 +22,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <div className="flex-1">{children}</div>
       <Footer />
       <DevPhaseModal />
+      <AdminInstructionModal />
       <AiLibrarianWidget />
     </>
   );

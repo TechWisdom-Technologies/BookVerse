@@ -137,7 +137,9 @@ exports.Prisma.UserScalarFieldEnum = {
   ageRating: 'ageRating',
   tags: 'tags',
   reactionCount: 'reactionCount',
-  description: 'description'
+  description: 'description',
+  adminInstruction: 'adminInstruction',
+  instructionSeen: 'instructionSeen'
 };
 
 exports.Prisma.NotificationScalarFieldEnum = {
@@ -195,6 +197,7 @@ exports.Prisma.StoryScalarFieldEnum = {
   published: 'published',
   genre: 'genre',
   universeId: 'universeId',
+  seriesId: 'seriesId',
   sequenceNumber: 'sequenceNumber',
   subGenres: 'subGenres',
   mood: 'mood',
@@ -335,6 +338,8 @@ exports.Prisma.TipScalarFieldEnum = {
   storyId: 'storyId',
   message: 'message',
   stripeSessionId: 'stripeSessionId',
+  senderNumber: 'senderNumber',
+  transactionId: 'transactionId',
   status: 'status',
   createdAt: 'createdAt'
 };
@@ -400,6 +405,7 @@ exports.Prisma.ContentReportScalarFieldEnum = {
   storyId: 'storyId',
   reason: 'reason',
   status: 'status',
+  description: 'description',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -423,6 +429,8 @@ exports.Prisma.StoryPromotionScalarFieldEnum = {
   startDate: 'startDate',
   endDate: 'endDate',
   cost: 'cost',
+  senderNumber: 'senderNumber',
+  transactionId: 'transactionId',
   status: 'status',
   createdAt: 'createdAt'
 };
@@ -438,6 +446,8 @@ exports.Prisma.GiftMembershipScalarFieldEnum = {
   value: 'value',
   expiresAt: 'expiresAt',
   redeemedAt: 'redeemedAt',
+  senderNumber: 'senderNumber',
+  transactionId: 'transactionId',
   status: 'status',
   createdAt: 'createdAt'
 };
@@ -451,6 +461,32 @@ exports.Prisma.UniverseScalarFieldEnum = {
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SeriesScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  coverUrl: 'coverUrl',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UniverseCollaboratorScalarFieldEnum = {
+  id: 'id',
+  universeId: 'universeId',
+  userId: 'userId',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.BookRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  universeId: 'universeId',
+  seriesId: 'seriesId',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SubscriptionTransactionScalarFieldEnum = {
@@ -493,6 +529,18 @@ exports.Prisma.ReadingProgressScalarFieldEnum = {
   storyId: 'storyId',
   chapterId: 'chapterId',
   percentage: 'percentage',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SupportTicketScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  category: 'category',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -566,6 +614,12 @@ exports.AnnotationType = exports.$Enums.AnnotationType = {
   NOTE: 'NOTE'
 };
 
+exports.CollaboratorStatus = exports.$Enums.CollaboratorStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Notification: 'Notification',
@@ -597,11 +651,15 @@ exports.Prisma.ModelName = {
   StoryPromotion: 'StoryPromotion',
   GiftMembership: 'GiftMembership',
   Universe: 'Universe',
+  Series: 'Series',
+  UniverseCollaborator: 'UniverseCollaborator',
+  BookRequest: 'BookRequest',
   SubscriptionTransaction: 'SubscriptionTransaction',
   Poll: 'Poll',
   PollOption: 'PollOption',
   PollVote: 'PollVote',
-  ReadingProgress: 'ReadingProgress'
+  ReadingProgress: 'ReadingProgress',
+  SupportTicket: 'SupportTicket'
 };
 
 /**

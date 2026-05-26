@@ -45,6 +45,7 @@ interface StoryData {
   updatedAt: string;
   chapters: ChapterItem[];
   universeId: string | null;
+  seriesId: string | null;
   sequenceNumber: number | null;
   _count: { reactions: number; comments: number; };
 }
@@ -66,8 +67,10 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   const [editSummary, setEditSummary] = useState("");
   const [editCoverUrl, setEditCoverUrl] = useState("");
   const [editUniverseId, setEditUniverseId] = useState<string | null>(null);
+  const [editSeriesId, setEditSeriesId] = useState<string | null>(null);
   const [editSequenceNumber, setEditSequenceNumber] = useState<number | null>(null);
   const [availableUniverses, setAvailableUniverses] = useState<any[]>([]);
+  const [availableSeries, setAvailableSeries] = useState<any[]>([]);
   const [savingMeta, setSavingMeta] = useState(false);
   const [publishLoading, setPublishLoading] = useState(false);
 
@@ -77,13 +80,19 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         const res = await fetch(`/api/stories/${storyId}`);
         if (!res.ok) { router.push("/write"); return; }
         const data = await res.json();
-        const storyData: StoryData = data.story;
+        if (!data.isAuthor) {
+          router.push("/write");
+          return;
+        }
+        
+        const storyData: any = data.story;
         setStory(storyData);
         setChapters(storyData.chapters);
         setEditTitle(storyData.title);
         setEditSummary(storyData.summary || "");
         setEditCoverUrl(storyData.coverUrl || "");
         setEditUniverseId(storyData.universeId);
+        setEditSeriesId(storyData.seriesId);
         setEditSequenceNumber(storyData.sequenceNumber);
         if (storyData.chapters.length > 0) setActiveChapterId(storyData.chapters[0].id);
       } catch { router.push("/write"); } finally { setLoadingStory(false); }
@@ -99,8 +108,19 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
       } catch (err) { console.error("Failed to fetch universes:", err); }
     };
 
+    const fetchAvailableSeries = async () => {
+      try {
+        const res = await fetch("/api/series?onlyMine=true");
+        if (res.ok) {
+          const data = await res.json();
+          setAvailableSeries(data);
+        }
+      } catch (err) { console.error("Failed to fetch series:", err); }
+    };
+
     fetchStory();
     fetchAvailableUniverses();
+    fetchAvailableSeries();
   }, [storyId, router]);
 
   useEffect(() => {
@@ -139,6 +159,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
           summary: editSummary.trim() || null,
           coverUrl: editCoverUrl || null,
           universeId: editUniverseId || null,
+          seriesId: editSeriesId || null,
           sequenceNumber: editSequenceNumber || null,
         }),
       });
@@ -244,6 +265,55 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Archival Summary</label>
                 <textarea value={editSummary} onChange={(e) => setEditSummary(e.target.value)} rows={3} className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white resize-none" />
+                
+                <div className="pt-4 space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Associated Universe</label>
+                    <select
+                      value={editUniverseId || ""}
+                      onChange={(e) => setEditUniverseId(e.target.value || null)}
+                      className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white appearance-none cursor-pointer"
+                    >
+                      <option value="">None (Standalone Story)</option>
+                      {availableUniverses.map((uni) => (
+                        <option key={uni.id} value={uni.id}>
+                          {uni.name} ({uni.genre})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Associated Series</label>
+                    <select
+                      value={editSeriesId || ""}
+                      onChange={(e) => setEditSeriesId(e.target.value || null)}
+                      className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white appearance-none cursor-pointer"
+                    >
+                      <option value="">None (Standalone Story)</option>
+                      {availableSeries.map((ser) => (
+                        <option key={ser.id} value={ser.id}>
+                          {ser.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {(editUniverseId || editSeriesId) && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Sequence Number (Optional)</label>
+                      <input
+                        type="number"
+                        min={1}
+                        value={editSequenceNumber ?? ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setEditSequenceNumber(val ? parseInt(val) : null);
+                        }}
+                        placeholder="e.g. 1 (Book One), 2 (Book Two)"
+                        className="w-full px-4 py-2 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div className="space-y-4">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Visual Registry</label>

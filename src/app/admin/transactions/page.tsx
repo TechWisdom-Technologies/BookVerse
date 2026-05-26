@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+
 import { 
   Loader2, 
   Search, 
@@ -38,6 +38,14 @@ interface SubscriptionTransaction {
   status: "PENDING" | "APPROVED" | "DECLINED";
   createdAt: string;
   user: UserProfile;
+  details?: {
+    type: "TIP" | "GIFT" | "PROMOTION";
+    receiverName?: string;
+    receiverUsername?: string;
+    storyTitle?: string | null;
+    recipientEmail?: string;
+    tier?: string;
+  } | null;
 }
 
 export default function AdminTransactionsPage() {
@@ -186,7 +194,7 @@ export default function AdminTransactionsPage() {
                         <div className="flex items-center gap-4">
                           <div className="relative h-10 w-10 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
                             {txn.user.avatarUrl ? (
-                              <Image src={txn.user.avatarUrl} alt="" fill className="object-cover transition-all" />
+                              <img src={txn.user.avatarUrl} alt="" className="absolute inset-0 w-full h-full object-cover transition-all" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-zinc-350 uppercase">
                                 {txn.user.username.charAt(0)}
@@ -203,19 +211,58 @@ export default function AdminTransactionsPage() {
                       </td>
                       
                       <td className="py-4 px-6">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-1.5">
-                            <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded font-mono ${
-                              txn.plan === "CREATOR"
-                                ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"
-                                : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
-                            }`}>
-                              {txn.plan}
-                            </span>
-                            <span className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest">
-                              ({txn.duration}M)
-                            </span>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            {txn.plan === "TIP" ? (
+                              <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded font-mono bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                                Author Tip
+                              </span>
+                            ) : txn.plan.startsWith("GIFT_") ? (
+                              <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded font-mono bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                                Gift {txn.plan.replace("GIFT_", "")}
+                              </span>
+                            ) : txn.plan.startsWith("PROMOTION_") ? (
+                              <span className="px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded font-mono bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                Promo {txn.plan.replace("PROMOTION_", "")}
+                              </span>
+                            ) : (
+                              <span className={`px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded font-mono ${
+                                txn.plan === "CREATOR"
+                                  ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"
+                                  : "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                              }`}>
+                                {txn.plan}
+                              </span>
+                            )}
+                            
+                            {!txn.plan.startsWith("PROMOTION_") && txn.plan !== "TIP" && (
+                              <span className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest font-mono">
+                                ({txn.duration}M)
+                              </span>
+                            )}
                           </div>
+                          
+                          {txn.details?.type === "TIP" && (
+                            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
+                              To: <span className="font-bold text-amber-600 dark:text-amber-400 uppercase">@{txn.details.receiverUsername}</span>
+                              {txn.details.storyTitle && (
+                                <span className="block text-[9px] text-zinc-400 dark:text-zinc-500 italic max-w-[180px] truncate">Story: "{txn.details.storyTitle}"</span>
+                              )}
+                            </div>
+                          )}
+
+                          {txn.details?.type === "GIFT" && (
+                            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight">
+                              To Email: <span className="font-bold text-zinc-950 dark:text-zinc-100 font-mono select-all">{txn.details.recipientEmail}</span>
+                            </div>
+                          )}
+
+                          {txn.details?.type === "PROMOTION" && (
+                            <div className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight max-w-[185px] truncate">
+                              Story: <span className="font-bold text-zinc-950 dark:text-zinc-100 italic">"{txn.details.storyTitle}"</span>
+                            </div>
+                          )}
+
                           <p className="text-[10px] font-bold text-zinc-350 dark:text-zinc-200">
                             ৳{txn.amount.toLocaleString()} BDT
                           </p>

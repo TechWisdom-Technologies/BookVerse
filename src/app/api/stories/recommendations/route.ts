@@ -116,11 +116,59 @@ export async function GET(req: Request) {
       recommendedStories = [...recommendedStories, ...popularStories];
     }
 
-    // Serialize dates for Client Component safety
-    const serialized = recommendedStories.map((story) => ({
-      ...story,
-      createdAt: story.createdAt.toISOString(),
-    }));
+    // Prioritize active FEATURED promotions first within recommendations list
+    try {
+      const activeFeaturedPromotions = await prisma.storyPromotion.findMany({
+        where: {
+          tier: 'FEATURED',
+          status: 'ACTIVE',
+          endDate: { gt: new Date() },
+          story: { published: true }
+        },
+        select: { storyId: true }
+      });
+      const featuredStoryIds = activeFeaturedPromotions.map(fp => fp.storyId);
+
+      // Sort so featured stories come first, preserving secondary viewCount/popularity ordering
+      recommendedStories.sort((a, b) => {
+        const aFeatured = featuredStoryIds.includes(a.id);
+        const bFeatured = featuredStoryIds.includes(b.id);
+        if (aFeatured && !bFeatured) return -1;
+        if (!aFeatured && bFeatured) return 1;
+        return 0;
+      });
+    } catch (err) {
+      console.error('Error sorting featured recommendations:', err);
+    }
+
+    // Fetch all active promotions to populate badges
+    let activePromotions: { storyId: string; tier: string }[] = [];
+    try {
+      activePromotions = await prisma.storyPromotion.findMany({
+        where: {
+          status: 'ACTIVE',
+          endDate: { gt: new Date() },
+        },
+        select: {
+          storyId: true,
+          tier: true,
+        },
+      });
+    } catch (err) {
+      console.error('Error fetching active promotions for badges:', err);
+    }
+
+    // Serialize dates and attach promotion flags for Client Component safety
+    const serialized = recommendedStories.map((story) => {
+      const activePromo = activePromotions.find((ap) => ap.storyId === story.id);
+      return {
+        ...story,
+        createdAt: story.createdAt.toISOString(),
+        isTrendingPromo: activePromo?.tier === 'TRENDING',
+        isPromotedPromo: activePromo?.tier === 'PROMOTED',
+        isFeaturedPromo: activePromo?.tier === 'FEATURED',
+      };
+    });
 
     return NextResponse.json(serialized);
   } catch (error) {

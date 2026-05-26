@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
+
 import Link from "next/link";
 import { Loader2, Search, Trash2, Globe, Eye } from "lucide-react";
 
@@ -85,7 +85,7 @@ export default function AdminUniversesPage() {
                         <div className="flex items-center gap-4">
                           <div className="relative h-12 w-9 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
                             {u.coverUrl ? (
-                              <Image src={u.coverUrl} alt={u.name} fill className="object-cover" />
+                              <img src={u.coverUrl} alt={u.name} className="absolute inset-0 w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center opacity-10"><Eye className="w-4 h-4" /></div>
                             )}

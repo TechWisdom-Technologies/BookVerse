@@ -12,13 +12,33 @@ export async function GET(req: Request) {
     let where: any = {};
 
     if (userId) {
-      where.userId = userId;
+      where.OR = [
+        { userId },
+        {
+          collaborators: {
+            some: {
+              userId,
+              status: 'ACCEPTED',
+            },
+          },
+        },
+      ];
     } else if (onlyMine) {
       const user = await getAuth();
       if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
-      where.userId = user.id;
+      where.OR = [
+        { userId: user.id },
+        {
+          collaborators: {
+            some: {
+              userId: user.id,
+              status: 'ACCEPTED',
+            },
+          },
+        },
+      ];
     }
 
     if (search) {

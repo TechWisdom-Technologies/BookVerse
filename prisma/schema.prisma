@@ -60,12 +60,15 @@ model User {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  books          Book[]
-  bookReviews    BookReview[]
-  bookSaves      BookSave[]
-  universes      Universe[]
-  stories        Story[]
-  storyReactions StoryReaction[]
+  books                 Book[]
+  bookReviews           BookReview[]
+  bookSaves             BookSave[]
+  universes             Universe[]
+  series                Series[]
+  collaboratorUniverses UniverseCollaborator[]
+  bookRequests          BookRequest[]
+  stories               Story[]
+  storyReactions        StoryReaction[]
   comments       Comment[]
   followers      Follow[]        @relation("following")
   following      Follow[]        @relation("follower")
@@ -95,6 +98,8 @@ model User {
   tags                     String[]                 @default([])
   reactionCount            Int                      @default(0) @map("reaction_count")
   description              String?
+  adminInstruction         String?                  @map("admin_instruction")
+  instructionSeen          Boolean                  @default(false) @map("instruction_seen")
 
   // Relationships to new models
   annotations              BookAnnotation[]
@@ -196,6 +201,7 @@ model Story {
   published Boolean  @default(false)
   genre     String?
   universeId  String?  @map("universe_id")
+  seriesId    String?  @map("series_id")
   sequenceNumber  Int?     @map("sequence_number")
   subGenres String[] @default([])
   mood      String?
@@ -207,6 +213,7 @@ model Story {
 
   author    User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
   universe  Universe?       @relation("story_universe", fields: [universeId], references: [id], onDelete: SetNull)
+  series    Series?         @relation("story_series", fields: [seriesId], references: [id], onDelete: SetNull)
   chapters  StoryChapter[]
   reactions StoryReaction[]
   comments  Comment[]
@@ -217,10 +224,13 @@ model Story {
   inlineComments    InlineComment[]
   shareActivities   ShareActivity[]
   promotions        StoryPromotion[]
+  contentReports    ContentReport[]    @relation("content_reports")
+  dmcaNotices       DMCANotice[]       @relation("dmca_notices")
 
   @@index([authorId])
   @@index([published])
   @@index([universeId])
+  @@index([seriesId])
   @@map("stories")
 }
 
@@ -448,6 +458,8 @@ model Tip {
   storyId         String?   @map("story_id")
   message         String?
   stripeSessionId String?   @unique @map("stripe_session_id")
+  senderNumber    String?   @map("sender_number")
+  transactionId   String?   @unique @map("transaction_id")
   status          TipStatus @default(PENDING)
   createdAt       DateTime  @default(now()) @map("created_at")
 
@@ -560,10 +572,12 @@ model ContentReport {
   storyId    String   @map("story_id")
   reason     String   // COPYRIGHTED, EXPLICIT, HATE_SPEECH, HARASSMENT, OTHER
   status     String   @default("PENDING") // PENDING, REVIEWED, RESOLVED, DISMISSED
+  description String?
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  reporter User @relation("reporter", fields: [reportedBy], references: [id], onDelete: Cascade)
+  reporter User  @relation("reporter", fields: [reportedBy], references: [id], onDelete: Cascade)
+  story    Story @relation("content_reports", fields: [storyId], references: [id], onDelete: Cascade)
 
   @@index([storyId])
   @@map("content_reports")
@@ -580,7 +594,8 @@ model DMCANotice {
   status            String   @default("SUBMITTED") // SUBMITTED, ACKNOWLEDGED, RESOLVED, DISMISSED
   createdAt         DateTime @default(now()) @map("created_at")
 
-  submittedByUser User @relation("dmca_submitter", fields: [submittedBy], references: [id], onDelete: Cascade)
+  submittedByUser User  @relation("dmca_submitter", fields: [submittedBy], references: [id], onDelete: Cascade)
+  story           Story @relation("dmca_notices", fields: [storyId], references: [id], onDelete: Cascade)
 
   @@index([storyId])
   @@map("dmca_notices")
@@ -589,14 +604,16 @@ model DMCANotice {
 
 
 model StoryPromotion {
-  id        String   @id @default(cuid())
-  storyId   String   @map("story_id")
-  tier      String   // FEATURED, PROMOTED, TRENDING
-  startDate DateTime @map("start_date")
-  endDate   DateTime @map("end_date")
-  cost      Float
-  status    String   @default("ACTIVE") // ACTIVE, ENDED, PAUSED
-  createdAt DateTime @default(now()) @map("created_at")
+  id            String   @id @default(cuid())
+  storyId       String   @map("story_id")
+  tier          String   // FEATURED, PROMOTED, TRENDING
+  startDate     DateTime @map("start_date")
+  endDate       DateTime @map("end_date")
+  cost          Float
+  senderNumber  String?  @map("sender_number")
+  transactionId String?  @unique @map("transaction_id")
+  status        String   @default("PENDING") // PENDING, ACTIVE, ENDED, PAUSED, DECLINED
+  createdAt     DateTime @default(now()) @map("created_at")
 
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
 
@@ -605,20 +622,22 @@ model StoryPromotion {
 }
 
 model GiftMembership {
-  id            String   @id @default(cuid())
-  code          String   @unique
-  tier          String   // PRO, CREATOR
-  duration      Int      // in months
-  sentBy        String   @map("sent_by")
-  recipientEmail String  @map("recipient_email")
-  redeemById    String?  @map("redeemed_by")
-  value         Float
-  expiresAt     DateTime @map("expires_at")
-  redeemedAt    DateTime? @map("redeemed_at")
-  status        String   @default("PENDING") // PENDING, REDEEMED, EXPIRED
-  createdAt     DateTime @default(now()) @map("created_at")
+  id             String    @id @default(cuid())
+  code           String    @unique
+  tier           String // PRO, CREATOR
+  duration       Int // in months
+  sentBy         String    @map("sent_by")
+  recipientEmail String    @map("recipient_email")
+  redeemById     String?   @map("redeemed_by")
+  value          Float
+  expiresAt      DateTime  @map("expires_at")
+  redeemedAt     DateTime? @map("redeemed_at")
+  senderNumber   String?   @map("sender_number")
+  transactionId  String?   @unique @map("transaction_id")
+  status         String    @default("PENDING") // PENDING, REDEEMED, EXPIRED
+  createdAt      DateTime  @default(now()) @map("created_at")
 
-  sentByUser  User  @relation("sender", fields: [sentBy], references: [id], onDelete: Cascade)
+  sentByUser     User  @relation("sender", fields: [sentBy], references: [id], onDelete: Cascade)
   redeemedByUser User? @relation("receiver", fields: [redeemById], references: [id], onDelete: SetNull)
 
   @@index([sentBy])
@@ -635,11 +654,64 @@ model Universe {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stories Story[] @relation("story_universe")
+  user          User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stories       Story[]                @relation("story_universe")
+  collaborators UniverseCollaborator[]
+  bookRequests  BookRequest[]
 
   @@index([userId])
   @@map("universes")
+}
+
+model Series {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  coverUrl    String?  @map("cover_url")
+  userId      String   @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stories      Story[]       @relation("story_series")
+  bookRequests BookRequest[]
+
+  @@index([userId])
+  @@map("series")
+}
+
+enum CollaboratorStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model UniverseCollaborator {
+  id         String             @id @default(cuid())
+  universeId String             @map("universe_id")
+  userId     String             @map("user_id")
+  status     CollaboratorStatus @default(PENDING)
+  createdAt  DateTime           @default(now()) @map("created_at")
+
+  universe Universe @relation(fields: [universeId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([universeId, userId])
+  @@map("universe_collaborators")
+}
+
+model BookRequest {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  universeId  String?  @map("universe_id")
+  seriesId    String?  @map("series_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  universe Universe? @relation(fields: [universeId], references: [id], onDelete: Cascade)
+  series   Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@map("book_requests")
 }
 
 model SubscriptionTransaction {
@@ -708,5 +780,19 @@ model ReadingProgress {
 
   @@unique([userId, storyId])
   @@map("reading_progress")
+}
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  category  String
+  subject   String
+  message   String
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("support_tickets")
 }
 

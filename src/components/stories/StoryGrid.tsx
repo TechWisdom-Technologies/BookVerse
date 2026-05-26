@@ -23,6 +23,9 @@ interface StoryData {
     reactions: number;
     comments: number;
   };
+  isTrendingPromo?: boolean;
+  isPromotedPromo?: boolean;
+  isFeaturedPromo?: boolean;
 }
 
 interface StoryGridProps {

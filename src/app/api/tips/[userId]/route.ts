@@ -49,7 +49,7 @@ export async function GET(
 
 /**
  * POST /api/tips/[userId]
- * Create a tip (mock implementation - replace with real Stripe flow)
+ * Create a pending tip via manual mobile payment for admin review
  */
 export async function POST(
   req: NextRequest,
@@ -58,43 +58,94 @@ export async function POST(
   try {
     const { userId } = await params;
     const user = await getAuth();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const { amount, message, storyId } = await req.json();
+    const { amount, message, storyId, senderNumber, transactionId } = await req.json();
 
     if (!amount || amount < 1) {
       return NextResponse.json(
-        { error: 'Tip amount must be at least $1' },
+        { error: 'Tip amount must be at least ৳1 Taka' },
         { status: 400 }
       );
     }
 
-    if (userId === user?.id) {
+    if (userId === user.id) {
       return NextResponse.json(
         { error: 'Cannot tip yourself' },
         { status: 400 }
       );
     }
 
-    // Create tip record (in production, this would integrate with Stripe)
-    const tip = await prisma.tip.create({
-      data: {
-        amount,
-        currency: 'usd',
-        senderId: user?.id || null,
-        receiverId: userId,
-        storyId: storyId || null,
-        message: message || null,
-        status: 'COMPLETED', // In production, this would be PENDING until Stripe confirms
-      },
-      include: {
-        sender: {
-          select: { id: true, username: true, displayName: true, avatarUrl: true },
+    if (!senderNumber || typeof senderNumber !== 'string' || !senderNumber.trim()) {
+      return NextResponse.json(
+        { error: 'Sender Mobile Number is required.' },
+        { status: 400 }
+      );
+    }
+
+    if (!transactionId || typeof transactionId !== 'string' || !transactionId.trim()) {
+      return NextResponse.json(
+        { error: 'Transaction ID is required.' },
+        { status: 400 }
+      );
+    }
+
+    const cleanTxnId = transactionId.trim();
+
+    // Verify duplicate transaction submissions
+    const [existingTxn, existingTip] = await Promise.all([
+      prisma.subscriptionTransaction.findFirst({
+        where: { transactionId: cleanTxnId },
+      }),
+      prisma.tip.findFirst({
+        where: { transactionId: cleanTxnId },
+      }),
+    ]);
+
+    if (existingTxn || existingTip) {
+      return NextResponse.json(
+        { error: 'This Transaction ID has already been submitted.' },
+        { status: 400 }
+      );
+    }
+
+    // Create both records inside a Prisma transaction
+    const [tip] = await prisma.$transaction([
+      prisma.tip.create({
+        data: {
+          amount,
+          currency: 'bdt',
+          senderId: user.id,
+          receiverId: userId,
+          storyId: storyId || null,
+          message: message || null,
+          status: 'PENDING',
+          senderNumber: senderNumber.trim(),
+          transactionId: cleanTxnId,
         },
-        story: {
-          select: { id: true, title: true },
+        include: {
+          sender: {
+            select: { id: true, username: true, displayName: true, avatarUrl: true },
+          },
+          story: {
+            select: { id: true, title: true },
+          },
         },
-      },
-    });
+      }),
+      prisma.subscriptionTransaction.create({
+        data: {
+          userId: user.id,
+          plan: 'TIP',
+          duration: 1,
+          amount: amount,
+          senderNumber: senderNumber.trim(),
+          transactionId: cleanTxnId,
+          status: 'PENDING',
+        },
+      }),
+    ]);
 
     return NextResponse.json(tip, { status: 201 });
   } catch (error) {

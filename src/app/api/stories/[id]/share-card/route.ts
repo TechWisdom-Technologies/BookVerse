@@ -23,6 +23,10 @@ export async function GET(
       where: { storyId: id },
     });
 
+    const host = req.headers.get('host') || 'localhost:3000';
+    const protocol = req.headers.get('x-forwarded-proto') || 'http';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || `${protocol}://${host}`;
+
     // Generate sharing card with metrics
     const shareCard = {
       title: story.title,
@@ -30,7 +34,7 @@ export async function GET(
       author: story.author.displayName,
       authorHandle: story.author.username,
       image: story.coverUrl || '/default-story.png',
-      url: `${process.env.NEXT_PUBLIC_APP_URL}/stories/${story.id}`,
+      url: `${baseUrl}/stories/${story.id}`,
       metrics: {
         views: story.viewCount || 0,
         reactions: story.reactionCount || 0,

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { Loader2, Search, Trash2, BookOpen, Plus, ArrowLeft, ShieldCheck, CheckSquare, Square, XCircle } from "lucide-react";
 
@@ -199,7 +198,7 @@ export default function AdminBooksPage() {
                         <div className="flex items-center gap-4">
                           <div className="relative h-12 w-9 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
                             {book.coverUrl ? (
-                              <Image src={book.coverUrl} alt="" fill className="object-cover transition-all duration-500" />
+                              <img src={book.coverUrl} alt="" className="absolute inset-0 w-full h-full object-cover transition-all duration-500" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center opacity-10">
                                 <BookOpen className="w-4 h-4" />
