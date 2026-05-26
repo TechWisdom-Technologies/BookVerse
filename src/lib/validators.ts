@@ -54,5 +54,10 @@ export const profileSchema = z.object({
   subGenres: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
   instructionSeen: z.boolean().optional(),
+  readingFont: z.enum(["sans", "serif", "dyslexic"]).optional(),
+  readerTheme: z.enum(["white", "sepia", "cream", "charcoal", "black"]).optional(),
+  readingProgressSync: z.boolean().optional(),
+  bkashNumber: z.string().optional().nullable(),
+  nagadNumber: z.string().optional().nullable(),
 });
 

@@ -74,6 +74,7 @@ export async function GET(req: Request) {
         where: {
           published: true,
           authorId: { not: user.id },
+          author: { isDeactivated: false },
           OR: [
             { genre: { in: preferredGenres } },
             { authorId: { in: reactedAuthors } },
@@ -104,6 +105,7 @@ export async function GET(req: Request) {
         where: {
           published: true,
           id: { notIn: excludedIds },
+          author: { isDeactivated: false },
         },
         select: selectFields,
         orderBy: [

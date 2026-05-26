@@ -32,8 +32,14 @@ export async function POST() {
 
     const existing = await prisma.user.findUnique({
       where: { firebaseUid: decoded.uid },
-      select: { id: true },
+      select: { id: true, isDeactivated: true },
     });
+
+    const updateFields: any = { email };
+    if (existing?.isDeactivated) {
+      updateFields.isDeactivated = false;
+      updateFields.deactivatedUntil = null;
+    }
 
     const user = await prisma.user.upsert({
       where: { firebaseUid: decoded.uid },
@@ -44,9 +50,7 @@ export async function POST() {
         displayName: decoded.name ?? null,
         avatarUrl: decoded.picture ?? null,
       },
-      update: {
-        email,
-      },
+      update: updateFields,
       include: {
         _count: {
           select: {

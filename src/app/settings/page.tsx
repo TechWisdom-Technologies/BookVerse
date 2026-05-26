@@ -6,7 +6,6 @@ import {
   User, 
   Palette, 
   Shield, 
-  Bell, 
   ArrowLeft, 
   Check, 
   Type, 
@@ -14,22 +13,108 @@ import {
   Sun, 
   Monitor,
   Loader2,
-  Settings as SettingsIcon,
   ShieldCheck,
-  Cpu
+  CreditCard,
+  Smartphone,
+  KeyRound,
+  Trash2,
+  Sparkles,
+  Info,
+  Wallet,
+  ArrowUpRight,
+  ArrowDownLeft,
+  TrendingUp,
+  Calendar,
+  AlertTriangle
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { EditProfileForm } from '@/components/profile/EditProfileForm';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { toast } from 'react-hot-toast';
+
+interface WalletTransaction {
+  id: string;
+  type: 'TIP_RECEIVED' | 'TIP_SENT' | 'SUBSCRIPTION';
+  amount: number;
+  currency: string;
+  status: string;
+  createdAt: string;
+  description: string;
+  method: string;
+}
 
 export default function SettingsPage() {
-  const { dbUser, loading: authLoading } = useAuth();
+  const { dbUser, loading: authLoading, refreshUser, resetPassword } = useAuth();
   const { theme, setTheme } = useTheme();
+  
   const [activeTab, setActiveTab] = useState('profile');
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => { setMounted(true); }, []);
+  // Reading preferences states
+  const [readingFont, setReadingFont] = useState('sans');
+  const [readerTheme, setReaderTheme] = useState('white');
+  const [readingProgressSync, setReadingProgressSync] = useState(true);
+  const [savingReading, setSavingReading] = useState(false);
+
+  // Billing states
+  const [bkashNumber, setBkashNumber] = useState('');
+  const [nagadNumber, setNagadNumber] = useState('');
+  const [savingBilling, setSavingBilling] = useState(false);
+
+  // Wallet states
+  const [walletLoading, setWalletLoading] = useState(true);
+  const [walletEarnedTips, setWalletEarnedTips] = useState(0);
+  const [walletSpentTips, setWalletSpentTips] = useState(0);
+  const [walletSpentSubs, setWalletSpentSubs] = useState(0);
+  const [walletHistory, setWalletHistory] = useState<WalletTransaction[]>([]);
+
+  // Security & Deactivation states
+  const [deactivatePeriod, setDeactivatePeriod] = useState('login'); // 'login' | '15' | '30' | '45' | '90' | '175' | 'custom'
+  const [customDays, setCustomDays] = useState('');
+  const [deactivating, setDeactivating] = useState(false);
+  const [sendingReset, setSendingReset] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
+
+  useEffect(() => { 
+    setMounted(true); 
+  }, []);
+
+  // Sync DB user data to component state once loaded
+  useEffect(() => {
+    if (dbUser) {
+      setReadingFont(dbUser.readingFont || 'sans');
+      setReaderTheme(dbUser.readerTheme || 'white');
+      setReadingProgressSync(dbUser.readingProgressSync ?? true);
+      setBkashNumber(dbUser.bkashNumber || '');
+      setNagadNumber(dbUser.nagadNumber || '');
+    }
+  }, [dbUser]);
+
+  // Load wallet transaction history when billing tab is selected
+  const fetchWalletDetails = async () => {
+    setWalletLoading(true);
+    try {
+      const res = await fetch('/api/users/me/wallet');
+      if (res.ok) {
+        const data = await res.json();
+        setWalletEarnedTips(data.totalEarnedTips);
+        setWalletSpentTips(data.totalSpentTips);
+        setWalletSpentSubs(data.totalSpentSubs);
+        setWalletHistory(data.history);
+      }
+    } catch (err) {
+      console.error("Failed to load wallet details:", err);
+    } finally {
+      setWalletLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'billing') {
+      fetchWalletDetails();
+    }
+  }, [activeTab]);
 
   if (!mounted) return null;
 
@@ -43,9 +128,149 @@ export default function SettingsPage() {
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
+    { id: 'reading', label: 'Reading Prefs', icon: Type },
     { id: 'appearance', label: 'Appearance', icon: Palette },
+    { id: 'billing', label: 'Wallet & Billing', icon: CreditCard },
     { id: 'security', label: 'Security', icon: Shield },
   ];
+
+  const handleSaveReading = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingReading(true);
+    try {
+      const res = await fetch('/api/users/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          readingFont,
+          readerTheme,
+          readingProgressSync,
+        }),
+      });
+      if (res.ok) {
+        toast.success('Reading preferences updated successfully!');
+        await refreshUser();
+      } else {
+        toast.error('Failed to update reading preferences');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update reading preferences');
+    } finally {
+      setSavingReading(false);
+    }
+  };
+
+  const handleSaveBilling = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingBilling(true);
+    try {
+      const res = await fetch('/api/users/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bkashNumber: bkashNumber.trim() || null,
+          nagadNumber: nagadNumber.trim() || null,
+        }),
+      });
+      if (res.ok) {
+        toast.success('Payout numbers updated successfully!');
+        await refreshUser();
+      } else {
+        toast.error('Failed to update payout numbers');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to update payout numbers');
+    } finally {
+      setSavingBilling(false);
+    }
+  };
+
+  const handleDeactivateAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    let days: number | null = null;
+    if (deactivatePeriod !== 'login') {
+      const parsedDays = deactivatePeriod === 'custom' ? Number(customDays) : Number(deactivatePeriod);
+      if (isNaN(parsedDays) || parsedDays <= 0) {
+        toast.error('Please enter a valid number of days');
+        return;
+      }
+      days = parsedDays;
+    }
+
+    if (!confirm(`Are you sure you want to deactivate your account? ${
+      days 
+        ? `Your profile will be hidden for ${days} days, or until you log in again.` 
+        : 'Your profile will be hidden until you log back in.'
+    }`)) {
+      return;
+    }
+
+    setDeactivating(true);
+    try {
+      const res = await fetch('/api/users/me/deactivate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ days }),
+      });
+
+      if (res.ok) {
+        toast.success('Account successfully deactivated.');
+        window.location.href = '/';
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to deactivate account');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network failure during account deactivation');
+    } finally {
+      setDeactivating(false);
+    }
+  };
+
+  const handlePasswordReset = async () => {
+    if (!dbUser?.email) return;
+    setSendingReset(true);
+    try {
+      await resetPassword(dbUser.email);
+      toast.success('Password reset email sent! Check your inbox.');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send password reset email');
+    } finally {
+      setSendingReset(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== 'DELETE') {
+      toast.error("Please type 'DELETE' to confirm");
+      return;
+    }
+    if (!confirm("WARNING: This action is permanent. All your books, chapters, and account data will be permanently deleted from BookVerse. Are you absolutely sure?")) {
+      return;
+    }
+    setDeletingAccount(true);
+    try {
+      const res = await fetch('/api/users/me', {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        toast.success('Your account was successfully deleted.');
+        window.location.href = '/';
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to delete account');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network failure during account deletion');
+    } finally {
+      setDeletingAccount(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
@@ -60,11 +285,11 @@ export default function SettingsPage() {
             </Link>
             <div>
               <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Settings.</h1>
-              <p className="text-sm text-zinc-500 font-medium">Manage your profile, look and feel, and account security.</p>
+              <p className="text-sm text-zinc-500 font-medium">Manage your profile, reading preferences, mobile wallets, and account deactivation.</p>
             </div>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded">
-            Active
+            Active Status: Verified
           </div>
         </header>
 
@@ -95,6 +320,8 @@ export default function SettingsPage() {
 
           {/* Content Area */}
           <section className="max-w-3xl">
+            
+            {/* PROFILE TAB */}
             {activeTab === 'profile' && (
               <div className="space-y-12 animate-in fade-in duration-500">
                 <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
@@ -107,6 +334,105 @@ export default function SettingsPage() {
               </div>
             )}
 
+            {/* READING PREFERENCES TAB */}
+            {activeTab === 'reading' && (
+              <div className="space-y-12 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Reading Preferences</h2>
+                  <p className="text-[11px] text-zinc-500 font-medium italic">Customize how you read chapters and stories across BookVerse.</p>
+                </div>
+
+                <form onSubmit={handleSaveReading} className="space-y-10">
+                  {/* Default Font */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Default Typography</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { id: 'sans', label: 'Sans-Serif', desc: 'Modern & Clean', fontClass: 'font-sans' },
+                        { id: 'serif', label: 'Serif', desc: 'Classic Novelist', fontClass: 'font-serif' },
+                        { id: 'dyslexic', label: 'Dyslexic', desc: 'Specialized Reading', fontClass: 'font-mono' }
+                      ].map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setReadingFont(f.id)}
+                          className={`flex flex-col text-left p-6 border rounded transition-all ${
+                            readingFont === f.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                          }`}
+                        >
+                          <span className={`text-base font-bold mb-1 ${f.fontClass}`}>Aa</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest block">{f.label}</span>
+                          <span className="text-[9px] text-zinc-400 font-bold block mt-1 uppercase">{f.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Reader Theme */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Reader Interface Theme</label>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                      {[
+                        { id: 'white', label: 'White', bg: 'bg-[#FFFFFF]', text: 'text-[#1E1E1E]', border: 'border-zinc-200' },
+                        { id: 'sepia', label: 'Sepia', bg: 'bg-[#F4ECD8]', text: 'text-[#5F4B32]', border: 'border-[#E7DEC7]' },
+                        { id: 'cream', label: 'Cream', bg: 'bg-[#FAF6EE]', text: 'text-[#1E1E1E]', border: 'border-[#F0EBE0]' },
+                        { id: 'charcoal', label: 'Charcoal', bg: 'bg-[#2D2D2D]', text: 'text-[#E0E0E0]', border: 'border-[#3D3D3D]' },
+                        { id: 'black', label: 'Ink Black', bg: 'bg-[#000000]', text: 'text-[#FFFFFF]', border: 'border-[#1E1E1E]' }
+                      ].map((themeOpt) => (
+                        <button
+                          key={themeOpt.id}
+                          type="button"
+                          onClick={() => setReaderTheme(themeOpt.id)}
+                          className={`p-4 border rounded flex flex-col items-center gap-3 transition-all ${themeOpt.bg} ${themeOpt.text} ${themeOpt.border} ${
+                            readerTheme === themeOpt.id ? 'ring-2 ring-zinc-900 dark:ring-white scale-105' : 'opacity-80 hover:opacity-100'
+                          }`}
+                        >
+                          <div className="text-[10px] font-bold uppercase tracking-widest leading-none">A</div>
+                          <span className="text-[9px] font-bold uppercase tracking-wider">{themeOpt.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Progress Sync */}
+                  <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg flex items-center justify-between gap-6 bg-zinc-50/20 dark:bg-zinc-900/10">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 block">Synchronize Reading Progress</span>
+                      <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">Auto-save pages and scroll milestones across devices.</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setReadingProgressSync(!readingProgressSync)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                        readingProgressSync ? 'bg-zinc-900 dark:bg-white' : 'bg-zinc-200 dark:bg-zinc-800'
+                      }`}
+                    >
+                      <span
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-zinc-900 shadow ring-0 transition duration-200 ease-in-out ${
+                          readingProgressSync ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={savingReading}
+                    className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                  >
+                    {savingReading ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      'Save Preferences'
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* APPEARANCE TAB */}
             {activeTab === 'appearance' && (
               <div className="space-y-12 animate-in fade-in duration-500">
                 <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
@@ -145,16 +471,372 @@ export default function SettingsPage() {
               </div>
             )}
 
+            {/* WALLET, BILLING & TIPPING TAB (strictly in BDT) */}
+            {activeTab === 'billing' && (
+              <div className="space-y-12 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Wallet Hub & Billings</h2>
+                  <p className="text-[11px] text-zinc-500 font-medium italic">Configure mobile cash-out wallets, check your payment balance sheets, and track ledger history in BDT.</p>
+                </div>
+
+                {/* Dynamic Wallet Dashboard Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Total Earned Card */}
+                  <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-zinc-50/20 dark:bg-zinc-900/10 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 text-zinc-400 mb-2">
+                        <span className="text-[9px] font-black uppercase tracking-widest">Earnings (Tips)</span>
+                        <ArrowDownLeft className="w-3.5 h-3.5 text-emerald-500" />
+                      </div>
+                      <h3 className="text-xl font-mono font-black text-zinc-900 dark:text-white leading-none">
+                        ৳{walletEarnedTips.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </h3>
+                    </div>
+                    <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest mt-4">Tips received (Converted to BDT)</span>
+                  </div>
+
+                  {/* Total Tipped Card */}
+                  <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-zinc-50/20 dark:bg-zinc-900/10 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 text-zinc-400 mb-2">
+                        <span className="text-[9px] font-black uppercase tracking-widest">Tipped to Authors</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 text-zinc-300" />
+                      </div>
+                      <h3 className="text-xl font-mono font-black text-zinc-900 dark:text-white leading-none">
+                        ৳{walletSpentTips.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                      </h3>
+                    </div>
+                    <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest mt-4">Support given (Converted to BDT)</span>
+                  </div>
+
+                  {/* Total Subscription Spent Card */}
+                  <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-zinc-50/20 dark:bg-zinc-900/10 flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between gap-3 text-zinc-400 mb-2">
+                        <span className="text-[9px] font-black uppercase tracking-widest">Subscription Cost</span>
+                        <TrendingUp className="w-3.5 h-3.5 text-blue-500" />
+                      </div>
+                      <h3 className="text-xl font-mono font-black text-zinc-900 dark:text-white leading-none">
+                        ৳{walletSpentSubs.toLocaleString()}
+                      </h3>
+                    </div>
+                    <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest mt-4">Verified Premium cycles</span>
+                  </div>
+                </div>
+
+                {/* Membership Status Card */}
+                <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+                  <div>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block mb-2">Premium Verification Tier</span>
+                    <h3 className="text-base font-bold uppercase tracking-wider text-zinc-900 dark:text-white flex items-center gap-2">
+                      {dbUser?.membershipTier || 'FREE ACCOUNT'}
+                      {dbUser?.membershipTier && <Sparkles className="w-4.5 h-4.5 text-purple-500 animate-pulse" />}
+                    </h3>
+                    <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest mt-1">
+                      {dbUser?.membershipTier ? `Authorized access to premium resources` : 'Upgrade your account to unlock publishing capabilities.'}
+                    </p>
+                  </div>
+                  <Link
+                    href="/premium"
+                    className="px-6 py-2.5 border border-zinc-900 dark:border-white text-zinc-900 dark:text-white text-[9px] font-bold uppercase tracking-widest rounded hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 transition-all font-mono shrink-0"
+                  >
+                    {dbUser?.membershipTier ? 'Modify Tier' : 'Upgrade Account'}
+                  </Link>
+                </div>
+
+                {/* bKash & Nagad Wallets Forms */}
+                <form onSubmit={handleSaveBilling} className="space-y-6">
+                  <div className="pb-2 border-b border-zinc-100 dark:border-zinc-900">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Mobile Payout Addresses</h3>
+                    <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Link your mobile cash-out wallets. Author tipping payouts will default to these wallets.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* bKash Personal Card */}
+                    <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg space-y-4 bg-white dark:bg-zinc-950">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-[#D12053]/10 flex items-center justify-center text-[#D12053] font-bold text-xs">bk</div>
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">bKash Personal</span>
+                          <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest">Mobile Wallet</span>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-350" />
+                        <input
+                          type="text"
+                          value={bkashNumber}
+                          onChange={(e) => setBkashNumber(e.target.value)}
+                          placeholder="e.g. 017XXXXXXXX"
+                          className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Nagad Personal Card */}
+                    <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg space-y-4 bg-white dark:bg-zinc-950">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-[#F26422]/10 flex items-center justify-center text-[#F26422] font-bold text-xs">ng</div>
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">Nagad Personal</span>
+                          <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest">Mobile Wallet</span>
+                        </div>
+                      </div>
+                      <div className="relative">
+                        <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-350" />
+                        <input
+                          type="text"
+                          value={nagadNumber}
+                          onChange={(e) => setNagadNumber(e.target.value)}
+                          placeholder="e.g. 019XXXXXXXX"
+                          className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={savingBilling}
+                    className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 transition-all flex items-center justify-center gap-2"
+                  >
+                    {savingBilling ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      'Save Wallet Information'
+                    )}
+                  </button>
+                </form>
+
+                {/* Workable Unified Wallet Ledger History in BDT */}
+                <div className="space-y-4">
+                  <div className="pb-2 border-b border-zinc-100 dark:border-zinc-900">
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Wallet Ledger History</h3>
+                    <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">A complete ledger of tips received, support tips sent, and subscription transactions in BDT.</p>
+                  </div>
+
+                  {walletLoading ? (
+                    <div className="flex justify-center py-16">
+                      <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
+                    </div>
+                  ) : walletHistory.length === 0 ? (
+                    <div className="py-16 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/[0.02] flex flex-col items-center justify-center gap-2">
+                      <Wallet className="w-8 h-8 text-zinc-200 dark:text-zinc-800" />
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 italic">No payment history linked to this wallet ledger.</p>
+                    </div>
+                  ) : (
+                    <div className="border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden divide-y divide-zinc-50 dark:divide-zinc-900">
+                      {walletHistory.map((item) => {
+                        const isReceived = item.type === 'TIP_RECEIVED';
+                        const isSub = item.type === 'SUBSCRIPTION';
+                        
+                        return (
+                          <div key={item.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:bg-zinc-50/30 dark:hover:bg-zinc-900/30 transition-all">
+                            <div className="flex items-start gap-4">
+                              <div className={`p-2.5 rounded shrink-0 ${
+                                isReceived 
+                                  ? 'bg-emerald-500/10 text-emerald-500' 
+                                  : isSub 
+                                  ? 'bg-blue-500/10 text-blue-500' 
+                                  : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
+                              }`}>
+                                {isReceived ? (
+                                  <ArrowDownLeft className="w-4 h-4" />
+                                ) : isSub ? (
+                                  <TrendingUp className="w-4 h-4" />
+                                ) : (
+                                  <ArrowUpRight className="w-4 h-4" />
+                                )}
+                              </div>
+                              <div className="space-y-1">
+                                <span className="text-xs font-bold text-zinc-900 dark:text-white block">{item.description}</span>
+                                <div className="flex items-center gap-3 text-[9px] text-zinc-400 font-bold uppercase tracking-wider font-mono">
+                                  <span>Via: {item.method}</span>
+                                  <span>•</span>
+                                  <span className="flex items-center gap-1">
+                                    <Calendar className="w-3 h-3" />
+                                    {new Date(item.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center sm:justify-end gap-4 shrink-0 justify-between">
+                              {/* Status Badge */}
+                              <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded ${
+                                item.status === 'COMPLETED' || item.status === 'APPROVED'
+                                  ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                  : item.status === 'DECLINED' || item.status === 'FAILED'
+                                  ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+                                  : 'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse'
+                              }`}>
+                                {item.status}
+                              </span>
+                              
+                              {/* Amount in BDT */}
+                              <span className={`text-xs font-mono font-black ${
+                                isReceived 
+                                  ? 'text-emerald-500' 
+                                  : 'text-zinc-950 dark:text-zinc-50'
+                              }`}>
+                                {isReceived ? '+' : '-'}৳{item.amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* Stripe customer portal shortcut */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-zinc-50/30 dark:bg-zinc-900/10">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Info className="w-4 h-4 text-zinc-400" />
+                    <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Card Payment Customer Portal</h3>
+                  </div>
+                  <p className="text-[11px] text-zinc-500 leading-relaxed mb-6 font-medium uppercase">
+                    If you support authors using direct credit cards or Stripe billing, you can securely access the card portal to check receipt logs or edit saved card structures.
+                  </p>
+                  <a
+                    href="https://billing.stripe.com/p/login/mock-portal"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all font-mono"
+                  >
+                    Launch Card Portal
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* SECURITY & DEACTIVATION TAB */}
             {activeTab === 'security' && (
               <div className="space-y-12 animate-in fade-in duration-500">
                 <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Security</h2>
-                  <p className="text-[11px] text-zinc-500 font-medium italic">Manage your password and protection.</p>
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Security & Account Status</h2>
+                  <p className="text-[11px] text-zinc-500 font-medium italic">Manage your password, temporarily deactivate your public profile, or safely delete account datasets.</p>
                 </div>
-                <div className="py-40 border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10 flex flex-col items-center justify-center text-center gap-4">
-                  <ShieldCheck className="w-10 h-10 text-zinc-100 dark:text-zinc-800" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic font-mono">Coming Soon</p>
-                  <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest max-w-xs leading-relaxed">Security tools are being updated for a safer experience.</p>
+
+                {/* Trigger password reset */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <KeyRound className="w-3.5 h-3.5 text-zinc-400" />
+                      Reset Account Password
+                    </span>
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed">
+                      Send a secure Firebase credentials-reset link directly to your inbox.
+                    </span>
+                  </div>
+                  <button
+                    onClick={handlePasswordReset}
+                    disabled={sendingReset}
+                    className="px-6 py-3 border border-zinc-100 dark:border-zinc-900 text-zinc-900 dark:text-white text-[9px] font-bold uppercase tracking-widest rounded hover:border-zinc-900 dark:hover:border-white transition-all flex items-center gap-2"
+                  >
+                    {sendingReset ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      'Trigger Reset Email'
+                    )}
+                  </button>
+                </div>
+
+                {/* Account Deactivation Section */}
+                <form onSubmit={handleDeactivateAccount} className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                      Deactivate Account
+                    </span>
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Temporarily hide your profile, stories, and book contributions from public search registries. Logging in again at any time will instantly reactivate your account.
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block">Deactivation Interval</label>
+                      <select
+                        value={deactivatePeriod}
+                        onChange={(e) => setDeactivatePeriod(e.target.value)}
+                        className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 transition-all uppercase"
+                      >
+                        <option value="login">Reactivate on next login</option>
+                        <option value="15">Deactivate for 15 Days</option>
+                        <option value="30">Deactivate for 30 Days</option>
+                        <option value="45">Deactivate for 45 Days</option>
+                        <option value="90">Deactivate for 90 Days</option>
+                        <option value="175">Deactivate for 175 Days</option>
+                        <option value="custom">Custom duration (days)</option>
+                      </select>
+                    </div>
+
+                    {deactivatePeriod === 'custom' && (
+                      <div className="space-y-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                        <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block">Enter Custom Days</label>
+                        <input
+                          type="number"
+                          min="1"
+                          value={customDays}
+                          onChange={(e) => setCustomDays(e.target.value)}
+                          placeholder="e.g. 60"
+                          className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 transition-all"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={deactivating}
+                    className="px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white text-[9px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2"
+                  >
+                    {deactivating ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      'Perform Deactivation'
+                    )}
+                  </button>
+                </form>
+
+                {/* Dangerous section - Delete Account */}
+                <div className="p-8 border border-rose-500/20 dark:border-rose-900/30 rounded-lg bg-rose-500/[0.02] space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                      <Trash2 className="w-3.5 h-3.5" />
+                      Permanently Delete Account
+                    </span>
+                    <span className="text-[9px] text-zinc-500 font-medium uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Deletes all databases entries tied to your User ID and deletes your Firebase Authentication profile. This operation is permanent and absolute.
+                    </span>
+                  </div>
+
+                  <div className="space-y-4">
+                    <label className="text-[8px] font-bold uppercase tracking-widest text-zinc-400 block">
+                      Type <span className="font-mono text-zinc-900 dark:text-white font-black select-all">DELETE</span> to confirm deactivation
+                    </label>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <input
+                        type="text"
+                        value={deleteConfirm}
+                        onChange={(e) => setDeleteConfirm(e.target.value)}
+                        placeholder="Type DELETE"
+                        className="px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs font-mono font-bold outline-none text-zinc-900 dark:text-white max-w-xs focus:border-rose-500 transition-all uppercase"
+                      />
+                      <button
+                        onClick={handleDeleteAccount}
+                        disabled={deletingAccount || deleteConfirm !== 'DELETE'}
+                        className="px-6 py-2.5 bg-rose-600 text-white text-[9px] font-bold uppercase tracking-widest rounded hover:bg-rose-700 disabled:bg-zinc-100 dark:disabled:bg-zinc-900 disabled:text-zinc-400 transition-all flex items-center justify-center gap-2"
+                      >
+                        {deletingAccount ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          'Perform Deletion'
+                        )}
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

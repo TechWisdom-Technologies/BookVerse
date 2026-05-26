@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { profileSchema } from "@/lib/validators";
 import { Prisma } from "@prisma/client";
+import { adminAuth } from "@/lib/firebase-admin";
 
 export async function GET() {
   try {
@@ -26,6 +27,11 @@ export async function GET() {
         tags: true,
         adminInstruction: true,
         instructionSeen: true,
+        readingFont: true,
+        readerTheme: true,
+        readingProgressSync: true,
+        bkashNumber: true,
+        nagadNumber: true,
         _count: {
           select: {
             followers: true,
@@ -86,6 +92,11 @@ export async function PATCH(request: Request) {
     if (parsed.subGenres !== undefined) updateData.subGenres = parsed.subGenres;
     if (parsed.tags !== undefined) updateData.tags = parsed.tags;
     if (parsed.instructionSeen !== undefined) updateData.instructionSeen = parsed.instructionSeen;
+    if (parsed.readingFont !== undefined) updateData.readingFont = parsed.readingFont;
+    if (parsed.readerTheme !== undefined) updateData.readerTheme = parsed.readerTheme;
+    if (parsed.readingProgressSync !== undefined) updateData.readingProgressSync = parsed.readingProgressSync;
+    if (parsed.bkashNumber !== undefined) updateData.bkashNumber = parsed.bkashNumber;
+    if (parsed.nagadNumber !== undefined) updateData.nagadNumber = parsed.nagadNumber;
 
     const user = await prisma.user.update({
       where: { id: dbUser.id },
@@ -106,6 +117,11 @@ export async function PATCH(request: Request) {
         tags: true,
         adminInstruction: true,
         instructionSeen: true,
+        readingFont: true,
+        readerTheme: true,
+        readingProgressSync: true,
+        bkashNumber: true,
+        nagadNumber: true,
         _count: {
           select: {
             followers: true,
@@ -132,6 +148,41 @@ export async function PATCH(request: Request) {
     console.error("PATCH /api/users/me error:", error);
     return NextResponse.json(
       { error: "Failed to update profile" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE() {
+  try {
+    const { dbUser } = await verifyToken();
+
+    // 1. Delete from Firebase Auth
+    try {
+      await adminAuth.deleteUser(dbUser.firebaseUid);
+    } catch (firebaseErr) {
+      console.warn("Failed to delete user from Firebase Auth, might not exist:", firebaseErr);
+    }
+
+    // 2. Delete from database
+    await prisma.user.delete({
+      where: { id: dbUser.id }
+    });
+
+    const response = NextResponse.json({ success: true, message: "Account successfully deleted." });
+    
+    // Clear cookies/session
+    response.cookies.set("firebase-token", "", { maxAge: 0, path: "/" });
+    response.cookies.set("user-role", "", { maxAge: 0, path: "/" });
+
+    return response;
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.error("DELETE /api/users/me error:", error);
+    return NextResponse.json(
+      { error: "Failed to delete account" },
       { status: 500 }
     );
   }

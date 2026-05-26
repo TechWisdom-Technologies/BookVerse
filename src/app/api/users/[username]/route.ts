@@ -42,6 +42,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
         role: true,
         membershipTier: true,
         createdAt: true,
+        isDeactivated: true,
         _count: {
           select: {
             followers: true,
@@ -83,7 +84,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
       },
     });
 
-    if (!user) {
+    if (!user || user.isDeactivated) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 

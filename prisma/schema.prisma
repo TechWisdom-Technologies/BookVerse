@@ -101,6 +101,15 @@ model User {
   adminInstruction         String?                  @map("admin_instruction")
   instructionSeen          Boolean                  @default(false) @map("instruction_seen")
 
+  // Reading Preferences & Mobile Wallets
+  readingFont              String                   @default("sans") @map("reading_font")
+  readerTheme              String                   @default("white") @map("reader_theme")
+  readingProgressSync      Boolean                  @default(true) @map("reading_progress_sync")
+  bkashNumber              String?                  @map("bkash_number")
+  nagadNumber              String?                  @map("nagad_number")
+  isDeactivated            Boolean                  @default(false) @map("is_deactivated")
+  deactivatedUntil         DateTime?                @map("deactivated_until")
+
   // Relationships to new models
   annotations              BookAnnotation[]
   scheduledChapters        ScheduledChapter[]

@@ -28,6 +28,11 @@ type SyncedUser = {
   tags?: string[];
   adminInstruction?: string | null;
   instructionSeen?: boolean;
+  readingFont?: string;
+  readerTheme?: string;
+  readingProgressSync?: boolean;
+  bkashNumber?: string | null;
+  nagadNumber?: string | null;
   _count?: {
     followers: number;
     following: number;

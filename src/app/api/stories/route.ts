@@ -17,7 +17,12 @@ export async function GET(request: Request) {
     const genre = searchParams.get("genre") || "";
     const skip = (page - 1) * limit;
 
-    const where: Prisma.StoryWhereInput = { published: true };
+    const where: Prisma.StoryWhereInput = { 
+      published: true,
+      author: {
+        isDeactivated: false,
+      }
+    };
     if (genre) {
       where.summary = { contains: genre, mode: "insensitive" };
     }
