@@ -6,6 +6,8 @@ import { ReadingLogForm } from '@/components/reading/ReadingLogForm';
 import { BarChart3, ArrowLeft, Zap, Info } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Reading Stats | BookVerse',
   description: 'Track your reading streaks and statistics on BookVerse',

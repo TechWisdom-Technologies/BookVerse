@@ -5,6 +5,8 @@ import { AchievementsDisplay } from '@/components/achievements/AchievementsDispl
 import { Award, ArrowLeft, Info, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'My Achievements | BookVerse',
   description: 'View your earned achievements and badges on BookVerse',
