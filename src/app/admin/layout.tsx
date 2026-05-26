@@ -39,12 +39,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A]">
+    <div className="flex h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] overflow-hidden">
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onCloseAction={() => setSidebarOpen(false)} />
 
       {/* Main content */}
-      <div className="flex flex-1 flex-col md:ml-64">
+      <div className="flex flex-1 flex-col md:ml-64 min-w-0">
         {/* Mobile header */}
         <header className="flex h-16 items-center border-b border-zinc-200/50 bg-white/80 backdrop-blur-md px-4 md:hidden dark:border-zinc-800/50 dark:bg-zinc-950/80 sticky top-0 z-30">
           <button
