@@ -25,7 +25,11 @@ import {
   ArrowDownLeft,
   TrendingUp,
   Calendar,
-  AlertTriangle
+  AlertTriangle,
+  Link2,
+  Download,
+  Laptop,
+  LogOut
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { EditProfileForm } from '@/components/profile/EditProfileForm';
@@ -76,6 +80,123 @@ export default function SettingsPage() {
   const [deletingAccount, setDeletingAccount] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState('');
 
+  // Block List States
+  const [blockedUsers, setBlockedUsers] = useState<{id: string; userId: string; username: string; displayName: string | null; reason: string; createdAt: string}[]>([]);
+  const [newBlockedUser, setNewBlockedUser] = useState('');
+  const [blockingUser, setBlockingUser] = useState(false);
+  const [blocksLoading, setBlocksLoading] = useState(false);
+
+  // Portability & Session States
+  const [isExporting, setIsExporting] = useState(false);
+  const [revokingSessions, setRevokingSessions] = useState(false);
+
+  // Block List Handlers (Real API)
+  const fetchBlockList = async () => {
+    setBlocksLoading(true);
+    try {
+      const res = await fetch('/api/users/me/blocks');
+      if (res.ok) {
+        const data = await res.json();
+        setBlockedUsers(data.blocks || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch block list:', err);
+    } finally {
+      setBlocksLoading(false);
+    }
+  };
+
+  const handleBlockUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBlockedUser.trim()) return;
+    setBlockingUser(true);
+    try {
+      const res = await fetch('/api/users/me/blocks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: newBlockedUser.trim() }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setBlockedUsers(prev => [data.block, ...prev]);
+        toast.success(`User @${newBlockedUser.trim()} successfully added to your Block List.`);
+        setNewBlockedUser('');
+      } else {
+        toast.error(data.error || 'Failed to block user');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error blocking user');
+    } finally {
+      setBlockingUser(false);
+    }
+  };
+
+  const handleUnblockUser = async (id: string, username: string) => {
+    try {
+      const res = await fetch(`/api/users/me/blocks/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setBlockedUsers(prev => prev.filter(u => u.id !== id));
+        toast.success(`User @${username} has been unblocked.`);
+      } else {
+        toast.error('Failed to unblock user');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error unblocking user');
+    }
+  };
+
+  // GDPR Data Export Handler (Real API)
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      const res = await fetch('/api/users/me/export');
+      if (!res.ok) throw new Error('Export failed');
+      const exportPayload = await res.json();
+
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `bookverse_data_export_${dbUser?.username || 'user'}_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success('Your complete profile data archive has been downloaded!');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to export profile data. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Real Session Revocation Handler (Firebase Admin)
+  const handleRevokeAllSessions = async () => {
+    if (!confirm('This will sign you out of ALL devices including this one. You will need to log in again. Continue?')) {
+      return;
+    }
+    setRevokingSessions(true);
+    try {
+      const res = await fetch('/api/users/me/revoke-sessions', { method: 'POST' });
+      if (res.ok) {
+        toast.success('All sessions revoked. Redirecting to login...');
+        setTimeout(() => { window.location.href = '/login'; }, 1500);
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to revoke sessions');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error revoking sessions');
+    } finally {
+      setRevokingSessions(false);
+    }
+  };
+
   useEffect(() => { 
     setMounted(true); 
   }, []);
@@ -114,6 +235,9 @@ export default function SettingsPage() {
     if (activeTab === 'billing') {
       fetchWalletDetails();
     }
+    if (activeTab === 'privacy') {
+      fetchBlockList();
+    }
   }, [activeTab]);
 
   if (!mounted) return null;
@@ -132,6 +256,9 @@ export default function SettingsPage() {
     { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'billing', label: 'Wallet & Billing', icon: CreditCard },
     { id: 'security', label: 'Security', icon: Shield },
+    { id: 'connections', label: 'Connections', icon: Link2 },
+    { id: 'privacy', label: 'Block List', icon: ShieldCheck },
+    { id: 'portability', label: 'GDPR & Sessions', icon: Laptop },
   ];
 
   const handleSaveReading = async (e: React.FormEvent) => {
@@ -555,7 +682,7 @@ export default function SettingsPage() {
                     {/* bKash Personal Card */}
                     <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg space-y-4 bg-white dark:bg-zinc-950">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-[#D12053]/10 flex items-center justify-center text-[#D12053] font-bold text-xs">bk</div>
+                        <img src="https://yt3.googleusercontent.com/ytc/AIdro_kfgKlp22w3_zZbhHhYhc279q-rVbYRMy1xZ8gJMZRcsQ=s900-c-k-c0x00ffffff-no-rj" alt="bKash" className="w-8 h-8 rounded shrink-0 select-none object-contain" />
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">bKash Personal</span>
                           <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest">Mobile Wallet</span>
@@ -576,7 +703,7 @@ export default function SettingsPage() {
                     {/* Nagad Personal Card */}
                     <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg space-y-4 bg-white dark:bg-zinc-950">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-[#F26422]/10 flex items-center justify-center text-[#F26422] font-bold text-xs">ng</div>
+                        <img src="https://play-lh.googleusercontent.com/9ps_d6nGKQzfbsJfMaFR0RkdwzEdbZV53ReYCS09Eo5MV-GtVylFD-7IHcVktlnz9Mo" alt="Nagad" className="w-8 h-8 rounded shrink-0 select-none object-contain" />
                         <div>
                           <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-800 dark:text-zinc-200 block">Nagad Personal</span>
                           <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest">Mobile Wallet</span>
@@ -726,7 +853,7 @@ export default function SettingsPage() {
                       Reset Account Password
                     </span>
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed">
-                      Send a secure Firebase credentials-reset link directly to your inbox.
+                      Send a secure password-reset link directly to your inbox.
                     </span>
                   </div>
                   <button
@@ -837,6 +964,177 @@ export default function SettingsPage() {
                       </button>
                     </div>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* CONNECTIONS TAB */}
+            {activeTab === 'connections' && (
+              <div className="space-y-12 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Auth Connections</h2>
+                  <p className="text-[11px] text-zinc-500 font-medium italic">Link and manage third-party credential providers for instant secure sign-in.</p>
+                </div>
+
+                <div className="space-y-6">
+                  {[
+                    { id: 'google', name: 'Google Workspace', desc: 'Secure one-click authentication via Google OAuth 2.0' },
+                    { id: 'github', name: 'GitHub Developer', desc: 'Link your GitHub profile for contributor badges' },
+                    { id: 'discord', name: 'Discord Community', desc: 'Bind your Discord identity for server integrations' }
+                  ].map((serv) => (
+                    <div key={serv.id} className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm opacity-60">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                          <Link2 className="w-3.5 h-3.5 text-zinc-400" />
+                          {serv.name}
+                        </span>
+                        <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed">
+                          {serv.desc}
+                        </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-4 shrink-0">
+                        <span className="px-2.5 py-1 text-[8px] font-black uppercase tracking-widest rounded bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                          Coming Soon
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-6 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-lg bg-zinc-50/30 dark:bg-zinc-900/20">
+                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed uppercase tracking-wider">
+                    OAuth integration with Google, GitHub, and Discord requires setting up dedicated application credentials and callback URLs. This feature is in active development and will be available in a future update.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* BLOCK LIST TAB */}
+            {activeTab === 'privacy' && (
+              <div className="space-y-12 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Moderation & Block List</h2>
+                  <p className="text-[11px] text-zinc-500 font-medium italic">Manage your block list. Blocked users cannot comment on your stories, send messages, or tip your wallet.</p>
+                </div>
+
+                {/* Block List */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-rose-600 dark:text-rose-400 block">Moderation Registry (Block List)</span>
+                    <span className="text-[8px] text-zinc-400 font-bold uppercase tracking-widest block mt-1">Enter a BookVerse username to add them to your permanent block registry.</span>
+                  </div>
+
+                  {/* Add block form */}
+                  <form onSubmit={handleBlockUser} className="flex gap-4">
+                    <input
+                      type="text"
+                      value={newBlockedUser}
+                      onChange={(e) => setNewBlockedUser(e.target.value)}
+                      placeholder="Enter exact username to block..."
+                      className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                    />
+                    <button
+                      type="submit"
+                      disabled={blockingUser || !newBlockedUser.trim()}
+                      className="px-6 py-2 bg-rose-600 text-white text-[9px] font-bold uppercase tracking-widest rounded hover:bg-rose-700 disabled:opacity-50 transition-all flex items-center gap-2"
+                    >
+                      {blockingUser ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        'Block'
+                      )}
+                    </button>
+                  </form>
+
+                  {/* Blocked Accounts List */}
+                  {blocksLoading ? (
+                    <div className="py-12 flex justify-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-zinc-300 dark:text-zinc-700" />
+                    </div>
+                  ) : blockedUsers.length === 0 ? (
+                    <div className="py-8 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/[0.01] flex flex-col items-center justify-center gap-1.5">
+                      <Shield className="w-6 h-6 text-zinc-200 dark:text-zinc-800" />
+                      <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 italic">No users are currently on your block list.</p>
+                    </div>
+                  ) : (
+                    <div className="border border-zinc-100 dark:border-zinc-900 rounded divide-y divide-zinc-100 dark:divide-zinc-900 overflow-hidden bg-zinc-50/[0.01]">
+                      {blockedUsers.map((userObj) => (
+                        <div key={userObj.id} className="p-4 flex items-center justify-between gap-4 group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all">
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] font-mono font-black text-zinc-900 dark:text-white block">@{userObj.username}</span>
+                            <span className="text-[8px] text-zinc-450 uppercase font-semibold tracking-wider block">Reason: {userObj.reason}</span>
+                          </div>
+                          <button
+                            onClick={() => handleUnblockUser(userObj.id, userObj.username)}
+                            className="px-4 py-1.5 border border-zinc-200 dark:border-zinc-800 hover:border-rose-500 text-[8px] font-bold uppercase tracking-widest rounded hover:text-rose-500 hover:bg-rose-500/[0.02] transition-all"
+                          >
+                            Unblock
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* DATA PORTABILITY & SESSION MANAGEMENT TAB */}
+            {activeTab === 'portability' && (
+              <div className="space-y-12 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Data Registry & Compliance</h2>
+                  <p className="text-[11px] text-zinc-500 font-medium italic">Download a comprehensive backup of your entire BookVerse data, and manage active sessions.</p>
+                </div>
+
+                {/* GDPR Data Export */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <Download className="w-3.5 h-3.5 text-zinc-400" />
+                      Export Profile Data (GDPR Compliant)
+                    </span>
+                    <span className="text-[9px] text-zinc-450 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Downloads a comprehensive JSON archive containing your complete profile, stories, books, tips, subscriptions, reading progress, achievements, and block list directly from the database.
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={handleExportData}
+                    disabled={isExporting}
+                    className="px-6 py-3 border border-zinc-900 dark:border-white text-zinc-900 dark:text-white text-[9px] font-bold uppercase tracking-widest rounded hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isExporting ? (
+                      <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Fetching data from server...</>
+                    ) : (
+                      <><Download className="w-3.5 h-3.5" /> Generate & Download Profile Backup</>
+                    )}
+                  </button>
+                </div>
+
+                {/* Session Revocation */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <LogOut className="w-3.5 h-3.5 text-zinc-400" />
+                      Sign Out All Devices
+                    </span>
+                    <span className="text-[9px] text-zinc-450 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Revokes all Firebase authentication tokens across every device and browser where you are currently signed in. You will be signed out everywhere, including this device, and will need to log in again.
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={handleRevokeAllSessions}
+                    disabled={revokingSessions}
+                    className="px-6 py-3 border border-rose-500/30 text-rose-600 dark:text-rose-400 bg-rose-500/[0.02] hover:bg-rose-500/10 text-[9px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {revokingSessions ? (
+                      <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Revoking tokens...</>
+                    ) : (
+                      <><LogOut className="w-3.5 h-3.5" /> Revoke All Sessions</>
+                    )}
+                  </button>
                 </div>
               </div>
             )}

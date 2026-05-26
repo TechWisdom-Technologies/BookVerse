@@ -33,6 +33,7 @@ import {
   X,
   Sparkles,
   Star,
+  Wallet,
 } from "lucide-react";
 
 // Navigation item type
@@ -554,6 +555,12 @@ export function Navbar() {
                 <div>
                   <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Author</h3>
                   <DropdownItem
+                    href="/wallet"
+                    icon={Wallet}
+                    label="Wallet"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
                     href="/write"
                     icon={PenLine}
                     label="Author Studio"
@@ -732,6 +739,16 @@ export function Navbar() {
                 <span className="relative text-white dark:text-zinc-900">AI Librarian</span>
               </div>
             </button>
+
+            {/* Settings shortcut button */}
+            {user && (
+              <NavButton
+                href="/settings"
+                icon={Settings}
+                label="Settings"
+                isActive={isActive("/settings")}
+              />
+            )}
 
             {/* Profile / Sign In */}
             {loading ? (

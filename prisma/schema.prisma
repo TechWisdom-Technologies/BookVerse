@@ -124,6 +124,8 @@ model User {
   notifications            Notification[]           @relation("user_notifications")
   subscriptionTransactions SubscriptionTransaction[]
   readingProgress          ReadingProgress[]
+  blockedUsers             UserBlock[]               @relation("blocker")
+  blockedBy                UserBlock[]               @relation("blocked")
 
   @@map("users")
 }
@@ -805,3 +807,18 @@ model SupportTicket {
   @@map("support_tickets")
 }
 
+model UserBlock {
+  id        String   @id @default(cuid())
+  blockerId String   @map("blocker_id")
+  blockedId String   @map("blocked_id")
+  reason    String   @default("Blocked by user")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  blocker User @relation("blocker", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked User @relation("blocked", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+  @@index([blockerId])
+  @@index([blockedId])
+  @@map("user_blocks")
+}
