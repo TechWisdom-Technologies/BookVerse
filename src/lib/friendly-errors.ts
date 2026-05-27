@@ -15,7 +15,7 @@ const SAFE_MESSAGES = [
   "Please sign in first",
   "Please sign in to save books",
   "Login required",
-  "Unauthorized",
+  "You are not logged in. Please log in first.",
   // Validation
   "Minimum tip is $1.00",
   "Please enter a gift code",
@@ -80,7 +80,7 @@ const ERROR_MAP: [RegExp, string][] = [
   // Stripe
   [/stripe/i, "Payment processing encountered an issue. Please try again."],
   // Auth
-  [/UNAUTHORIZED/i, "You need to be signed in to do this."],
+  [/UNAUTHORIZED/i, "You are not logged in. Please log in first."],
   [/forbidden/i, "You don't have permission to do this."],
   [/USER_NOT_FOUND/i, "Your account could not be found. Please sign in again."],
 ];
