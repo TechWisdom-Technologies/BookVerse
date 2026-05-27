@@ -88,7 +88,7 @@ export function AiLibrarianWidget() {
                     AI Librarian
                   </h3>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Powered by Groq
+                    Powered by TechWisdom AI
                   </p>
                 </div>
               </div>
@@ -102,7 +102,7 @@ export function AiLibrarianWidget() {
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-zinc-950">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-white dark:bg-zinc-950 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {messages.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <Bot className="mb-3 h-10 w-10 text-indigo-600/20 dark:text-indigo-400/20" />

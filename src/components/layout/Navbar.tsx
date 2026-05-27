@@ -365,10 +365,10 @@ export function Navbar() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-zinc-950/40 backdrop-blur-sm"
+            className="fixed inset-0 z-60 bg-zinc-950/40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed top-3 left-3 bottom-3 z-50 w-[min(88vw,20rem)] sm:w-80 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-3xl shadow-2xl p-4 animate-in slide-in-from-left duration-300 ease-out">
+          <aside className="fixed top-3 left-3 bottom-3 z-70 w-[min(88vw,20rem)] sm:w-80 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-3xl shadow-2xl p-4 animate-in slide-in-from-left duration-300 ease-out">
             <div className="flex items-center justify-between mb-4">
               <Link href="/" onClick={() => setMobileOpen(false)} className="font-bold uppercase tracking-widest">Home</Link>
               <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-2">
@@ -429,10 +429,10 @@ export function Navbar() {
       {profileOpen && user && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-zinc-950/30 backdrop-blur-sm transition-opacity duration-300"
+            className="fixed inset-0 z-60 bg-zinc-950/30 backdrop-blur-sm transition-opacity duration-300"
             onClick={() => setProfileOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-80 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-l border-zinc-100 dark:border-zinc-900 shadow-2xl animate-in slide-in-from-right duration-300 ease-out">
+          <div className="fixed top-0 right-0 h-full w-80 z-70 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-l border-zinc-100 dark:border-zinc-900 shadow-2xl animate-in slide-in-from-right duration-300 ease-out">
             <div className="h-full flex flex-col">
               {/* Header */}
               <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 relative overflow-hidden">
@@ -681,7 +681,7 @@ export function Navbar() {
       )}
 
       {/* Bottom Navigation Dock (desktop/tablet) */}
-      <nav className="hidden md:flex fixed bottom-8 left-1/2 -translate-x-1/2 z-50" aria-label="Bottom navigation">
+      <nav className="hidden md:flex fixed bottom-8 left-1/2 -translate-x-1/2 z-40" aria-label="Bottom navigation">
         <div className="flex items-center gap-1.5 px-2.5 py-2.5 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-2xl rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.08)] border border-zinc-100 dark:border-zinc-800 transition-all">
 
           {/* Left side items */}
