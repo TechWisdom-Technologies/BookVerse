@@ -28,7 +28,6 @@ import {
   PlusCircle,
   Mail,
   Layers,
-  Send,
   Menu,
   X,
   Sparkles,
@@ -117,26 +116,38 @@ interface DropdownItemProps {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   label: string;
   highlight?: boolean;
+  badge?: string;
   onClick: () => void;
 }
 
-function DropdownItem({ href, icon: Icon, label, highlight, onClick }: DropdownItemProps) {
+function DropdownItem({ href, icon: Icon, label, highlight, badge, onClick }: DropdownItemProps) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 group border border-transparent ${highlight
-        ? "bg-gradient-to-r from-indigo-500/10 via-indigo-500/5 to-transparent text-indigo-650 dark:text-indigo-400 border-indigo-500/10 shadow-sm"
-        : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-gradient-to-r hover:from-zinc-50 hover:to-transparent dark:hover:from-zinc-900/50"
+      className={`flex items-center gap-4.5 px-4 py-2.5 rounded-xl transition-all duration-300 group border border-transparent ${highlight
+        ? "bg-indigo-500/5 dark:bg-indigo-500/10 text-indigo-650 dark:text-indigo-400 border-indigo-500/5 hover:bg-indigo-500/10 dark:hover:bg-indigo-500/20"
+        : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900/40"
         }`}
     >
-      <div className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300 ${highlight
-        ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/25 scale-105"
+      <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-300 ${highlight
+        ? "bg-indigo-500 text-white shadow-md shadow-indigo-500/15"
         : "bg-zinc-50 dark:bg-zinc-900 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
         }`}>
-        <Icon size={14} />
+        <Icon size={12} />
       </div>
-      <span className="text-[10px] font-black uppercase tracking-[0.2em] transition-transform duration-300 group-hover:translate-x-1">{label}</span>
+      <span className="text-[9px] font-bold uppercase tracking-[0.15em] transition-transform duration-300 group-hover:translate-x-1">{label}</span>
+      {badge && (
+        <span className={`ml-auto px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest rounded shadow-sm transition-all duration-300 group-hover:scale-105 ${
+          badge === "PRO"
+            ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+            : badge === "ADMIN"
+            ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-950"
+            : "bg-indigo-550 text-white"
+        }`}>
+          {badge}
+        </span>
+      )}
     </Link>
   );
 }
@@ -365,7 +376,7 @@ export function Navbar() {
               </button>
             </div>
 
-            <nav className="space-y-2 overflow-y-auto h-[calc(100%-64px)] pr-2">
+            <nav className="space-y-2 overflow-y-auto h-[calc(100%-64px)] pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700/80">
               <div>
                 <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Main</h3>
                 {leftItems.map((item) => (
@@ -428,8 +439,8 @@ export function Navbar() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
                 
-                <div className="flex items-center gap-4 relative z-10">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md">
+                <div className="flex items-center gap-4 relative z-10 pr-12">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md flex-shrink-0">
                     {dbUser?.avatarUrl ? (
                       <img
                         src={dbUser.avatarUrl}
@@ -442,18 +453,35 @@ export function Navbar() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-black text-sm text-zinc-900 dark:text-white truncate uppercase tracking-tight">{dbUser?.displayName || dbUser?.username}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">@{dbUser?.username}</span>
-                      {dbUser?.role === "ADMIN" && (
+                  <div className="min-w-0 flex-1">
+                    <p className="font-black text-sm text-zinc-900 dark:text-white truncate uppercase tracking-tight leading-snug">
+                      {dbUser?.displayName || dbUser?.username}
+                    </p>
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest truncate mt-0.5">
+                      @{dbUser?.username}
+                    </p>
+                    {dbUser?.role === "ADMIN" && (
+                      <div className="mt-1.5 flex">
                         <span className="px-2 py-0.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-[8px] font-black uppercase tracking-widest rounded-lg">
                           Admin
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Sign Out Button - placed absolutely on top right of the header card to avoid collision */}
+                <button
+                  onClick={() => {
+                    signOut();
+                    setProfileOpen(false);
+                  }}
+                  className="absolute top-6 right-6 z-20 p-2.5 rounded-xl bg-rose-500/10 dark:bg-rose-500/20 border border-rose-500/20 dark:border-rose-500/30 text-rose-500 dark:text-rose-450 hover:bg-rose-500 dark:hover:bg-rose-500 hover:text-white dark:hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm"
+                  title="Sign Out"
+                  aria-label="Sign Out"
+                >
+                  <LogOut size={16} />
+                </button>
 
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-3 mt-6 relative z-10">
@@ -473,7 +501,7 @@ export function Navbar() {
               </div>
 
               {/* Menu */}
-              <div className="flex-1 overflow-y-auto py-6 px-4 space-y-6">
+              <div className="flex-1 overflow-y-auto py-6 px-4 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700/80">
                 {/* Mobile-only Explore Section */}
                 <div className="md:hidden border-b border-zinc-100 dark:border-zinc-900 pb-6">
                   <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Explore</h3>
@@ -541,6 +569,7 @@ export function Navbar() {
                     href="/author/analytics"
                     icon={BarChart3}
                     label="Analytics"
+                    badge="PRO"
                     onClick={() => setProfileOpen(false)}
                   />
                   <DropdownItem
@@ -558,6 +587,7 @@ export function Navbar() {
                     href="/wallet"
                     icon={Wallet}
                     label="Wallet"
+                    badge="PRO"
                     onClick={() => setProfileOpen(false)}
                   />
                   <DropdownItem
@@ -588,6 +618,7 @@ export function Navbar() {
                     href="/author/newsletter"
                     icon={Mail}
                     label="Newsletter & Fans"
+                    badge="PRO"
                     highlight
                     onClick={() => setProfileOpen(false)}
                   />
@@ -608,6 +639,7 @@ export function Navbar() {
                     href="/reading-challenges"
                     icon={Trophy}
                     label="Challenges"
+                    badge="PRO"
                     onClick={() => setProfileOpen(false)}
                   />
                   <DropdownItem
@@ -620,6 +652,7 @@ export function Navbar() {
                     href="/premium"
                     icon={Premium}
                     label="Premium"
+                    badge="PRO"
                     highlight
                     onClick={() => setProfileOpen(false)}
                   />
@@ -627,6 +660,7 @@ export function Navbar() {
                     href="/gifts"
                     icon={Gift}
                     label="Gifts"
+                    badge="PRO"
                     onClick={() => setProfileOpen(false)}
                   />
                   {dbUser?.role === "ADMIN" && (
@@ -634,27 +668,12 @@ export function Navbar() {
                       href="/admin"
                       icon={Shield}
                       label="Admin Panel"
+                      badge="ADMIN"
                       highlight
                       onClick={() => setProfileOpen(false)}
                     />
                   )}
                 </div>
-              </div>
-
-              {/* Sign Out */}
-              <div className="p-4 border-t border-zinc-100 dark:border-zinc-900">
-                <button
-                  onClick={() => {
-                    signOut();
-                    setProfileOpen(false);
-                  }}
-                  className="flex w-full items-center gap-4 px-4 py-3 rounded text-rose-500 hover:bg-rose-500/5 transition-all duration-200 group"
-                >
-                  <div className="w-8 h-8 rounded bg-rose-500/5 flex items-center justify-center group-hover:bg-rose-500/10 transition-colors">
-                    <LogOut size={14} />
-                  </div>
-                  <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Sign Out</span>
-                </button>
               </div>
             </div>
           </div>

@@ -50,17 +50,38 @@ export async function GET(
   }
 }
 
+import { getAuth } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limit';
+
+const VALID_PLATFORMS = ['twitter', 'facebook', 'whatsapp', 'telegram', 'copy', 'email', 'reddit', 'linkedin', 'pinterest'];
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Rate limit: 10 share logs per minute per IP
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { id } = await params;
+    
+    // Require authentication
+    const user = await getAuth();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { platform } = body;
 
-    if (!platform) {
+    if (!platform || typeof platform !== 'string') {
       return NextResponse.json({ error: 'Platform required' }, { status: 400 });
+    }
+
+    const normalizedPlatform = platform.toLowerCase().trim();
+    if (!VALID_PLATFORMS.includes(normalizedPlatform)) {
+      return NextResponse.json({ error: 'Invalid platform' }, { status: 400 });
     }
 
     const story = await prisma.story.findUnique({
@@ -75,12 +96,15 @@ export async function POST(
     await prisma.shareActivity.create({
       data: {
         storyId: id,
-        platform,
+        platform: normalizedPlatform,
       },
     });
 
     return NextResponse.json({ success: true, message: 'Share logged' });
   } catch (error) {
+    if (error instanceof Error && error.message === 'UNAUTHORIZED') {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
     console.error('Error logging share:', error);
     return NextResponse.json({ error: 'Failed to log' }, { status: 500 });
   }

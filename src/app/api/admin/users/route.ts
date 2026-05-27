@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
+import { adminAuth } from "@/lib/firebase-admin";
 
 export async function GET(request: Request) {
   try {
@@ -142,6 +143,25 @@ export async function DELETE(request: Request) {
       );
     }
 
+    // 1. Look up the user's firebaseUid before deleting
+    const targetUser = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { firebaseUid: true },
+    });
+    if (!targetUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // 2. Delete from Firebase Auth
+    if (targetUser.firebaseUid) {
+      try {
+        await adminAuth.deleteUser(targetUser.firebaseUid);
+      } catch (firebaseErr) {
+        console.warn("Failed to delete from Firebase Auth:", firebaseErr);
+      }
+    }
+
+    // 3. Delete from database
     await prisma.user.delete({ where: { id: userId } });
 
     return new NextResponse(null, { status: 204 });

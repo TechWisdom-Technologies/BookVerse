@@ -364,8 +364,9 @@ export default function SettingsPage() {
     try {
       await resetPassword(dbUser.email);
       toast.success('Password reset email sent! Check your inbox.');
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to send password reset email');
+    } catch (err: unknown) {
+      const e = err as Record<string, unknown>;
+      toast.error((e.message as string) || 'Failed to send password reset email');
     } finally {
       setSendingReset(false);
     }
@@ -456,7 +457,7 @@ export default function SettingsPage() {
                   <p className="text-[11px] text-zinc-500 font-medium italic">Update your name, bio, and public information.</p>
                 </div>
                 <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded p-10 shadow-sm">
-                  <EditProfileForm user={dbUser as any} />
+                  <EditProfileForm user={dbUser as unknown as Parameters<typeof EditProfileForm>[0]["user"]} />
                 </div>
               </div>
             )}
@@ -825,14 +826,12 @@ export default function SettingsPage() {
                   <p className="text-[11px] text-zinc-500 leading-relaxed mb-6 font-medium uppercase">
                     If you support authors using direct credit cards or Stripe billing, you can securely access the card portal to check receipt logs or edit saved card structures.
                   </p>
-                  <a
-                    href="https://billing.stripe.com/p/login/mock-portal"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all font-mono"
+                  <button
+                    disabled
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest rounded text-zinc-400 dark:text-zinc-650 cursor-not-allowed font-mono shadow-sm"
                   >
-                    Launch Card Portal
-                  </a>
+                    Launch Card Portal (Coming Soon)
+                  </button>
                 </div>
               </div>
             )}

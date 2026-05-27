@@ -3,11 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { 
-  User, 
   ArrowLeft, 
   Smartphone,
   Loader2,
-  CreditCard,
   Sparkles,
   Info,
   Wallet,
@@ -418,14 +416,12 @@ export default function WalletPage() {
               <p className="text-[11px] text-zinc-500 leading-relaxed font-medium uppercase">
                 Direct credit card gateways and international tips require card verification checks. Launch the secure Stripe customer portal to manage details.
               </p>
-              <a
-                href="https://billing.stripe.com/p/login/mock-portal"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all font-mono"
+              <button
+                disabled
+                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest rounded text-zinc-400 dark:text-zinc-650 cursor-not-allowed font-mono shadow-sm"
               >
-                Stripe Customer Portal
-              </a>
+                Portal (Coming Soon)
+              </button>
             </div>
 
           </div>

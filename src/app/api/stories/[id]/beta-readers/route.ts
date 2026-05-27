@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAuth } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 import { prisma } from "@/lib/prisma";
 
 interface RouteParams {
@@ -25,6 +26,9 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
     }
 
     if (story.authorId !== user.id && user.role !== "ADMIN") {
+      if (!(await hasFeatureAccess(user, 'PRO'))) {
+        return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+      }
       const ownInvite = await prisma.betaReader.findUnique({
         where: { storyId_userId: { storyId, userId: user.id } },
       });
@@ -53,6 +57,10 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
     }
 
     const story = await prisma.story.findUnique({
@@ -88,6 +96,10 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
     }
 
     const body = await req.json().catch(() => ({}));

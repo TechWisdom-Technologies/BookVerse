@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 export async function GET() {
   try {
     const { dbUser } = await verifyToken();
+
+    if (!(await hasFeatureAccess(dbUser, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
     const USD_TO_BDT = 120; // Stable exchange rate conversion for tips
 

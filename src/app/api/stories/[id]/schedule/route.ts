@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 export async function GET(
   req: Request,
@@ -38,6 +39,10 @@ export async function POST(
 
     if (!story || story.authorId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
     }
 
     const body = await req.json();

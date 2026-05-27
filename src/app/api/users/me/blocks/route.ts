@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 // GET /api/users/me/blocks — List all blocked users
 export async function GET() {
   try {
     const { dbUser } = await verifyToken();
+
+    if (!(await hasFeatureAccess(dbUser, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
     const blocks = await prisma.userBlock.findMany({
       where: { blockerId: dbUser.id },
@@ -41,6 +46,10 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const { dbUser } = await verifyToken();
+
+    if (!(await hasFeatureAccess(dbUser, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
     const body = await request.json();
     const { username, reason } = body;
 

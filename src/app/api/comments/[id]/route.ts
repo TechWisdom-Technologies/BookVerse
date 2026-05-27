@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { verifyToken } from "@/lib/auth";
 
 interface RouteParams {
@@ -7,6 +8,9 @@ interface RouteParams {
 }
 
 export async function PATCH(request: Request, { params }: RouteParams) {
+  const limitRes = await checkRateLimit(30, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { id } = await params;
     const { dbUser } = await verifyToken();
@@ -53,6 +57,9 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 }
 
 export async function DELETE(_request: Request, { params }: RouteParams) {
+  const limitRes = await checkRateLimit(30, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { id } = await params;
     const { dbUser } = await verifyToken();

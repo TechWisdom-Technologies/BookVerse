@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { FileType, Role, type Prisma } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 import { bookSchema } from "@/lib/validators";
 import { indexBook } from "@/lib/meilisearch";
 import { z } from "zod";
@@ -104,6 +105,10 @@ export async function POST(request: Request) {
 
     if (!canUploadBooks(dbUser.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    if (!(await hasFeatureAccess(dbUser, 'CREATOR'))) {
+      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
     const body = await request.json();

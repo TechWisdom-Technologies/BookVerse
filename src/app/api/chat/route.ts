@@ -1,6 +1,8 @@
 import { createGroq } from '@ai-sdk/groq';
-import { streamText, generateText } from 'ai';
+import { generateText } from 'ai';
 import { prisma } from "@/lib/prisma";
+import { verifyToken } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -10,7 +12,14 @@ const groq = createGroq({
 });
 
 export async function POST(req: Request) {
+  // Rate limit: 10 AI chat messages per minute per IP
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
+    // Require authentication to prevent anonymous API credit abuse
+    await verifyToken();
+
     const apiKey = process.env.GROQ_API_KEY;
     if (!apiKey) {
       console.error("GROQ_API_KEY is missing from environment variables");
@@ -94,8 +103,14 @@ export async function POST(req: Request) {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
     console.error("AI API CRITICAL ERROR:", error);
-    return new Response(JSON.stringify({ error: 'Internal Server Error', details: String(error) }), {
+    return new Response(JSON.stringify({ error: 'The AI assistant is temporarily unavailable. Please try again.' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });

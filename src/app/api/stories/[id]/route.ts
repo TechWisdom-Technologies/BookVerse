@@ -105,6 +105,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     const body = await request.json();
 
     if (body.incrementView === true) {
+      // Rate limit: Max 30 view increments per minute per IP
+      const { checkRateLimit } = await import("@/lib/rate-limit");
+      const limitRes = await checkRateLimit(30, 60000);
+      if (limitRes.limited) return limitRes.response;
+
       const story = await prisma.story.findUnique({
         where: { id },
         select: { id: true, published: true },
@@ -267,7 +272,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     // Return Zod validation errors
     if (error && typeof error === "object" && "issues" in error) {
       return NextResponse.json(
-        { error: "Validation failed", details: (error as any).issues },
+        { error: "Validation failed", details: (error as { issues: unknown }).issues },
         { status: 400 }
       );
     }

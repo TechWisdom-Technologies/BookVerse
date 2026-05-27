@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * GET /api/tips/[userId]
@@ -10,8 +11,16 @@ export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { userId } = await params;
+
+    const user = await getAuth();
+    if (!user || (user.id !== userId && user.role !== "ADMIN")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const tips = await prisma.tip.findMany({
       where: {
@@ -55,6 +64,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { userId } = await params;
     const user = await getAuth();

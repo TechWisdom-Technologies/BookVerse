@@ -2,18 +2,34 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 import { adminAuth } from "@/lib/firebase-admin";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 let stripeInstance: Stripe | null = null;
 const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
   if (!stripeInstance) {
-    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY || "mock_key", {
-      apiVersion: "2024-12-18.acacia" as any,
+    stripeInstance = new Stripe(key, {
+      apiVersion: "2026-04-22.dahlia",
     });
   }
   return stripeInstance;
 };
 
 export async function POST(req: Request) {
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("Stripe secret key is not configured");
+    return NextResponse.json(
+      { error: "Payment service not configured" },
+      { status: 503 }
+    );
+  }
+
   try {
     const authHeader = req.headers.get("Authorization");
     let senderId: string | null = null;

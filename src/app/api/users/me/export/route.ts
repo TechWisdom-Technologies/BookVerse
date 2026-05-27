@@ -1,11 +1,20 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // GET /api/users/me/export — Comprehensive GDPR data export
 export async function GET() {
+  const limitRes = await checkRateLimit(5, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { dbUser } = await verifyToken();
+
+    if (!(await hasFeatureAccess(dbUser, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
     // Fetch the full user profile with relations
     const user = await prisma.user.findUnique({

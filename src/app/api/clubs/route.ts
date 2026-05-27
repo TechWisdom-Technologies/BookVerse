@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth, getCurrentUser } from '@/lib/auth';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 
@@ -56,6 +57,10 @@ export async function POST(req: NextRequest) {
     const user = await getAuth();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
     }
 
     const { name, description, genre, isPrivate, coverUrl, maxMembers } = await req.json();

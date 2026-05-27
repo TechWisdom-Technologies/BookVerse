@@ -31,6 +31,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Validate that the redeemer is the intended recipient
+    if (gift.recipientEmail && user.email !== gift.recipientEmail) {
+      return NextResponse.json(
+        { error: 'This gift code was sent to a different email address.' },
+        { status: 403 }
+      );
+    }
+
     if (gift.expiresAt < new Date()) {
       return NextResponse.json({ error: 'Gift code expired' }, { status: 400 });
     }
@@ -38,7 +46,7 @@ export async function POST(req: Request) {
     // Redeem gift
     const membershipEndDate = new Date(Date.now() + gift.duration * 30 * 24 * 60 * 60 * 1000);
 
-    const redeemed = await prisma.giftMembership.update({
+    await prisma.giftMembership.update({
       where: { code },
       data: {
         redeemById: user.id,

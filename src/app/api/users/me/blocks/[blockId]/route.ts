@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 // DELETE /api/users/me/blocks/[blockId] — Unblock a user
 export async function DELETE(
@@ -9,6 +10,10 @@ export async function DELETE(
 ) {
   try {
     const { dbUser } = await verifyToken();
+
+    if (!(await hasFeatureAccess(dbUser, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
     const { blockId } = await params;
 
     // Verify the block belongs to this user

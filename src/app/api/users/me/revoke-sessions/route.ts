@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 import { adminAuth } from "@/lib/firebase-admin";
 
 // POST /api/users/me/revoke-sessions — Revoke all Firebase refresh tokens
 export async function POST() {
   try {
     const { dbUser } = await verifyToken();
+
+    if (!(await hasFeatureAccess(dbUser, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    }
 
     // Revoke all refresh tokens for this user via Firebase Admin SDK
     await adminAuth.revokeRefreshTokens(dbUser.firebaseUid);
@@ -18,6 +23,7 @@ export async function POST() {
     // Clear the current session cookie so the user gets logged out here too
     response.cookies.set("firebase-token", "", { maxAge: 0, path: "/" });
     response.cookies.set("user-role", "", { maxAge: 0, path: "/" });
+    response.cookies.set("user-role-sig", "", { maxAge: 0, path: "/" });
 
     return response;
   } catch (error) {

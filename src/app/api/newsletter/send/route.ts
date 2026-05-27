@@ -28,8 +28,8 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
-    if (!(await hasFeatureAccess(user, "PRO"))) {
-      return NextResponse.json(paidFeatureError("PRO"), { status: 402 });
+    if (!(await hasFeatureAccess(user, "CREATOR"))) {
+      return NextResponse.json(paidFeatureError("CREATOR"), { status: 402 });
     }
 
     const { subject, htmlContent } = await req.json();
@@ -53,7 +53,8 @@ export async function POST(req: Request) {
 
     const { data, error } = await resend.emails.send({
       from,
-      to: subscriberEmails,
+      to: user.email,
+      bcc: subscriberEmails,
       subject: subject,
       html: htmlContent,
       replyTo: user.email,

@@ -44,6 +44,25 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
 
     if (action === 'impersonate') {
       if (!user.firebaseUid) return NextResponse.json({ error: 'No firebaseUid for user' }, { status: 400 });
+
+      // Prevent admin from impersonating themselves
+      if (user.id === dbUser.id) {
+        return NextResponse.json({ error: 'Cannot impersonate yourself' }, { status: 400 });
+      }
+
+      // Prevent impersonating other admins
+      if (user.role === Role.ADMIN) {
+        return NextResponse.json({ error: 'Cannot impersonate another admin' }, { status: 403 });
+      }
+
+      // Full audit trail — log who impersonated whom, from where
+      const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+        || request.headers.get('x-real-ip')
+        || 'unknown';
+      console.warn(
+        `[SECURITY_AUDIT] IMPERSONATION: Admin "${dbUser.username}" (id=${dbUser.id}) impersonated user "${user.username}" (id=${user.id}) from IP=${clientIp} at ${new Date().toISOString()}`
+      );
+
       const token = await adminAuth.createCustomToken(user.firebaseUid);
       return NextResponse.json({ token });
     }

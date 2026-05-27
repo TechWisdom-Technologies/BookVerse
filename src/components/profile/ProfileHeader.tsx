@@ -1,9 +1,11 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { FollowButton } from "./FollowButton";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
-import { Calendar, BookOpen, Users, Award, BarChart3, Settings } from "lucide-react";
+import { BookOpen, Award, BarChart3, Settings } from "lucide-react";
 
 interface ProfileHeaderProps {
   user: {
@@ -26,6 +28,7 @@ interface ProfileHeaderProps {
 }
 
 export function ProfileHeader({ user }: ProfileHeaderProps) {
+  const [avatarError, setAvatarError] = useState(false);
   const displayName = user.displayName || user.username;
 
   return (
@@ -37,13 +40,12 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
         {/* Profile Image */}
         <div className="relative shrink-0">
           <div className="h-32 w-32 md:h-40 md:w-40 rounded-xl overflow-hidden border-4 border-white dark:border-zinc-950 shadow-2xl bg-white dark:bg-zinc-900">
-            {user.avatarUrl ? (
-              <Image
+            {user.avatarUrl && !avatarError ? (
+              <img
                 src={user.avatarUrl}
                 alt={displayName}
-                width={160}
-                height={160}
                 className="w-full h-full object-cover"
+                onError={() => setAvatarError(true)}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-zinc-200 dark:text-zinc-800 uppercase">

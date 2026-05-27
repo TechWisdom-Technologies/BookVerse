@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
 import { createNotification } from '@/lib/notifications';
+import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 
 export async function GET(
   req: Request,
@@ -52,6 +53,10 @@ export async function POST(
 
     if (universe.userId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
+      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
     const body = await req.json();

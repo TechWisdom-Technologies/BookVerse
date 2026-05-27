@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
-import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
+// Promotions are available to all users; no paid plan gate required
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const promotions = await prisma.storyPromotion.findMany({
       where: { status: 'ACTIVE' },
@@ -35,11 +35,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Check if user has pro plan access (first 100 users get free)
-    const hasAccess = await hasFeatureAccess(dbUser, 'PRO');
-    if (!hasAccess) {
-      return NextResponse.json(paidFeatureError('PRO'), { status: 403 });
-    }
+    // Promotions are open to all authors; founding-user free access still applies elsewhere
 
     const body = await req.json();
     const { storyId, duration, tier, customBudget, senderNumber, transactionId } = body;

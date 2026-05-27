@@ -120,10 +120,10 @@ export async function POST(
     }
 
     return NextResponse.json(member, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error joining club:', error);
     return NextResponse.json(
-      { error: 'Failed to join club', details: error?.message },
+      { error: 'Failed to join club' },
       { status: 500 }
     );
   }

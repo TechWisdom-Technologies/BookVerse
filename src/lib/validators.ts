@@ -57,7 +57,17 @@ export const profileSchema = z.object({
   readingFont: z.enum(["sans", "serif", "dyslexic"]).optional(),
   readerTheme: z.enum(["white", "sepia", "cream", "charcoal", "black"]).optional(),
   readingProgressSync: z.boolean().optional(),
-  bkashNumber: z.string().optional().nullable(),
-  nagadNumber: z.string().optional().nullable(),
+  bkashNumber: z.string()
+    .refine((val) => val === "" || /^01[3-9]\d{8}$/.test(val), {
+      message: "Invalid bKash number. Must be a valid 11-digit Bangladeshi mobile number or empty."
+    })
+    .optional()
+    .nullable(),
+  nagadNumber: z.string()
+    .refine((val) => val === "" || /^01[3-9]\d{8}$/.test(val), {
+      message: "Invalid Nagad number. Must be a valid 11-digit Bangladeshi mobile number or empty."
+    })
+    .optional()
+    .nullable(),
 });
 

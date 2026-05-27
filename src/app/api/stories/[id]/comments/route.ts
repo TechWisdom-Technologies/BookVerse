@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { verifyToken } from "@/lib/auth";
 import { commentSchema } from "@/lib/validators";
 import { sendCommentNotification } from "@/lib/resend";
@@ -10,6 +11,9 @@ interface RouteParams {
 }
 
 export async function GET(request: Request, { params }: RouteParams) {
+  const limitRes = await checkRateLimit(30, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { id: storyId } = await params;
     const { searchParams } = new URL(request.url);
@@ -83,6 +87,9 @@ export async function GET(request: Request, { params }: RouteParams) {
 }
 
 export async function POST(request: Request, { params }: RouteParams) {
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { id: storyId } = await params;
     const { dbUser } = await verifyToken();

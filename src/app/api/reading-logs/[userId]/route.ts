@@ -13,6 +13,10 @@ export async function GET(
 ) {
   try {
     const { userId } = await params;
+    const user = await getAuth();
+    if (!user || user.id !== userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     // Fetch reading logs for the past 90 days
     const ninetyDaysAgo = new Date();

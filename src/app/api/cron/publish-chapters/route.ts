@@ -9,9 +9,7 @@ export async function GET(req: NextRequest) {
     const cronSecret = process.env.CRON_SECRET;
     const isVercelCron = req.headers.get('x-vercel-cron') === 'true';
     const hasValidToken = cronSecret && authHeader === `Bearer ${cronSecret}`;
-    const isDev = process.env.NODE_ENV === 'development';
-
-    if (!isDev && !isVercelCron && !hasValidToken) {
+    if (!isVercelCron && !hasValidToken) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

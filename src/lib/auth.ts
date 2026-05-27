@@ -3,11 +3,13 @@ import { cookies, headers } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 
+import { User } from "@prisma/client";
+
 /**
  * Helper to get the authenticated database user.
  * Renamed to getCurrentUser to avoid conflicts.
  */
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<User | null> {
   try {
     const { dbUser } = await verifyToken();
     return dbUser;
@@ -19,7 +21,7 @@ export async function getCurrentUser() {
 
 export async function verifyToken(): Promise<{
   firebaseUser: DecodedIdToken;
-  dbUser: any; // Simplified type to avoid circular inference issues
+  dbUser: User;
 }> {
   const cookieStore = await cookies();
   const tokenFromCookie = cookieStore.get("firebase-token")?.value;
@@ -30,7 +32,7 @@ export async function verifyToken(): Promise<{
     ? authHeader.slice("bearer ".length).trim()
     : undefined;
 
-  const token = tokenFromCookie || tokenFromHeader;
+  const token = tokenFromHeader || tokenFromCookie;
   if (!token) throw new Error("UNAUTHORIZED");
 
   const firebaseUser = await adminAuth.verifyIdToken(token);

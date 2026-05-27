@@ -10,8 +10,9 @@ export async function POST(request: Request) {
 
     let deactivatedUntil: Date | null = null;
     if (days && typeof days === "number" && days > 0) {
+      const safeDays = Math.min(Math.max(1, Math.floor(days)), 365);
       deactivatedUntil = new Date();
-      deactivatedUntil.setDate(deactivatedUntil.getDate() + days);
+      deactivatedUntil.setDate(deactivatedUntil.getDate() + safeDays);
     }
 
     // Update user deactivation states
@@ -31,6 +32,7 @@ export async function POST(request: Request) {
     // Logout: Clear cookies
     response.cookies.set("firebase-token", "", { maxAge: 0, path: "/" });
     response.cookies.set("user-role", "", { maxAge: 0, path: "/" });
+    response.cookies.set("user-role-sig", "", { maxAge: 0, path: "/" });
 
     return response;
   } catch (error) {

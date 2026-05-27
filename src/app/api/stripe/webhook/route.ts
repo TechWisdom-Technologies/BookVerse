@@ -5,17 +5,29 @@ import { createNotification } from "@/lib/notifications";
 
 let stripeInstance: Stripe | null = null;
 const getStripe = () => {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
   if (!stripeInstance) {
-    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY || "mock_key", {
-      apiVersion: "2024-12-18.acacia" as any,
+    stripeInstance = new Stripe(key, {
+      // @ts-expect-error: Stripe apiVersion mismatch due to using a preview API version
+      apiVersion: "2024-12-18.acacia",
     });
   }
   return stripeInstance;
 };
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
 export async function POST(req: Request) {
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!process.env.STRIPE_SECRET_KEY || !webhookSecret) {
+    console.error("Stripe environment variables are not configured");
+    return NextResponse.json(
+      { error: "Payment service not configured" },
+      { status: 503 }
+    );
+  }
+
   try {
     const body = await req.text();
     const signature = req.headers.get("stripe-signature");
@@ -27,9 +39,10 @@ export async function POST(req: Request) {
     let event: Stripe.Event;
 
     try {
-      event = getStripe().webhooks.constructEvent(body, signature, webhookSecret || "mock_webhook_secret");
-    } catch (err: any) {
-      console.error(`Webhook signature verification failed: ${err.message}`);
+      event = getStripe().webhooks.constructEvent(body, signature, webhookSecret);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error(`Webhook signature verification failed: ${errorMessage}`);
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 

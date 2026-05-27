@@ -20,31 +20,75 @@ interface ChapterReaderPageProps {
   params: Promise<{ id: string; chapterId: string; }>;
 }
 
+function sanitizeHtml(htmlString: string): string {
+  const window = new Window();
+  const document = window.document;
+  const body = document.createElement("body");
+  body.innerHTML = htmlString;
+
+  // 1. Remove dangerous tags
+  const forbiddenTags = ["script", "iframe", "object", "embed", "style", "form", "input", "button", "textarea", "meta", "link"];
+  for (const tag of forbiddenTags) {
+    const elements = body.querySelectorAll(tag);
+    for (const el of elements) {
+      el.remove();
+    }
+  }
+
+  // 2. Remove dangerous attributes and event handlers
+  const allElements = body.querySelectorAll("*");
+  for (const el of allElements) {
+    const attrs = Array.from(el.attributes);
+    for (const attr of attrs) {
+      if (attr.name.startsWith("on")) {
+        el.removeAttribute(attr.name);
+      }
+      if (attr.name === "href" && attr.value) {
+        const val = attr.value.trim().toLowerCase();
+        if (val.startsWith("javascript:") || val.startsWith("data:")) {
+          el.removeAttribute("href");
+        }
+      }
+      if (attr.name === "src" && attr.value) {
+        const val = attr.value.trim().toLowerCase();
+        if (val.startsWith("javascript:") || val.startsWith("data:")) {
+          el.removeAttribute("src");
+        }
+      }
+    }
+  }
+
+  return body.innerHTML;
+}
+
 function renderChapterContent(content: unknown) {
   if (!content || typeof content !== "object") return null;
   try {
     const window = new Window();
-    (global as any).window = window;
-    (global as any).document = window.document;
-    try { (global as any).navigator = window.navigator; } catch (e) {}
-    return generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
+    const g = global as unknown as Record<string, unknown>;
+    g.window = window;
+    g.document = window.document;
+    try { g.navigator = window.navigator; } catch { /* ignore */ }
+    const rawHtml = generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
+    return rawHtml ? sanitizeHtml(rawHtml) : null;
   } catch (error) {
     console.error("Failed to render TipTap content:", error);
     return null;
   }
 }
 
-function estimateReadingTime(content: any): number {
+function estimateReadingTime(content: unknown): number {
   if (!content) return 1;
   
-  function countWords(node: any): number {
-    if (!node) return 0;
+  function countWords(node: unknown): number {
+    if (!node || typeof node !== "object") return 0;
+    const n = node as Record<string, unknown>;
     let clientWordCount = 0;
-    if (node.type === "text" && typeof node.text === "string") {
-      clientWordCount += node.text.trim().split(/\s+/).filter(Boolean).length;
+    if (n.type === "text" && typeof n.text === "string") {
+      clientWordCount += n.text.trim().split(/\s+/).filter(Boolean).length;
     }
-    if (node.content && Array.isArray(node.content)) {
-      for (const child of node.content) {
+    if (n.content && Array.isArray(n.content)) {
+      for (const child of n.content) {
         clientWordCount += countWords(child);
       }
     }

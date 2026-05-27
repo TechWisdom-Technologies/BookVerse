@@ -40,17 +40,6 @@ type SyncedUser = {
   };
 };
 
-function setCookie(name: string, value: string, maxAgeSeconds?: number) {
-  const parts = [`${encodeURIComponent(name)}=${encodeURIComponent(value)}`, "Path=/", "SameSite=Lax"];
-  if (maxAgeSeconds != null) parts.push(`Max-Age=${maxAgeSeconds}`);
-  if (window.location.protocol === "https:") parts.push("Secure");
-  document.cookie = parts.join("; ");
-}
-
-function clearCookie(name: string) {
-  document.cookie = `${encodeURIComponent(name)}=; Path=/; Max-Age=0; SameSite=Lax`;
-}
-
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [dbUser, setDbUser] = useState<SyncedUser | null>(null);
@@ -61,7 +50,6 @@ export function useAuth() {
       setUser(u);
 
       if (!u) {
-        clearCookie("firebase-token");
         setDbUser(null);
         setLoading(false);
         return;
@@ -69,10 +57,11 @@ export function useAuth() {
 
       try {
         const token = await u.getIdToken();
-        setCookie("firebase-token", token, 60 * 60 * 24 * 7);
         const response = await fetch("/api/auth/sync", {
           method: "POST",
-          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         if (response.ok) {
           const payload = (await response.json()) as { user?: SyncedUser, needsOnboarding?: boolean };
@@ -83,6 +72,8 @@ export function useAuth() {
             window.location.href = '/onboarding';
           }
         }
+      } catch (error) {
+        console.error("Auth sync error:", error);
       } finally {
         setLoading(false);
       }
@@ -134,17 +125,24 @@ export function useAuth() {
   }, []);
 
   const signOut = useCallback(async () => {
-    clearCookie("firebase-token");
     setDbUser(null);
+    try {
+      await fetch("/api/auth/signout", { method: "POST" });
+    } catch (error) {
+      console.error("Failed to sign out on server:", error);
+    }
     await fbSignOut(auth);
   }, []);
 
   const refreshUser = useCallback(async () => {
     if (!user) return;
     try {
+      const token = await user.getIdToken();
       const response = await fetch("/api/auth/sync", {
         method: "POST",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
       if (response.ok) {
         const payload = (await response.json()) as { user?: SyncedUser };
