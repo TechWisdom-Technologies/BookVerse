@@ -7,96 +7,47 @@ interface TTSPlayerProps {
   htmlContent: string;
 }
 
-const chunkText = (text: string, maxLen = 200): string[] => {
-  const sentences = text.match(/[^.!?\n]+[.!?\n]+(\s|$)/g) || [text];
+const chunkText = (text: string, maxLen = 1500): string[] => {
+  const paragraphs = text.split(/\n\s*\n/);
   const chunks: string[] = [];
   let currentChunk = "";
 
-  for (let sentence of sentences) {
-    sentence = sentence.trim() + " ";
-    if ((currentChunk + sentence).length > maxLen) {
+  for (let para of paragraphs) {
+    para = para.trim();
+    if (!para) continue;
+    
+    if ((currentChunk + "\n\n" + para).length > maxLen) {
       if (currentChunk.trim()) {
         chunks.push(currentChunk.trim());
       }
-      if (sentence.length > maxLen) {
-        const words = sentence.split(/\s+/);
-        let wordChunk = "";
-        for (const word of words) {
-          if ((wordChunk + " " + word).length > maxLen) {
-            if (wordChunk.trim()) {
-              chunks.push(wordChunk.trim());
+      
+      if (para.length > maxLen) {
+        const sentences = para.match(/[^.!?\n]+[.!?\n]+(\s|$)/g) || [para];
+        let sentenceChunk = "";
+        for (let sentence of sentences) {
+          sentence = sentence.trim() + " ";
+          if ((sentenceChunk + sentence).length > maxLen) {
+            if (sentenceChunk.trim()) {
+              chunks.push(sentenceChunk.trim());
             }
-            wordChunk = word;
+            sentenceChunk = sentence;
           } else {
-            wordChunk = wordChunk ? wordChunk + " " + word : word;
+            sentenceChunk += sentence;
           }
         }
-        currentChunk = wordChunk + " ";
+        currentChunk = sentenceChunk;
       } else {
-        currentChunk = sentence;
+        currentChunk = para;
       }
     } else {
-      currentChunk += sentence;
+      currentChunk = currentChunk ? currentChunk + "\n\n" + para : para;
     }
   }
+  
   if (currentChunk.trim()) {
     chunks.push(currentChunk.trim());
   }
   return chunks.filter(Boolean);
-};
-
-const getBestBengaliVoice = (voices: SpeechSynthesisVoice[]) => {
-  const bnVoices = voices.filter(v => 
-    v.lang.toLowerCase().includes("bn-bd") || 
-    v.lang.toLowerCase().includes("bn-in") || 
-    v.lang.toLowerCase().startsWith("bn") ||
-    v.name.toLowerCase().includes("bengali") ||
-    v.name.toLowerCase().includes("bangla")
-  );
-
-  if (bnVoices.length === 0) return null;
-
-  // 1. Prioritize premium online/natural female voices (Edge: Nabanita)
-  const premiumOnlineFemale = bnVoices.find(v => 
-    v.name.toLowerCase().includes("nabanita")
-  );
-  if (premiumOnlineFemale) return premiumOnlineFemale;
-
-  // 2. Prioritize macOS/iOS female voice (Lekha)
-  const macOSFemale = bnVoices.find(v => 
-    v.name.toLowerCase().includes("lekha")
-  );
-  if (macOSFemale) return macOSFemale;
-
-  // 3. Prioritize Windows local female voice (Kalpana)
-  const localWindowsFemale = bnVoices.find(v => 
-    v.name.toLowerCase().includes("kalpana")
-  );
-  if (localWindowsFemale) return localWindowsFemale;
-
-  // 4. Prioritize Google voices (usually very high quality online female voices)
-  const googleVoice = bnVoices.find(v => 
-    v.name.toLowerCase().includes("google")
-  );
-  if (googleVoice) return googleVoice;
-
-  // 5. Prioritize any voice containing "female" or "natural" or "online"
-  const generalFemaleOrNatural = bnVoices.find(v => 
-    v.name.toLowerCase().includes("female") || 
-    v.name.toLowerCase().includes("natural") || 
-    v.name.toLowerCase().includes("online")
-  );
-  if (generalFemaleOrNatural) return generalFemaleOrNatural;
-
-  // 6. If no female voice is explicitly matched, try to filter out known male voices
-  const nonMaleVoice = bnVoices.find(v => 
-    !v.name.toLowerCase().includes("hemant") && 
-    !v.name.toLowerCase().includes("pradeep") && 
-    !v.name.toLowerCase().includes("male")
-  );
-  if (nonMaleVoice) return nonMaleVoice;
-
-  return bnVoices[0];
 };
 
 export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
@@ -106,13 +57,10 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
   const isPlayingRef = useRef(false);
   const chunksRef = useRef<string[]>([]);
   const currentChunkIndexRef = useRef(0);
-  const isBengaliRef = useRef(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       setSupported(true);
-      // Pre-warm the voice list
-      window.speechSynthesis.getVoices();
     }
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -139,20 +87,6 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
 
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
-
-    if (isBengaliRef.current) {
-      utterance.lang = "bn-BD";
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        const voices = window.speechSynthesis.getVoices();
-        const bnVoice = getBestBengaliVoice(voices);
-        if (bnVoice) {
-          utterance.voice = bnVoice;
-        }
-      }
-    } else {
-      utterance.lang = "en-US";
-    }
-
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -188,11 +122,7 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
     const text = getTextFromHtml(htmlContent);
     if (!text.trim()) return;
 
-    // Detect if the entire text contains Bangla characters
-    const isBengali = /[\u0980-\u09FF]/.test(text);
-    isBengaliRef.current = isBengali;
-
-    const chunkList = chunkText(text, 200);
+    const chunkList = chunkText(text, 1500);
     if (chunkList.length === 0) return;
 
     window.speechSynthesis.cancel();
@@ -214,7 +144,7 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
           {isPlaying ? <Loader2 className="w-3 h-3 animate-spin text-zinc-300" /> : <Volume2 className="w-3 h-3" />}
           Listen to Story
         </div>
-        
+
         <div className="h-3 w-px bg-zinc-100 dark:bg-zinc-800" />
 
         <div className="flex items-center gap-1">
