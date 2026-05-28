@@ -57,7 +57,6 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
   const isSpeakingRef = useRef(false);
   const chunksRef = useRef<string[]>([]);
   const currentChunkIndexRef = useRef(0);
-  const isBengaliRef = useRef(false);
 
   // Cancel SpeechSynthesis on unmount
   useEffect(() => {
@@ -99,34 +98,6 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
 
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
-
-    if (isBengaliRef.current) {
-      utterance.lang = "bn-BD";
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        const voices = window.speechSynthesis.getVoices();
-        const bnVoices = voices.filter(v => 
-          v.lang.toLowerCase().includes("bn-bd") || 
-          v.lang.toLowerCase().includes("bn-in") || 
-          v.lang.toLowerCase().startsWith("bn") ||
-          v.name.toLowerCase().includes("bengali") ||
-          v.name.toLowerCase().includes("bangla")
-        );
-        // Prioritize female and high-quality voices (e.g., Kalpana on Windows, or Google/Natural female voices)
-        const bnVoice = bnVoices.find(v => 
-          v.name.toLowerCase().includes("kalpana") ||
-          v.name.toLowerCase().includes("female") ||
-          v.name.toLowerCase().includes("google") ||
-          v.name.toLowerCase().includes("natural")
-        ) || bnVoices[0];
-        
-        if (bnVoice) {
-          utterance.voice = bnVoice;
-        }
-      }
-    } else {
-      utterance.lang = "en-US";
-    }
-
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -168,10 +139,6 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     }
 
     if (!textToSpeak.trim()) return;
-
-    // Detect if the text contains Bangla characters
-    const isBengali = /[\u0980-\u09FF]/.test(textToSpeak);
-    isBengaliRef.current = isBengali;
 
     const chunkList = chunkText(textToSpeak, 200);
     if (chunkList.length === 0) return;
