@@ -14,6 +14,25 @@ const chunkText = (text: string, maxLen = 1500): string[] => {
   const chunks: string[] = [];
   let currentChunk = "";
 
+  const splitIntoSentences = (t: string): string[] => {
+    const marks = /[.!?।\n]/;
+    const sentences: string[] = [];
+    let start = 0;
+    
+    for (let i = 0; i < t.length; i++) {
+      if (marks.test(t[i])) {
+        sentences.push(t.slice(start, i + 1));
+        start = i + 1;
+      }
+    }
+    
+    if (start < t.length) {
+      sentences.push(t.slice(start));
+    }
+    
+    return sentences.map(s => s.trim()).filter(Boolean);
+  };
+
   for (let para of paragraphs) {
     para = para.trim();
     if (!para) continue;
@@ -24,7 +43,7 @@ const chunkText = (text: string, maxLen = 1500): string[] => {
       }
       
       if (para.length > maxLen) {
-        const sentences = para.match(/[^.!?\n]+[.!?\n]+(\s|$)/g) || [para];
+        const sentences = splitIntoSentences(para);
         let sentenceChunk = "";
         for (let sentence of sentences) {
           sentence = sentence.trim() + " ";
