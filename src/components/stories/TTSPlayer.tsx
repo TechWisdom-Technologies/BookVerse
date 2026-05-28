@@ -83,42 +83,6 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
 
-    // Auto-detect if text contains Bengali characters
-    const isBengali = /[\u0980-\u09FF]/.test(chunk);
-    if (isBengali) {
-      utterance.lang = "bn-BD";
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        const voices = window.speechSynthesis.getVoices();
-        const bnVoices = voices.filter(v => 
-          v.lang.toLowerCase().includes("bn") || 
-          v.name.toLowerCase().includes("bengali") || 
-          v.name.toLowerCase().includes("bangla")
-        );
-
-        if (bnVoices.length > 0) {
-          // Prioritize high-quality female voices (Google Bangla, Microsoft Kalpana, Apple Lekha, or general female/natural)
-          const preferredVoice = bnVoices.find(v => {
-            const name = v.name.toLowerCase();
-            return name.includes("google") || 
-                   name.includes("kalpana") || 
-                   name.includes("lekha") || 
-                   name.includes("female") || 
-                   name.includes("natural");
-          }) || bnVoices.find(v => {
-            // Second preference: any Bengali voice that is NOT Microsoft Hemant (which is male)
-            return !v.name.toLowerCase().includes("hemant");
-          }) || bnVoices[0];
-
-          if (preferredVoice) {
-            utterance.voice = preferredVoice;
-            utterance.lang = preferredVoice.lang;
-          }
-        }
-      }
-    } else {
-      utterance.lang = "en-US";
-    }
-
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
