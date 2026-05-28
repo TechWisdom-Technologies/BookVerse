@@ -61,6 +61,8 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       setSupported(true);
+      // Pre-warm the voice list
+      window.speechSynthesis.getVoices();
     }
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -87,6 +89,52 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
 
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
+
+    // Auto-detect if text contains Bengali characters
+    const isBengali = /[\u0980-\u09FF]/.test(chunk);
+    if (isBengali) {
+      utterance.lang = "bn-BD";
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const voices = window.speechSynthesis.getVoices();
+        const bnVoices = voices.filter(v => 
+          v.lang.toLowerCase().includes("bn") || 
+          v.name.toLowerCase().includes("bengali") || 
+          v.name.toLowerCase().includes("bangla")
+        );
+
+        if (bnVoices.length > 0) {
+          // 1. Prioritize premium online/natural/google female voices
+          let preferredVoice = bnVoices.find(v => {
+            const name = v.name.toLowerCase();
+            return name.includes("natural") || name.includes("online") || name.includes("google");
+          });
+
+          // 2. Fallback to local offline female voices
+          if (!preferredVoice) {
+            preferredVoice = bnVoices.find(v => {
+              const name = v.name.toLowerCase();
+              return name.includes("kalpana") || name.includes("lekha") || name.includes("female");
+            });
+          }
+
+          // 3. Fallback to any voice that is NOT Microsoft Hemant (male)
+          if (!preferredVoice) {
+            preferredVoice = bnVoices.find(v => !v.name.toLowerCase().includes("hemant"));
+          }
+
+          // 4. Final fallback
+          preferredVoice = preferredVoice || bnVoices[0];
+
+          if (preferredVoice) {
+            utterance.voice = preferredVoice;
+            utterance.lang = preferredVoice.lang;
+          }
+        }
+      }
+    } else {
+      utterance.lang = "en-US";
+    }
+
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
