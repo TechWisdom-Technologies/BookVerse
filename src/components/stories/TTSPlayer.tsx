@@ -45,6 +45,60 @@ const chunkText = (text: string, maxLen = 200): string[] => {
   return chunks.filter(Boolean);
 };
 
+const getBestBengaliVoice = (voices: SpeechSynthesisVoice[]) => {
+  const bnVoices = voices.filter(v => 
+    v.lang.toLowerCase().includes("bn-bd") || 
+    v.lang.toLowerCase().includes("bn-in") || 
+    v.lang.toLowerCase().startsWith("bn") ||
+    v.name.toLowerCase().includes("bengali") ||
+    v.name.toLowerCase().includes("bangla")
+  );
+
+  if (bnVoices.length === 0) return null;
+
+  // 1. Prioritize premium online/natural female voices (Edge: Nabanita)
+  const premiumOnlineFemale = bnVoices.find(v => 
+    v.name.toLowerCase().includes("nabanita")
+  );
+  if (premiumOnlineFemale) return premiumOnlineFemale;
+
+  // 2. Prioritize macOS/iOS female voice (Lekha)
+  const macOSFemale = bnVoices.find(v => 
+    v.name.toLowerCase().includes("lekha")
+  );
+  if (macOSFemale) return macOSFemale;
+
+  // 3. Prioritize Windows local female voice (Kalpana)
+  const localWindowsFemale = bnVoices.find(v => 
+    v.name.toLowerCase().includes("kalpana")
+  );
+  if (localWindowsFemale) return localWindowsFemale;
+
+  // 4. Prioritize Google voices (usually very high quality online female voices)
+  const googleVoice = bnVoices.find(v => 
+    v.name.toLowerCase().includes("google")
+  );
+  if (googleVoice) return googleVoice;
+
+  // 5. Prioritize any voice containing "female" or "natural" or "online"
+  const generalFemaleOrNatural = bnVoices.find(v => 
+    v.name.toLowerCase().includes("female") || 
+    v.name.toLowerCase().includes("natural") || 
+    v.name.toLowerCase().includes("online")
+  );
+  if (generalFemaleOrNatural) return generalFemaleOrNatural;
+
+  // 6. If no female voice is explicitly matched, try to filter out known male voices
+  const nonMaleVoice = bnVoices.find(v => 
+    !v.name.toLowerCase().includes("hemant") && 
+    !v.name.toLowerCase().includes("pradeep") && 
+    !v.name.toLowerCase().includes("male")
+  );
+  if (nonMaleVoice) return nonMaleVoice;
+
+  return bnVoices[0];
+};
+
 export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [supported, setSupported] = useState(false);
@@ -57,6 +111,8 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       setSupported(true);
+      // Pre-warm the voice list
+      window.speechSynthesis.getVoices();
     }
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -86,6 +142,13 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
 
     if (isBengaliRef.current) {
       utterance.lang = "bn-BD";
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const voices = window.speechSynthesis.getVoices();
+        const bnVoice = getBestBengaliVoice(voices);
+        if (bnVoice) {
+          utterance.voice = bnVoice;
+        }
+      }
     } else {
       utterance.lang = "en-US";
     }
