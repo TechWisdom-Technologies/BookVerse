@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Volume2, BookOpen, Loader } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -9,12 +9,64 @@ interface EnhancedReaderFeatures {
   onHighlight?: (text: string) => void;
 }
 
+const chunkText = (text: string, maxLen = 200): string[] => {
+  const sentences = text.match(/[^.!?\n]+[.!?\n]+(\s|$)/g) || [text];
+  const chunks: string[] = [];
+  let currentChunk = "";
+
+  for (let sentence of sentences) {
+    sentence = sentence.trim() + " ";
+    if ((currentChunk + sentence).length > maxLen) {
+      if (currentChunk.trim()) {
+        chunks.push(currentChunk.trim());
+      }
+      if (sentence.length > maxLen) {
+        const words = sentence.split(/\s+/);
+        let wordChunk = "";
+        for (const word of words) {
+          if ((wordChunk + " " + word).length > maxLen) {
+            if (wordChunk.trim()) {
+              chunks.push(wordChunk.trim());
+            }
+            wordChunk = word;
+          } else {
+            wordChunk = wordChunk ? wordChunk + " " + word : word;
+          }
+        }
+        currentChunk = wordChunk + " ";
+      } else {
+        currentChunk = sentence;
+      }
+    } else {
+      currentChunk += sentence;
+    }
+  }
+  if (currentChunk.trim()) {
+    chunks.push(currentChunk.trim());
+  }
+  return chunks.filter(Boolean);
+};
+
 export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeatures) {
   const [selectedText, setSelectedText] = useState('');
   const [wordDefinition, setWordDefinition] = useState('');
   const [showDefinition, setShowDefinition] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isSpeakingRef = useRef(false);
+  const chunksRef = useRef<string[]>([]);
+  const currentChunkIndexRef = useRef(0);
+  const isBengaliRef = useRef(false);
+
+  // Cancel SpeechSynthesis on unmount
+  useEffect(() => {
+    return () => {
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
 
   // Handle text selection
   useEffect(() => {
@@ -33,6 +85,64 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     };
   }, []);
 
+  // Sequential speech synthesis player
+  const speakNextChunk = () => {
+    if (!isSpeakingRef.current) return;
+
+    if (currentChunkIndexRef.current >= chunksRef.current.length) {
+      setIsSpeaking(false);
+      isSpeakingRef.current = false;
+      currentChunkIndexRef.current = 0;
+      toast.success('Done reading');
+      return;
+    }
+
+    const chunk = chunksRef.current[currentChunkIndexRef.current];
+    const utterance = new SpeechSynthesisUtterance(chunk);
+
+    if (isBengaliRef.current) {
+      utterance.lang = "bn-BD";
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const voices = window.speechSynthesis.getVoices();
+        const bnVoice = voices.find(v => 
+          v.lang.toLowerCase().includes("bn-bd") || 
+          v.lang.toLowerCase().includes("bn-in") || 
+          v.lang.toLowerCase().startsWith("bn") ||
+          v.name.toLowerCase().includes("bengali") ||
+          v.name.toLowerCase().includes("bangla")
+        );
+        if (bnVoice) {
+          utterance.voice = bnVoice;
+        }
+      }
+    } else {
+      utterance.lang = "en-US";
+    }
+
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onend = () => {
+      currentChunkIndexRef.current += 1;
+      speakNextChunk();
+    };
+
+    utterance.onerror = (event) => {
+      if (isSpeakingRef.current && event.error !== "interrupted" && event.error !== "canceled") {
+        console.error("SpeechSynthesis error:", event);
+      }
+      if (!isSpeakingRef.current || event.error === "interrupted" || event.error === "canceled") {
+        return;
+      }
+      setIsSpeaking(false);
+      isSpeakingRef.current = false;
+      currentChunkIndexRef.current = 0;
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
   // Text-to-Speech function
   const handleReadAloud = () => {
     const textToSpeak = selectedText || text;
@@ -45,21 +155,27 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     if (isSpeaking) {
       window.speechSynthesis.cancel();
       setIsSpeaking(false);
+      isSpeakingRef.current = false;
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.rate = 1;
-    utterance.pitch = 1;
-    utterance.volume = 1;
+    if (!textToSpeak.trim()) return;
 
-    utterance.onend = () => {
-      setIsSpeaking(false);
-      toast.success('Done reading');
-    };
+    // Detect if the text contains Bangla characters
+    const isBengali = /[\u0980-\u09FF]/.test(textToSpeak);
+    isBengaliRef.current = isBengali;
 
-    window.speechSynthesis.speak(utterance);
+    const chunkList = chunkText(textToSpeak, 200);
+    if (chunkList.length === 0) return;
+
+    window.speechSynthesis.cancel();
+
+    chunksRef.current = chunkList;
+    currentChunkIndexRef.current = 0;
+    isSpeakingRef.current = true;
     setIsSpeaking(true);
+
+    speakNextChunk();
   };
 
   // Dictionary lookup (mock implementation)

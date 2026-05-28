@@ -1,28 +1,66 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Play, Pause, Square, Volume2, Loader2, Radio } from "lucide-react";
+import { Play, Pause, Volume2, Loader2 } from "lucide-react";
 
 interface TTSPlayerProps {
   htmlContent: string;
 }
 
+const chunkText = (text: string, maxLen = 200): string[] => {
+  const sentences = text.match(/[^.!?\n]+[.!?\n]+(\s|$)/g) || [text];
+  const chunks: string[] = [];
+  let currentChunk = "";
+
+  for (let sentence of sentences) {
+    sentence = sentence.trim() + " ";
+    if ((currentChunk + sentence).length > maxLen) {
+      if (currentChunk.trim()) {
+        chunks.push(currentChunk.trim());
+      }
+      if (sentence.length > maxLen) {
+        const words = sentence.split(/\s+/);
+        let wordChunk = "";
+        for (const word of words) {
+          if ((wordChunk + " " + word).length > maxLen) {
+            if (wordChunk.trim()) {
+              chunks.push(wordChunk.trim());
+            }
+            wordChunk = word;
+          } else {
+            wordChunk = wordChunk ? wordChunk + " " + word : word;
+          }
+        }
+        currentChunk = wordChunk + " ";
+      } else {
+        currentChunk = sentence;
+      }
+    } else {
+      currentChunk += sentence;
+    }
+  }
+  if (currentChunk.trim()) {
+    chunks.push(currentChunk.trim());
+  }
+  return chunks.filter(Boolean);
+};
+
 export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
   const [supported, setSupported] = useState(false);
-  const synthRef = useRef<SpeechSynthesis | null>(null);
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  const isPlayingRef = useRef(false);
+  const chunksRef = useRef<string[]>([]);
+  const currentChunkIndexRef = useRef(0);
+  const isBengaliRef = useRef(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       setSupported(true);
-      synthRef.current = window.speechSynthesis;
     }
-    
     return () => {
-      if (synthRef.current) {
-        synthRef.current.cancel();
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
       }
     };
   }, []);
@@ -33,59 +71,88 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
     return doc.body.textContent || "";
   };
 
-  const handlePlay = () => {
-    if (!synthRef.current) return;
+  const speakNextChunk = () => {
+    if (!isPlayingRef.current) return;
 
-    if (isPaused) {
-      synthRef.current.resume();
-      setIsPlaying(true);
-      setIsPaused(false);
+    if (currentChunkIndexRef.current >= chunksRef.current.length) {
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      currentChunkIndexRef.current = 0;
+      return;
+    }
+
+    const chunk = chunksRef.current[currentChunkIndexRef.current];
+    const utterance = new SpeechSynthesisUtterance(chunk);
+
+    if (isBengaliRef.current) {
+      utterance.lang = "bn-BD";
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        const voices = window.speechSynthesis.getVoices();
+        const bnVoice = voices.find(v => 
+          v.lang.toLowerCase().includes("bn-bd") || 
+          v.lang.toLowerCase().includes("bn-in") || 
+          v.lang.toLowerCase().startsWith("bn") ||
+          v.name.toLowerCase().includes("bengali") ||
+          v.name.toLowerCase().includes("bangla")
+        );
+        if (bnVoice) {
+          utterance.voice = bnVoice;
+        }
+      }
+    } else {
+      utterance.lang = "en-US";
+    }
+
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onend = () => {
+      currentChunkIndexRef.current += 1;
+      speakNextChunk();
+    };
+
+    utterance.onerror = (event) => {
+      if (isPlayingRef.current && event.error !== "interrupted" && event.error !== "canceled") {
+        console.error("SpeechSynthesis error:", event);
+      }
+      if (!isPlayingRef.current || event.error === "interrupted" || event.error === "canceled") {
+        return;
+      }
+      setIsPlaying(false);
+      isPlayingRef.current = false;
+      currentChunkIndexRef.current = 0;
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const handlePlay = () => {
+    if (isPlaying) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      isPlayingRef.current = false;
       return;
     }
 
     const text = getTextFromHtml(htmlContent);
     if (!text.trim()) return;
 
-    synthRef.current.cancel();
+    // Detect if the text contains Bangla characters
+    const isBengali = /[\u0980-\u09FF]/.test(text);
+    isBengaliRef.current = isBengali;
 
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1.0;
-    utterance.pitch = 1.0;
-    
-    utterance.onstart = () => {
-      setIsPlaying(true);
-      setIsPaused(false);
-    };
+    const chunkList = chunkText(text, 200);
+    if (chunkList.length === 0) return;
 
-    utterance.onend = () => {
-      setIsPlaying(false);
-      setIsPaused(false);
-    };
+    window.speechSynthesis.cancel();
 
-    utterance.onerror = (e) => {
-      if (e.error !== 'interrupted') {
-        console.error("Audio Error:", e);
-      }
-      setIsPlaying(false);
-      setIsPaused(false);
-    };
+    chunksRef.current = chunkList;
+    currentChunkIndexRef.current = 0;
+    isPlayingRef.current = true;
+    setIsPlaying(true);
 
-    utteranceRef.current = utterance;
-    synthRef.current.speak(utterance);
-  };
-
-  const handlePause = () => {
-    if (!synthRef.current) return;
-    synthRef.current.pause();
-    setIsPlaying(false);
-    setIsPaused(true);
-  };
-
-  const handleStop = () => {
-    if (!synthRef.current) return;
-    synthRef.current.cancel();
-    setIsPlaying(false);
-    setIsPaused(false);
+    speakNextChunk();
   };
 
   if (!supported) return null;
@@ -107,24 +174,14 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
               className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-all"
             >
               <Play className="w-3 h-3" />
-              {isPaused ? "Resume" : "Play"}
+              Play
             </button>
           ) : (
             <button
-              onClick={handlePause}
+              onClick={handlePlay}
               className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-all"
             >
               <Pause className="w-3 h-3" />
-              Pause
-            </button>
-          )}
-
-          {(isPlaying || isPaused) && (
-            <button
-              onClick={handleStop}
-              className="flex items-center gap-1.5 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-rose-500 hover:bg-rose-500/5 rounded transition-all"
-            >
-              <Square className="w-2.5 h-2.5" />
               Stop
             </button>
           )}
