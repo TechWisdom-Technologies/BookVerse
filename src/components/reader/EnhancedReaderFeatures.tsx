@@ -57,6 +57,7 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
   const isSpeakingRef = useRef(false);
   const chunksRef = useRef<string[]>([]);
   const currentChunkIndexRef = useRef(0);
+  const isBengaliRef = useRef(false);
 
   // Cancel SpeechSynthesis on unmount
   useEffect(() => {
@@ -99,6 +100,12 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
 
+    if (isBengaliRef.current) {
+      utterance.lang = "bn-BD";
+    } else {
+      utterance.lang = "en-US";
+    }
+
     utterance.rate = 1;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -140,6 +147,10 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     }
 
     if (!textToSpeak.trim()) return;
+
+    // Detect if the entire text contains Bangla characters
+    const isBengali = /[\u0980-\u09FF]/.test(textToSpeak);
+    isBengaliRef.current = isBengali;
 
     const chunkList = chunkText(textToSpeak, 200);
     if (chunkList.length === 0) return;

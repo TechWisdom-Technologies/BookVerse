@@ -52,6 +52,7 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
   const isPlayingRef = useRef(false);
   const chunksRef = useRef<string[]>([]);
   const currentChunkIndexRef = useRef(0);
+  const isBengaliRef = useRef(false);
 
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -82,6 +83,12 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
 
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
+
+    if (isBengaliRef.current) {
+      utterance.lang = "bn-BD";
+    } else {
+      utterance.lang = "en-US";
+    }
 
     utterance.rate = 1;
     utterance.pitch = 1;
@@ -117,6 +124,10 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
 
     const text = getTextFromHtml(htmlContent);
     if (!text.trim()) return;
+
+    // Detect if the entire text contains Bangla characters
+    const isBengali = /[\u0980-\u09FF]/.test(text);
+    isBengaliRef.current = isBengali;
 
     const chunkList = chunkText(text, 200);
     if (chunkList.length === 0) return;
