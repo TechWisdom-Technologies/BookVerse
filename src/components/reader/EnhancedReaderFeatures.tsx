@@ -71,6 +71,45 @@ const chunkText = (text: string, maxLen = 1500): string[] => {
   return chunks.filter(Boolean);
 };
 
+const getVoicesAsync = (): Promise<SpeechSynthesisVoice[]> => {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) {
+      resolve([]);
+      return;
+    }
+    let voices = window.speechSynthesis.getVoices();
+    if (voices.length > 0) {
+      resolve(voices);
+      return;
+    }
+    
+    // Fallback 1: listen to voiceschanged event
+    const handleVoicesChanged = () => {
+      voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        window.speechSynthesis.onvoiceschanged = null;
+        resolve(voices);
+      }
+    };
+    window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+    
+    // Fallback 2: Polling fallback (crucial iOS WebKit workaround)
+    let retries = 0;
+    const interval = setInterval(() => {
+      voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        clearInterval(interval);
+        window.speechSynthesis.onvoiceschanged = null;
+        resolve(voices);
+      } else if (retries >= 10) {
+        clearInterval(interval);
+        resolve([]);
+      }
+      retries++;
+    }, 100);
+  });
+};
+
 export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeatures) {
   const [selectedText, setSelectedText] = useState('');
   const [wordDefinition, setWordDefinition] = useState('');
@@ -86,7 +125,7 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
   useEffect(() => {
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       // Pre-warm the voice list
-      window.speechSynthesis.getVoices();
+      getVoicesAsync();
     }
     return () => {
       if (typeof window !== "undefined" && "speechSynthesis" in window) {
@@ -113,7 +152,7 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
   }, []);
 
   // Sequential speech synthesis player
-  const speakNextChunk = () => {
+  const speakNextChunk = async () => {
     if (!isSpeakingRef.current) return;
 
     if (currentChunkIndexRef.current >= chunksRef.current.length) {
@@ -127,49 +166,81 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     const chunk = chunksRef.current[currentChunkIndexRef.current];
     const utterance = new SpeechSynthesisUtterance(chunk);
 
+    // Safari / iOS Garbage Collection Fix: Keep a strong reference to the utterance
+    if (typeof window !== "undefined") {
+      (window as any)._activeUtterance = utterance;
+    }
+
     // Auto-detect if text contains Bengali characters
     const isBengali = /[\u0980-\u09FF]/.test(chunk);
+    const voices = await getVoicesAsync();
+
     if (isBengali) {
       utterance.lang = "bn-BD";
-      if (typeof window !== "undefined" && window.speechSynthesis) {
-        const voices = window.speechSynthesis.getVoices();
-        const bnVoices = voices.filter(v => 
-          v.lang.toLowerCase().includes("bn") || 
-          v.name.toLowerCase().includes("bengali") || 
-          v.name.toLowerCase().includes("bangla")
-        );
+      const bnVoices = voices.filter(v => 
+        v.lang.toLowerCase().includes("bn") || 
+        v.name.toLowerCase().includes("bengali") || 
+        v.name.toLowerCase().includes("bangla")
+      );
 
-        if (bnVoices.length > 0) {
-          // 1. Prioritize premium online/natural/google female voices
-          let preferredVoice = bnVoices.find(v => {
+      if (bnVoices.length > 0) {
+        // 1. Prioritize premium online/natural/google/siri female voices
+        let preferredVoice = bnVoices.find(v => {
+          const name = v.name.toLowerCase();
+          return name.includes("natural") || name.includes("online") || name.includes("google") || name.includes("siri");
+        });
+
+        // 2. Fallback to local offline female voices
+        if (!preferredVoice) {
+          preferredVoice = bnVoices.find(v => {
             const name = v.name.toLowerCase();
-            return name.includes("natural") || name.includes("online") || name.includes("google");
+            return name.includes("kalpana") || name.includes("lekha") || name.includes("female");
           });
+        }
 
-          // 2. Fallback to local offline female voices
-          if (!preferredVoice) {
-            preferredVoice = bnVoices.find(v => {
-              const name = v.name.toLowerCase();
-              return name.includes("kalpana") || name.includes("lekha") || name.includes("female");
-            });
-          }
+        // 3. Fallback to any voice that is NOT Microsoft Hemant (male)
+        if (!preferredVoice) {
+          preferredVoice = bnVoices.find(v => !v.name.toLowerCase().includes("hemant"));
+        }
 
-          // 3. Fallback to any voice that is NOT Microsoft Hemant (male)
-          if (!preferredVoice) {
-            preferredVoice = bnVoices.find(v => !v.name.toLowerCase().includes("hemant"));
-          }
+        // 4. Final fallback
+        preferredVoice = preferredVoice || bnVoices[0];
 
-          // 4. Final fallback
-          preferredVoice = preferredVoice || bnVoices[0];
-
-          if (preferredVoice) {
-            utterance.voice = preferredVoice;
-            utterance.lang = preferredVoice.lang;
-          }
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+          utterance.lang = preferredVoice.lang;
         }
       }
     } else {
       utterance.lang = "en-US";
+      // Select a high-quality English voice if available (crucial for iOS Safari)
+      const enVoices = voices.filter(v => 
+        v.lang.toLowerCase().startsWith("en")
+      );
+      if (enVoices.length > 0) {
+        let preferredVoice = enVoices.find(v => {
+          const name = v.name.toLowerCase();
+          return name.includes("natural") || name.includes("online") || name.includes("google");
+        });
+
+        if (!preferredVoice) {
+          preferredVoice = enVoices.find(v => {
+            const name = v.name.toLowerCase();
+            return name.includes("siri") || name.includes("samantha") || name.includes("daniel");
+          });
+        }
+
+        if (!preferredVoice) {
+          preferredVoice = enVoices.find(v => v.name.toLowerCase().includes("premium"));
+        }
+
+        preferredVoice = preferredVoice || enVoices.find(v => v.lang.toLowerCase() === "en-us") || enVoices[0];
+
+        if (preferredVoice) {
+          utterance.voice = preferredVoice;
+          utterance.lang = preferredVoice.lang;
+        }
+      }
     }
 
     utterance.rate = 1;
@@ -177,11 +248,19 @@ export function EnhancedReaderFeatures({ text, onHighlight }: EnhancedReaderFeat
     utterance.volume = 1;
 
     utterance.onend = () => {
+      // Clear the strong reference when finished
+      if (typeof window !== "undefined") {
+        (window as any)._activeUtterance = null;
+      }
       currentChunkIndexRef.current += 1;
       speakNextChunk();
     };
 
     utterance.onerror = (event) => {
+      // Clear the strong reference on error
+      if (typeof window !== "undefined") {
+        (window as any)._activeUtterance = null;
+      }
       if (isSpeakingRef.current && event.error !== "interrupted" && event.error !== "canceled") {
         console.error("SpeechSynthesis error:", event);
       }
