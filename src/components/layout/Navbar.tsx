@@ -33,6 +33,7 @@ import {
   Sparkles,
   Star,
   Wallet,
+  WifiOff,
 } from "lucide-react";
 
 // Navigation item type
@@ -576,6 +577,12 @@ export function Navbar() {
                     href="/shelf"
                     icon={BookMarked}
                     label="My Library"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/offline-stories"
+                    icon={WifiOff}
+                    label="Offline Stories"
                     onClick={() => setProfileOpen(false)}
                   />
                 </div>

@@ -13,6 +13,7 @@ import { StorySharingActions } from "@/components/stories/StorySharingActions";
 import { PromotionBadge } from "@/components/promotions/PromotionBadge";
 import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
 import { StoryModerationActions } from "@/components/stories/StoryModerationActions";
+import { SaveOfflineButton } from "@/components/stories/SaveOfflineButton";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -191,7 +192,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               <BookOpen className="w-3.5 h-3.5" /> Narrative Chapters
             </h2>
             {story.chapters.length > 0 && (
-              <div className="flex gap-3">
+              <div className="flex flex-wrap gap-3">
                 {resumeChapter ? (
                   <Link href={`/stories/${story.id}/chapters/${resumeChapter.id}`} className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[10px] font-bold uppercase tracking-widest rounded transition-all shadow hover:shadow-md">
                     Resume ({Math.round(readingProgress!.percentage)}%)
@@ -200,6 +201,21 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                 <Link href={`/stories/${story.id}/chapters/${story.chapters[0].id}`} className="px-5 py-2 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-700 dark:text-zinc-300 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
                   Start From Beginning
                 </Link>
+                <SaveOfflineButton
+                  storyId={story.id}
+                  storyTitle={story.title}
+                  storySummary={story.summary}
+                  storyCoverUrl={story.coverUrl}
+                  authorName={story.author.displayName || story.author.username}
+                  authorUsername={story.author.username}
+                  authorAvatarUrl={story.author.avatarUrl}
+                  chapters={story.chapters.map((ch) => ({
+                    id: ch.id,
+                    title: ch.title,
+                    chapterOrder: ch.chapterOrder,
+                    content: ch.content,
+                  }))}
+                />
               </div>
             )}
           </div>

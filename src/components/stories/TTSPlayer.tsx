@@ -16,30 +16,30 @@ const chunkText = (text: string, maxLen = 1500): string[] => {
     const marks = /[.!?।\n]/;
     const sentences: string[] = [];
     let start = 0;
-    
+
     for (let i = 0; i < t.length; i++) {
       if (marks.test(t[i])) {
         sentences.push(t.slice(start, i + 1));
         start = i + 1;
       }
     }
-    
+
     if (start < t.length) {
       sentences.push(t.slice(start));
     }
-    
+
     return sentences.map(s => s.trim()).filter(Boolean);
   };
 
   for (let para of paragraphs) {
     para = para.trim();
     if (!para) continue;
-    
+
     if ((currentChunk + "\n\n" + para).length > maxLen) {
       if (currentChunk.trim()) {
         chunks.push(currentChunk.trim());
       }
-      
+
       if (para.length > maxLen) {
         const sentences = splitIntoSentences(para);
         let sentenceChunk = "";
@@ -62,7 +62,7 @@ const chunkText = (text: string, maxLen = 1500): string[] => {
       currentChunk = currentChunk ? currentChunk + "\n\n" + para : para;
     }
   }
-  
+
   if (currentChunk.trim()) {
     chunks.push(currentChunk.trim());
   }
@@ -80,7 +80,7 @@ const getVoicesAsync = (): Promise<SpeechSynthesisVoice[]> => {
       resolve(voices);
       return;
     }
-    
+
     // Fallback 1: listen to voiceschanged event
     const handleVoicesChanged = () => {
       voices = window.speechSynthesis.getVoices();
@@ -90,7 +90,7 @@ const getVoicesAsync = (): Promise<SpeechSynthesisVoice[]> => {
       }
     };
     window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
-    
+
     // Fallback 2: Polling fallback (crucial iOS WebKit workaround)
     let retries = 0;
     const interval = setInterval(() => {
@@ -159,9 +159,9 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
 
     if (isBengali) {
       utterance.lang = "bn-BD";
-      const bnVoices = voices.filter(v => 
-        v.lang.toLowerCase().includes("bn") || 
-        v.name.toLowerCase().includes("bengali") || 
+      const bnVoices = voices.filter(v =>
+        v.lang.toLowerCase().includes("bn") ||
+        v.name.toLowerCase().includes("bengali") ||
         v.name.toLowerCase().includes("bangla")
       );
 
@@ -196,7 +196,7 @@ export function TTSPlayer({ htmlContent }: TTSPlayerProps) {
     } else {
       utterance.lang = "en-US";
       // Select a high-quality English voice if available (crucial for iOS Safari)
-      const enVoices = voices.filter(v => 
+      const enVoices = voices.filter(v =>
         v.lang.toLowerCase().startsWith("en")
       );
       if (enVoices.length > 0) {
