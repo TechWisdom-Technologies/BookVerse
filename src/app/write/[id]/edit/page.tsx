@@ -9,6 +9,7 @@ import ChapterList, {
   type ChapterItem,
 } from "@/components/stories/ChapterList";
 import { AiCoverGenerator } from "@/components/stories/AiCoverGenerator";
+import { toast } from "react-hot-toast";
 import {
   ArrowLeft,
   Globe,
@@ -183,6 +184,24 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
     } finally { setPublishLoading(false); }
   };
 
+  const handleAutoSaveCover = async (url: string) => {
+    setEditCoverUrl(url);
+    try {
+      const res = await fetch(`/api/stories/${storyId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coverUrl: url }),
+      });
+      if (res.ok) {
+        setStory((prev) => (prev ? { ...prev, coverUrl: url } : prev));
+        toast.success("Cover updated instantly!");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save cover.");
+    }
+  };
+
   const handleDeleteStory = async () => {
     if (!confirm("Are you sure you want to delete this story? This action cannot be undone.")) return;
     try {
@@ -318,9 +337,9 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
               <div className="space-y-4">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Visual Registry</label>
                 <div className="p-4 border border-dashed border-zinc-100 dark:border-zinc-800 rounded bg-white/50 dark:bg-zinc-950/50">
-                  <FileUpload accept="image/*" maxSize={5 * 1024 * 1024} onUpload={(url) => setEditCoverUrl(url)} label="Upload Record Cover" />
+                  <FileUpload accept="image/*" maxSize={5 * 1024 * 1024} onUpload={handleAutoSaveCover} label="Upload Record Cover" />
                   <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-900">
-                    <AiCoverGenerator onCoverGenerated={(url) => setEditCoverUrl(url)} />
+                    <AiCoverGenerator onCoverGenerated={handleAutoSaveCover} />
                   </div>
                 </div>
               </div>

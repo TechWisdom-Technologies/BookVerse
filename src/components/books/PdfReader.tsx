@@ -53,8 +53,12 @@ export function PdfReader({ fileUrl: initialFileUrl }: PdfReaderProps) {
         const pdfjs = await loadPdfJs();
         if (cancelled) return;
 
+        // Bypass CORS for external URLs by routing through our internal proxy
+        const isExternal = fileUrl.startsWith("http") && !fileUrl.startsWith(window.location.origin);
+        const proxyUrl = isExternal ? `/api/pdf-proxy?url=${encodeURIComponent(fileUrl)}` : fileUrl;
+
         const loadingTask = pdfjs.getDocument({
-          url: fileUrl,
+          url: proxyUrl,
           useSystemFonts: true,
           disableRange: false,
           disableStream: false,

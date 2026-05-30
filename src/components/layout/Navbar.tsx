@@ -11,6 +11,7 @@ import {
   LogOut,
   User,
   BookMarked,
+  BookOpen,
   Upload,
   Shield,
   Home,
@@ -140,13 +141,12 @@ function DropdownItem({ href, icon: Icon, label, highlight, badge, onClick }: Dr
       </div>
       <span className="text-[9px] font-bold uppercase tracking-[0.15em] transition-transform duration-300 group-hover:translate-x-1">{label}</span>
       {badge && (
-        <span className={`ml-auto px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest rounded shadow-sm transition-all duration-300 group-hover:scale-105 ${
-          badge === "PRO"
-            ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
-            : badge === "ADMIN"
+        <span className={`ml-auto px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest rounded shadow-sm transition-all duration-300 group-hover:scale-105 ${badge === "PRO"
+          ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white"
+          : badge === "ADMIN"
             ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-950"
             : "bg-indigo-550 text-white"
-        }`}>
+          }`}>
           {badge}
         </span>
       )}
@@ -198,14 +198,14 @@ export function Navbar() {
 
   const leftItems: NavItem[] = user
     ? [
-        { href: "/support", label: "Support", icon: HelpCircle },
-        ...dynamicAuthLeftItems,
-        ...leftNavItems,
-      ]
+      { href: "/support", label: "Support", icon: HelpCircle },
+      ...dynamicAuthLeftItems,
+      ...leftNavItems,
+    ]
     : [
-        { href: "/support", label: "Support", icon: HelpCircle },
-        ...leftNavItems,
-      ];
+      { href: "/support", label: "Support", icon: HelpCircle },
+      ...leftNavItems,
+    ];
   const rightItems = user ? [...rightNavItems, ...authRightItems] : rightNavItems;
 
   return (
@@ -213,7 +213,7 @@ export function Navbar() {
       {/* Mobile Navigation Dock (mobile-only) */}
       <nav className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-[92%] max-w-[400px]" aria-label="Mobile navigation">
         <div className="flex items-center justify-around px-3 py-2 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-2xl rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-zinc-100 dark:border-zinc-800/80 transition-all">
-          
+
           {user ? (
             <>
               {/* Library */}
@@ -440,7 +440,7 @@ export function Navbar() {
               <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-                
+
                 <div className="flex items-center gap-4 relative z-10 pr-12">
                   <div className="w-14 h-14 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md flex-shrink-0">
                     {dbUser?.avatarUrl ? (
@@ -654,6 +654,12 @@ export function Navbar() {
                     href="/settings"
                     icon={Settings}
                     label="Settings"
+                    onClick={() => setProfileOpen(false)}
+                  />
+                  <DropdownItem
+                    href="/docs"
+                    icon={BookOpen}
+                    label="Documentation"
                     onClick={() => setProfileOpen(false)}
                   />
                   <DropdownItem

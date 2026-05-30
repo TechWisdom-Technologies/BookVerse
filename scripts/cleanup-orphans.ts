@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../src/generated/client";
 import { S3Client, ListObjectsV2Command, DeleteObjectsCommand, ListObjectsV2CommandOutput } from "@aws-sdk/client-s3";
 import { config } from "dotenv";
 
@@ -41,26 +41,30 @@ function extractKeyFromUrl(url: string | null): string | null {
 }
 
 async function main() {
-  console.log("Fetching all books from the database to map active files...");
-  const books = await prisma.book.findMany({
-    select: {
-      id: true,
-      title: true,
-      fileUrl: true,
-      coverUrl: true,
-    },
-  });
+  console.log("Fetching active files from the database...");
+  
+  const books = await prisma.book.findMany({ select: { fileUrl: true, coverUrl: true } });
+  const stories = await prisma.story.findMany({ select: { coverUrl: true } });
+  const universes = await prisma.universe.findMany({ select: { coverUrl: true } });
+  const series = await prisma.series.findMany({ select: { coverUrl: true } });
+  const clubs = await prisma.club.findMany({ select: { coverUrl: true } });
+  const chapters = await prisma.storyChapter.findMany({ select: { illustrationUrl: true } });
 
   const activeKeys = new Set<string>();
 
-  for (const book of books) {
-    const fileKey = extractKeyFromUrl(book.fileUrl);
-    const coverKey = extractKeyFromUrl(book.coverUrl);
-    if (fileKey) activeKeys.add(fileKey);
-    if (coverKey) activeKeys.add(coverKey);
-  }
+  const addKey = (url: string | null) => {
+    const key = extractKeyFromUrl(url);
+    if (key) activeKeys.add(key);
+  };
 
-  console.log(`Found ${books.length} books in DB. Total active R2 files registered: ${activeKeys.size}`);
+  books.forEach(b => { addKey(b.fileUrl); addKey(b.coverUrl); });
+  stories.forEach(s => addKey(s.coverUrl));
+  universes.forEach(u => addKey(u.coverUrl));
+  series.forEach(s => addKey(s.coverUrl));
+  clubs.forEach(c => addKey(c.coverUrl));
+  chapters.forEach(c => addKey(c.illustrationUrl));
+
+  console.log(`Found ${activeKeys.size} total active R2 files registered across all tables.`);
 
   console.log("Scanning Cloudflare R2 bucket for all files...");
   let continuationToken: string | undefined = undefined;

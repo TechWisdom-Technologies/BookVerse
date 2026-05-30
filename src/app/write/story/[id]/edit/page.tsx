@@ -229,6 +229,26 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
     } finally { setPublishLoading(false); }
   };
 
+  const handleAutoSaveCover = async (url: string) => {
+    setEditCoverUrl(url);
+    try {
+      const res = await fetch(`/api/stories/${storyId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coverUrl: url }),
+      });
+      if (res.ok) {
+        setStory((prev) => (prev ? { ...prev, coverUrl: url } : prev));
+        toast.success("Cover updated instantly!");
+      } else {
+        throw new Error("Failed to save cover to database");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save cover instantly.");
+    }
+  };
+
   const handleDeleteStory = async () => {
     if (!confirm("Are you sure you want to delete this story? This cannot be undone.")) return;
     try {
@@ -381,7 +401,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                       </div>
                     )}
                     <div className="absolute bottom-6 left-6 right-6">
-                      <FileUpload accept="image/*" maxSize={5 * 1024 * 1024} onUpload={(url) => setEditCoverUrl(url)} label="Upload Cover" />
+                      <FileUpload accept="image/*" maxSize={5 * 1024 * 1024} onUpload={handleAutoSaveCover} label="Upload Cover" />
                     </div>
                   </div>
                 </div>
@@ -392,7 +412,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                   <Sparkles className="w-4 h-4 text-zinc-300" />
                   <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">AI Cover</h2>
                 </div>
-                <AiCoverGenerator onCoverGenerated={(url) => setEditCoverUrl(url)} />
+                <AiCoverGenerator onCoverGenerated={handleAutoSaveCover} />
               </div>
             </div>
 

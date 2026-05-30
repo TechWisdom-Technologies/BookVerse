@@ -31,6 +31,23 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   );
 }
 
+// Social Icons SVGs
+const FacebookIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+);
+const TwitterIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+);
+const InstagramIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+);
+const LinkedinIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+);
+const TiktokIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+);
+
 // Social Link
 function SocialLink({ href, icon: Icon, label }: { href: string; icon: React.ComponentType<{ size?: number; className?: string }>; label: string }) {
   return (
@@ -148,15 +165,17 @@ export function Footer() {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 mb-20">
           {/* Discover */}
           <div className="space-y-6">
             <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Discover</h4>
             <ul className="space-y-3">
+              <li><FooterLink href="/">Home</FooterLink></li>
               <li><FooterLink href="/library">Browse Library</FooterLink></li>
               <li><FooterLink href="/stories">Stories</FooterLink></li>
-              <li><FooterLink href="/search">Search</FooterLink></li>
               <li><FooterLink href="/universes">Universes</FooterLink></li>
+              <li><FooterLink href="/series">Series</FooterLink></li>
+              <li><FooterLink href="/search">Search</FooterLink></li>
             </ul>
           </div>
 
@@ -165,29 +184,40 @@ export function Footer() {
             <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Community</h4>
             <ul className="space-y-3">
               <li><FooterLink href="/clubs">Book Clubs</FooterLink></li>
-              <li><FooterLink href="/activity-feed">Feed</FooterLink></li>
+              <li><FooterLink href="/activity-feed">Activity Feed</FooterLink></li>
               <li><FooterLink href="/reading-challenges">Challenges</FooterLink></li>
+              <li><FooterLink href="/shelf">My Shelf</FooterLink></li>
+              <li><FooterLink href="/offline-stories">Offline Stories</FooterLink></li>
             </ul>
           </div>
 
-          {/* For Writers */}
+          {/* For Authors */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">For Writers</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">For Authors</h4>
             <ul className="space-y-3">
-              <li><FooterLink href="/write">Write Story</FooterLink></li>
+              <li><FooterLink href="/write/dashboard">Author Dashboard</FooterLink></li>
+              <li><FooterLink href="/write/new">Write a Story</FooterLink></li>
+              <li><FooterLink href="/write/universes">Story Universes</FooterLink></li>
+              <li><FooterLink href="/write/series">Story Series</FooterLink></li>
+              <li><FooterLink href="/author/analytics">Analytics</FooterLink></li>
+              <li><FooterLink href="/wallet">Wallet</FooterLink></li>
+              <li><FooterLink href="/author/newsletter">Newsletter & Fans</FooterLink></li>
               <li><FooterLink href="/upload">Upload Book</FooterLink></li>
-              <li><FooterLink href="/write/newsletter">Newsletter</FooterLink></li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Support & Legal */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Support</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Support & Legal</h4>
             <ul className="space-y-3">
               <li><FooterLink href="/premium">Premium</FooterLink></li>
               <li><FooterLink href="/gifts">Gifts</FooterLink></li>
               <li><FooterLink href="/settings">Settings</FooterLink></li>
               <li><FooterLink href="/support">Support Desk</FooterLink></li>
+              <li><FooterLink href="/docs">Documentation</FooterLink></li>
+              <li><FooterLink href="/privacy">Privacy Policy</FooterLink></li>
+              <li><FooterLink href="/terms">Terms of Service</FooterLink></li>
+              <li><FooterLink href="/cookies">Cookie Policy</FooterLink></li>
               <li><FooterLink href="/dmca">DMCA</FooterLink></li>
             </ul>
           </div>
@@ -220,6 +250,18 @@ export function Footer() {
                 </a>
               </li>
             </ul>
+            
+            {/* Social Links Moved Here */}
+            <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+              <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic mb-4">Follow Us</h4>
+              <div className="flex items-center gap-3">
+                <SocialLink href="https://facebook.com" icon={FacebookIcon} label="Facebook" />
+                <SocialLink href="https://instagram.com" icon={InstagramIcon} label="Instagram" />
+                <SocialLink href="https://twitter.com" icon={TwitterIcon} label="Twitter" />
+                <SocialLink href="https://linkedin.com" icon={LinkedinIcon} label="LinkedIn" />
+                <SocialLink href="https://tiktok.com" icon={TiktokIcon} label="TikTok" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -234,21 +276,6 @@ export function Footer() {
               <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
                 Design and Developed by TechWisdom Technologies
               </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex items-center gap-3">
-              <SocialLink href="https://github.com" icon={Globe} label="GitHub" />
-              <SocialLink href="https://twitter.com" icon={MessageCircle} label="Twitter" />
-              <SocialLink href="https://instagram.com" icon={Share2} label="Instagram" />
-              <SocialLink href="https://linkedin.com" icon={ExternalLink} label="LinkedIn" />
-            </div>
-
-            {/* Legal Links */}
-            <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
-              <Link href="/privacy" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Privacy</Link>
-              <Link href="/terms" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Terms</Link>
-              <Link href="/cookies" className="hover:text-zinc-900 dark:hover:text-white transition-colors">Cookies</Link>
             </div>
           </div>
         </div>
