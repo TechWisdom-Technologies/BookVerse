@@ -27,6 +27,7 @@ interface StoryItem {
   summary: string | null;
   viewCount: number;
   published: boolean;
+  genre?: string | null;
   createdAt: string;
   updatedAt: string;
   _count: {
@@ -111,6 +112,7 @@ export default function WriteDashboardPage() {
               <Layers className="w-3.5 h-3.5" />
               My Series
             </Link>
+
             <Link href="/write/requests" className="px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 text-[10px] font-bold uppercase tracking-widest text-zinc-500 rounded border border-zinc-100 dark:border-zinc-800 hover:text-zinc-900 dark:hover:text-white transition-all flex items-center gap-2">
               <MessageSquare className="w-3.5 h-3.5" />
               Book Requests

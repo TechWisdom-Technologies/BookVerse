@@ -6,7 +6,7 @@ import { Footer } from "./Footer";
 import { AiLibrarianWidget } from "@/components/shared/AiLibrarianWidget";
 import { DevPhaseModal } from "@/components/shared/DevPhaseModal";
 import { AdminInstructionModal } from "@/components/shared/AdminInstructionModal";
-import { OfflineRedirector } from "@/components/shared/OfflineRedirector";
+import { OfflineDetector } from "@/components/shared/OfflineDetector";
 import { ReactNode } from "react";
 
 export function AppLayout({ children }: { children: ReactNode }) {
@@ -14,7 +14,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const isAdminPath = pathname?.startsWith("/admin");
 
   if (isAdminPath) {
-    return <div className="flex-1">{children}</div>;
+    return (
+      <>
+        <div className="flex-1">{children}</div>
+        <OfflineDetector />
+      </>
+    );
   }
 
   return (
@@ -25,7 +30,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
       <DevPhaseModal />
       <AdminInstructionModal />
       <AiLibrarianWidget />
-      <OfflineRedirector />
+      <OfflineDetector />
     </>
   );
 }

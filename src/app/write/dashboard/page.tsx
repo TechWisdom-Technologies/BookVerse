@@ -51,6 +51,7 @@ interface ContributedStory {
   title: string;
   coverUrl: string | null;
   authorId: string;
+  genre?: string | null;
   author: {
     id: string;
     username: string;

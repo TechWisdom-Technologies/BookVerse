@@ -1,178 +1,138 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Download, Check, Loader2, Trash2, WifiOff } from "lucide-react";
+import { Download, CheckCircle2, Loader2, Trash2, WifiOff } from "lucide-react";
 import toast from "react-hot-toast";
 import {
   saveStoryOffline,
-  removeOfflineStory,
-  isStorySaved,
-  getTimeRemaining,
-  type SaveStoryInput,
-} from "@/lib/offlineStoryDb";
-
-interface ChapterData {
-  id: string;
-  title: string;
-  chapterOrder: number;
-  content: unknown;
-}
+  isStorySavedOffline,
+  deleteOfflineStory,
+  compressImageToBase64,
+  getExpirationLabel,
+  getOfflineStory,
+} from "@/lib/offline-storage";
 
 interface SaveOfflineButtonProps {
   storyId: string;
-  storyTitle: string;
-  storySummary: string | null;
-  storyCoverUrl: string | null;
-  authorName: string;
+  title: string;
+  author: string;
   authorUsername: string;
-  authorAvatarUrl: string | null;
-  chapters: ChapterData[];
+  description: string;
+  coverUrl: string | null;
+  chapters: {
+    id: string;
+    title: string;
+    chapterOrder: number;
+    htmlContent: string;
+  }[];
 }
 
-function estimateReadingTime(content: unknown): number {
-  if (!content) return 1;
-
-  function countWords(node: unknown): number {
-    if (!node || typeof node !== "object") return 0;
-    const n = node as Record<string, unknown>;
-    let count = 0;
-    if (n.type === "text" && typeof n.text === "string") {
-      count += n.text.trim().split(/\s+/).filter(Boolean).length;
-    }
-    if (n.content && Array.isArray(n.content)) {
-      for (const child of n.content) {
-        count += countWords(child);
-      }
-    }
-    return count;
-  }
-
-  const words = countWords(content);
-  return Math.max(1, Math.ceil(words / 200));
-}
+type DownloadState = "idle" | "checking" | "downloading" | "compressing" | "saved";
 
 export function SaveOfflineButton({
   storyId,
-  storyTitle,
-  storySummary,
-  storyCoverUrl,
-  authorName,
+  title,
+  author,
   authorUsername,
-  authorAvatarUrl,
+  description,
+  coverUrl,
   chapters,
 }: SaveOfflineButtonProps) {
-  const [saved, setSaved] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [removing, setRemoving] = useState(false);
-  const [expiresAt, setExpiresAt] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
+  const [state, setState] = useState<DownloadState>("checking");
+  const [expirationLabel, setExpirationLabel] = useState("");
 
-  const checkSavedStatus = useCallback(async () => {
+  const checkStatus = useCallback(async () => {
     try {
-      const isSaved = await isStorySaved(storyId);
-      setSaved(isSaved);
-      if (isSaved) {
-        // We need to get the expiresAt from the story data
-        const { getOfflineStory } = await import("@/lib/offlineStoryDb");
-        const result = await getOfflineStory(storyId);
-        if (result) {
-          setExpiresAt(result.story.expiresAt);
+      const saved = await isStorySavedOffline(storyId);
+      if (saved) {
+        const story = await getOfflineStory(storyId);
+        if (story) {
+          setExpirationLabel(getExpirationLabel(story.expiresAt));
         }
+        setState("saved");
+      } else {
+        setState("idle");
       }
     } catch {
-      // IndexedDB not available
+      setState("idle");
     }
   }, [storyId]);
 
   useEffect(() => {
-    setMounted(true);
-    checkSavedStatus();
-  }, [checkSavedStatus]);
-
-  if (!mounted) return null;
+    checkStatus();
+  }, [checkStatus]);
 
   const handleSave = async () => {
-    if (saving) return;
-    setSaving(true);
+    if (state === "downloading" || state === "compressing") return;
 
     try {
-      const input: SaveStoryInput = {
+      setState("downloading");
+
+      // Compress cover image to Base64
+      setState("compressing");
+      let coverBase64 = "";
+      if (coverUrl) {
+        coverBase64 = await compressImageToBase64(coverUrl);
+      }
+
+      await saveStoryOffline({
         id: storyId,
-        title: storyTitle,
-        summary: storySummary,
-        coverUrl: storyCoverUrl,
-        authorName,
+        title,
+        author,
         authorUsername,
-        authorAvatarUrl,
-        chapters: chapters.map((ch) => ({
-          id: ch.id,
-          title: ch.title,
-          chapterOrder: ch.chapterOrder,
-          htmlContent: null, // HTML will be rendered on the offline page
-          rawContent: ch.content,
-          readingTimeMin: estimateReadingTime(ch.content),
-        })),
-      };
+        description,
+        coverImage: coverBase64,
+        chapters,
+      });
 
-      await saveStoryOffline(input);
-      setSaved(true);
-
-      // Refresh expiration
-      const { getOfflineStory } = await import("@/lib/offlineStoryDb");
-      const result = await getOfflineStory(storyId);
-      if (result) setExpiresAt(result.story.expiresAt);
-
-      toast.success("Story saved for offline reading (7 days)");
-    } catch (err) {
-      console.error("Failed to save story offline:", err);
-      toast.error("Failed to save story offline");
-    } finally {
-      setSaving(false);
+      setState("saved");
+      const story = await getOfflineStory(storyId);
+      if (story) {
+        setExpirationLabel(getExpirationLabel(story.expiresAt));
+      }
+      toast.success("গল্পটি অফলাইনে সেভ হয়েছে!");
+    } catch (error) {
+      console.error("Failed to save offline:", error);
+      toast.error("অফলাইনে সেভ করতে ব্যর্থ হয়েছে");
+      setState("idle");
     }
   };
 
   const handleRemove = async () => {
-    if (removing) return;
-    setRemoving(true);
-
     try {
-      await removeOfflineStory(storyId);
-      setSaved(false);
-      setExpiresAt(null);
-      toast.success("Removed from offline stories");
-    } catch (err) {
-      console.error("Failed to remove offline story:", err);
-      toast.error("Failed to remove offline story");
-    } finally {
-      setRemoving(false);
+      await deleteOfflineStory(storyId);
+      setState("idle");
+      setExpirationLabel("");
+      toast.success("অফলাইন থেকে মুছে ফেলা হয়েছে");
+    } catch (error) {
+      console.error("Failed to remove offline story:", error);
+      toast.error("মুছে ফেলতে ব্যর্থ হয়েছে");
     }
   };
 
-  if (saved) {
+  if (state === "checking") return null;
+
+  if (state === "saved") {
     return (
       <div className="flex items-center gap-2">
-        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 rounded transition-all">
-          <WifiOff className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700 dark:text-emerald-400">
-            Saved Offline
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/50 rounded text-emerald-700 dark:text-emerald-400">
+          <CheckCircle2 className="w-3.5 h-3.5" />
+          <span className="text-[9px] font-bold uppercase tracking-widest">
+            Offline Ready
           </span>
-          {expiresAt && (
-            <span className="text-[9px] font-mono font-bold text-emerald-500/70 dark:text-emerald-500/60">
-              · {getTimeRemaining(expiresAt)}
-            </span>
+          {expirationLabel && (
+            <>
+              <span className="text-emerald-300 dark:text-emerald-700">•</span>
+              <span className="text-[9px] font-mono font-bold">{expirationLabel}</span>
+            </>
           )}
         </div>
         <button
           onClick={handleRemove}
-          disabled={removing}
-          className="flex items-center gap-1.5 px-3 py-2 border border-zinc-200 dark:border-zinc-800 rounded hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:border-rose-300 dark:hover:border-rose-800 text-zinc-400 hover:text-rose-500 transition-all group"
+          className="p-1.5 rounded text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
           title="Remove from offline"
         >
-          {removing ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Trash2 className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
-          )}
+          <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
     );
@@ -181,18 +141,22 @@ export function SaveOfflineButton({
   return (
     <button
       onClick={handleSave}
-      disabled={saving || chapters.length === 0}
-      className="flex items-center gap-2 px-5 py-2 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded transition-all disabled:opacity-40 disabled:cursor-not-allowed group"
+      disabled={state === "downloading" || state === "compressing"}
+      className="flex items-center gap-2 px-3 py-1.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all disabled:opacity-50"
     >
-      {saving ? (
+      {state === "downloading" || state === "compressing" ? (
         <>
-          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          Saving…
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-zinc-400" />
+          <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+            {state === "downloading" ? "Fetching..." : "Compressing..."}
+          </span>
         </>
       ) : (
         <>
-          <Download className="w-3.5 h-3.5 transition-transform group-hover:translate-y-0.5" />
-          Save Offline
+          <WifiOff className="w-3.5 h-3.5 text-zinc-400" />
+          <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
+            Save Offline
+          </span>
         </>
       )}
     </button>

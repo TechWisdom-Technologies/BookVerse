@@ -33,7 +33,7 @@ import {
   Sparkles,
   Star,
   Wallet,
-  WifiOff,
+  Bookmark,
 } from "lucide-react";
 
 // Navigation item type
@@ -62,6 +62,7 @@ const rightNavItems: NavItem[] = [
 // Auth-specific items
 const authRightItems: NavItem[] = [
   { href: "/shelf", label: "Library", icon: BookMarked },
+  { href: "/offline-stories", label: "Offline Stories", icon: Bookmark },
   { href: "/write", label: "Write", icon: PenLine },
 ];
 
@@ -581,7 +582,7 @@ export function Navbar() {
                   />
                   <DropdownItem
                     href="/offline-stories"
-                    icon={WifiOff}
+                    icon={Bookmark}
                     label="Offline Stories"
                     onClick={() => setProfileOpen(false)}
                   />

@@ -5,305 +5,312 @@ import Link from "next/link";
 import {
   WifiOff,
   Trash2,
-  BookOpen,
   Clock,
+  BookOpen,
   ArrowLeft,
-  Download,
+  HardDrive,
   AlertTriangle,
-  Feather,
-  Loader2,
-  Timer,
+  Search,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import {
-  getOfflineStories,
-  removeOfflineStory,
-  getTimeRemaining,
+  getAllOfflineStories,
+  deleteOfflineStory,
+  clearAllOfflineStories,
+  purgeExpiredStories,
+  getOfflineStorageSize,
+  formatStorageSize,
+  getExpirationLabel,
   type OfflineStory,
-} from "@/lib/offlineStoryDb";
+} from "@/lib/offline-storage";
 
 export default function OfflineStoriesPage() {
   const [stories, setStories] = useState<OfflineStory[]>([]);
   const [loading, setLoading] = useState(true);
-  const [isOffline, setIsOffline] = useState(false);
-  const [removingId, setRemovingId] = useState<string | null>(null);
-  const [, setTick] = useState(0); // Force re-render for countdown updates
+  const [storageSize, setStorageSize] = useState(0);
+  const [isOnline, setIsOnline] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"savedAt" | "expiresAt">("savedAt");
 
   useEffect(() => {
-    setIsOffline(!navigator.onLine);
-
-    const goOffline = () => setIsOffline(true);
-    const goOnline = () => setIsOffline(false);
-
-    window.addEventListener("offline", goOffline);
+    setIsOnline(navigator.onLine);
+    const goOnline = () => setIsOnline(true);
+    const goOffline = () => setIsOnline(false);
     window.addEventListener("online", goOnline);
-
+    window.addEventListener("offline", goOffline);
     return () => {
-      window.removeEventListener("offline", goOffline);
       window.removeEventListener("online", goOnline);
+      window.removeEventListener("offline", goOffline);
     };
   }, []);
 
-  // Tick every minute to update time remaining
   useEffect(() => {
-    const interval = setInterval(() => setTick((t) => t + 1), 60_000);
-    return () => clearInterval(interval);
-  }, []);
+    async function loadStories() {
+      try {
+        // Auto-purge expired stories first
+        const purged = await purgeExpiredStories();
+        if (purged > 0) {
+          toast.success(`${purged}টি মেয়াদোত্তীর্ণ গল্প মুছে ফেলা হয়েছে`);
+        }
 
-  useEffect(() => {
+        const allStories = await getAllOfflineStories();
+        setStories(allStories);
+
+        const size = await getOfflineStorageSize();
+        setStorageSize(size);
+      } catch (error) {
+        console.error("Failed to load offline stories:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
     loadStories();
   }, []);
 
-  const loadStories = async () => {
+  const handleDelete = async (id: string) => {
     try {
-      const result = await getOfflineStories();
-      setStories(result);
-    } catch (err) {
-      console.error("Failed to load offline stories:", err);
-    } finally {
-      setLoading(false);
+      await deleteOfflineStory(id);
+      setStories((prev) => prev.filter((s) => s.id !== id));
+      const size = await getOfflineStorageSize();
+      setStorageSize(size);
+      toast.success("অফলাইন থেকে মুছে ফেলা হয়েছে");
+    } catch {
+      toast.error("মুছে ফেলতে ব্যর্থ হয়েছে");
     }
   };
 
-  const handleRemove = async (storyId: string) => {
-    setRemovingId(storyId);
+  const handleClearAll = async () => {
+    if (!confirm("আপনি কি সব অফলাইন গল্প মুছে ফেলতে চান?")) return;
     try {
-      await removeOfflineStory(storyId);
-      setStories((prev) => prev.filter((s) => s.id !== storyId));
-      toast.success("Story removed from offline storage");
-    } catch (err) {
-      console.error("Failed to remove:", err);
-      toast.error("Failed to remove story");
-    } finally {
-      setRemovingId(null);
+      await clearAllOfflineStories();
+      setStories([]);
+      setStorageSize(0);
+      toast.success("সব অফলাইন গল্প মুছে ফেলা হয়েছে");
+    } catch {
+      toast.error("মুছে ফেলতে ব্যর্থ হয়েছে");
     }
   };
 
-  const getExpirationColor = (expiresAt: number) => {
-    const diff = expiresAt - Date.now();
-    const hours = diff / (1000 * 60 * 60);
-    if (hours < 24) return "text-rose-500";
-    if (hours < 72) return "text-amber-500";
-    return "text-emerald-500";
-  };
+  const filteredStories = stories
+    .filter((s) =>
+      searchQuery
+        ? s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          s.author.toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+    )
+    .sort((a, b) => {
+      if (sortBy === "expiresAt") return a.expiresAt - b.expiresAt;
+      return b.savedAt - a.savedAt;
+    });
 
-  const getExpirationBarWidth = (savedAt: number, expiresAt: number) => {
-    const total = expiresAt - savedAt;
-    const remaining = expiresAt - Date.now();
-    return Math.max(0, Math.min(100, (remaining / total) * 100));
-  };
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
+        <div className="max-w-4xl mx-auto px-6 py-12">
+          <div className="animate-pulse space-y-6">
+            <div className="h-4 bg-zinc-100 dark:bg-zinc-900 rounded w-32" />
+            <div className="h-8 bg-zinc-100 dark:bg-zinc-900 rounded w-64" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-48 bg-zinc-100 dark:bg-zinc-900 rounded" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Navigation */}
-        <div className="mb-12">
+        <div className="mb-8">
           <Link
-            href="/"
+            href="/stories"
             className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3 h-3" />
-            Back to Home
+            Story Archives
           </Link>
         </div>
 
         {/* Offline Status Banner */}
-        {isOffline && (
-          <div className="mb-8 flex items-center gap-3 px-5 py-3.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-lg animate-in fade-in slide-in-from-top-2 duration-300">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/10 dark:bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-              <WifiOff className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        {!isOnline && (
+          <div className="mb-6 flex items-center gap-3 px-4 py-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded">
+            <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+            <p className="text-xs font-bold text-amber-700 dark:text-amber-400">
+              আপনি বর্তমানে অফলাইনে আছেন। শুধুমাত্র সেভ করা গল্পগুলো পড়তে পারবেন।
+            </p>
+          </div>
+        )}
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 pb-8 border-b border-zinc-100 dark:border-zinc-900">
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+              <WifiOff className="w-3.5 h-3.5" />
+              Offline Library
             </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400">
-                You&apos;re offline
-              </p>
-              <p className="text-[10px] font-medium text-amber-600/70 dark:text-amber-500/60 mt-0.5">
-                Reading from your saved offline library. Stories below are available to read.
-              </p>
+            <h1 className="text-2xl font-bold tracking-tight">
+              অফলাইন গল্পসমূহ
+            </h1>
+            <p className="text-xs text-zinc-500 font-medium max-w-md">
+              ইন্টারনেট ছাড়াই পড়ুন। গল্পগুলো সেভ করার ৭ দিন পর স্বয়ংক্রিয়ভাবে মুছে যাবে।
+            </p>
+          </div>
+
+          {/* Storage Indicator */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded">
+              <HardDrive className="w-3.5 h-3.5 text-zinc-400" />
+              <span className="text-[9px] font-bold font-mono uppercase tracking-widest text-zinc-500">
+                {formatStorageSize(storageSize)} used
+              </span>
+            </div>
+
+            {stories.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                className="flex items-center gap-2 px-3 py-2 text-[9px] font-bold uppercase tracking-widest text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded transition-all"
+              >
+                <Trash2 className="w-3 h-3" />
+                Clear All
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Search & Sort */}
+        {stories.length > 0 && (
+          <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="গল্প বা লেখক খুঁজুন..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 text-xs font-medium bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-700"
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSortBy("savedAt")}
+                className={`px-3 py-2 text-[9px] font-bold uppercase tracking-widest rounded border transition-all ${
+                  sortBy === "savedAt"
+                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
+                    : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600"
+                }`}
+              >
+                Recent
+              </button>
+              <button
+                onClick={() => setSortBy("expiresAt")}
+                className={`px-3 py-2 text-[9px] font-bold uppercase tracking-widest rounded border transition-all ${
+                  sortBy === "expiresAt"
+                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
+                    : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 border-zinc-100 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-600"
+                }`}
+              >
+                Expiring Soon
+              </button>
             </div>
           </div>
         )}
 
-        {/* Page Header */}
-        <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
-              <Download className="w-5 h-5 text-zinc-500" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold tracking-tight">Offline Stories</h1>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-1">
-                {stories.length} {stories.length === 1 ? "story" : "stories"} saved
-                <span className="mx-2 text-zinc-300">·</span>
-                7-day auto-expiry
-              </p>
-            </div>
-          </div>
-          <p className="text-sm text-zinc-500 font-medium max-w-2xl">
-            Stories you save for offline reading are stored on this device for 7 days. 
-            After that, they will automatically vanish. Save a story again to reset the timer.
-          </p>
-        </header>
-
-        {/* Content */}
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-4">
-            <Loader2 className="w-6 h-6 text-zinc-300 animate-spin" />
-            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-              Loading saved stories…
+        {/* Story Cards */}
+        {filteredStories.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 space-y-4">
+            <WifiOff className="w-12 h-12 text-zinc-200 dark:text-zinc-800" />
+            <p className="text-sm font-bold text-zinc-400">
+              {searchQuery ? "কোনো গল্প পাওয়া যায়নি" : "কোনো অফলাইন গল্প নেই"}
             </p>
-          </div>
-        ) : stories.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-32 gap-6 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
-              <Feather className="w-8 h-8 text-zinc-300 dark:text-zinc-700" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold tracking-tight mb-2">No offline stories yet</h2>
-              <p className="text-sm text-zinc-500 font-medium max-w-md">
-                Save stories for offline reading by clicking the &quot;Save Offline&quot; button on any story page.
-              </p>
-            </div>
-            {!isOffline && (
+            <p className="text-xs text-zinc-400 max-w-sm text-center">
+              {searchQuery
+                ? "অন্য কিছু দিয়ে খুঁজুন।"
+                : "গল্পের পৃষ্ঠায় গিয়ে \"Save Offline\" বাটনে ক্লিক করে গল্প ডাউনলোড করুন।"}
+            </p>
+            {!searchQuery && (
               <Link
                 href="/stories"
-                className="mt-2 px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all hover:opacity-90"
+                className="mt-4 px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all hover:opacity-90"
               >
                 Browse Stories
               </Link>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 rounded-lg overflow-hidden">
-            {stories.map((story) => {
-              const timeRemaining = getTimeRemaining(story.expiresAt);
-              const barWidth = getExpirationBarWidth(story.savedAt, story.expiresAt);
-              const colorClass = getExpirationColor(story.expiresAt);
-
-              return (
-                <div
-                  key={story.id}
-                  className="bg-white dark:bg-zinc-950 p-0 transition-all hover:bg-zinc-50/50 dark:hover:bg-zinc-900/30"
-                >
-                  <div className="flex items-start gap-5 p-5">
-                    {/* Cover */}
-                    <Link
-                      href={`/offline-stories/${story.id}`}
-                      className="shrink-0"
-                    >
-                      <div className="relative w-16 h-24 rounded overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shadow-sm group">
-                        {story.coverBase64 ? (
-                          <img
-                            src={story.coverBase64}
-                            alt={story.title}
-                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                          />
-                        ) : story.coverUrl ? (
-                          <img
-                            src={story.coverUrl}
-                            alt={story.title}
-                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <BookOpen className="w-6 h-6 text-zinc-300 dark:text-zinc-700" />
-                          </div>
-                        )}
-                        {/* Offline badge */}
-                        <div className="absolute bottom-0 left-0 right-0 bg-zinc-900/80 backdrop-blur-sm px-1.5 py-0.5 text-center">
-                          <span className="text-[7px] font-bold uppercase tracking-widest text-white">
-                            Offline
-                          </span>
-                        </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {filteredStories.map((story) => (
+              <div
+                key={story.id}
+                className="group relative border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+              >
+                <div className="flex gap-4 p-4">
+                  {/* Cover Image */}
+                  <div className="shrink-0 w-20 h-28 rounded overflow-hidden bg-zinc-100 dark:bg-zinc-900">
+                    {story.coverImage ? (
+                      <img
+                        src={story.coverImage}
+                        alt={story.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <BookOpen className="w-6 h-6 text-zinc-300 dark:text-zinc-700" />
                       </div>
-                    </Link>
+                    )}
+                  </div>
 
-                    {/* Story Info */}
-                    <div className="flex-1 min-w-0">
-                      <Link
-                        href={`/offline-stories/${story.id}`}
-                        className="block group"
-                      >
-                        <h3 className="text-sm font-bold tracking-tight truncate group-hover:text-zinc-600 dark:group-hover:text-zinc-300 transition-colors">
-                          {story.title}
-                        </h3>
-                      </Link>
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">
-                        by {story.authorName}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <h3 className="text-sm font-bold tracking-tight truncate">
+                      {story.title}
+                    </h3>
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                      {story.author}
+                    </p>
+                    {story.description && (
+                      <p className="text-[11px] text-zinc-500 line-clamp-2 leading-relaxed">
+                        {story.description}
                       </p>
-                      {story.summary && (
-                        <p className="text-xs text-zinc-500 font-medium mt-2 line-clamp-2">
-                          {story.summary}
-                        </p>
-                      )}
+                    )}
 
-                      <div className="flex items-center gap-4 mt-3">
-                        <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400">
-                          <BookOpen className="w-3 h-3" />
-                          {story.chapterCount} {story.chapterCount === 1 ? "chapter" : "chapters"}
-                        </span>
-                        <span className={`flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest ${colorClass}`}>
-                          <Timer className="w-3 h-3" />
-                          {timeRemaining}
-                        </span>
-                      </div>
-
-                      {/* Expiration progress bar */}
-                      <div className="mt-3 h-1 bg-zinc-100 dark:bg-zinc-900 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-1000 ${
-                            barWidth > 60
-                              ? "bg-emerald-500"
-                              : barWidth > 30
-                              ? "bg-amber-500"
-                              : "bg-rose-500"
-                          }`}
-                          style={{ width: `${barWidth}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex flex-col gap-2 shrink-0">
-                      <Link
-                        href={`/offline-stories/${story.id}`}
-                        className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-widest rounded transition-all hover:opacity-90"
-                      >
-                        Read
-                      </Link>
-                      <button
-                        onClick={() => handleRemove(story.id)}
-                        disabled={removingId === story.id}
-                        className="flex items-center justify-center gap-1.5 px-4 py-2 border border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:text-rose-500 hover:border-rose-300 dark:hover:border-rose-800 text-[9px] font-bold uppercase tracking-widest rounded transition-all disabled:opacity-40"
-                      >
-                        {removingId === story.id ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          <Trash2 className="w-3 h-3" />
-                        )}
-                        Remove
-                      </button>
+                    {/* Meta */}
+                    <div className="flex items-center gap-3 pt-1">
+                      <span className="flex items-center gap-1 text-[9px] font-bold font-mono text-zinc-400 uppercase tracking-widest">
+                        <BookOpen className="w-3 h-3" />
+                        {story.chapters.length} Ch
+                      </span>
+                      <span className="flex items-center gap-1 text-[9px] font-bold font-mono text-amber-500 uppercase tracking-widest">
+                        <Clock className="w-3 h-3" />
+                        {getExpirationLabel(story.expiresAt)}
+                      </span>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
 
-        {/* Info Footer */}
-        {stories.length > 0 && (
-          <div className="mt-8 flex items-start gap-3 px-5 py-4 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 rounded-lg">
-            <AlertTriangle className="w-4 h-4 text-zinc-400 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">
-                Storage Notice
-              </p>
-              <p className="text-xs text-zinc-400 font-medium">
-                Saved stories expire after 7 days and are stored only on this device.
-                Clearing your browser data will also remove saved stories.
-              </p>
-            </div>
+                {/* Actions */}
+                <div className="flex items-center border-t border-zinc-50 dark:border-zinc-900">
+                  <Link
+                    href={`/offline-stories/${story.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
+                  >
+                    <BookOpen className="w-3 h-3" />
+                    Read Offline
+                  </Link>
+                  <div className="w-px h-6 bg-zinc-50 dark:bg-zinc-900" />
+                  <button
+                    onClick={() => handleDelete(story.id)}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 transition-all"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Remove
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

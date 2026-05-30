@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Merriweather } from "next/font/google";
+import { Plus_Jakarta_Sans, Merriweather, Hind_Siliguri } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/app/providers";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -15,6 +15,13 @@ const merriweather = Merriweather({
   subsets: ["latin"],
   weight: ["300", "400", "700"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+const hindSiliguri = Hind_Siliguri({
+  subsets: ["bengali", "latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-bangla",
   display: "swap",
 });
 
@@ -89,7 +96,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${plusJakarta.variable} ${merriweather.variable}`}
+      className={`h-full antialiased ${plusJakarta.variable} ${merriweather.variable} ${hindSiliguri.variable}`}
       suppressHydrationWarning
     >
       <body
@@ -99,8 +106,7 @@ export default function RootLayout({
         <Providers>
           <AppLayout>{children}</AppLayout>
         </Providers>
-        {process.env.NODE_ENV === "production" ? (
-          <Script
+        <Script
             id="service-worker-registration"
             strategy="afterInteractive"
             dangerouslySetInnerHTML={{
@@ -117,30 +123,6 @@ export default function RootLayout({
               `,
             }}
           />
-        ) : (
-          <Script
-            id="service-worker-dev-cleanup"
-            strategy="afterInteractive"
-            dangerouslySetInnerHTML={{
-              __html: `
-                if ('serviceWorker' in navigator) {
-                  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    registrations.forEach(function(registration) {
-                      registration.unregister();
-                    });
-                  });
-                }
-                if ('caches' in window) {
-                  caches.keys().then(function(keys) {
-                    keys.forEach(function(key) {
-                      caches.delete(key);
-                    });
-                  });
-                }
-              `,
-            }}
-          />
-        )}
       </body>
     </html>
   );

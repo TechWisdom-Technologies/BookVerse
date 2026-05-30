@@ -288,13 +288,19 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     const { id } = await params;
     const { dbUser } = await verifyToken();
 
-    const existing = await prisma.story.findUnique({ where: { id } });
+    const existing = await prisma.story.findUnique({ 
+      where: { id },
+      include: { chapters: true }
+    });
+    
     if (!existing) {
       return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
     if (existing.authorId !== dbUser.id && dbUser.role !== Role.ADMIN) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+
 
     await prisma.story.delete({ where: { id } });
 

@@ -1,15 +1,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cookies } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactionType } from "@prisma/client";
+import { generateHTML } from "@tiptap/html";
+import { type JSONContent } from "@tiptap/core";
+import { Window } from "happy-dom";
+import ImageExtension from "@tiptap/extension-image";
+import Underline from "@tiptap/extension-underline";
+import StarterKit from "@tiptap/starter-kit";
 import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft, Clock } from "lucide-react";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { ReactionBar } from "@/components/stories/ReactionBar";
 import { StoryViewTracker } from "@/components/stories/StoryViewTracker";
 import { TipAuthorDialog } from "@/components/stories/TipAuthorDialog";
 import { StorySharingActions } from "@/components/stories/StorySharingActions";
+import { SaveOfflineButton } from "@/components/stories/SaveOfflineButton";
 import { PromotionBadge } from "@/components/promotions/PromotionBadge";
 import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
 import { StoryModerationActions } from "@/components/stories/StoryModerationActions";
@@ -67,6 +74,21 @@ function estimateReadingTime(content: any): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
+function renderChapterContentToHtml(content: unknown): string {
+  if (!content || typeof content !== "object") return "";
+  try {
+    const window = new Window();
+    const g = global as unknown as Record<string, unknown>;
+    g.window = window;
+    g.document = window.document;
+    try { g.navigator = window.navigator; } catch { /* ignore */ }
+    const rawHtml = generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
+    return rawHtml || "";
+  } catch {
+    return "";
+  }
+}
+
 export default async function StoryDetailPage({ params }: StoryPageProps) {
   const { id } = await params;
   const currentUserId = await getCurrentUserId();
@@ -86,6 +108,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
   });
 
   if (!story || !story.published) notFound();
+
+
 
   const readingProgress = currentUserId
     ? await prisma.readingProgress.findUnique({
@@ -184,6 +208,27 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         </div>
 
         <StorySharingActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
+
+        {/* Offline Save Button */}
+        <div className="my-6 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 p-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            Offline Reading
+          </div>
+          <SaveOfflineButton
+            storyId={story.id}
+            title={story.title}
+            author={story.author.displayName || story.author.username}
+            authorUsername={story.author.username}
+            description={story.summary || ""}
+            coverUrl={story.coverUrl}
+            chapters={story.chapters.map((ch) => ({
+              id: ch.id,
+              title: ch.title,
+              chapterOrder: ch.chapterOrder,
+              htmlContent: renderChapterContentToHtml(ch.content),
+            }))}
+          />
+        </div>
 
         {/* Chapters Section */}
         <section className="mb-20">
