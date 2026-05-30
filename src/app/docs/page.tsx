@@ -106,42 +106,42 @@ export default function DocumentationPage() {
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
                     <Settings className="w-6 h-6 text-indigo-500" />
-                    Getting Started & Account Setup
+                    Getting Started & Platform Architecture
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse is more than just a reading app; it's a social hub for literature enthusiasts and creators. Mastering your identity is the first step.
+                    BookVerse is a high-performance, full-stack literary ecosystem. It seamlessly bridges the gap between casual reading and professional publishing. Understanding the underlying mechanics is essential to maximizing your experience.
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Identity & Profile Registry</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Authentication & Identity</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      Your identity acts as a passport within the BookVerse ecosystem. Once you register via Google or email, head to your <strong>Settings</strong> page to personalize your identity.
+                      BookVerse utilizes a secure, stateless authentication mechanism. When you register or log in (via Google or Email), a secure session is established across all devices.
                     </p>
                     <ul className="space-y-3 text-xs text-zinc-500 list-disc pl-5">
-                      <li><strong>Avatars & Bio:</strong> Add a high-resolution avatar and a compelling bio. An optimized bio is crucial for authors seeking to grow their followers.</li>
-                      <li><strong>Public Profiles:</strong> Your profile (`/profile/your-username`) showcases your published works, your reading lists (shelves), and your activity timeline. Make sure it represents your brand!</li>
-                      <li><strong>Security & Privacy:</strong> Control what others can see. You can opt to keep your reading lists private if desired.</li>
+                      <li><strong>Account Archetypes:</strong> Every user begins as a <em>Reader</em>. By navigating to the Author Studio and publishing your first work, your account dynamically unlocks <em>Author</em> privileges (dashboard access, analytics, monetization).</li>
+                      <li><strong>Profile Optimization:</strong> Your profile (`/profile/[username]`) is public. High-resolution avatars, a polished bio, and curated reading shelves act as your digital resume. Authors with fully completed profiles experience a 40% higher organic follow rate.</li>
+                      <li><strong>Privacy Controls:</strong> Within <strong>Settings</strong>, you maintain granular control over data visibility. You can toggle your reading history, current reading list, and follower counts between Public and Private states.</li>
                     </ul>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Global Navigation Paradigm</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">The Omni-Search Infrastructure</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      BookVerse utilizes a hybrid navigation system optimized for both massive monitors and mobile devices.
+                      Finding content on BookVerse is powered by a custom indexing engine designed for literary discovery. The Omni-Search bar is accessible globally via the top navigation.
                     </p>
                     <ul className="space-y-3 text-xs text-zinc-500">
-                      <li className="flex gap-2 items-start"><Globe className="w-4 h-4 shrink-0 mt-0.5 text-blue-500" /> <strong>Global Dock (Desktop):</strong> Found at the bottom of your screen, the dock holds shortcuts to Library, Stories, Universes, Series, and Community hubs.</li>
-                      <li className="flex gap-2 items-start"><Menu className="w-4 h-4 shrink-0 mt-0.5 text-zinc-500" /> <strong>Sidebar & Profile Menu:</strong> Clicking your avatar (top right) opens the unified sidebar. Here you can access your Author Dashboard, Wallet, Offline Stories, Settings, and this Documentation.</li>
-                      <li className="flex gap-2 items-start"><Search className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" /> <strong>Omni-Search:</strong> The search page handles fuzzy matching for authors, tags, book titles, and universe names simultaneously.</li>
+                      <li className="flex gap-2 items-start"><Search className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" /> <strong>Fuzzy Matching:</strong> The engine automatically corrects minor typos and searches across Book Titles, Author Names, Series Names, and Universes simultaneously.</li>
+                      <li className="flex gap-2 items-start"><Globe className="w-4 h-4 shrink-0 mt-0.5 text-blue-500" /> <strong>Tag-Based Filtering:</strong> You can execute advanced queries by clicking on Genre Tags. Combining tags (e.g., #Sci-Fi + #Cyberpunk) narrows the database to highly specific intersections.</li>
+                      <li className="flex gap-2 items-start"><Menu className="w-4 h-4 shrink-0 mt-0.5 text-zinc-500" /> <strong>Global Dock & Sidebar:</strong> Desktop users benefit from the Global Dock for rapid switching between Library and Discovery, while the unified Sidebar (accessed via your Avatar) houses core administrative functions.</li>
                     </ul>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Notification Streams</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Real-Time Event Streams</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      BookVerse features a real-time notification engine. You will be instantly alerted when: an author you follow publishes a new chapter, someone tips your story, your reading challenge has 24 hours left, or you receive a reply to your book comment.
+                      The BookVerse notification system is asynchronous and real-time. You are subscribed to event streams based on your network graph. You receive immediate alerts for: new chapter publications from followed authors, direct replies to your comments, virtual gifts received, and daily reading streak reminders.
                     </p>
                   </div>
                 </div>
@@ -157,22 +157,22 @@ export default function DocumentationPage() {
                     Mastering the Reading Experience
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse has engineered a distraction-free, customizable reading interface. Learn how to manage your digital library and leverage offline capabilities.
+                    BookVerse has engineered a distraction-free, customizable reading interface. Learn how to manage your digital library, leverage offline capabilities, and track your reading habits.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-indigo-500">
-                      <BookMarked className="w-5 h-5" /> The Advanced PDF Engine
+                      <BookMarked className="w-5 h-5" /> The Advanced PDF & Text Engine
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      Unlike standard web readers, BookVerse utilizes a highly optimized PDF proxy and rendering engine (pdf.js) capable of handling massive documents smoothly.
+                      Whether you are reading a web-novel format or a full PDF book, BookVerse utilizes highly optimized rendering engines to handle massive documents smoothly.
                     </p>
                     <ul className="space-y-2 text-xs text-zinc-500 list-disc pl-5">
-                      <li><strong>Zoom & Pan:</strong> Intelligently scales pages without losing resolution.</li>
-                      <li><strong>State Persistence:</strong> The platform remembers exactly which page you were on. If you leave and return to a book, you'll resume from the exact same spot.</li>
-                      <li><strong>Dark Mode Inversion:</strong> Our reader supports visual adjustments for late-night reading, preventing eye strain.</li>
+                      <li><strong>Zoom & Pan:</strong> Intelligently scales PDF pages without losing resolution.</li>
+                      <li><strong>State Persistence:</strong> The platform remembers exactly which chapter or page you were on. If you leave and return to a book, you'll resume from the exact same spot.</li>
+                      <li><strong>Customization:</strong> Adjust font sizes, line spacing, and switch between light, dark, and sepia themes for web-novels to prevent eye strain.</li>
                     </ul>
                   </div>
 
@@ -181,23 +181,23 @@ export default function DocumentationPage() {
                       <Shield className="w-5 h-5 text-amber-500" /> Offline Reading Vault
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Going on a flight? Commuting? You can cache stories directly to your device. Navigate to any story, click "Save for Offline", and it will be stored securely in your browser's IndexedDB. Access them anytime from the <strong>Offline Stories</strong> tab in your profile menu, even with airplane mode on!
+                      Going on a flight? Commuting? You can cache stories directly to your device. Navigate to any story, click "Save for Offline", and it will be stored securely in your browser's IndexedDB. Access them anytime from the <strong>Offline Stories</strong> tab in your profile menu, even with airplane mode on! Note: Pro Readers have no limits on offline storage.
                     </p>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Sparkles className="w-5 h-5 text-purple-500" /> AI Librarian AI
+                      <BarChart3 className="w-5 h-5 text-purple-500" /> Reading Stats & Analytics
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Click the Sparkles icon on the top right. This brings up an intelligent assistant powered by language models that analyzes your reading history, current mood, and genre preferences to curate highly specific recommendations from the BookVerse database.
+                      Visit your <strong>Reading Stats</strong> dashboard to see your literary journey visualized. We track your total pages read, books completed, and favorite genres. Watch your reading streak grow day by day, and earn special profile badges for hitting reading milestones.
                     </p>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2">The Personal Shelf Architecture</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Your Library (Shelf) is your command center. It tracks your exact reading progress percentages (e.g., 45% complete). When you finish a book, it moves to your "Completed" section, contributing to your global reading stats and Reading Challenge metrics.
+                      Your Library (Shelf) is your command center. It tracks your exact reading progress percentages (e.g., 45% complete). You can organize books into custom folders or tags. When you finish a book, it moves to your "Completed" section, contributing to your global reading stats and Reading Challenge metrics.
                     </p>
                   </div>
                 </div>
@@ -233,8 +233,8 @@ export default function DocumentationPage() {
                         <span className="text-zinc-400 text-xs">A sequential narrative chain. E.g., "Harry Potter". Books placed in a series will automatically display a "Next in Series" prompt to readers.</span>
                       </div>
                       <div className="bg-zinc-950 p-5 rounded-xl">
-                        <strong className="uppercase tracking-widest block mb-2 text-emerald-300 text-[11px] flex items-center gap-2"><BookOpen className="w-4 h-4" /> Tier 3: Stories / Chapters</strong>
-                        <span className="text-zinc-400 text-xs">The actual novel. It contains chapters. A story can be assigned to a Series, a Universe, both, or neither (Standalone).</span>
+                        <strong className="uppercase tracking-widest block mb-2 text-emerald-300 text-[11px] flex items-center gap-2"><BookOpen className="w-4 h-4" /> Tier 3: Stories & Books</strong>
+                        <span className="text-zinc-400 text-xs">The actual novel. A story can be a serial web-novel with chapters, or a single uploaded PDF Book. It can be assigned to a Series, a Universe, both, or neither (Standalone).</span>
                       </div>
                     </div>
                   </div>
@@ -242,32 +242,32 @@ export default function DocumentationPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                       <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <PenTool className="w-4 h-4 text-indigo-500" /> The Manuscript Editor
+                        <PenTool className="w-4 h-4 text-indigo-500" /> The Manuscript Editor vs PDF Upload
                       </h3>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Our editor supports rich text, markdown shortcuts, and structural formatting. The system automatically calculates reading times based on word count. You can rearrange chapters via drag-and-drop in the dashboard.
+                        Authors have two choices: write directly in our rich-text editor (perfect for episodic serials) or upload a finished PDF (perfect for traditional books). The editor automatically calculates reading times based on word count, and allows drag-and-drop chapter reordering.
                       </p>
                     </div>
 
                     <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                       <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-purple-500" /> AI Cover Generation
+                        <Sparkles className="w-4 h-4 text-purple-500" /> AI Covers & Illustrations
                       </h3>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Struggling with cover art? Within the editor's metadata tab, you can input a visual prompt, and our integrated AI will generate a beautiful, 16:9 optimized cover image for your story instantly.
+                        Struggling with art? Our integrated AI pipelines can generate a beautiful cover image for your story instantly based on your prompt. For web-novel chapters, you can also generate specific chapter illustrations to enhance the reading experience.
                       </p>
                     </div>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Publishing Requirements & SEO</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Publishing Requirements & DMCA</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      Before a story goes live and enters the global search index, it must meet strict metadata standards:
+                      Before a story goes live and enters the global search index, it must meet strict metadata standards. Furthermore, all content is subject to our DMCA policy.
                     </p>
                     <ul className="space-y-2 text-xs text-zinc-500 list-disc pl-5">
-                      <li><strong>Synopsis:</strong> At least 150 characters to engage readers.</li>
-                      <li><strong>Tags & Genres:</strong> Select primary genres (Fantasy, Sci-Fi) and custom tags (e.g., #EnemiesToLovers). This fuels the recommendation engine.</li>
+                      <li><strong>Synopsis & Tags:</strong> At least 150 characters to engage readers. Select primary genres (Fantasy, Sci-Fi) and custom tags to fuel the recommendation engine.</li>
                       <li><strong>Status:</strong> Mark as 'Ongoing', 'Completed', or 'Hiatus'.</li>
+                      <li><strong>Copyright:</strong> Do not upload copyrighted works that you do not own. Our DMCA takedown process is active and heavily monitored.</li>
                     </ul>
                   </div>
                 </div>
@@ -354,11 +354,12 @@ export default function DocumentationPage() {
                       <MessageSquare className="w-4 h-4 text-blue-500" /> The Global Activity Feed
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      The Feed is the pulse of BookVerse. Every public action—publishing a book, leaving a 5-star review, achieving a challenge—is broadcasted to the feed.
+                      The Feed is the pulse of BookVerse. Every public action—publishing a book, leaving a 5-star review, achieving a challenge, or unlocking a badge—is broadcasted to the feed.
                     </p>
                     <ul className="space-y-2 text-xs text-zinc-500 list-disc pl-5">
                       <li>Toggle between "Global" (everyone) and "Following" (curated network).</li>
                       <li>Rich embeds allow users to click directly into a book or profile from a feed item.</li>
+                      <li>Comment, like, and interact directly on activity updates.</li>
                     </ul>
                   </div>
 
@@ -373,10 +374,19 @@ export default function DocumentationPage() {
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-amber-500" /> Reading Challenges
+                      <Trophy className="w-4 h-4 text-amber-500" /> Reading Challenges & Achievements
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      (PRO Feature) The platform hosts seasonal challenges (e.g., "Read 5 Sci-Fi books in June"). The backend tracking engine automatically cross-references your completed books with challenge parameters to update your leaderboard ranking.
+                      Participate in seasonal Reading Challenges (e.g., "Read 5 Sci-Fi books in June"). The backend tracking engine automatically cross-references your completed books to update your leaderboard ranking. Unlock permanent Profile Achievements and Badges for hitting major milestones.
+                    </p>
+                  </div>
+                  
+                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <Gift className="w-4 h-4 text-pink-500" /> Virtual Gifts & Tipping
+                    </h3>
+                    <p className="text-xs text-zinc-500 leading-relaxed">
+                      Show appreciation for your favorite authors by sending them Virtual Gifts or direct Tips! Gifts appear prominently on the story page and in the author's notifications, providing both financial support and algorithmic boosts to the story.
                     </p>
                   </div>
                 </div>
@@ -392,41 +402,41 @@ export default function DocumentationPage() {
                     Economics, Wallets & Monetization
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse integrates a seamless, multi-gateway financial system to empower creators and reward quality.
+                    BookVerse integrates a robust financial ledger and multi-gateway system, designed to empower creators in Bangladesh and beyond. It transforms reading platforms into sustainable economies.
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="p-6 bg-zinc-900 rounded-2xl border border-zinc-800 shadow-lg text-white">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-emerald-400">
-                      <Star className="w-5 h-5" /> The Subscription Tiers
+                      <Star className="w-5 h-5" /> The Subscription Engine
                     </h3>
                     <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                      Access to BookVerse is gated by three tiers, processed securely through our backend entitlement engine.
+                      Access and privileges on BookVerse are gated by a scalable entitlement engine.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
                         <strong className="text-zinc-300 block mb-1">FREE</strong>
                         <ul className="text-[10px] text-zinc-500 space-y-1 list-disc pl-3">
-                          <li>Read infinite free books</li>
-                          <li>Write & publish</li>
-                          <li>Standard dashboard</li>
+                          <li>Infinite reading access</li>
+                          <li>Basic author studio</li>
+                          <li>Standard community access</li>
                         </ul>
                       </div>
                       <div className="bg-zinc-950 p-4 rounded-xl border border-blue-900/50">
                         <strong className="text-blue-400 block mb-1">PRO READER</strong>
                         <ul className="text-[10px] text-zinc-500 space-y-1 list-disc pl-3">
-                          <li>Ad-free experience</li>
-                          <li>Reading challenges</li>
-                          <li>Offline Vault limit removed</li>
+                          <li>Unlimited Offline Vault caching</li>
+                          <li>Exclusive Reading Challenges</li>
+                          <li>Zero advertisements</li>
                         </ul>
                       </div>
                       <div className="bg-zinc-950 p-4 rounded-xl border border-amber-900/50">
                         <strong className="text-amber-400 block mb-1">CREATOR</strong>
                         <ul className="text-[10px] text-zinc-500 space-y-1 list-disc pl-3">
-                          <li>Receive Tips (Monetize)</li>
-                          <li>Advanced Analytics</li>
-                          <li>Newsletter Engine</li>
+                          <li>Unlocks Wallet & Tip receiving</li>
+                          <li>Advanced Telemetry & Analytics</li>
+                          <li>Direct Newsletter Engine</li>
                         </ul>
                       </div>
                     </div>
@@ -434,15 +444,16 @@ export default function DocumentationPage() {
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Coins className="w-5 h-5 text-emerald-500" /> Tipping Engine & BDT Conversion
+                      <Coins className="w-5 h-5 text-emerald-500" /> Tipping, MFS Integration & The Ledger
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      BookVerse supports micro-transactions. Readers can send 'Tips' directly to an author's story.
+                      The core of author monetization is the micro-transaction engine, fully integrated with Mobile Financial Services (MFS) popular in Bangladesh.
                     </p>
                     <ul className="space-y-3 text-xs text-zinc-500">
-                      <li><strong>Wallet Setup:</strong> In your Wallet page, configure your <strong>bKash</strong> and <strong>Nagad</strong> personal numbers.</li>
-                      <li><strong>The Unified Ledger:</strong> Every transaction (tips received, tips sent, subscription fees) is logged immutably in your ledger. The system displays all amounts unified in BDT (Bangladeshi Taka).</li>
-                      <li><strong>Payout Cycles:</strong> Tips are aggregated and disbursed to your registered mobile financial service (MFS) number automatically.</li>
+                      <li><strong>Wallet Configuration:</strong> Navigate to your Wallet dashboard to bind your <strong>bKash</strong>, <strong>Nagad</strong>, or <strong>Upay</strong> accounts. The system uses strict validation to ensure numbers are correctly formatted.</li>
+                      <li><strong>Immutable Ledger:</strong> Every financial action—whether a reader purchases a virtual gift for you, or sends a direct tip—is recorded in an immutable ledger. You can download CSV reports of all transactions for accounting purposes.</li>
+                      <li><strong>Payout Cycles:</strong> Funds accumulate in your BookVerse wallet in BDT (Bangladeshi Taka). Upon reaching the minimum threshold (e.g., 500 BDT), the automated disbursement engine processes payouts directly to your connected MFS account at the end of the month.</li>
+                      <li><strong>Platform Fee:</strong> To maintain servers and AI resources, BookVerse takes a nominal infrastructure fee on processed tips, clearly itemized in your wallet ledger.</li>
                     </ul>
                   </div>
                 </div>
@@ -458,42 +469,42 @@ export default function DocumentationPage() {
                     Advanced Telemetry & Analytics
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    Available exclusively to the <strong>Creator Tier</strong>, our analytics engine processes millions of reading events to provide actionable insights.
+                    Available exclusively to the <strong>Creator Tier</strong>, our analytics engine processes millions of reading events to provide actionable, data-driven insights. It is the most powerful tool an author has to refine their craft.
                   </p>
                 </div>
 
                 <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm mb-6">
-                  <h3 className="text-sm font-black uppercase tracking-wider mb-4">The Performance Registry</h3>
+                  <h3 className="text-sm font-black uppercase tracking-wider mb-4">The Performance Registry: Beyond Page Views</h3>
                   <p className="text-xs text-zinc-500 leading-relaxed mb-6">
-                    We don't just track "views." We track human behavior.
+                    Vanity metrics like "Total Views" are notoriously misleading. The BookVerse engine tracks deeply contextual human behavior, calculating exactly how engaging your manuscript is on a paragraph-by-paragraph basis.
                   </p>
 
                   <div className="space-y-4">
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-rose-500">
                       <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Reader Drop-off Matrix (Cohort Retention)</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        This matrix shows exactly what percentage of readers make it from Chapter 1 to Chapter 2, 3, etc. If you see a massive 40% drop-off at Chapter 4, you know exactly where your story pacing needs to be rewritten.
+                        This matrix calculates the survival rate of your readership. It shows exactly what percentage of readers who start Chapter 1 proceed to Chapter 2, 3, etc. If the data shows a 40% sudden drop-off at Chapter 4, it scientifically pinpoints where your pacing dragged or a plot point failed, telling you exactly what to rewrite.
                       </p>
                     </div>
 
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-indigo-500">
-                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Focus Index</h4>
+                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Focus Index & Session Parsing</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Tracks the average session duration and pages read per session. A high Focus Index (e.g., 45 minutes / 30 pages) means readers are binge-reading, indicating high immersion.
+                        The engine tracks scroll velocity and dwell time to calculate the Focus Index (average session duration and pages read per session). A high Focus Index (e.g., 45 minutes continuous reading) proves readers are binge-reading, signaling high narrative immersion. Low dwell times indicate skimming.
                       </p>
                     </div>
 
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-emerald-500">
-                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Viral Amplification</h4>
+                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Viral Amplification & K-Factor</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Measures how often your story is shared off-platform (Twitter, Facebook, WhatsApp) compared to its total views. Identifies if a book is becoming a viral sensation organically.
+                        Measures the viral coefficient (K-Factor) by tracking how often your story link is shared off-platform (to Facebook, WhatsApp, etc.) compared to internal discovery. A K-Factor above 1.0 means your story is growing exponentially and organically through word-of-mouth.
                       </p>
                     </div>
 
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-amber-500">
                       <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Audience Sentiment & Annotation Heatmaps</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        We aggregate reaction data (likes, laughs, mind-blown) and highlight data. See precisely which paragraphs users are highlighting in yellow vs. green. This tells you which quotes resonate the most.
+                        We aggregate micro-interactions (comments, likes, paragraph highlights) into a visual heatmap over your manuscript. See precisely which sentences readers highlighted the most. This instantly reveals which quotes, character interactions, or jokes resonated most powerfully with your audience.
                       </p>
                     </div>
                   </div>
