@@ -85,6 +85,10 @@ export async function POST(request: Request) {
   try {
     const { dbUser } = await verifyToken();
 
+    if (dbUser.role !== "AUTHOR" && dbUser.role !== "ADMIN") {
+      return NextResponse.json({ error: "Only authors can create stories." }, { status: 403 });
+    }
+
     const body = await request.json();
     const parsed = storySchema.parse(body);
 

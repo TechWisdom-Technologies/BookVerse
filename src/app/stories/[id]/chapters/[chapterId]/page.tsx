@@ -149,6 +149,17 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
           </Link>
         </div>
 
+        {/* Chapter Illustration (Hero) */}
+        {chapter.illustrationUrl && (
+          <div className="mb-12 relative aspect-[21/9] w-full rounded overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-800">
+            <img 
+              src={chapter.illustrationUrl} 
+              alt={`Illustration for ${chapter.title}`}
+              className="w-full h-full object-cover grayscale"
+            />
+          </div>
+        )}
+
         {/* Chapter Header Dossier */}
         <header className="mb-16 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">

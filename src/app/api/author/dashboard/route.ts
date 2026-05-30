@@ -10,9 +10,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Entitlement gate check (CREATOR plan or Admin or Founding user)
-    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
-      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
+    // Entitlement gate check (AUTHOR plan or Admin or Founding user)
+    if (!(await hasFeatureAccess(user, 'AUTHOR'))) {
+      return NextResponse.json(paidFeatureError('AUTHOR'), { status: 402 });
     }
 
     // 1. Fetch pending invitations where the logged-in user is the invited collaborator

@@ -12,6 +12,7 @@ interface UserData {
   email: string;
   displayName: string | null;
   role: string;
+  membershipTier: string | null;
   avatarUrl: string | null;
   createdAt: string;
   _count: {
@@ -22,6 +23,7 @@ interface UserData {
 }
 
 const roles = ["VISITOR", "MEMBER", "AUTHOR", "ADMIN"];
+const tiers = ["None", "AUTHOR", "PRO", "CREATOR"];
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -55,6 +57,21 @@ export default function AdminUsersPage() {
       });
       if (res.ok) {
         setUsers(users.map((u) => (u.id === userId ? { ...u, role: newRole } : u)));
+      }
+    } finally { setUpdating(null); }
+  };
+
+  const handleTierChange = async (userId: string, newTier: string) => {
+    setUpdating(userId);
+    const tierValue = newTier === "None" ? null : newTier;
+    try {
+      const res = await fetch("/api/admin/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, membershipTier: tierValue }),
+      });
+      if (res.ok) {
+        setUsers(users.map((u) => (u.id === userId ? { ...u, membershipTier: tierValue } : u)));
       }
     } finally { setUpdating(null); }
   };
@@ -150,17 +167,33 @@ export default function AdminUsersPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-4 px-6">
-                        <select
-                          value={user.role}
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                          disabled={updating === user.id}
-                          className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all disabled:opacity-50"
-                        >
-                          {roles.map((role) => (
-                            <option key={role} value={role}>{role}</option>
-                          ))}
-                        </select>
+                      <td className="py-4 px-6 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400 w-10">Role:</span>
+                          <select
+                            value={user.role}
+                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                            disabled={updating === user.id}
+                            className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all disabled:opacity-50"
+                          >
+                            {roles.map((role) => (
+                              <option key={role} value={role}>{role}</option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400 w-10">Tier:</span>
+                          <select
+                            value={user.membershipTier || "None"}
+                            onChange={(e) => handleTierChange(user.id, e.target.value)}
+                            disabled={updating === user.id}
+                            className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all disabled:opacity-50"
+                          >
+                            {tiers.map((tier) => (
+                              <option key={tier} value={tier}>{tier}</option>
+                            ))}
+                          </select>
+                        </div>
                       </td>
                       <td className="py-4 px-6 text-[10px] font-mono font-bold text-zinc-300">
                         {formatDate(user.createdAt)}

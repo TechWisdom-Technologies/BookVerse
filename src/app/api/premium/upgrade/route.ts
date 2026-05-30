@@ -12,8 +12,25 @@ export async function POST(req: Request) {
     const { plan, duration, senderNumber, transactionId } = await req.json();
 
     const upperPlan = plan?.toUpperCase();
-    if (upperPlan !== 'PRO' && upperPlan !== 'CREATOR') {
+    if (upperPlan !== 'PRO' && upperPlan !== 'CREATOR' && upperPlan !== 'AUTHOR') {
       return NextResponse.json({ error: 'Invalid subscription plan selected.' }, { status: 400 });
+    }
+
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { membershipTier: true, membershipExpiry: true },
+    });
+
+    if (dbUser?.membershipTier) {
+      const isActive = !dbUser.membershipExpiry || new Date(dbUser.membershipExpiry).getTime() > Date.now();
+      if (isActive) {
+        const tierRank = (t: string) => t === 'CREATOR' ? 3 : t === 'PRO' ? 2 : t === 'AUTHOR' ? 1 : 0;
+        if (tierRank(dbUser.membershipTier) >= tierRank(upperPlan)) {
+          return NextResponse.json({ 
+            error: `You already have an active ${dbUser.membershipTier} plan or higher. You cannot purchase a lower tier.` 
+          }, { status: 400 });
+        }
+      }
     }
 
     const months = duration ? Number(duration) : 1;
@@ -43,8 +60,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Calculate billing amount based on plan prices (PRO = 499 BDT, CREATOR = 999 BDT per month)
-    const pricePerMonth = upperPlan === 'CREATOR' ? 999 : 499;
+    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 499 BDT, CREATOR = 999 BDT per month)
+    const pricePerMonth = upperPlan === 'CREATOR' ? 999 : upperPlan === 'PRO' ? 499 : 99;
     const amount = pricePerMonth * months;
 
     // Log the pending manual payment transaction

@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-export type PaidTier = "PRO" | "CREATOR";
+export type PaidTier = "AUTHOR" | "PRO" | "CREATOR";
 
 type EntitledUser = {
   id: string;
@@ -17,8 +17,9 @@ function isActiveMembership(user: EntitledUser) {
 }
 
 function tierRank(tier?: string | null) {
-  if (tier === "CREATOR") return 2;
-  if (tier === "PRO") return 1;
+  if (tier === "CREATOR") return 3;
+  if (tier === "PRO") return 2;
+  if (tier === "AUTHOR") return 1;
   return 0;
 }
 
@@ -47,7 +48,7 @@ export async function hasFeatureAccess(user: EntitledUser, requiredTier: PaidTie
 
 export function paidFeatureError(requiredTier: PaidTier) {
   return {
-    error: `${requiredTier === "CREATOR" ? "Creator" : "Pro"} plan required`,
+    error: `${requiredTier === "CREATOR" ? "Creator" : requiredTier === "PRO" ? "Pro" : "Author"} plan required`,
     requiredTier,
     upgradeUrl: `/premium/checkout?plan=${requiredTier.toLowerCase()}`,
   };

@@ -694,6 +694,25 @@ export function Navbar() {
 
           {/* Left side items */}
           <div className="flex items-center gap-1 pr-3 border-r border-zinc-100 dark:border-zinc-800">
+            {/* Bookverse Logo */}
+            <Link
+              href="/"
+              className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105 mr-1"
+            >
+              <div className="absolute inset-0 rounded-full transition-all duration-300 bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800" />
+              <div className="relative w-9 h-9 rounded-full overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500">
+                <img
+                  src="/bookverse.png"
+                  alt="BookVerse"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-200 pointer-events-none opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0">
+                <div className="absolute inset-0 bg-zinc-900 dark:bg-white rounded shadow-md" />
+                <span className="relative text-white dark:text-zinc-900">BookVerse</span>
+              </div>
+            </Link>
+
             {leftItems.map((item) => (
               <NavButton
                 key={item.href}

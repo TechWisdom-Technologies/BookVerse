@@ -12,6 +12,7 @@ import ChapterList, {
   type ChapterItem,
 } from "@/components/stories/ChapterList";
 import { AiCoverGenerator } from "@/components/stories/AiCoverGenerator";
+import { AiChapterIllustration } from "@/components/stories/AiChapterIllustration";
 import {
   ArrowLeft,
   Globe,
@@ -499,14 +500,26 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                     <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
                   </div>
                 ) : (
-                  <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded p-1 shadow-sm">
-                    <StoryEditor
-                      key={activeChapterId}
+                  <div className="space-y-8">
+                    <AiChapterIllustration 
+                      storyId={storyId} 
+                      chapterId={activeChapterId!} 
+                      initialUrl={activeChapter.illustrationUrl}
+                      onSave={(url) => {
+                        setChapters(chapters.map(c => 
+                          c.id === activeChapterId ? { ...c, illustrationUrl: url } : c
+                        ));
+                      }}
+                    />
+                    <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded p-1 shadow-sm">
+                      <StoryEditor
+                        key={activeChapterId}
                       chapterId={activeChapterId!}
                       storyId={storyId}
                       initialContent={chapterContent}
                       onSave={handleSaveChapter}
                     />
+                  </div>
                   </div>
                 )}
               </div>

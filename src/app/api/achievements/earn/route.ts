@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
-      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
+    if (!(await hasFeatureAccess(user, 'PRO'))) {
+      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
     }
 
     const { achievementName } = await req.json();

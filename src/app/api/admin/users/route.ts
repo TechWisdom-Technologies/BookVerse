@@ -36,6 +36,8 @@ export async function GET(request: Request) {
           email: true,
           displayName: true,
           role: true,
+          membershipTier: true,
+          membershipExpiry: true,
           avatarUrl: true,
           createdAt: true,
           _count: {
@@ -73,31 +75,51 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { userId, role } = body;
+    const { userId, role, membershipTier } = body;
 
-    if (!userId || !role || !Object.values(Role).includes(role)) {
+    if (!userId) {
       return NextResponse.json(
-        { error: "Invalid userId or role" },
+        { error: "Invalid userId" },
+        { status: 400 }
+      );
+    }
+    
+    if (role && !Object.values(Role).includes(role)) {
+      return NextResponse.json(
+        { error: "Invalid role" },
+        { status: 400 }
+      );
+    }
+
+    const validTiers = ["AUTHOR", "PRO", "CREATOR"];
+    if (membershipTier !== undefined && membershipTier !== null && !validTiers.includes(membershipTier)) {
+      return NextResponse.json(
+        { error: "Invalid membership tier" },
         { status: 400 }
       );
     }
 
     // Prevent self-demotion
-    if (userId === dbUser.id && role !== Role.ADMIN) {
+    if (userId === dbUser.id && role !== undefined && role !== Role.ADMIN) {
       return NextResponse.json(
         { error: "Cannot change your own role" },
         { status: 400 }
       );
     }
 
+    const updateData: Prisma.UserUpdateInput = {};
+    if (role !== undefined) updateData.role = role;
+    if (membershipTier !== undefined) updateData.membershipTier = membershipTier;
+
     const user = await prisma.user.update({
       where: { id: userId },
-      data: { role },
+      data: updateData,
       select: {
         id: true,
         username: true,
         email: true,
         role: true,
+        membershipTier: true,
       },
     });
 

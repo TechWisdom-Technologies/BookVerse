@@ -37,6 +37,7 @@ export async function GET(_request: Request, { params }: RouteParams) {
             id: true,
             title: true,
             chapterOrder: true,
+            illustrationUrl: true,
             createdAt: true,
           },
         },

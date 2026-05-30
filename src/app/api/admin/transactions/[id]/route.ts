@@ -273,6 +273,14 @@ export async function POST(
         baseDate.getTime() + txn.duration * 30 * 24 * 60 * 60 * 1000
       );
 
+      // Determine if we need to upgrade their role to AUTHOR
+      // We only upgrade if they are currently a VISITOR or MEMBER, so we don't downgrade ADMINs
+      let newRole = txn.user.role;
+      if ((txn.plan === "AUTHOR" || txn.plan === "PRO" || txn.plan === "CREATOR") && 
+          (newRole === "VISITOR" || newRole === "MEMBER")) {
+        newRole = "AUTHOR";
+      }
+
       // Perform updates inside a transaction
       await prisma.$transaction([
         prisma.subscriptionTransaction.update({
@@ -284,6 +292,7 @@ export async function POST(
           data: {
             membershipTier: txn.plan,
             membershipExpiry: membershipEndDate,
+            role: newRole,
           },
         }),
       ]);

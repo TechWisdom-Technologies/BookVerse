@@ -6,6 +6,7 @@ import { generateUsername } from "@/lib/utils";
 import { sendWelcomeEmail } from "@/lib/resend";
 import { signRole } from "@/lib/cookie-crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { Role } from "@prisma/client";
 
 async function readToken() {
   const h = await headers();
@@ -56,6 +57,14 @@ export async function POST() {
       }
     }
 
+    let isFoundingUser = false;
+    if (!existing) {
+      const userCount = await prisma.user.count();
+      if (userCount < 100) {
+        isFoundingUser = true;
+      }
+    }
+
     const user = await prisma.user.upsert({
       where: { firebaseUid: decoded.uid },
       create: {
@@ -64,6 +73,8 @@ export async function POST() {
         username: createUsername,
         displayName: decoded.name ?? null,
         avatarUrl: decoded.picture ?? null,
+        role: isFoundingUser ? Role.AUTHOR : Role.VISITOR,
+        membershipTier: isFoundingUser ? "CREATOR" : null,
       },
       update: updateFields,
       select: {

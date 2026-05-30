@@ -17,6 +17,7 @@ export interface ChapterItem {
   id: string;
   title: string;
   chapterOrder: number;
+  illustrationUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,6 +1,32 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
+import { v2 as cloudinary } from "cloudinary";
+import { deleteFromR2 } from "@/lib/r2";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+async function deleteImage(url: string | null) {
+  if (!url) return;
+  try {
+    if (url.includes("cloudinary.com")) {
+      const urlParts = url.split("/");
+      const filename = urlParts[urlParts.length - 1];
+      const publicId = "bookverse/illustrations/" + filename.split(".")[0];
+      await cloudinary.uploader.destroy(publicId);
+    } else if (url.includes(process.env.CLOUDFLARE_R2_PUBLIC_URL?.replace("https://", "") || "r2.dev")) {
+      const urlObj = new URL(url);
+      const key = urlObj.pathname.replace(/^\/+/, "");
+      await deleteFromR2(key);
+    }
+  } catch (error) {
+    console.error("Failed to delete image:", error);
+  }
+}
 
 interface RouteParams {
   params: Promise<{ id: string; chapterId: string }>;
@@ -78,11 +104,29 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
+    const currentChapter = await prisma.storyChapter.findUnique({
+      where: { id: chapterId },
+      select: { illustrationUrl: true },
+    });
+
+    if (!currentChapter) {
+      return NextResponse.json({ error: "Chapter not found" }, { status: 404 });
+    }
+
     const body = await request.json();
 
     const updateData: Record<string, unknown> = {};
     if (typeof body.title === "string") updateData.title = body.title;
     if (body.content !== undefined) updateData.content = body.content;
+    
+    if (body.illustrationUrl !== undefined) {
+      // If we are replacing or removing an illustration, delete the old one
+      if (currentChapter.illustrationUrl && currentChapter.illustrationUrl !== body.illustrationUrl) {
+        await deleteImage(currentChapter.illustrationUrl);
+      }
+      updateData.illustrationUrl = body.illustrationUrl;
+    }
+
     if (typeof body.chapterOrder === "number") updateData.chapterOrder = body.chapterOrder;
 
     const chapter = await prisma.storyChapter.update({
@@ -137,6 +181,11 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
         },
       });
     });
+
+    // Delete illustration from storage if it exists
+    if (chapter.illustrationUrl) {
+      await deleteImage(chapter.illustrationUrl);
+    }
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

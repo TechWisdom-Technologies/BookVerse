@@ -250,6 +250,7 @@ model StoryChapter {
   storyId      String        @map("story_id")
   title        String
   content      Json?
+  illustrationUrl String?    @map("illustration_url")
   chapterNumber Int          @map("chapter_number")
   chapterOrder Int           @map("chapter_order")
   status       ChapterStatus @default(PUBLISHED)

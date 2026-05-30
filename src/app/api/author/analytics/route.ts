@@ -59,6 +59,41 @@ export async function GET() {
       where: { followingId: user.id },
     });
 
+    const isCreator = await hasFeatureAccess(user, 'CREATOR');
+    let detailedFollowers = undefined;
+    let detailedSubscribers = undefined;
+    let detailedTippers = undefined;
+
+    if (isCreator) {
+      const dbFollowers = await prisma.follow.findMany({
+        where: { followingId: user.id },
+        include: { follower: { select: { id: true, username: true, displayName: true, avatarUrl: true } } },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+      });
+      detailedFollowers = dbFollowers.map(f => f.follower);
+
+      const dbSubs = await prisma.newsletterSubscriber.findMany({
+        where: { authorId: user.id },
+        include: { subscriber: { select: { id: true, username: true, displayName: true, avatarUrl: true } } },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+      });
+      detailedSubscribers = dbSubs.map(s => s.subscriber);
+
+      const dbTips = await prisma.tip.findMany({
+        where: { receiverId: user.id, status: 'COMPLETED' },
+        include: { sender: { select: { id: true, username: true, displayName: true, avatarUrl: true } } },
+        orderBy: { createdAt: 'desc' },
+        take: 100,
+      });
+      detailedTippers = dbTips.map(t => ({
+        amount: t.amount,
+        sender: t.sender || { username: 'Anonymous' },
+        createdAt: t.createdAt,
+      }));
+    }
+
     // Top performing stories
     const topStories = stories
       .sort((a, b) => b.viewCount - a.viewCount)
@@ -229,6 +264,11 @@ export async function GET() {
         subscribers,
         followers,
       },
+      creatorInsights: isCreator ? {
+        followers: detailedFollowers,
+        subscribers: detailedSubscribers,
+        tippers: detailedTippers,
+      } : undefined,
       topStories,
       stories: stories.map(s => ({
         id: s.id,

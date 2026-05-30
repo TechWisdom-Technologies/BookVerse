@@ -50,6 +50,11 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { hasFeatureAccess, paidFeatureError } = await import('@/lib/entitlements');
+    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
+      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
+    }
+
     const story = await prisma.story.findUnique({
       where: { id: storyId },
       select: { authorId: true },

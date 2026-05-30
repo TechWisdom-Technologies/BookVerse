@@ -21,9 +21,18 @@ function CheckoutContent() {
   
   const planParam = searchParams.get('plan') || 'pro';
   const isCreator = planParam.toLowerCase() === 'creator';
+  const isPro = planParam.toLowerCase() === 'pro';
   
-  const planName = isCreator ? 'CREATOR' : 'PRO';
-  const planPrice = isCreator ? 999 : 499;
+  let planName = 'AUTHOR';
+  let planPrice = 99;
+  
+  if (isCreator) {
+    planName = 'CREATOR';
+    planPrice = 999;
+  } else if (isPro) {
+    planName = 'PRO';
+    planPrice = 499;
+  }
 
   // Form & Method Selection States
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'contact'>('none');

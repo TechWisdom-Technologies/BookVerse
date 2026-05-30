@@ -1,4 +1,4 @@
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, DeleteObjectsCommand, PutObjectCommand, S3Client, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
 const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
 const accessKeyId = process.env.CLOUDFLARE_R2_ACCESS_KEY_ID;
@@ -72,3 +72,51 @@ export async function deleteFromR2(key: string) {
   );
 }
 
+export async function deleteMultipleFromR2(keys: string[]) {
+  if (!r2Client) throw new Error("R2 client not configured (missing env vars).");
+  if (keys.length === 0) return;
+  const Bucket = requireEnv("CLOUDFLARE_R2_BUCKET_NAME", bucket);
+
+  // AWS S3 allows deleting max 1000 objects per request
+  for (let i = 0; i < keys.length; i += 1000) {
+    const chunk = keys.slice(i, i + 1000);
+    await r2Client.send(
+      new DeleteObjectsCommand({
+        Bucket,
+        Delete: {
+          Objects: chunk.map((Key) => ({ Key })),
+          Quiet: true,
+        },
+      })
+    );
+  }
+}
+
+export async function listAllR2Objects(): Promise<string[]> {
+  if (!r2Client) throw new Error("R2 client not configured (missing env vars).");
+  const Bucket = requireEnv("CLOUDFLARE_R2_BUCKET_NAME", bucket);
+
+  const keys: string[] = [];
+  let isTruncated = true;
+  let continuationToken: string | undefined = undefined;
+
+  while (isTruncated) {
+    const response: any = await r2Client.send(
+      new ListObjectsV2Command({
+        Bucket,
+        ContinuationToken: continuationToken,
+      })
+    );
+
+    if (response.Contents) {
+      for (const item of response.Contents) {
+        if (item.Key) keys.push(item.Key);
+      }
+    }
+
+    isTruncated = response.IsTruncated ?? false;
+    continuationToken = response.NextContinuationToken;
+  }
+
+  return keys;
+}

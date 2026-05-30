@@ -87,11 +87,13 @@ export async function compressImageToBase64(
       resolve("");
     };
 
-    // Add a cache-busting query parameter. 
-    // If the browser already cached the image from the regular page load (without CORS headers),
-    // requesting it again with crossOrigin="anonymous" will fail due to the cached response lacking CORS headers.
-    const separator = imageUrl.includes("?") ? "&" : "?";
-    img.src = `${imageUrl}${separator}offline_bust=${Date.now()}`;
+    // Proxy the image through Next.js's built-in image optimizer.
+    // This solves CORS issues by loading from the same origin, 
+    // and Next.js already pre-optimizes/compresses the image for us.
+    const proxyUrl = `/_next/image?url=${encodeURIComponent(imageUrl)}&w=640&q=75`;
+    
+    // Add cache-buster to the proxy URL just in case
+    img.src = `${proxyUrl}&offline_bust=${Date.now()}`;
   });
 }
 

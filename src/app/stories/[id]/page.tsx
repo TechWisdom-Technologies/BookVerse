@@ -97,7 +97,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
     where: { id },
     include: {
       author: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true, _count: { select: { followers: true, following: true } } } },
-      chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true, content: true } },
+      chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true, content: true, illustrationUrl: true } },
       promotions: {
         where: { status: "ACTIVE", endDate: { gt: new Date() } },
         orderBy: { endDate: "asc" },
@@ -233,12 +233,19 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                   coverUrl={story.coverUrl}
                   author={story.author.displayName || story.author.username}
                   authorUsername={story.author.username}
-                  chapters={story.chapters.map((ch) => ({
-                    id: ch.id,
-                    title: ch.title,
-                    chapterOrder: ch.chapterOrder,
-                    htmlContent: renderChapterContentToHtml(ch.content),
-                  }))}
+                  chapters={story.chapters.map((ch) => {
+                    const rawHtml = renderChapterContentToHtml(ch.content);
+                    const illustrationHtml = ch.illustrationUrl 
+                      ? `<div style="margin-bottom: 2rem; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);"><img src="${ch.illustrationUrl}" alt="Chapter Illustration" style="width: 100%; height: auto; display: block;" /></div>` 
+                      : "";
+                    
+                    return {
+                      id: ch.id,
+                      title: ch.title,
+                      chapterOrder: ch.chapterOrder,
+                      htmlContent: illustrationHtml + rawHtml,
+                    };
+                  })}
                 />
               </div>
             )}

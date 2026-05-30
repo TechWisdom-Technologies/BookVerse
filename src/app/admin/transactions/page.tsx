@@ -138,28 +138,46 @@ export default function AdminTransactionsPage() {
         </header>
 
         {/* Surgical Search & Stats overview */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3 h-3 text-zinc-300" />
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+          <div className="relative w-full md:w-[400px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by TxnID, Mobile, User..."
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-md text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+              className="w-full pl-10 pr-4 py-2.5 bg-zinc-50/50 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs font-bold uppercase tracking-widest text-zinc-900 dark:text-white outline-none focus:border-indigo-500 dark:focus:border-indigo-400 transition-all shadow-sm"
             />
           </div>
 
           <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-amber-500" />
-              <span>{transactions.filter(t => t.status === "PENDING").length} Pending Audits</span>
+            <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-500/20">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span>{transactions.filter(t => t.status === "PENDING").length} Pending</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-lg border border-emerald-200 dark:border-emerald-500/20">
               <span className="w-2 h-2 rounded-full bg-emerald-500" />
               <span>{transactions.filter(t => t.status === "APPROVED").length} Approved</span>
             </div>
           </div>
+        </div>
+
+        {/* Fiscal Treasury Dashboards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12">
+          {[
+            { label: "Total Revenue Logged", value: `৳${transactions.filter(t => t.status === "APPROVED").reduce((acc, t) => acc + t.amount, 0).toLocaleString()}`, icon: CreditCard },
+            { label: "Pending Pipeline", value: `৳${transactions.filter(t => t.status === "PENDING").reduce((acc, t) => acc + t.amount, 0).toLocaleString()}`, icon: TrendingUp },
+            { label: "Transaction Volume", value: transactions.length.toLocaleString(), icon: Calendar },
+            { label: "Approval Rate", value: transactions.length ? `${((transactions.filter(t => t.status === "APPROVED").length / transactions.length) * 100).toFixed(1)}%` : "0%", icon: Check },
+          ].map((stat, i) => (
+            <div key={i} className="p-6 border border-zinc-200 dark:border-zinc-800/80 rounded-2xl bg-white dark:bg-zinc-900/40 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">{stat.label}</span>
+                <stat.icon className="w-4 h-4 text-zinc-400 dark:text-zinc-600" />
+              </div>
+              <div className="text-2xl font-black tracking-tight text-zinc-900 dark:text-white">{stat.value}</div>
+            </div>
+          ))}
         </div>
 
         {/* Audit Table */}
@@ -190,22 +208,33 @@ export default function AdminTransactionsPage() {
                 <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900">
                   {filteredTransactions.map((txn) => (
                     <tr key={txn.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
-                      <td className="py-4 px-6">
+                      <td className="py-5 px-6">
                         <div className="flex items-center gap-4">
-                          <div className="relative h-10 w-10 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
+                          <div className="relative h-11 w-11 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shrink-0">
                             {txn.user.avatarUrl ? (
                               <img src={txn.user.avatarUrl} alt="" className="absolute inset-0 w-full h-full object-cover transition-all" />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-zinc-350 uppercase">
+                              <div className="w-full h-full flex items-center justify-center text-xs font-bold text-zinc-400 uppercase">
                                 {txn.user.username.charAt(0)}
                               </div>
                             )}
                           </div>
                           <div>
-                            <p className="text-xs font-bold text-zinc-900 dark:text-white uppercase">
+                            <p className="text-xs font-black text-zinc-900 dark:text-white uppercase tracking-wide">
                               {txn.user.displayName || txn.user.username}
                             </p>
-                            <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest mt-0.5">@{txn.user.username}</p>
+                            <div className="flex items-center gap-2 mt-1">
+                              <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">@{txn.user.username}</p>
+                              {txn.user.membershipTier && (
+                                <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                                  txn.user.membershipTier === 'CREATOR' ? 'bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20' :
+                                  txn.user.membershipTier === 'PRO' ? 'bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20' :
+                                  'bg-zinc-100 text-zinc-600 border-zinc-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700'
+                                }`}>
+                                  Current: {txn.user.membershipTier}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -259,13 +288,15 @@ export default function AdminTransactionsPage() {
 
                           {txn.details?.type === "PROMOTION" && (
                             <div className="text-[10px] text-zinc-500 dark:text-zinc-400 leading-tight max-w-[185px] truncate">
-                              Story: <span className="font-bold text-zinc-950 dark:text-zinc-100 italic">"{txn.details.storyTitle}"</span>
+                              Story: <span className="font-bold text-zinc-900 dark:text-zinc-100 italic">"{txn.details.storyTitle}"</span>
                             </div>
                           )}
 
-                          <p className="text-[10px] font-bold text-zinc-350 dark:text-zinc-200">
-                            ৳{txn.amount.toLocaleString()} BDT
-                          </p>
+                          <div className="mt-1 flex flex-col">
+                            <span className="text-[11px] font-black tracking-tight text-emerald-600 dark:text-emerald-400">
+                              ৳{txn.amount.toLocaleString()} BDT
+                            </span>
+                          </div>
                         </div>
                       </td>
 

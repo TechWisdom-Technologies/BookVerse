@@ -93,6 +93,11 @@ interface Analytics {
     chapter: string;
     rate: number;
   }>;
+  creatorInsights?: {
+    followers: Array<{ id: string; username: string; displayName: string | null; avatarUrl: string | null }>;
+    subscribers: Array<{ id?: string; email?: string; username?: string; displayName?: string | null; avatarUrl?: string | null }>;
+    tippers: Array<{ amount: number; createdAt: string; sender: { id?: string; username: string; displayName?: string | null; avatarUrl?: string | null } }>;
+  };
 }
 
 type SortKey = 'title' | 'views' | 'reactions' | 'comments' | 'tips' | 'chapters' | 'engagementRate';
@@ -378,6 +383,94 @@ export default function AuthorAnalyticsPage() {
             </div>
           ))}
         </div>
+
+        {/* ========================================== */}
+        {/* EXCLUSIVE CREATOR INSIGHTS (WHO IS WHO) */}
+        {/* ========================================== */}
+        {analytics.creatorInsights && (
+          <section className="mb-16 space-y-8 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
+              <div>
+                <h2 className="text-sm font-black uppercase tracking-[0.2em]">Creator Demographics (Identities)</h2>
+                <p className="text-[10px] text-zinc-400 font-bold uppercase mt-0.5">Exclusive itemized identity lists of your audience base.</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Followers Identity List */}
+              <div className="p-6 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm max-h-[400px] flex flex-col">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">Recent Followers</h3>
+                <div className="overflow-y-auto space-y-4 pr-2 flex-1 scrollbar-thin">
+                  {analytics.creatorInsights.followers.length === 0 ? (
+                    <div className="text-[9px] text-zinc-500 uppercase tracking-widest py-10 text-center">No followers yet.</div>
+                  ) : (
+                    analytics.creatorInsights.followers.map((f, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 shrink-0 overflow-hidden">
+                          {f.avatarUrl ? <img src={f.avatarUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] font-bold">{f.username.charAt(0)}</div>}
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="text-[10px] font-bold uppercase truncate">{f.displayName || f.username}</p>
+                          <p className="text-[8px] text-zinc-400 uppercase tracking-wider truncate">@{f.username}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Subscribers Identity List */}
+              <div className="p-6 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm max-h-[400px] flex flex-col">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">Recent Subscribers</h3>
+                <div className="overflow-y-auto space-y-4 pr-2 flex-1 scrollbar-thin">
+                  {analytics.creatorInsights.subscribers.length === 0 ? (
+                    <div className="text-[9px] text-zinc-500 uppercase tracking-widest py-10 text-center">No subscribers yet.</div>
+                  ) : (
+                    analytics.creatorInsights.subscribers.map((s, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 shrink-0 overflow-hidden">
+                          {s.avatarUrl ? <img src={s.avatarUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] font-bold">{(s.username || s.email || '?').charAt(0)}</div>}
+                        </div>
+                        <div className="overflow-hidden">
+                          <p className="text-[10px] font-bold uppercase truncate">{s.displayName || s.username || 'Anonymous'}</p>
+                          <p className="text-[8px] text-zinc-400 uppercase tracking-wider truncate">{s.username ? `@${s.username}` : s.email}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Tippers Identity List */}
+              <div className="p-6 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm max-h-[400px] flex flex-col">
+                <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400 mb-4 pb-4 border-b border-zinc-100 dark:border-zinc-800">Recent Tippers</h3>
+                <div className="overflow-y-auto space-y-4 pr-2 flex-1 scrollbar-thin">
+                  {analytics.creatorInsights.tippers.length === 0 ? (
+                    <div className="text-[9px] text-zinc-500 uppercase tracking-widest py-10 text-center">No tips yet.</div>
+                  ) : (
+                    analytics.creatorInsights.tippers.map((t, i) => (
+                      <div key={i} className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 overflow-hidden">
+                          <div className="w-8 h-8 rounded bg-zinc-100 dark:bg-zinc-800 shrink-0 overflow-hidden">
+                            {t.sender?.avatarUrl ? <img src={t.sender.avatarUrl} alt="" className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center text-[10px] font-bold">{(t.sender?.username || '?').charAt(0)}</div>}
+                          </div>
+                          <div className="overflow-hidden">
+                            <p className="text-[10px] font-bold uppercase truncate">{t.sender?.displayName || t.sender?.username}</p>
+                            <p className="text-[8px] text-zinc-400 uppercase tracking-wider truncate">{t.sender?.username ? `@${t.sender.username}` : 'Anonymous'}</p>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-xs font-black text-emerald-500 font-mono">${(t.amount / 100).toFixed(2)}</p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ========================================== */}
         {/* 5 NEW ADVANCED PERFORMANCE ANALYTICS CARDS */}

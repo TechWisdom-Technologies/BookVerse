@@ -11,7 +11,6 @@ const TIERS = [
     description: 'Get started with BookVerse',
     features: [
       'Read unlimited public books',
-      'Create & publish stories',
       'Join book clubs',
       'Leave reviews and comments',
       'Basic profile page',
@@ -22,6 +21,23 @@ const TIERS = [
     ctaDisabled: true,
   },
   {
+    name: 'Author',
+    price: 99,
+    period: 'month',
+    description: 'For aspiring writers',
+    features: [
+      'Read unlimited public books',
+      'Create & publish stories',
+      'Upload custom book covers',
+      'Access to Author Dashboard',
+      'Join book clubs',
+      'Community access',
+    ],
+    popular: false,
+    cta: 'Become an Author',
+    ctaHref: '/premium/checkout?plan=author',
+  },
+  {
     name: 'Pro',
     price: 499,
     period: 'month',
@@ -29,7 +45,6 @@ const TIERS = [
     features: [
       'Everything in Free +',
       'Ad-free reading experience',
-      'Advanced analytics dashboard',
       'Priority support',
       'Custom profile badges',
       'Early access to new features',
@@ -48,6 +63,7 @@ const TIERS = [
     description: 'For serious authors and creators',
     features: [
       'Everything in Pro +',
+      'Advanced analytics dashboard',
       'Advanced monetization tools',
       'Exclusive creator dashboard',
       'Newsletter management',
@@ -90,7 +106,7 @@ export default function PremiumPage() {
         </header>
 
         {/* Pricing Tiers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 mb-20 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 mb-20 shadow-sm">
           {TIERS.map(tier => (
             <div
               key={tier.name}
@@ -160,24 +176,26 @@ export default function PremiumPage() {
                 <tr className="bg-zinc-50 dark:bg-zinc-900">
                   <th className="py-5 px-8 text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">Feature</th>
                   <th className="py-5 px-8 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">Free</th>
+                  <th className="py-5 px-8 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">Author</th>
                   <th className="py-5 px-8 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-900 dark:text-white border-b border-zinc-100 dark:border-zinc-800">Pro</th>
                   <th className="py-5 px-8 text-center text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 border-b border-zinc-100 dark:border-zinc-800">Creator</th>
                 </tr>
               </thead>
               <tbody className="text-[11px] font-medium text-zinc-500">
                 {[
-                  ['Reading Library', 'Full', 'Full', 'Full'],
-                  ['Publishing & Chapters', 'Full', 'Full', 'Full'],
-                  ['Ad-Free Experience', '-', 'Yes', 'Yes'],
-                  ['Analytics Dashboard', 'Basic', 'Advanced', 'Full'],
-                  ['Monetization Tools', '-', 'Basic', 'Advanced'],
-                  ['Newsletter Management', '-', '-', 'Yes'],
-                  ['Priority Support', '-', 'Standard', 'Premium']
-                ].map(([name, free, pro, creator]) => (
+                  ['Reading Library', 'Full', 'Full', 'Full', 'Full'],
+                  ['Publishing & Chapters', '-', 'Full', 'Full', 'Full'],
+                  ['Ad-Free Experience', '-', '-', 'Yes', 'Yes'],
+                  ['Analytics Dashboard', '-', 'Basic', '-', 'Advanced'],
+                  ['Monetization Tools', '-', '-', 'Basic', 'Advanced'],
+                  ['Newsletter Management', '-', '-', '-', 'Yes'],
+                  ['Priority Support', '-', 'Standard', 'Premium', 'Elite']
+                ].map(([name, free, author, pro, creator]) => (
                   <tr key={name as string} className="border-b border-zinc-50 dark:border-zinc-900 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                     <td className="py-5 px-8 font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-tighter">{name}</td>
                     <td className="py-5 px-8 text-center">{free}</td>
-                    <td className="py-5 px-8 text-center font-bold text-zinc-900 dark:text-zinc-100">{pro}</td>
+                    <td className="py-5 px-8 text-center font-bold text-zinc-900 dark:text-zinc-100">{author}</td>
+                    <td className="py-5 px-8 text-center">{pro}</td>
                     <td className="py-5 px-8 text-center">{creator}</td>
                   </tr>
                 ))}

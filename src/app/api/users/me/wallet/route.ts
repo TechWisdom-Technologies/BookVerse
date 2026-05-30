@@ -71,47 +71,50 @@ export async function GET() {
 
     const history: UnifiedTransaction[] = [];
 
-    tipsReceived.forEach(t => {
-      history.push({
-        id: t.id,
-        type: "TIP_RECEIVED",
-        amount: (t.amount / 100) * USD_TO_BDT, // convert to BDT
-        currency: "BDT",
-        status: t.status,
-        createdAt: t.createdAt,
-        description: `Received tip from @${t.sender?.username || 'anonymous'}${t.story ? ` on "${t.story.title}"` : ''}`,
-        method: t.stripeSessionId ? "Stripe (Card)" : (t.transactionId ? "Mobile Wallet" : "Card"),
+    const isCreator = await hasFeatureAccess(dbUser, 'CREATOR');
+    if (isCreator) {
+      tipsReceived.forEach(t => {
+        history.push({
+          id: t.id,
+          type: "TIP_RECEIVED",
+          amount: (t.amount / 100) * USD_TO_BDT, // convert to BDT
+          currency: "BDT",
+          status: t.status,
+          createdAt: t.createdAt,
+          description: `Received tip from @${t.sender?.username || 'anonymous'}${t.story ? ` on "${t.story.title}"` : ''}`,
+          method: t.stripeSessionId ? "Stripe (Card)" : (t.transactionId ? "Mobile Wallet" : "Card"),
+        });
       });
-    });
 
-    tipsSent.forEach(t => {
-      history.push({
-        id: t.id,
-        type: "TIP_SENT",
-        amount: (t.amount / 100) * USD_TO_BDT, // convert to BDT
-        currency: "BDT",
-        status: t.status,
-        createdAt: t.createdAt,
-        description: `Sent support tip to @${t.receiver?.username || 'author'}${t.story ? ` on "${t.story.title}"` : ''}`,
-        method: t.stripeSessionId ? "Stripe (Card)" : "Card",
+      tipsSent.forEach(t => {
+        history.push({
+          id: t.id,
+          type: "TIP_SENT",
+          amount: (t.amount / 100) * USD_TO_BDT, // convert to BDT
+          currency: "BDT",
+          status: t.status,
+          createdAt: t.createdAt,
+          description: `Sent support tip to @${t.receiver?.username || 'author'}${t.story ? ` on "${t.story.title}"` : ''}`,
+          method: t.stripeSessionId ? "Stripe (Card)" : "Card",
+        });
       });
-    });
 
-    subscriptions.forEach(s => {
-      history.push({
-        id: s.id,
-        type: "SUBSCRIPTION",
-        amount: s.amount,
-        currency: "BDT",
-        status: s.status,
-        createdAt: s.createdAt,
-        description: `Premium Upgrade: ${s.plan} (${s.duration} Month${s.duration > 1 ? 's' : ''})`,
-        method: s.senderNumber ? `bKash/Nagad (${s.senderNumber})` : "Mobile Pay",
+      subscriptions.forEach(s => {
+        history.push({
+          id: s.id,
+          type: "SUBSCRIPTION",
+          amount: s.amount,
+          currency: "BDT",
+          status: s.status,
+          createdAt: s.createdAt,
+          description: `Premium Upgrade: ${s.plan} (${s.duration} Month${s.duration > 1 ? 's' : ''})`,
+          method: s.senderNumber ? `bKash/Nagad (${s.senderNumber})` : "Mobile Pay",
+        });
       });
-    });
 
-    // Sort history by date descending
-    history.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      // Sort history by date descending
+      history.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
 
     return NextResponse.json({
       totalEarnedTips,
