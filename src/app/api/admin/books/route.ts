@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
-import { removeBook } from "@/lib/meilisearch";
 import { deleteFromR2 } from "@/lib/r2";
 
 /** Extract the R2 object key from a full public URL */
@@ -126,9 +125,8 @@ export async function DELETE(request: Request) {
     // Delete from database first
     await prisma.book.deleteMany({ where: { id: { in: idsToDelete } } });
 
-    // Remove from Meilisearch index and R2 storage (fire-and-forget, don't block response)
+    // Remove from R2 storage (fire-and-forget, don't block response)
     for (const book of booksToDelete) {
-      void removeBook(book.id);
       void safeDeleteR2(book.fileUrl);
       void safeDeleteR2(book.coverUrl);
     }

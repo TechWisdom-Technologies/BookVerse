@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
-import { indexStory, removeStory } from "@/lib/meilisearch";
+
 import { Role, type ReactionType } from "@prisma/client";
 import { createNotification } from "@/lib/notifications";
 import { publishScheduledChapters } from "@/lib/publish-chapters";
@@ -232,19 +232,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       }
     }
 
-    // Sync with Meilisearch when published status changes
     if (parsed.published === true && !existing.published) {
-      void indexStory({
-        id: story.id,
-        title: story.title,
-        summary: story.summary,
-        authorName: story.author.displayName || story.author.username,
-        published: true,
-        coverUrl: story.coverUrl,
-        createdAt: story.createdAt.toISOString(),
-        viewCount: story.viewCount,
-      });
-
       // Notify followers
       void prisma.follow.findMany({
         where: { followingId: story.authorId },
@@ -259,9 +247,6 @@ export async function PATCH(request: Request, { params }: RouteParams) {
           });
         }
       });
-
-    } else if (parsed.published === false) {
-      void removeStory(story.id);
     }
 
     return NextResponse.json({ story });
@@ -305,8 +290,6 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
 
     await prisma.story.delete({ where: { id } });
 
-    // Remove from Meilisearch index
-    void removeStory(id);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {

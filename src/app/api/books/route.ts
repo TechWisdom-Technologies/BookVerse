@@ -4,7 +4,6 @@ import { FileType, Role, type Prisma } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
 import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
 import { bookSchema } from "@/lib/validators";
-import { indexBook } from "@/lib/meilisearch";
 import { z } from "zod";
 
 function canUploadBooks(role: Role) {
@@ -143,19 +142,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // Index in Meilisearch (fire-and-forget)
-    void indexBook({
-      id: book.id,
-      title: book.title,
-      authorName: book.authorName,
-      genre: book.genre,
-      language: book.language,
-      description: book.description,
-      coverUrl: book.coverUrl,
-      fileType: book.fileType,
-      createdAt: book.createdAt.toISOString(),
-      downloadCount: book.downloadCount,
-    });
 
     return NextResponse.json({ book }, { status: 201 });
   } catch (error) {

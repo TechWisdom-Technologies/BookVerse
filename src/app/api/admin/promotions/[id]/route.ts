@@ -67,6 +67,14 @@ export async function POST(
             endDate: newEndDate,
           },
         }),
+        prisma.story.update({
+          where: { id: promo.storyId },
+          data: {
+            promotionScore: {
+              increment: promo.tier === "FEATURED" ? 500 : promo.tier === "PROMOTED" ? 200 : 100
+            }
+          }
+        }),
         ...(promo.transactionId
           ? [
               prisma.subscriptionTransaction.updateMany({

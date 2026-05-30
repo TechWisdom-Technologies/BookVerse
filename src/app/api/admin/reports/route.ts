@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
-import { removeStory } from "@/lib/meilisearch";
 import { createNotification } from "@/lib/notifications";
 
 export async function GET(request: Request) {
@@ -114,12 +113,6 @@ export async function PATCH(request: Request) {
         data: { published: false },
       });
 
-      // 2. Remove from Meilisearch index
-      try {
-        void removeStory(report.storyId);
-      } catch (meiliErr) {
-        console.error("Failed to remove story from Meilisearch index:", meiliErr);
-      }
 
       // 3. Send warning notification to author
       try {

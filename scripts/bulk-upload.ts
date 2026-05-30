@@ -6,7 +6,6 @@ import os from "os";
 import { execFileSync } from "child_process";
 import { randomUUID } from "crypto";
 import { uploadToR2 } from "../src/lib/r2";
-import { indexBook } from "../src/lib/meilisearch";
 
 // Load environment variables (supports .env.local and .env)
 config({ path: ".env.local" });
@@ -208,23 +207,6 @@ async function main() {
       console.log(`✅ Successfully registered book (ID: ${book.id}) in database.`);
       successCount++;
 
-      // 6. Index in Meilisearch
-      try {
-        await indexBook({
-          id: book.id,
-          title: book.title,
-          authorName: book.authorName,
-          genre: book.genre,
-          language: book.language,
-          description: book.description,
-          coverUrl: book.coverUrl,
-          fileType: book.fileType,
-          createdAt: book.createdAt.toISOString(),
-          downloadCount: book.downloadCount,
-        });
-      } catch (meiliError) {
-        // Meilisearch is optional, don't fail the whole upload
-      }
 
     } catch (e: any) {
       console.error(`❌ Error processing book ${file}:`, e.message || e);

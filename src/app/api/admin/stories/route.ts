@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
-import { removeStory } from "@/lib/meilisearch";
 
 export async function GET(request: Request) {
   try {
@@ -88,10 +87,6 @@ export async function PATCH(request: Request) {
       },
     });
 
-    // Remove from Meilisearch if unpublished
-    if (!published) {
-      void removeStory(storyId);
-    }
 
     return NextResponse.json({ story });
   } catch (error) {
@@ -127,8 +122,6 @@ export async function DELETE(request: Request) {
       );
     }
 
-    // Remove from Meilisearch index
-    void removeStory(storyId);
 
     await prisma.story.delete({ where: { id: storyId } });
 

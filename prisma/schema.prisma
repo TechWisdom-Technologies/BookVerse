@@ -219,6 +219,11 @@ model Story {
   contentWarnings String[] @default([])
   ageRating Int?     @default(0)
   tags      String[] @default([])
+  
+  // Fiverr-Style Search Fields
+  promotionScore Int @default(0) @map("promotion_score")
+  searchIndex String? @map("search_index")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

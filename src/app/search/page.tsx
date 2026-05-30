@@ -5,8 +5,25 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Loader2, BookOpen, ArrowLeft, Clock } from "lucide-react";
 import { SearchResults } from "@/components/search/SearchResults";
 import { Pagination } from "@/components/shared/Pagination";
-import type { SearchResult } from "@/lib/meilisearch";
-
+export type SearchResult = {
+  id: string;
+  _type: "book" | "story" | "universe" | "author";
+  title?: string;
+  name?: string;
+  username?: string;
+  authorName?: string;
+  displayName?: string;
+  genre?: string;
+  summary?: string;
+  description?: string;
+  coverUrl?: string | null;
+  avatarUrl?: string | null;
+  createdAt: string;
+  viewCount?: number;
+  downloadCount?: number;
+  storyCount?: number;
+  creatorName?: string;
+};
 function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();

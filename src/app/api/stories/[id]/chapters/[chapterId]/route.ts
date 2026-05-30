@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { v2 as cloudinary } from "cloudinary";
 import { deleteFromR2 } from "@/lib/r2";
+import { syncStorySearchIndex } from "@/lib/search-utils";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -133,6 +134,11 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       where: { id: chapterId },
       data: updateData,
     });
+    
+    // Sync search index asynchronously if content was updated
+    if (body.content !== undefined) {
+      void syncStorySearchIndex(storyId);
+    }
 
     return NextResponse.json({ chapter });
   } catch (error) {
@@ -186,6 +192,9 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
     if (chapter.illustrationUrl) {
       await deleteImage(chapter.illustrationUrl);
     }
+    
+    // Sync search index asynchronously
+    void syncStorySearchIndex(storyId);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
