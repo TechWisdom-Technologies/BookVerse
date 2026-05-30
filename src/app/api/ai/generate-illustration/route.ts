@@ -7,19 +7,22 @@ export const maxDuration = 60;
 
 /**
  * Generate an AI chapter illustration.
- * Strategy: Hugging Face (primary) → Pollinations (fallback)
+ * Strategy: Cloudflare Workers AI (primary) → Pollinations (fallback)
  */
-async function generateWithHuggingFace(prompt: string): Promise<Buffer | null> {
-  const token = process.env.HF_ACCESS_TOKEN;
-  if (!token) {
-    console.warn("[AI Illustration] No HF_ACCESS_TOKEN set, skipping Hugging Face.");
+async function generateWithCloudflare(prompt: string): Promise<Buffer | null> {
+  const token = process.env.CLOUDFLARE_AI_TOKEN;
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  
+  if (!token || !accountId) {
+    console.warn("[AI Illustration] Missing CLOUDFLARE_AI_TOKEN or CLOUDFLARE_ACCOUNT_ID, skipping Cloudflare.");
     return null;
   }
 
-  const model = "black-forest-labs/FLUX.1-schnell";
-  const apiUrl = `https://router.huggingface.co/hf-inference/models/${model}`;
+  // Cloudflare's incredibly fast SDXL Lightning model
+  const model = "@cf/bytedance/stable-diffusion-xl-lightning";
+  const apiUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`;
 
-  console.log("[AI Illustration] Trying Hugging Face:", model);
+  console.log("[AI Illustration] Trying Cloudflare Workers AI:", model);
 
   try {
     const res = await fetch(apiUrl, {
@@ -27,27 +30,16 @@ async function generateWithHuggingFace(prompt: string): Promise<Buffer | null> {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        Accept: "image/*",
       },
       body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          width: 1024,
-          height: 512,
-        },
+        prompt: prompt,
       }),
     });
 
     if (!res.ok) {
       const status = res.status;
       const body = await res.text().catch(() => "");
-      console.warn(`[AI Illustration] Hugging Face returned ${status}: ${body.slice(0, 200)}`);
-      return null;
-    }
-
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.startsWith("image/")) {
-      console.warn(`[AI Illustration] Hugging Face returned non-image content-type: ${contentType}`);
+      console.warn(`[AI Illustration] Cloudflare returned ${status}: ${body.slice(0, 200)}`);
       return null;
     }
 
@@ -55,14 +47,14 @@ async function generateWithHuggingFace(prompt: string): Promise<Buffer | null> {
     const buffer = Buffer.from(arrayBuffer);
 
     if (buffer.length < 5000) {
-      console.warn(`[AI Illustration] Hugging Face returned suspiciously small image (${buffer.length} bytes)`);
+      console.warn(`[AI Illustration] Cloudflare returned suspiciously small image (${buffer.length} bytes)`);
       return null;
     }
 
-    console.log(`[AI Illustration] Hugging Face success! Image size: ${buffer.length} bytes`);
+    console.log(`[AI Illustration] Cloudflare success! Image size: ${buffer.length} bytes`);
     return buffer;
   } catch (err) {
-    console.warn("[AI Illustration] Hugging Face fetch error:", err);
+    console.warn(`[AI Illustration] Cloudflare fetch error:`, err);
     return null;
   }
 }
@@ -121,11 +113,11 @@ export async function POST(request: Request) {
     // 2. Enhance prompt for Bangladeshi realistic black and white style
     const enhancedPrompt = `${englishPrompt}, set in Bangladesh, realistic photography, black and white, monochrome, high contrast, highly detailed, photorealistic, cinematic lighting, masterpiece`;
 
-    // Strategy: Try Hugging Face first, fallback to Pollinations
-    let imageBuffer = await generateWithHuggingFace(enhancedPrompt);
+    // Strategy: Try Cloudflare first, fallback to Pollinations
+    let imageBuffer = await generateWithCloudflare(enhancedPrompt);
 
     if (!imageBuffer) {
-      console.log("[AI Illustration] Hugging Face unavailable, falling back to Pollinations...");
+      console.log("[AI Illustration] Cloudflare unavailable, falling back to Pollinations...");
       imageBuffer = await generateWithPollinations(enhancedPrompt);
     }
 

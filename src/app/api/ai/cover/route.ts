@@ -6,20 +6,22 @@ export const maxDuration = 60;
 
 /**
  * Generate an AI book cover image.
- * Strategy: Hugging Face (primary) → Pollinations (fallback)
+ * Strategy: Cloudflare Workers AI (primary) → Pollinations (fallback)
  */
-async function generateWithHuggingFace(prompt: string): Promise<Buffer | null> {
-  const token = process.env.HF_ACCESS_TOKEN;
-  if (!token) {
-    console.warn("[AI Cover] No HF_ACCESS_TOKEN set, skipping Hugging Face.");
+async function generateWithCloudflare(prompt: string): Promise<Buffer | null> {
+  const token = process.env.CLOUDFLARE_AI_TOKEN;
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  
+  if (!token || !accountId) {
+    console.warn("[AI Cover] Missing CLOUDFLARE_AI_TOKEN or CLOUDFLARE_ACCOUNT_ID, skipping Cloudflare.");
     return null;
   }
 
-  // Use FLUX.1-schnell — fast, high quality, free-tier friendly
-  const model = "black-forest-labs/FLUX.1-schnell";
-  const apiUrl = `https://router.huggingface.co/hf-inference/models/${model}`;
+  // Cloudflare's incredibly fast SDXL Lightning model
+  const model = "@cf/bytedance/stable-diffusion-xl-lightning";
+  const apiUrl = `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/${model}`;
 
-  console.log("[AI Cover] Trying Hugging Face:", model);
+  console.log("[AI Cover] Trying Cloudflare Workers AI:", model);
 
   try {
     const res = await fetch(apiUrl, {
@@ -27,43 +29,31 @@ async function generateWithHuggingFace(prompt: string): Promise<Buffer | null> {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
-        Accept: "image/*",
       },
       body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          width: 512,
-          height: 768,
-        },
+        prompt: prompt,
       }),
     });
 
     if (!res.ok) {
       const status = res.status;
       const body = await res.text().catch(() => "");
-      console.warn(`[AI Cover] Hugging Face returned ${status}: ${body.slice(0, 200)}`);
-      return null; // Will trigger fallback
-    }
-
-    const contentType = res.headers.get("content-type") || "";
-    if (!contentType.startsWith("image/")) {
-      console.warn(`[AI Cover] Hugging Face returned non-image content-type: ${contentType}`);
+      console.warn(`[AI Cover] Cloudflare returned ${status}: ${body.slice(0, 200)}`);
       return null;
     }
 
     const arrayBuffer = await res.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Sanity check: image should be at least 5KB
     if (buffer.length < 5000) {
-      console.warn(`[AI Cover] Hugging Face returned suspiciously small image (${buffer.length} bytes)`);
+      console.warn(`[AI Cover] Cloudflare returned suspiciously small image (${buffer.length} bytes)`);
       return null;
     }
 
-    console.log(`[AI Cover] Hugging Face success! Image size: ${buffer.length} bytes`);
+    console.log(`[AI Cover] Cloudflare success! Image size: ${buffer.length} bytes`);
     return buffer;
   } catch (err) {
-    console.warn("[AI Cover] Hugging Face fetch error:", err);
+    console.warn(`[AI Cover] Cloudflare fetch error:`, err);
     return null;
   }
 }
@@ -105,11 +95,11 @@ export async function POST(req: Request) {
 
     const enhancedPrompt = `A professional, high-quality book cover design without any text. Style: ${prompt}. Cinematic lighting, highly detailed, centered composition, suitable for a novel cover.`;
 
-    // Strategy: Try Hugging Face first, fallback to Pollinations
-    let imageBuffer = await generateWithHuggingFace(enhancedPrompt);
+    // Strategy: Try Cloudflare first, fallback to Pollinations
+    let imageBuffer = await generateWithCloudflare(enhancedPrompt);
 
     if (!imageBuffer) {
-      console.log("[AI Cover] Hugging Face unavailable, falling back to Pollinations...");
+      console.log("[AI Cover] Cloudflare unavailable, falling back to Pollinations...");
       imageBuffer = await generateWithPollinations(enhancedPrompt);
     }
 
