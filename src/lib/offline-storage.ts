@@ -81,12 +81,17 @@ export async function compressImageToBase64(
       resolve(dataUrl);
     };
 
-    img.onerror = () => {
+    img.onerror = (e) => {
       // If CORS fails, return a placeholder
+      console.warn("Failed to load image for offline cover:", e);
       resolve("");
     };
 
-    img.src = imageUrl;
+    // Add a cache-busting query parameter. 
+    // If the browser already cached the image from the regular page load (without CORS headers),
+    // requesting it again with crossOrigin="anonymous" will fail due to the cached response lacking CORS headers.
+    const separator = imageUrl.includes("?") ? "&" : "?";
+    img.src = `${imageUrl}${separator}offline_bust=${Date.now()}`;
   });
 }
 

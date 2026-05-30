@@ -20,7 +20,7 @@ import { SaveOfflineButton } from "@/components/stories/SaveOfflineButton";
 import { PromotionBadge } from "@/components/promotions/PromotionBadge";
 import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
 import { StoryModerationActions } from "@/components/stories/StoryModerationActions";
-import { SaveOfflineButton } from "@/components/stories/SaveOfflineButton";
+
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -209,26 +209,6 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
 
         <StorySharingActions storyId={story.id} authorId={story.author.id} currentUserId={currentUserId} />
 
-        {/* Offline Save Button */}
-        <div className="my-6 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 p-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-            Offline Reading
-          </div>
-          <SaveOfflineButton
-            storyId={story.id}
-            title={story.title}
-            author={story.author.displayName || story.author.username}
-            authorUsername={story.author.username}
-            description={story.summary || ""}
-            coverUrl={story.coverUrl}
-            chapters={story.chapters.map((ch) => ({
-              id: ch.id,
-              title: ch.title,
-              chapterOrder: ch.chapterOrder,
-              htmlContent: renderChapterContentToHtml(ch.content),
-            }))}
-          />
-        </div>
 
         {/* Chapters Section */}
         <section className="mb-20">
@@ -248,17 +228,16 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
                 </Link>
                 <SaveOfflineButton
                   storyId={story.id}
-                  storyTitle={story.title}
-                  storySummary={story.summary}
-                  storyCoverUrl={story.coverUrl}
-                  authorName={story.author.displayName || story.author.username}
+                  title={story.title}
+                  description={story.summary || ""}
+                  coverUrl={story.coverUrl}
+                  author={story.author.displayName || story.author.username}
                   authorUsername={story.author.username}
-                  authorAvatarUrl={story.author.avatarUrl}
                   chapters={story.chapters.map((ch) => ({
                     id: ch.id,
                     title: ch.title,
                     chapterOrder: ch.chapterOrder,
-                    content: ch.content,
+                    htmlContent: renderChapterContentToHtml(ch.content),
                   }))}
                 />
               </div>
