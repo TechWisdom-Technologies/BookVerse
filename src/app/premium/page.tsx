@@ -39,18 +39,16 @@ const TIERS = [
   },
   {
     name: 'Pro',
-    price: 499,
+    price: 299,
     period: 'month',
     description: 'Perfect for active readers and authors',
     features: [
-      'Everything in Free +',
+      'Everything in Author +',
       'Ad-free reading experience',
       'Priority support',
-      'Custom profile badges',
+      'Unlock Achievements & Badges',
+      'Access to Wallet Dashboard',
       'Early access to new features',
-      'Enhanced author tools',
-      'Monthly reading goals tracking',
-      'Exclusive community events',
     ],
     popular: true,
     cta: 'Upgrade to Pro',
@@ -58,21 +56,18 @@ const TIERS = [
   },
   {
     name: 'Creator',
-    price: 999,
+    price: 799,
     period: 'month',
     description: 'For serious authors and creators',
     features: [
       'Everything in Pro +',
-      'Advanced analytics dashboard',
-      'Advanced monetization tools',
-      'Exclusive creator dashboard',
-      'Newsletter management',
-      'Beta reader program access',
-      'Custom landing page',
-      'Revenue analytics',
+      'Creator Demographics & Advanced Analytics',
+      'Create Story Polls & Voting',
+      'Gift Memberships to Readers',
+      'Unified Ledger History (Wallet)',
+      'Beta Reader Program Access',
+      'Newsletter Management',
       'Premium tier support',
-      'Co-author collaboration',
-      'Advanced formatting options',
     ],
     popular: false,
     cta: 'Upgrade to Creator',
@@ -186,17 +181,20 @@ export default function PremiumPage() {
                   ['Reading Library', 'Full', 'Full', 'Full', 'Full'],
                   ['Publishing & Chapters', '-', 'Full', 'Full', 'Full'],
                   ['Ad-Free Experience', '-', '-', 'Yes', 'Yes'],
-                  ['Analytics Dashboard', '-', 'Basic', '-', 'Advanced'],
-                  ['Monetization Tools', '-', '-', 'Basic', 'Advanced'],
-                  ['Newsletter Management', '-', '-', '-', 'Yes'],
+                  ['Wallet Dashboard', '-', '-', 'Basic', 'Full + Ledger'],
+                  ['Achievements & Badges', '-', '-', 'Yes', 'Yes'],
+                  ['Advanced Analytics', '-', '-', '-', 'Yes'],
+                  ['Story Polls & Voting', '-', '-', '-', 'Yes'],
+                  ['Gift Memberships', '-', '-', '-', 'Yes'],
+                  ['Beta Reader Program', '-', '-', '-', 'Yes'],
                   ['Priority Support', '-', 'Standard', 'Premium', 'Elite']
                 ].map(([name, free, author, pro, creator]) => (
                   <tr key={name as string} className="border-b border-zinc-50 dark:border-zinc-900 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                     <td className="py-5 px-8 font-bold text-zinc-900 dark:text-zinc-100 uppercase tracking-tighter">{name}</td>
                     <td className="py-5 px-8 text-center">{free}</td>
                     <td className="py-5 px-8 text-center font-bold text-zinc-900 dark:text-zinc-100">{author}</td>
-                    <td className="py-5 px-8 text-center">{pro}</td>
-                    <td className="py-5 px-8 text-center">{creator}</td>
+                    <td className="py-5 px-8 text-center font-bold text-blue-600 dark:text-blue-400">{pro}</td>
+                    <td className="py-5 px-8 text-center font-bold text-purple-600 dark:text-purple-400">{creator}</td>
                   </tr>
                 ))}
               </tbody>

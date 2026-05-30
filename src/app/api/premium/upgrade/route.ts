@@ -60,8 +60,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 499 BDT, CREATOR = 999 BDT per month)
-    const pricePerMonth = upperPlan === 'CREATOR' ? 999 : upperPlan === 'PRO' ? 499 : 99;
+    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 299 BDT, CREATOR = 799 BDT per month)
+    const pricePerMonth = upperPlan === 'CREATOR' ? 799 : upperPlan === 'PRO' ? 299 : 99;
     const amount = pricePerMonth * months;
 
     // Log the pending manual payment transaction

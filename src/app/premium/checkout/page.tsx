@@ -28,10 +28,10 @@ function CheckoutContent() {
   
   if (isCreator) {
     planName = 'CREATOR';
-    planPrice = 999;
+    planPrice = 799;
   } else if (isPro) {
     planName = 'PRO';
-    planPrice = 499;
+    planPrice = 299;
   }
 
   // Form & Method Selection States
