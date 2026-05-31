@@ -12,6 +12,7 @@ import { ReactNode } from "react";
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isAdminPath = pathname?.startsWith("/admin");
+  const isOfflinePath = pathname?.startsWith("/offline-stories");
 
   if (isAdminPath) {
     return (
@@ -26,7 +27,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
     <>
       <Navbar />
       <div className="flex-1">{children}</div>
-      <Footer />
+      {!isOfflinePath && <Footer />}
       <DevPhaseModal />
       <AdminInstructionModal />
       <AiLibrarianWidget />

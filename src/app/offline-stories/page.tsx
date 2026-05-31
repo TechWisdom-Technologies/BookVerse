@@ -48,6 +48,11 @@ function OfflineStoryReader({ id, onBack }: { id: string; onBack: () => void }) 
     loadStory();
   }, [id]);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentChapterIndex]);
+
+
   if (loading) {
     return (
       <div className="animate-pulse space-y-6">
