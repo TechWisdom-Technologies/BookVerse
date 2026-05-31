@@ -67,6 +67,13 @@ interface UniverseItem {
   stories: ContributedStory[];
 }
 
+interface SeriesItem {
+  id: string;
+  name: string;
+  description: string | null;
+  stories: ContributedStory[];
+}
+
 interface BookRequestItem {
   id: string;
   createdAt: string;
@@ -131,6 +138,7 @@ interface ScheduledItem {
 interface DashboardData {
   pendingInvites: InviteItem[];
   myUniverses: UniverseItem[];
+  mySeries: SeriesItem[];
   bookRequests: BookRequestItem[];
   stats: {
     totalStories: number;
@@ -294,6 +302,7 @@ export default function AuthorDashboardPage() {
   const {
     pendingInvites,
     myUniverses,
+    mySeries,
     bookRequests,
     stats,
     activePolls,
@@ -649,7 +658,77 @@ export default function AuthorDashboardPage() {
                 ))}
               </div>
             )}
+
+            {/* Series Block */}
+            <div className="flex items-center gap-2 mb-2 mt-12 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+              <Layers className="w-4 h-4 text-zinc-400" />
+              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Series & Works Registry</h2>
+            </div>
+
+            {mySeries?.length === 0 ? (
+              <div className="py-20 border border-dashed border-zinc-100 dark:border-zinc-900 rounded-3xl bg-zinc-50/5 flex flex-col items-center justify-center text-center p-6">
+                <Layers className="w-10 h-10 text-zinc-300 dark:text-zinc-800 mb-6" />
+                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic mb-2">No series established.</p>
+                <Link href="/write/series" className="px-6 py-2.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-[9px] font-bold uppercase tracking-widest rounded-xl hover:opacity-90 shadow">
+                  Establish a Series
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {mySeries?.map((series) => (
+                  <div
+                    key={series.id}
+                    className="p-6 bg-zinc-50/20 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-900 rounded-3xl space-y-6 shadow-sm"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider">{series.name}</h3>
+                        {series.description && <p className="text-xs text-zinc-400 max-w-lg mt-1 font-medium leading-relaxed line-clamp-1">{series.description}</p>}
+                      </div>
+                      <Link
+                        href={`/write/series`}
+                        className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800/80 hover:bg-indigo-500 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-zinc-200/40 dark:border-zinc-700/40 shrink-0"
+                      >
+                        Manage Series
+                      </Link>
+                    </div>
+
+                    <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/40 space-y-4">
+                      <h4 className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Manuscripts in Series</h4>
+                      {series.stories.length === 0 ? (
+                        <p className="text-xs text-zinc-400 italic">No manuscripts compiled in this series yet.</p>
+                      ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {series.stories.map((story) => (
+                            <Link
+                              href={`/write/story/${story.id}/edit`}
+                              key={story.id}
+                              className="p-4 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-2xl flex items-center gap-3 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all shadow-sm"
+                            >
+                              {story.coverUrl ? (
+                                <img src={story.coverUrl} className="w-10 h-14 object-cover rounded-lg shrink-0" />
+                              ) : (
+                                <div className="w-10 h-14 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shrink-0">
+                                  <BookOpen className="w-4 h-4 text-zinc-300" />
+                                </div>
+                              )}
+                              <div className="min-w-0">
+                                <h5 className="text-xs font-bold truncate pr-2">{story.title}</h5>
+                                <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider mt-1 truncate">
+                                  By {story.author.displayName || story.author.username}
+                                </p>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
 
           {/* Column 3: Recent Book Requests Feed */}
           <div className="space-y-6">

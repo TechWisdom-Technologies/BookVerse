@@ -93,6 +93,12 @@ interface Analytics {
     chapter: string;
     rate: number;
   }>;
+  collections: {
+    totalUniverseViews: number;
+    totalSeriesViews: number;
+    universes: Array<{ id: string; name: string; views: number; reactions: number; comments: number }>;
+    series: Array<{ id: string; name: string; views: number; reactions: number; comments: number }>;
+  };
   creatorInsights?: {
     followers: Array<{ id: string; username: string; displayName: string | null; avatarUrl: string | null }>;
     subscribers: Array<{ id?: string; email?: string; username?: string; displayName?: string | null; avatarUrl?: string | null }>;
@@ -244,7 +250,8 @@ export default function AuthorAnalyticsPage() {
     viralAmplification,
     focusIndex,
     annotationsHeatmap,
-    cohortRetention
+    cohortRetention,
+    collections
   } = analytics;
 
   // Compute sentiment breakdown
@@ -298,6 +305,78 @@ export default function AuthorAnalyticsPage() {
             </div>
           ))}
         </div>
+
+        {/* Collections (Universes & Series) Stats */}
+        <section className="mb-12 animate-fade-in">
+          <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+            <Layers className="w-4 h-4 text-zinc-400" />
+            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Collections Intelligence</h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Universes */}
+            <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/40">
+                <div className="flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-indigo-500" />
+                  <h3 className="text-xs font-black uppercase tracking-wider">Universes Performance</h3>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block">Total Views</span>
+                  <span className="text-sm font-black font-mono">{collections.totalUniverseViews.toLocaleString()}</span>
+                </div>
+              </div>
+              
+              {collections.universes.length === 0 ? (
+                <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest text-center py-6">No universes found</p>
+              ) : (
+                <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
+                  {collections.universes.map(u => (
+                    <div key={u.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/50 rounded-xl">
+                      <span className="text-[10px] font-black uppercase tracking-wider truncate max-w-[200px]" title={u.name}>{u.name}</span>
+                      <div className="flex items-center gap-4 text-[9px] font-bold uppercase font-mono">
+                        <span className="text-zinc-500" title="Views"><Eye className="w-3 h-3 inline mr-1 mb-0.5"/>{u.views}</span>
+                        <span className="text-emerald-500" title="Reactions"><Heart className="w-3 h-3 inline mr-1 mb-0.5"/>{u.reactions}</span>
+                        <span className="text-indigo-500" title="Comments"><MessageSquare className="w-3 h-3 inline mr-1 mb-0.5"/>{u.comments}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Series */}
+            <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm">
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-100 dark:border-zinc-800/40">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-indigo-500" />
+                  <h3 className="text-xs font-black uppercase tracking-wider">Series Performance</h3>
+                </div>
+                <div className="text-right">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block">Total Views</span>
+                  <span className="text-sm font-black font-mono">{collections.totalSeriesViews.toLocaleString()}</span>
+                </div>
+              </div>
+              
+              {collections.series.length === 0 ? (
+                <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-widest text-center py-6">No series found</p>
+              ) : (
+                <div className="space-y-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
+                  {collections.series.map(s => (
+                    <div key={s.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-4 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/50 rounded-xl">
+                      <span className="text-[10px] font-black uppercase tracking-wider truncate max-w-[200px]" title={s.name}>{s.name}</span>
+                      <div className="flex items-center gap-4 text-[9px] font-bold uppercase font-mono">
+                        <span className="text-zinc-500" title="Views"><Eye className="w-3 h-3 inline mr-1 mb-0.5"/>{s.views}</span>
+                        <span className="text-emerald-500" title="Reactions"><Heart className="w-3 h-3 inline mr-1 mb-0.5"/>{s.reactions}</span>
+                        <span className="text-indigo-500" title="Comments"><MessageSquare className="w-3 h-3 inline mr-1 mb-0.5"/>{s.comments}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* NEW FEATURE 4 & 5: Sentiment Metrics & Reader Progress Section */}
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
@@ -369,7 +448,7 @@ export default function AuthorAnalyticsPage() {
           {[
             { label: "Community Newsletter", val: `${stats.subscribers.toLocaleString()} subscribers`, icon: Users },
             { label: "Followers Count", val: `${stats.followers.toLocaleString()} readers`, icon: Users },
-            { label: "Fiscal Yield Snapshot", val: `$${stats.totalTipsAmount.toLocaleString()}`, icon: Coins, sub: `${stats.totalTips} total sponsorships` },
+            { label: "Fiscal Yield Snapshot", val: `৳${stats.totalTipsAmount.toLocaleString()}`, icon: Coins, sub: `${stats.totalTips} total sponsorships` },
           ].map((s, i) => (
             <div key={i} className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-2xl bg-zinc-50/20 dark:bg-zinc-900/10 backdrop-blur-sm shadow-sm flex flex-col justify-between min-h-[130px]">
               <div className="flex items-center justify-between">
@@ -461,7 +540,7 @@ export default function AuthorAnalyticsPage() {
                           </div>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-xs font-black text-emerald-500 font-mono">${(t.amount / 100).toFixed(2)}</p>
+                          <p className="text-xs font-black text-emerald-500 font-mono">৳{(t.amount / 100).toFixed(2)}</p>
                         </div>
                       </div>
                     ))
@@ -802,7 +881,7 @@ export default function AuthorAnalyticsPage() {
                         <td className="py-4 px-3 text-right text-rose-500">{story.reactions.toLocaleString()}</td>
                         <td className="py-4 px-3 text-right text-blue-500">{story.comments.toLocaleString()}</td>
                         <td className="py-4 px-3 text-right text-indigo-500">{er}%</td>
-                        <td className="py-4 px-3 text-right text-emerald-500">{story.tips > 0 ? `$${story.tips.toLocaleString()}` : '—'}</td>
+                        <td className="py-4 px-3 text-right text-emerald-500">{story.tips > 0 ? `৳${story.tips.toLocaleString()}` : '—'}</td>
                         <td className="py-4 px-3 text-center">
                           <span className={`text-[8px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg flex items-center justify-center gap-1.5 mx-auto w-fit ${
                             story.published ? "text-emerald-500 bg-emerald-500/5 border border-emerald-500/10" : "text-zinc-400 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800"

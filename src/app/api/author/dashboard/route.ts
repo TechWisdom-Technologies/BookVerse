@@ -70,6 +70,26 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     });
 
+    // 2.5 Fetch series owned by the user
+    const mySeries = await prisma.series.findMany({
+      where: { userId: user.id },
+      include: {
+        stories: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                displayName: true,
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
     // 3. Fetch fan book requests submitted for user's universes or series
     const bookRequests = await prisma.bookRequest.findMany({
       where: {
@@ -168,7 +188,7 @@ export async function GET() {
       orderBy: { releaseDateTime: 'asc' },
       take: 5,
     });
-    
+
     // Resolve scheduled stories title manually for correct rendering
     const scheduledStoryIds = scheduledChapters.map(c => c.storyId);
     const scheduledStoriesResolved = await prisma.story.findMany({
@@ -209,8 +229,8 @@ export async function GET() {
       return acc;
     }, {});
 
-    const avgAgeRating = myStoriesMeta.length > 0 
-      ? myStoriesMeta.reduce((sum, s) => sum + (s.ageRating || 0), 0) / myStoriesMeta.length 
+    const avgAgeRating = myStoriesMeta.length > 0
+      ? myStoriesMeta.reduce((sum, s) => sum + (s.ageRating || 0), 0) / myStoriesMeta.length
       : 13; // default recommendation
 
     // Feature 3: Gift Memberships Registry
@@ -321,6 +341,7 @@ export async function GET() {
     return NextResponse.json({
       pendingInvites,
       myUniverses,
+      mySeries,
       bookRequests,
       stats: {
         totalStories: storiesCount,

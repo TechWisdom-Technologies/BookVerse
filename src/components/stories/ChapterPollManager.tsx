@@ -269,6 +269,7 @@ export function ChapterPollManager({ storyId, chapterId, isAuthor, userId }: Cha
                   options={formattedOptions}
                   expiresAt={poll.expiresAt}
                   onVote={fetchPolls}
+                  userId={userId}
                 />
                 {isAuthor && (
                   <button

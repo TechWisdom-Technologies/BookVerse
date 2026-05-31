@@ -49,6 +49,44 @@ export async function GET() {
     );
     const totalTips = stories.reduce((sum, s) => sum + s.tips.length, 0);
 
+    // Fetch collections
+    const universes = await prisma.universe.findMany({
+      where: { userId: user.id },
+      include: {
+        stories: {
+          select: { viewCount: true, reactions: { select: { id: true } }, comments: { select: { id: true } } }
+        }
+      }
+    });
+
+    const seriesList = await prisma.series.findMany({
+      where: { userId: user.id },
+      include: {
+        stories: {
+          select: { viewCount: true, reactions: { select: { id: true } }, comments: { select: { id: true } } }
+        }
+      }
+    });
+
+    const universeAnalytics = universes.map(u => ({
+      id: u.id,
+      name: u.name,
+      views: u.stories.reduce((sum, s) => sum + s.viewCount, 0),
+      reactions: u.stories.reduce((sum, s) => sum + s.reactions.length, 0),
+      comments: u.stories.reduce((sum, s) => sum + s.comments.length, 0)
+    })).sort((a, b) => b.views - a.views);
+
+    const seriesAnalytics = seriesList.map(s => ({
+      id: s.id,
+      name: s.name,
+      views: s.stories.reduce((sum, s) => sum + s.viewCount, 0),
+      reactions: s.stories.reduce((sum, s) => sum + s.reactions.length, 0),
+      comments: s.stories.reduce((sum, s) => sum + s.comments.length, 0)
+    })).sort((a, b) => b.views - a.views);
+
+    const totalUniverseViews = universeAnalytics.reduce((sum, u) => sum + u.views, 0);
+    const totalSeriesViews = seriesAnalytics.reduce((sum, s) => sum + s.views, 0);
+
     // Get subscriber count
     const subscribers = await prisma.newsletterSubscriber.count({
       where: { authorId: user.id },
@@ -289,7 +327,13 @@ export async function GET() {
       viralAmplification,
       focusIndex,
       annotationsHeatmap,
-      cohortRetention
+      cohortRetention,
+      collections: {
+        totalUniverseViews,
+        totalSeriesViews,
+        universes: universeAnalytics,
+        series: seriesAnalytics,
+      }
     });
   } catch (error) {
     console.error('Error fetching analytics:', error);
