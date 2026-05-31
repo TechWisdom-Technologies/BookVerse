@@ -32,9 +32,9 @@ import {
   Menu,
   X,
   Sparkles,
-  Star,
   Wallet,
   Bookmark,
+  Star,
 } from "lucide-react";
 
 // Navigation item type
@@ -367,20 +367,27 @@ export function Navbar() {
       {mobileOpen && (
         <>
           <div
-            className="fixed inset-0 z-60 bg-zinc-950/40 backdrop-blur-sm"
+            className="fixed inset-0 z-60 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-500"
             onClick={() => setMobileOpen(false)}
           />
-          <aside className="fixed top-3 left-3 bottom-3 z-70 w-[min(88vw,20rem)] sm:w-80 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-3xl shadow-2xl p-4 animate-in slide-in-from-left duration-300 ease-out">
-            <div className="flex items-center justify-between mb-4">
-              <Link href="/" onClick={() => setMobileOpen(false)} className="font-bold uppercase tracking-widest">Home</Link>
-              <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-2">
-                <X size={20} />
+          <aside className="fixed top-0 left-0 bottom-0 z-70 w-[min(90vw,22rem)] bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border-r border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl p-6 animate-in slide-in-from-left fade-in zoom-in-95 duration-500 ease-out">
+            <div className="flex items-center justify-between mb-5 pb-3 border-b border-zinc-200/50 dark:border-zinc-800/50">
+              <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 font-black text-base tracking-tight">
+                <div className="w-6 h-6 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                  <img src="/bookverse.png" alt="BookVerse" className="w-full h-full object-cover" />
+                </div>
+                BookVerse
+              </Link>
+              <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="p-1.5 rounded-xl text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white transition-all duration-200">
+                <X size={18} />
               </button>
             </div>
 
-            <nav className="space-y-2 overflow-y-auto h-[calc(100%-64px)] pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700/80">
+            <nav className="space-y-6 overflow-y-auto h-[calc(100%-80px)] pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700/80">
               <div>
-                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Main</h3>
+                <div className="mb-3 px-2">
+                  <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Main</h3>
+                </div>
                 {leftItems.map((item) => (
                   <DropdownItem
                     key={item.href}
@@ -392,8 +399,10 @@ export function Navbar() {
                 ))}
               </div>
 
-              <div className="mt-3">
-                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Explore</h3>
+              <div>
+                <div className="mb-3 px-2">
+                  <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Explore</h3>
+                </div>
                 {rightItems.map((item) => (
                   <DropdownItem
                     key={item.href}
@@ -405,21 +414,23 @@ export function Navbar() {
                 ))}
               </div>
 
-              <div className="mt-3">
-                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2">Account</h3>
+              <div>
+                <div className="mb-3 px-2">
+                  <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Account</h3>
+                </div>
                 {loading ? (
-                  <div className="h-10 w-full bg-zinc-50 dark:bg-zinc-900 animate-pulse rounded" />
+                  <div className="h-10 w-full bg-zinc-100 dark:bg-zinc-900 animate-pulse rounded-xl" />
                 ) : user ? (
-                  <>
+                  <div className="space-y-1">
                     <DropdownItem href={`/profile/${dbUser?.username || ""}`} icon={User} label="My Profile" onClick={() => setMobileOpen(false)} />
                     <DropdownItem href="/settings" icon={Settings} label="Settings" onClick={() => setMobileOpen(false)} />
-                  </>
+                  </div>
                 ) : (
-                  <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 px-4 py-3 rounded text-zinc-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white">
-                    <div className="w-8 h-8 rounded flex items-center justify-center bg-zinc-50 dark:bg-zinc-900 text-zinc-300">
+                  <Link href="/login" onClick={() => setMobileOpen(false)} className="flex items-center gap-4 px-4 py-3.5 rounded-xl text-zinc-600 hover:bg-zinc-100 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white transition-all duration-200 group">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-400 group-hover:bg-zinc-200 dark:group-hover:bg-zinc-700 transition-colors">
                       <User size={14} />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Sign In</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em]">Sign In</span>
                   </Link>
                 )}
               </div>
@@ -431,18 +442,18 @@ export function Navbar() {
       {profileOpen && user && (
         <>
           <div
-            className="fixed inset-0 z-60 bg-zinc-950/30 backdrop-blur-sm transition-opacity duration-300"
+            className="fixed inset-0 z-60 bg-zinc-950/60 backdrop-blur-md animate-in fade-in duration-500"
             onClick={() => setProfileOpen(false)}
           />
-          <div className="fixed top-0 right-0 h-full w-80 z-70 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-xl border-l border-zinc-100 dark:border-zinc-900 shadow-2xl animate-in slide-in-from-right duration-300 ease-out">
+          <div className="fixed top-0 right-0 h-full w-[min(90vw,22rem)] z-70 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-2xl border-l border-zinc-200/50 dark:border-zinc-800/50 shadow-2xl animate-in slide-in-from-right fade-in zoom-in-[0.98] duration-500 ease-out">
             <div className="h-full flex flex-col">
               {/* Header */}
-              <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
+              <div className="p-5 border-b border-zinc-200/50 dark:border-zinc-800/50 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-[40px] pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-sky-500/10 rounded-full blur-[40px] pointer-events-none" />
 
-                <div className="flex items-center gap-4 relative z-10 pr-12">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md flex-shrink-0">
+                <div className="flex items-center gap-4 relative z-10 pr-10">
+                  <div className="w-12 h-12 rounded-xl overflow-hidden border-2 border-white dark:border-zinc-900 bg-zinc-100 dark:bg-zinc-800 shadow-md flex-shrink-0">
                     {dbUser?.avatarUrl ? (
                       <img
                         src={dbUser.avatarUrl}
@@ -450,8 +461,8 @@ export function Navbar() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 font-bold text-sm uppercase">
-                        {dbUser?.username?.[0]?.toUpperCase() || <User size={24} />}
+                      <div className="w-full h-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center text-zinc-400 font-bold text-lg uppercase">
+                        {dbUser?.username?.[0]?.toUpperCase() || <User size={20} />}
                       </div>
                     )}
                   </div>
@@ -459,12 +470,12 @@ export function Navbar() {
                     <p className="font-black text-sm text-zinc-900 dark:text-white truncate uppercase tracking-tight leading-snug">
                       {dbUser?.displayName || dbUser?.username}
                     </p>
-                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest truncate mt-0.5">
+                    <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest truncate mt-0.5">
                       @{dbUser?.username}
                     </p>
                     {dbUser?.role === "ADMIN" && (
-                      <div className="mt-1.5 flex">
-                        <span className="px-2 py-0.5 bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-[8px] font-black uppercase tracking-widest rounded-lg">
+                      <div className="mt-1 flex">
+                        <span className="px-2 py-0.5 bg-indigo-600 text-white text-[8px] font-black uppercase tracking-widest rounded shadow-sm">
                           Admin
                         </span>
                       </div>
@@ -472,221 +483,101 @@ export function Navbar() {
                   </div>
                 </div>
 
-                {/* Sign Out Button - placed absolutely on top right of the header card to avoid collision */}
+                {/* Sign Out Button */}
                 <button
                   onClick={() => {
                     signOut();
                     setProfileOpen(false);
                   }}
-                  className="absolute top-6 right-6 z-20 p-2.5 rounded-xl bg-rose-500/10 dark:bg-rose-500/20 border border-rose-500/20 dark:border-rose-500/30 text-rose-500 dark:text-rose-450 hover:bg-rose-500 dark:hover:bg-rose-500 hover:text-white dark:hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm"
+                  className="absolute top-5 right-5 z-20 p-2 rounded-lg bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-450 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white transition-all duration-300 hover:scale-105 active:scale-95 shadow-sm"
                   title="Sign Out"
                   aria-label="Sign Out"
                 >
-                  <LogOut size={16} />
+                  <LogOut size={14} />
                 </button>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-3 mt-6 relative z-10">
-                  <div className="text-center p-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/40 shadow-sm hover:scale-105 transition-all duration-300">
-                    <div className="font-black text-sm text-zinc-900 dark:text-white">{dbUser?._count?.stories ?? 0}</div>
-                    <div className="text-[8px] uppercase tracking-widest text-zinc-450 font-bold">Stories</div>
+                <div className="grid grid-cols-3 gap-2 mt-5 relative z-10">
+                  <div className="text-center p-2.5 bg-white/50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm hover:scale-105 hover:bg-white dark:hover:bg-zinc-900 transition-all duration-300">
+                    <div className="font-black text-xs text-zinc-900 dark:text-white">{dbUser?._count?.stories ?? 0}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-zinc-500 font-bold mt-0.5">Stories</div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/40 shadow-sm hover:scale-105 transition-all duration-300">
-                    <div className="font-black text-sm text-zinc-900 dark:text-white">{dbUser?._count?.followers ?? 0}</div>
-                    <div className="text-[8px] uppercase tracking-widest text-zinc-450 font-bold">Followers</div>
+                  <div className="text-center p-2.5 bg-white/50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm hover:scale-105 hover:bg-white dark:hover:bg-zinc-900 transition-all duration-300">
+                    <div className="font-black text-xs text-zinc-900 dark:text-white">{dbUser?._count?.followers ?? 0}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-zinc-500 font-bold mt-0.5">Followers</div>
                   </div>
-                  <div className="text-center p-3 bg-zinc-50/50 dark:bg-zinc-900/40 rounded-2xl border border-zinc-100/50 dark:border-zinc-800/40 shadow-sm hover:scale-105 transition-all duration-300">
-                    <div className="font-black text-sm text-zinc-900 dark:text-white">{dbUser?._count?.following ?? 0}</div>
-                    <div className="text-[8px] uppercase tracking-widest text-zinc-450 font-bold">Following</div>
+                  <div className="text-center p-2.5 bg-white/50 dark:bg-zinc-900/50 rounded-xl border border-zinc-200/50 dark:border-zinc-800/50 shadow-sm hover:scale-105 hover:bg-white dark:hover:bg-zinc-900 transition-all duration-300">
+                    <div className="font-black text-xs text-zinc-900 dark:text-white">{dbUser?._count?.following ?? 0}</div>
+                    <div className="text-[8px] uppercase tracking-widest text-zinc-500 font-bold mt-0.5">Following</div>
                   </div>
                 </div>
               </div>
 
               {/* Menu */}
-              <div className="flex-1 overflow-y-auto py-6 px-4 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700/80">
+              <div className="flex-1 overflow-y-auto py-8 px-6 space-y-8 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-200 dark:[&::-webkit-scrollbar-thumb]:bg-zinc-800/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-zinc-300 dark:hover:[&::-webkit-scrollbar-thumb]:bg-zinc-700/80">
                 {/* Mobile-only Explore Section */}
-                <div className="md:hidden border-b border-zinc-100 dark:border-zinc-900 pb-6">
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Explore</h3>
-                  <DropdownItem
-                    href="/stories"
-                    icon={Feather}
-                    label="Stories"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/universes"
-                    icon={Globe}
-                    label="Universes"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/series"
-                    icon={Layers}
-                    label="Series"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/clubs"
-                    icon={User}
-                    label="Clubs"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/search"
-                    icon={Search}
-                    label="Search"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/activity-feed"
-                    icon={MessageSquare}
-                    label="Feed"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/support"
-                    icon={HelpCircle}
-                    label="Support"
-                    onClick={() => setProfileOpen(false)}
-                  />
+                <div className="md:hidden">
+                  <div className="mb-3 px-2">
+                    <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Explore</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <DropdownItem href="/stories" icon={Feather} label="Stories" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/universes" icon={Globe} label="Universes" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/series" icon={Layers} label="Series" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/clubs" icon={User} label="Clubs" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/search" icon={Search} label="Search" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/activity-feed" icon={MessageSquare} label="Feed" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/support" icon={HelpCircle} label="Support" onClick={() => setProfileOpen(false)} />
+                  </div>
                 </div>
 
                 {/* Account Core */}
                 <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Registry</h3>
-                  <DropdownItem
-                    href={`/profile/${dbUser?.username || ""}`}
-                    icon={User}
-                    label="My Profile"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/dashboard"
-                    icon={Sparkles}
-                    label="Author Dashboard"
-                    highlight
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/author/analytics"
-                    icon={BarChart3}
-                    label="Analytics"
-                    badge="PRO"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/shelf"
-                    icon={BookMarked}
-                    label="My Library"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/offline-stories"
-                    icon={Bookmark}
-                    label="Offline Stories"
-                    onClick={() => setProfileOpen(false)}
-                  />
+                  <div className="mb-3 px-2">
+                    <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Registry</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <DropdownItem href={`/profile/${dbUser?.username || ""}`} icon={User} label="My Profile" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/write/dashboard" icon={Sparkles} label="Author Dashboard" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/author/analytics" icon={BarChart3} label="Analytics" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/shelf" icon={BookMarked} label="My Library" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/offline-stories" icon={Bookmark} label="Offline Stories" onClick={() => setProfileOpen(false)} />
+                  </div>
                 </div>
 
                 {/* Author Studio Menus */}
                 <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Author</h3>
-                  <DropdownItem
-                    href="/wallet"
-                    icon={Wallet}
-                    label="Wallet"
-                    badge="PRO"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write"
-                    icon={PenLine}
-                    label="Author Studio"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/new"
-                    icon={PlusCircle}
-                    label="New Story"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/universes"
-                    icon={Globe}
-                    label="Story Universes"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/write/series"
-                    icon={Layers}
-                    label="Story Series"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/author/newsletter"
-                    icon={Mail}
-                    label="Newsletter & Fans"
-                    badge="PRO"
-                    highlight
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
-                    <DropdownItem
-                      href="/upload"
-                      icon={Upload}
-                      label="Upload Book"
-                      onClick={() => setProfileOpen(false)}
-                    />
-                  )}
+                  <div className="mb-3 px-2">
+                    <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Author</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <DropdownItem href="/wallet" icon={Wallet} label="Wallet" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/write" icon={PenLine} label="Author Studio" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/write/new" icon={PlusCircle} label="New Story" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/write/universes" icon={Globe} label="Story Universes" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/write/series" icon={Layers} label="Story Series" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/author/newsletter" icon={Mail} label="Newsletter & Fans" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
+                      <DropdownItem href="/upload" icon={Upload} label="Upload Book" onClick={() => setProfileOpen(false)} />
+                    )}
+                  </div>
                 </div>
 
                 {/* Activity & Support */}
                 <div>
-                  <h3 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 px-4 italic">Activity & More</h3>
-                  <DropdownItem
-                    href="/reading-challenges"
-                    icon={Trophy}
-                    label="Challenges"
-                    badge="PRO"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/settings"
-                    icon={Settings}
-                    label="Settings"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/docs"
-                    icon={BookOpen}
-                    label="Documentation"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/premium"
-                    icon={Premium}
-                    label="Premium"
-                    badge="PRO"
-                    highlight
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  <DropdownItem
-                    href="/gifts"
-                    icon={Gift}
-                    label="Gifts"
-                    badge="PRO"
-                    onClick={() => setProfileOpen(false)}
-                  />
-                  {dbUser?.role === "ADMIN" && (
-                    <DropdownItem
-                      href="/admin"
-                      icon={Shield}
-                      label="Admin Panel"
-                      badge="ADMIN"
-                      highlight
-                      onClick={() => setProfileOpen(false)}
-                    />
-                  )}
+                  <div className="mb-3 px-2">
+                    <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Activity & More</h3>
+                  </div>
+                  <div className="space-y-1">
+                    <DropdownItem href="/reading-challenges" icon={Trophy} label="Challenges" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/settings" icon={Settings} label="Settings" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/docs" icon={BookOpen} label="Documentation" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/premium" icon={Premium} label="Premium" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/gifts" icon={Gift} label="Gifts" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    {dbUser?.role === "ADMIN" && (
+                      <DropdownItem href="/admin" icon={Shield} label="Admin Panel" badge="ADMIN" onClick={() => setProfileOpen(false)} />
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

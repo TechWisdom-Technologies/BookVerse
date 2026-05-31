@@ -149,3 +149,45 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    const { dbUser } = await verifyToken();
+
+    if (dbUser.role !== Role.ADMIN) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { id, title, authorName, genre, description, language } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
+    }
+
+    const updatedBook = await prisma.book.update({
+      where: { id },
+      data: {
+        title,
+        authorName,
+        genre,
+        description,
+        language,
+      },
+    });
+
+    return NextResponse.json({ book: updatedBook });
+  } catch (error) {
+    if (error instanceof Error && error.message === "UNAUTHORIZED") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      return NextResponse.json({ error: "Book not found" }, { status: 404 });
+    }
+    console.error("PATCH /api/admin/books error:", error);
+    return NextResponse.json(
+      { error: "Failed to update book" },
+      { status: 500 }
+    );
+  }
+}
