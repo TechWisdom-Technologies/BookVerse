@@ -159,6 +159,7 @@ export function Navbar() {
   const { user, dbUser, loading, signOut } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [hasNewFeed, setHasNewFeed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLibrarianOpen, setIsLibrarianOpen] = useState(false);
 
@@ -166,8 +167,15 @@ export function Navbar() {
     const handleState = (e: Event) => {
       setIsLibrarianOpen((e as CustomEvent).detail);
     };
+    const handleFeedVisit = () => {
+      setHasNewFeed(false);
+    };
     window.addEventListener("ai-librarian-state", handleState);
-    return () => window.removeEventListener("ai-librarian-state", handleState);
+    window.addEventListener("feed-visited", handleFeedVisit);
+    return () => {
+      window.removeEventListener("ai-librarian-state", handleState);
+      window.removeEventListener("feed-visited", handleFeedVisit);
+    };
   }, []);
 
   useEffect(() => {
@@ -180,6 +188,19 @@ export function Navbar() {
           }
         })
         .catch(err => console.error("Failed to fetch unread notifications", err));
+        
+      fetch("/api/activity-feed")
+        .then(res => res.json())
+        .then(data => {
+          if (data.activities && data.activities.length > 0) {
+            const latestFeedTime = new Date(data.activities[0].timestamp).getTime();
+            const lastVisitedStr = localStorage.getItem('lastVisitedFeedAt');
+            if (!lastVisitedStr || new Date(lastVisitedStr).getTime() < latestFeedTime) {
+              setHasNewFeed(true);
+            }
+          }
+        })
+        .catch(err => console.error("Failed to fetch feed", err));
     }
   }, [user, loading, pathname]);
 
@@ -206,7 +227,12 @@ export function Navbar() {
       { href: "/support", label: "Support", icon: HelpCircle },
       ...leftNavItems,
     ];
-  const rightItems = user ? [...rightNavItems, ...authRightItems] : rightNavItems;
+  const rightItems = (user ? [...rightNavItems, ...authRightItems] : rightNavItems).map(item => {
+    if (item.label === "Feed") {
+      return { ...item, badge: hasNewFeed };
+    }
+    return item;
+  });
 
   return (
     <>
@@ -526,7 +552,7 @@ export function Navbar() {
                     <DropdownItem href="/series" icon={Layers} label="Series" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/clubs" icon={User} label="Clubs" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/search" icon={Search} label="Search" onClick={() => setProfileOpen(false)} />
-                    <DropdownItem href="/activity-feed" icon={MessageSquare} label="Feed" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/activity-feed" icon={MessageSquare} label="Feed" badge={hasNewFeed ? "NEW" : undefined} onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/support" icon={HelpCircle} label="Support" onClick={() => setProfileOpen(false)} />
                   </div>
                 </div>

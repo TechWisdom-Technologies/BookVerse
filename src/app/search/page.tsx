@@ -85,7 +85,7 @@ function SearchContent() {
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        
+
         {/* Simple Header */}
         <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
@@ -131,11 +131,10 @@ function SearchContent() {
               <button
                 key={t}
                 onClick={() => handleTypeChange(t)}
-                className={`px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border ${
-                  typeParam === t
+                className={`px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border ${typeParam === t
                     ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white"
                     : "bg-transparent border-zinc-100 dark:border-zinc-900 text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-                }`}
+                  }`}
               >
                 {t}
               </button>

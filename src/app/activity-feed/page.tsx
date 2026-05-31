@@ -36,6 +36,10 @@ export default function ActivityFeedPage() {
         if (res.ok) {
           const data = await res.json();
           setActivities(data.activities);
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('lastVisitedFeedAt', new Date().toISOString());
+            window.dispatchEvent(new Event('feed-visited'));
+          }
         }
       } finally { setLoading(false); }
     };

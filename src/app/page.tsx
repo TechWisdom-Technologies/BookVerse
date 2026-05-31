@@ -40,13 +40,13 @@ import { StoryGrid } from "@/components/stories/StoryGrid";
 
 export const dynamic = "force-dynamic";
 
-const categories = [
-  { name: "Fiction", count: "2.4K", icon: BookOpen, color: "text-zinc-400" },
-  { name: "Mystery", count: "1.2K", icon: Search, color: "text-zinc-400" },
-  { name: "Romance", count: "3.1K", icon: Heart, color: "text-zinc-400" },
-  { name: "Sci-Fi", count: "0.8K", icon: Sparkles, color: "text-zinc-400" },
-  { name: "Fantasy", count: "1.5K", icon: Star, color: "text-zinc-400" },
-  { name: "Biography", count: "0.7K", icon: Users, color: "text-zinc-400" },
+const categoriesBase = [
+  { name: "Fiction", icon: BookOpen, color: "text-zinc-400" },
+  { name: "Mystery", icon: Search, color: "text-zinc-400" },
+  { name: "Romance", icon: Heart, color: "text-zinc-400" },
+  { name: "Sci-Fi", icon: Sparkles, color: "text-zinc-400" },
+  { name: "Fantasy", icon: Star, color: "text-zinc-400" },
+  { name: "Biography", icon: Users, color: "text-zinc-400" },
 ];
 
 const features = [
@@ -76,8 +76,8 @@ const getUniverseGraphic = (name: string) => {
 export default async function HomePage() {
   try {
     const [featured, recent, universes, stories, promotedStories, activePromotions] = await Promise.all([
-      prisma.book.findMany({ take: 6, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
-      prisma.book.findMany({ take: 6, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
+      prisma.book.findMany({ take: 8, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
+      prisma.book.findMany({ take: 8, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
       prisma.universe.findMany({
         take: 4,
         orderBy: { createdAt: "desc" },
@@ -154,6 +154,20 @@ export default async function HomePage() {
     };
 
     const [featuredWithRatings, recentWithRatings] = await Promise.all([addRatings(featured), addRatings(recent)]);
+    
+    const categoriesWithCounts = await Promise.all(
+      categoriesBase.map(async (cat) => {
+        const [bookCount, storyCount] = await Promise.all([
+          prisma.book.count({ where: { genre: { contains: cat.name, mode: 'insensitive' } } }),
+          prisma.story.count({ where: { genre: { contains: cat.name, mode: 'insensitive' } } })
+        ]);
+        const total = bookCount + storyCount;
+        return {
+          ...cat,
+          count: total > 1000 ? (total / 1000).toFixed(1) + 'K' : total.toString(),
+        };
+      })
+    );
     
     const formattedStories = stories.map(story => {
       const activePromo = activePromotions.find((ap: { storyId: string; tier: string }) => ap.storyId === story.id);
@@ -286,7 +300,7 @@ export default async function HomePage() {
               <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">Browse by Category</h2>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 shadow-sm">
-              {categories.map((cat) => (
+              {categoriesWithCounts.map((cat) => (
                 <Link key={cat.name} href={`/library?genre=${cat.name}`} className="p-10 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all text-center group">
                   <cat.icon className={`w-5 h-5 mx-auto mb-6 opacity-20 group-hover:opacity-100 transition-all duration-500`} />
                   <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">{cat.name}</h3>

@@ -22,7 +22,7 @@ interface BookGridProps {
 export function BookGrid({ books, loading }: BookGridProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 8 }).map((_, index) => (
           <div key={index} className="space-y-3 animate-pulse">
             <div className="aspect-[2/3] rounded-lg bg-zinc-200 dark:bg-zinc-800" />
@@ -46,7 +46,7 @@ export function BookGrid({ books, loading }: BookGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {books.map((book) => (
         <BookCard key={book.id} book={book} />
       ))}

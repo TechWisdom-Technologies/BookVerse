@@ -64,7 +64,7 @@ export async function POST(req: Request) {
             type: "TIP",
             title: "You received a Tip!",
             message: `${completedTip.sender?.displayName || completedTip.sender?.username || 'Someone'} sent you a tip of ${(completedTip.amount / 100).toFixed(2)}!`,
-            link: `/profile`,
+            link: `/wallet`,
           });
         }
       }

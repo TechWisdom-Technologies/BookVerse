@@ -95,57 +95,53 @@ export default function SeriesExplorationPage() {
             <Link
               key={s.id}
               href={`/series/${s.id}`}
-              className="group flex flex-col border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all relative overflow-hidden shadow-sm"
+              className="group block relative rounded-xl bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 transition-all hover:border-zinc-300 dark:hover:border-zinc-700 overflow-hidden shadow-sm hover:shadow-md"
             >
-              {/* Series Cover */}
-              <div className="h-48 w-full overflow-hidden relative">
-                {s.coverUrl ? (
-                  <img
-                    src={s.coverUrl}
-                    alt=""
-                    className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className={`w-full h-full bg-gradient-to-br ${getSeriesGraphic(s.name)} flex flex-col items-center justify-center p-6 text-center relative overflow-hidden`}>
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_60%)] animate-pulse duration-1000" />
-                    <div className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-white/10 blur-xl" />
-                    <div className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-black/20 blur-xl" />
-                    
-                    <Layers className="w-10 h-10 text-white/90 drop-shadow-md mb-2 relative z-10" />
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-white/80 relative z-10 drop-shadow-sm">
-                      Serialized Saga
-                    </span>
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent opacity-60" />
-              </div>
-
-              {/* Card Content */}
-              <div className="p-6 space-y-4 relative z-10 flex-1 flex flex-col">
-                <div className="flex-1">
-                  <h3 className="text-sm font-bold mb-2 tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors uppercase">
-                    {s.name}
-                  </h3>
-                  <p className="text-[11px] text-zinc-500 font-medium line-clamp-2 leading-relaxed">
-                    {s.description || 'No description provided.'}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between mt-auto">
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[8px] font-bold overflow-hidden border border-zinc-100 dark:border-zinc-800">
-                      {s.user.avatarUrl ? (
-                        <img src={s.user.avatarUrl} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        s.user.username[0].toUpperCase()
-                      )}
+              <div className="p-2">
+                <div className="relative h-[22rem] w-full overflow-hidden rounded-lg">
+                  {s.coverUrl ? (
+                    <img src={s.coverUrl} alt="" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  ) : (
+                    <div className={`w-full h-full bg-gradient-to-br ${getSeriesGraphic(s.name)} flex flex-col items-center justify-center relative`}>
+                       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_60%)] animate-pulse duration-1000" />
+                       <Layers className="w-16 h-16 text-white/80 drop-shadow-lg mb-4" />
+                       <span className="text-[10px] font-mono font-bold uppercase tracking-[0.4em] text-white/60 relative z-10 drop-shadow-sm">
+                         Serialized Saga
+                       </span>
                     </div>
-                    <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest">{s.user.displayName || s.user.username}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-[9px] font-bold text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors uppercase tracking-[0.2em]">
-                    <BookOpen className="w-3.5 h-3.5" />
-                    {s._count?.stories || 0} Books
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/60 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Overlay Content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6 z-10 flex flex-col justify-end h-full">
+                    <div className="flex items-center gap-2 mb-4 transform opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                      <span className="flex items-center gap-1.5 text-white text-[9px] font-bold uppercase tracking-widest backdrop-blur-md bg-black/40 px-2.5 py-1 rounded border border-white/10">
+                        <Flame className="w-3 h-3 text-orange-400" /> {s.viewCount} Reads
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold tracking-tight text-white mb-2 group-hover:text-zinc-200 transition-colors line-clamp-2">
+                      {s.name}
+                    </h3>
+                    
+                    <p className="text-[11px] text-zinc-400 font-medium line-clamp-2 leading-relaxed mb-6">
+                      {s.description || 'Dive into this sequential series and follow the continuous storyline.'}
+                    </p>
+                    
+                    <div className="flex items-center gap-3 mt-auto pt-5 border-t border-white/10">
+                      <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-[10px] font-bold overflow-hidden border border-zinc-600 ring-2 ring-transparent group-hover:ring-white/20 transition-all">
+                        {s.user.avatarUrl ? (
+                          <img src={s.user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-white">{s.user.username[0].toUpperCase()}</span>
+                        )}
+                      </div>
+                      <span className="text-xs font-bold text-zinc-300 tracking-wide">{s.user.displayName || s.user.username}</span>
+                      <div className="ml-auto flex items-center gap-1.5 text-[10px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">
+                        <BookOpen className="w-4 h-4" />
+                        {s._count?.stories || 0} Books
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -34,6 +34,30 @@ const FAQS = [
     q: "How do I report copyright infringement (DMCA)?",
     a: "We take copyright very seriously. You can easily submit a DMCA takedown notice by clicking the 'DMCA' link in the footer or contacting us directly with legal details at twtech.contact@gmail.com.",
   },
+  {
+    q: "Can I read stories offline?",
+    a: "Yes! You can download chapters to your local device by clicking the download icon. They will be available in the Offline Stories section even without an internet connection.",
+  },
+  {
+    q: "What are Universes?",
+    a: "Universes are collaborative fiction worlds where multiple authors can contribute stories set in the exact same lore and setting. You can create your own Universe or request to join existing ones!",
+  },
+  {
+    q: "How do I send a tip to my favorite author?",
+    a: "While reading a published story, you can click the 'Send Tip' button to directly support the author financially using a secure Stripe transaction.",
+  },
+  {
+    q: "Are my draft chapters public?",
+    a: "No, any story or chapter marked as a 'Draft' is completely private to you. Only chapters you explicitly set to 'Published' will be visible to your readers.",
+  },
+  {
+    q: "Can I change my username?",
+    a: "Yes, you can update your username and display name at any time from your Profile Settings. Keep in mind that your username must be unique across the platform.",
+  },
+  {
+    q: "How do I delete my account?",
+    a: "You can permanently delete your account and all associated data from the Settings page. Please note that this action is irreversible and will remove all your stories.",
+  }
 ];
 
 export default function SupportPage() {
