@@ -68,7 +68,7 @@ export default function ActivityFeedPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
       <div className="max-w-3xl mx-auto px-6 py-12">
-        
+
         {/* Simple Header */}
         <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">

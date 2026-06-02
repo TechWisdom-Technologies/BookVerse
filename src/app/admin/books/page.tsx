@@ -149,7 +149,7 @@ export default function AdminBooksPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-12 relative z-10">
-        
+
         {/* Minimal Header */}
         <header className="mb-12 pb-8 border-b border-zinc-200/50 dark:border-zinc-800/50 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
@@ -316,11 +316,10 @@ export default function AdminBooksPage() {
               <button
                 key={p}
                 onClick={() => setPage(p)}
-                className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${
-                  page === p
+                className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-bold transition-all ${page === p
                     ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md"
                     : "bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800"
-                }`}
+                  }`}
               >
                 {p}
               </button>
@@ -343,7 +342,7 @@ export default function AdminBooksPage() {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="p-6 space-y-5 overflow-y-auto max-h-[60vh] [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Title</label>
@@ -354,7 +353,7 @@ export default function AdminBooksPage() {
                   className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-sm font-medium text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-xs font-bold text-zinc-700 dark:text-zinc-300 mb-1.5 uppercase tracking-wider">Author Name</label>
                 <input
