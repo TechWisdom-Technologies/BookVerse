@@ -237,13 +237,13 @@ export async function GET() {
     // Feature 4: Interactive Cohort Retention Attrition Matrix (100% Dynamic & Genuine)
     const authorChapters = await prisma.storyChapter.findMany({
       where: { story: { authorId: user.id } },
-      select: { id: true, chapterOrder: true, title: true },
+      select: { id: true, chapterOrder: true, title: true, storyId: true },
       orderBy: { chapterOrder: 'asc' }
     });
 
     const dbReadingProgress = await prisma.readingProgress.findMany({
       where: { storyId: { in: stories.map(s => s.id) } },
-      select: { chapterId: true }
+      select: { chapterId: true, storyId: true }
     });
 
     const progressChapters = dbReadingProgress.map(rp => {
@@ -252,22 +252,39 @@ export async function GET() {
     }).filter((order): order is number => order !== null);
 
     const maxChapterOrder = authorChapters.reduce((max, ch) => Math.max(max, ch.chapterOrder), 1);
-    const retentionCohorts = [];
-
-    const baseCount = progressChapters.filter(order => order >= 1).length;
-
-    for (let order = 1; order <= Math.min(6, maxChapterOrder); order++) {
-      const reachedCount = progressChapters.filter(o => o >= order).length;
-      const rate = baseCount > 0 ? Math.round((reachedCount / baseCount) * 100) : 0;
+    
+    const calculateRetention = (storyId: string | null) => {
+      const filteredChapters = storyId ? authorChapters.filter(c => c.storyId === storyId) : authorChapters;
+      const filteredProgress = storyId ? dbReadingProgress.filter(p => p.storyId === storyId) : dbReadingProgress;
       
-      const chapterTitle = authorChapters.find(ch => ch.chapterOrder === order)?.title || `Chapter ${order}`;
-      retentionCohorts.push({
-        chapter: `Ch ${order}: ${chapterTitle}`,
-        rate
-      });
-    }
+      const progressChapters = filteredProgress.map(rp => {
+        const match = filteredChapters.find(ch => ch.id === rp.chapterId);
+        return match ? match.chapterOrder : null;
+      }).filter((order): order is number => order !== null);
 
-    const cohortRetention = retentionCohorts;
+      const localMaxChapterOrder = filteredChapters.reduce((max, ch) => Math.max(max, ch.chapterOrder), 1);
+      const retentionCohorts = [];
+
+      const baseCount = progressChapters.filter(order => order >= 1).length;
+
+      for (let order = 1; order <= Math.min(6, localMaxChapterOrder); order++) {
+        const reachedCount = progressChapters.filter(o => o >= order).length;
+        const rate = baseCount > 0 ? Math.round((reachedCount / baseCount) * 100) : 0;
+        
+        const chapterTitle = filteredChapters.find(ch => ch.chapterOrder === order)?.title || `Chapter ${order}`;
+        retentionCohorts.push({
+          chapter: `Ch ${order}: ${chapterTitle}`,
+          rate
+        });
+      }
+      return retentionCohorts;
+    };
+
+    const cohortRetention = calculateRetention(null);
+    const retentionByStory: Record<string, any[]> = {};
+    for (const s of stories) {
+      retentionByStory[s.id] = calculateRetention(s.id);
+    }
 
     // Feature 4: Sentiment Distribution Grouping
     const sentimentGroups = await prisma.storyReaction.groupBy({
@@ -328,6 +345,7 @@ export async function GET() {
       focusIndex,
       annotationsHeatmap,
       cohortRetention,
+      retentionByStory,
       collections: {
         totalUniverseViews,
         totalSeriesViews,

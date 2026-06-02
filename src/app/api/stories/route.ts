@@ -48,6 +48,8 @@ export async function GET(request: Request) {
               avatarUrl: true,
             },
           },
+          series: { select: { name: true } },
+          universe: { select: { name: true } },
           _count: {
             select: {
               chapters: true,

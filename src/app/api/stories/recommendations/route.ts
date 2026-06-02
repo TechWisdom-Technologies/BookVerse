@@ -17,6 +17,9 @@ export async function GET(req: Request) {
       createdAt: true,
       genre: true,
       subGenres: true,
+      sequenceNumber: true,
+      series: { select: { name: true } },
+      universe: { select: { name: true } },
       author: {
         select: {
           id: true,

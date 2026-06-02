@@ -183,11 +183,11 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
         {/* Navigation */}
         <div className="mb-12 flex items-center justify-between">
           <Link
-            href={`/offline-stories/${storyId}`}
+            href={`/offline-stories`}
             className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
           >
             <ArrowLeft className="w-3 h-3" />
-            {storyTitle || "Back to Story"}
+            Back to Offline Library
           </Link>
           <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-full">
             <WifiOff className="w-3 h-3 text-amber-600 dark:text-amber-400" />
@@ -260,10 +260,10 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
             </Link>
           ) : (
             <Link
-              href={`/offline-stories/${storyId}`}
+              href={`/offline-stories`}
               className="px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all"
             >
-              Back to Story
+              Back to Offline Library
             </Link>
           )}
         </nav>

@@ -58,6 +58,8 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
           story: {
             include: {
               author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+              series: { select: { name: true } },
+              universe: { select: { name: true } },
               _count: {
                 select: {
                   chapters: true,
@@ -118,6 +120,8 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
       where,
       include: {
         author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
+        series: { select: { name: true } },
+        universe: { select: { name: true } },
         _count: { select: { chapters: true, reactions: true, comments: true } },
       },
       orderBy,

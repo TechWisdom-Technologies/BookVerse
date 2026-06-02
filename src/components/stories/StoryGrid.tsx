@@ -26,6 +26,9 @@ interface StoryData {
   isTrendingPromo?: boolean;
   isPromotedPromo?: boolean;
   isFeaturedPromo?: boolean;
+  series?: { name: string } | null;
+  universe?: { name: string } | null;
+  sequenceNumber?: number | null;
 }
 
 interface StoryGridProps {

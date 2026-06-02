@@ -93,6 +93,7 @@ interface Analytics {
     chapter: string;
     rate: number;
   }>;
+  retentionByStory: Record<string, Array<{ chapter: string; rate: number }>>;
   collections: {
     totalUniverseViews: number;
     totalSeriesViews: number;
@@ -121,6 +122,7 @@ export default function AuthorAnalyticsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
   const [sortKey, setSortKey] = useState<SortKey>('views');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [selectedRetentionStory, setSelectedRetentionStory] = useState<string>('all');
 
   useEffect(() => {
     if (authLoading) return;
@@ -713,10 +715,22 @@ export default function AuthorAnalyticsPage() {
                   <Layers className="w-4 h-4 text-zinc-400" />
                   <h3 className="text-[10px] font-black uppercase tracking-wider text-zinc-400">Chapter Retention Cohort Drop-Off</h3>
                 </div>
-                <span className="text-[9px] font-black tracking-wider text-rose-500 font-mono">Attrition Matrix</span>
+                <div className="flex items-center gap-4">
+                  <select
+                    value={selectedRetentionStory}
+                    onChange={(e) => setSelectedRetentionStory(e.target.value)}
+                    className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-[10px] font-bold uppercase px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 max-w-[200px]"
+                  >
+                    <option value="all">All Stories</option>
+                    {analytics.stories.map((s) => (
+                      <option key={s.id} value={s.id}>{s.title}</option>
+                    ))}
+                  </select>
+                  <span className="text-[9px] font-black tracking-wider text-rose-500 font-mono">Attrition Matrix</span>
+                </div>
               </div>
 
-              {cohortRetention.length === 0 ? (
+              {(selectedRetentionStory === 'all' ? cohortRetention : analytics.retentionByStory[selectedRetentionStory] || []).length === 0 ? (
                 <div className="py-12 text-center flex flex-col items-center justify-center space-y-2">
                   <Layers className="w-8 h-8 text-zinc-300 dark:text-zinc-800" />
                   <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">No chapter progression data loaded</p>
@@ -724,7 +738,7 @@ export default function AuthorAnalyticsPage() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {cohortRetention.map((ch, idx) => (
+                  {(selectedRetentionStory === 'all' ? cohortRetention : analytics.retentionByStory[selectedRetentionStory] || []).map((ch, idx) => (
                     <div key={idx} className="flex items-center gap-4">
                       <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider w-28 truncate shrink-0 font-sans">{ch.chapter}</span>
                       <div className="flex-1 h-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded-lg overflow-hidden relative">

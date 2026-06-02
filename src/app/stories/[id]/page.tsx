@@ -103,6 +103,8 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
         orderBy: { endDate: "asc" },
         select: { id: true, tier: true, endDate: true },
       },
+      series: { select: { name: true } },
+      universe: { select: { name: true } },
       _count: { select: { reactions: true, comments: true } },
     },
   });
@@ -195,6 +197,13 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
             )}
 
             <div className="flex flex-wrap items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+              {story.series ? (
+                <span className="flex items-center gap-1.5 text-indigo-500">{story.series.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}</span>
+              ) : story.universe ? (
+                <span className="flex items-center gap-1.5 text-purple-500">{story.universe.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}</span>
+              ) : (
+                <span className="flex items-center gap-1.5 text-zinc-500">Non sequel</span>
+              )}
               <span className="flex items-center gap-1.5"><Eye className="h-3.5 w-3.5" /> {story.viewCount}</span>
               <span className="flex items-center gap-1.5"><BookOpen className="h-3.5 w-3.5" /> {story.chapters.length} Chapters</span>
               <span className="flex items-center gap-1.5"><MessageSquare className="h-3.5 w-3.5" /> {story._count.comments}</span>

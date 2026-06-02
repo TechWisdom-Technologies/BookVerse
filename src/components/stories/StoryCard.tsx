@@ -27,6 +27,9 @@ interface StoryCardData {
   isTrendingPromo?: boolean;
   isPromotedPromo?: boolean;
   isFeaturedPromo?: boolean;
+  series?: { name: string } | null;
+  universe?: { name: string } | null;
+  sequenceNumber?: number | null;
 }
 
 interface StoryCardProps {
@@ -77,6 +80,19 @@ export function StoryCard({ story }: StoryCardProps) {
           <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
             {story.title}
           </h3>
+          {story.series ? (
+            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+              {story.series.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}
+            </p>
+          ) : story.universe ? (
+            <p className="text-[10px] font-bold uppercase tracking-wider text-purple-500">
+              {story.universe.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}
+            </p>
+          ) : (
+            <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
+              Non sequel
+            </p>
+          )}
 
           <div className="flex items-center gap-2">
             {story.author.avatarUrl ? (
