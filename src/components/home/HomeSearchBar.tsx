@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, TrendingUp, Book, User, Compass, Loader2, Mic } from "lucide-react";
 import toast from "react-hot-toast";
@@ -33,6 +33,8 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
   const searchParams = useSearchParams();
   const typeParam = searchParams.get("type") || "all";
 
+  const recognitionRef = useRef<any>(null);
+
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
@@ -46,12 +48,28 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
     }
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, []);
+
   const handleVoiceSearch = () => {
     if (typeof window === "undefined") return;
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) return;
 
+    if (isListening) {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+      return;
+    }
+
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
     recognition.lang = "en-US";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
@@ -80,13 +98,10 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
 
     recognition.onend = () => {
       setIsListening(false);
+      recognitionRef.current = null;
     };
 
-    if (isListening) {
-      recognition.stop();
-    } else {
-      recognition.start();
-    }
+    recognition.start();
   };
 
   useEffect(() => {
