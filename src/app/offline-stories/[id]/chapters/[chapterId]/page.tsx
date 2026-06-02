@@ -13,88 +13,11 @@ import {
 } from "lucide-react";
 import {
   getOfflineStory,
-  getOfflineChapter,
   type OfflineChapter,
-} from "@/lib/offlineStoryDb";
+} from "@/lib/offline-storage";
 
 interface OfflineChapterPageProps {
   params: Promise<{ id: string; chapterId: string }>;
-}
-
-/**
- * Renders TipTap JSON content to HTML on the client side.
- * We do a simple recursive render since we can't use the server-side
- * TipTap generateHTML in a client component without bundling happy-dom.
- */
-function renderTipTapContent(node: unknown): string {
-  if (!node || typeof node !== "object") return "";
-  const n = node as Record<string, unknown>;
-
-  if (n.type === "text") {
-    let text = (n.text as string) || "";
-    const marks = n.marks as Array<{ type: string; attrs?: Record<string, unknown> }> | undefined;
-    if (marks) {
-      for (const mark of marks) {
-        switch (mark.type) {
-          case "bold":
-            text = `<strong>${text}</strong>`;
-            break;
-          case "italic":
-            text = `<em>${text}</em>`;
-            break;
-          case "underline":
-            text = `<u>${text}</u>`;
-            break;
-          case "strike":
-            text = `<s>${text}</s>`;
-            break;
-          case "code":
-            text = `<code>${text}</code>`;
-            break;
-          case "link":
-            text = `<a href="${mark.attrs?.href || "#"}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-            break;
-        }
-      }
-    }
-    return text;
-  }
-
-  const children = n.content as unknown[] | undefined;
-  const inner = children ? children.map(renderTipTapContent).join("") : "";
-
-  switch (n.type) {
-    case "doc":
-      return inner;
-    case "paragraph":
-      return `<p>${inner || "<br>"}</p>`;
-    case "heading": {
-      const level = (n.attrs as Record<string, unknown>)?.level || 2;
-      return `<h${level}>${inner}</h${level}>`;
-    }
-    case "bulletList":
-      return `<ul>${inner}</ul>`;
-    case "orderedList":
-      return `<ol>${inner}</ol>`;
-    case "listItem":
-      return `<li>${inner}</li>`;
-    case "blockquote":
-      return `<blockquote>${inner}</blockquote>`;
-    case "codeBlock":
-      return `<pre><code>${inner}</code></pre>`;
-    case "hardBreak":
-      return "<br>";
-    case "horizontalRule":
-      return "<hr>";
-    case "image": {
-      const attrs = n.attrs as Record<string, unknown>;
-      const src = attrs?.src || "";
-      const alt = attrs?.alt || "";
-      return `<img src="${src}" alt="${alt}" style="max-width: 100%; height: auto;" />`;
-    }
-    default:
-      return inner;
-  }
 }
 
 export default function OfflineChapterPage({ params }: OfflineChapterPageProps) {
@@ -108,20 +31,23 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
   useEffect(() => {
     (async () => {
       try {
-        const chapterData = await getOfflineChapter(storyId, chapterId);
+        const storyData = await getOfflineStory(storyId);
+        if (!storyData) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+
+        const chapterData = storyData.chapters.find((ch) => ch.id === chapterId);
         if (!chapterData) {
           setNotFound(true);
           setLoading(false);
           return;
         }
-        setChapter(chapterData);
 
-        // Get story title and sibling chapters for navigation
-        const storyData = await getOfflineStory(storyId);
-        if (storyData) {
-          setStoryTitle(storyData.story.title);
-          setAllChapters(storyData.chapters);
-        }
+        setChapter(chapterData);
+        setStoryTitle(storyData.title);
+        setAllChapters(storyData.chapters.sort((a, b) => a.chapterOrder - b.chapterOrder));
       } catch (err) {
         console.error("Failed to load offline chapter:", err);
         setNotFound(true);
@@ -166,16 +92,15 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
     );
   }
 
-  const currentIndex = allChapters.findIndex((c) => c.chapterId === chapterId);
+  const currentIndex = allChapters.findIndex((c) => c.id === chapterId);
   const prevChapter = currentIndex > 0 ? allChapters[currentIndex - 1] : null;
   const nextChapter =
     currentIndex >= 0 && currentIndex < allChapters.length - 1
       ? allChapters[currentIndex + 1]
       : null;
 
-  // Render content from stored HTML or from raw TipTap JSON
-  const htmlContent =
-    chapter.htmlContent || renderTipTapContent(chapter.rawContent);
+  // Render content from stored HTML
+  const htmlContent = chapter.htmlContent;
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-40">
@@ -211,7 +136,7 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
               <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
                 <Clock className="w-3 h-3 text-blue-500" />
                 <span className="text-blue-500">
-                  {chapter.readingTimeMin} min read
+                  {Math.max(1, Math.ceil((chapter.htmlContent?.length || 0) / 1000))} min read
                 </span>
               </div>
             </div>
@@ -236,7 +161,7 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
         <nav className="mt-20 pt-12 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4">
           {prevChapter ? (
             <Link
-              href={`/offline-stories/${storyId}/chapters/${prevChapter.chapterId}`}
+              href={`/offline-stories/${storyId}/chapters/${prevChapter.id}`}
               className="flex items-center gap-3 px-6 py-3 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 transition-all group"
             >
               <ChevronLeft className="w-3.5 h-3.5" />
@@ -250,7 +175,7 @@ export default function OfflineChapterPage({ params }: OfflineChapterPageProps) 
 
           {nextChapter ? (
             <Link
-              href={`/offline-stories/${storyId}/chapters/${nextChapter.chapterId}`}
+              href={`/offline-stories/${storyId}/chapters/${nextChapter.id}`}
               className="flex items-center gap-3 px-6 py-3 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 transition-all group"
             >
               <span className="text-[10px] font-bold uppercase tracking-widest">
