@@ -84,11 +84,11 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   const [editUniverseId, setEditUniverseId] = useState<string | null>(null);
   const [editSeriesId, setEditSeriesId] = useState<string | null>(null);
   const [editSequenceNumber, setEditSequenceNumber] = useState<number | null>(null);
-  const [editSubGenres, setEditSubGenres] = useState<string[]>([]);
+  const [editSubGenres, setEditSubGenres] = useState<string>("");
   const [editMood, setEditMood] = useState("");
-  const [editContentWarnings, setEditContentWarnings] = useState<string[]>([]);
+  const [editContentWarnings, setEditContentWarnings] = useState<string>("");
   const [editAgeRating, setEditAgeRating] = useState<number>(0);
-  const [editTags, setEditTags] = useState<string[]>([]);
+  const [editTags, setEditTags] = useState<string>("");
   const [editDescription, setEditDescription] = useState("");
   const [availableUniverses, setAvailableUniverses] = useState<any[]>([]);
   const [availableSeries, setAvailableSeries] = useState<any[]>([]);
@@ -114,11 +114,11 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         setEditUniverseId(storyData.universeId);
         setEditSeriesId(storyData.seriesId);
         setEditSequenceNumber(storyData.sequenceNumber ?? null);
-        setEditSubGenres(storyData.subGenres || []);
+        setEditSubGenres((storyData.subGenres || []).join(", "));
         setEditMood(storyData.mood || "");
-        setEditContentWarnings(storyData.contentWarnings || []);
+        setEditContentWarnings((storyData.contentWarnings || []).join(", "));
         setEditAgeRating(storyData.ageRating || 0);
-        setEditTags(storyData.tags || []);
+        setEditTags((storyData.tags || []).join(", "));
         setEditDescription(storyData.description || "");
         if (storyData.chapters.length > 0) setActiveChapterId(storyData.chapters[0].id);
       } catch { router.push("/write"); } finally { setLoadingStory(false); }
@@ -191,11 +191,11 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
           universeId: editUniverseId || null,
           seriesId: editSeriesId || null,
           sequenceNumber: editSequenceNumber || null,
-          subGenres: editSubGenres,
+          subGenres: editSubGenres.split(",").map(s => s.trim()).filter(Boolean),
           mood: editMood || null,
-          contentWarnings: editContentWarnings,
+          contentWarnings: editContentWarnings.split(",").map(s => s.trim()).filter(Boolean),
           ageRating: Number(editAgeRating) || 0,
-          tags: editTags,
+          tags: editTags.split(",").map(s => s.trim()).filter(Boolean).slice(0, 5),
           description: editDescription || null,
         }),
       });
@@ -455,15 +455,15 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Sub-Genres (Comma separated)</label>
-                    <input type="text" value={editSubGenres.join(", ")} onChange={(e) => setEditSubGenres(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g. Space Opera, Cyberpunk, Hard Sci-Fi" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                    <input type="text" value={editSubGenres} onChange={(e) => setEditSubGenres(e.target.value)} placeholder="e.g. Space Opera, Cyberpunk, Hard Sci-Fi" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Content Warnings (Comma separated)</label>
-                    <input type="text" value={editContentWarnings.join(", ")} onChange={(e) => setEditContentWarnings(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g. Mild Violence, Strong Language" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                    <input type="text" value={editContentWarnings} onChange={(e) => setEditContentWarnings(e.target.value)} placeholder="e.g. Mild Violence, Strong Language" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Search Tags (Comma separated)</label>
-                    <input type="text" value={editTags.join(", ")} onChange={(e) => setEditTags(e.target.value.split(",").map(s => s.trim()).filter(Boolean))} placeholder="e.g. futuristic, neon, space" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                    <input type="text" value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder="e.g. futuristic, neon, space (max 5)" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
                   </div>
                 </div>
               </div>

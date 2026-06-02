@@ -6,7 +6,7 @@ import { BookOpen, Sparkles, Play, ArrowRight, Star } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full h-screen min-h-[800px] flex items-center justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
+    <section className="relative w-full h-screen min-h-[800px] flex items-start pt-12 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] dark:opacity-20" />

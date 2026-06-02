@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Search, Loader2, BookOpen, ArrowLeft, Clock } from "lucide-react";
 import { SearchResults } from "@/components/search/SearchResults";
 import { Pagination } from "@/components/shared/Pagination";
+import { HomeSearchBar } from "@/components/home/HomeSearchBar";
 export type SearchResult = {
   id: string;
   _type: "book" | "story" | "universe" | "author";
@@ -35,11 +36,6 @@ function SearchContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(query);
-
-  useEffect(() => {
-    setSearchQuery(query);
-  }, [query]);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -67,13 +63,6 @@ function SearchContent() {
     };
     fetchResults();
   }, [query, typeParam, pageParam]);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}&type=${typeParam}`);
-    }
-  };
 
   const handleTypeChange = (newType: "all" | "books" | "stories" | "universes" | "authors") => {
     router.push(`/search?q=${encodeURIComponent(query)}&type=${newType}`);
@@ -105,24 +94,7 @@ function SearchContent() {
         </header>
 
         {/* Search Form */}
-        <form onSubmit={handleSearch} className="max-w-3xl mx-auto mb-16">
-          <div className="relative flex items-center">
-            <Search className="absolute left-5 w-4 h-4 text-zinc-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Type title, author, universe, or keywords..."
-              className="w-full pl-14 pr-28 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-sm font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all shadow-sm"
-            />
-            <button
-              type="submit"
-              className="absolute right-2 px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all"
-            >
-              Search
-            </button>
-          </div>
-        </form>
+        <HomeSearchBar initialQuery={query} variant="searchPage" />
 
         {/* Filter Tabs */}
         {query.trim() && (

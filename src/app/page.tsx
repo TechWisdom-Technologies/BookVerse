@@ -37,6 +37,7 @@ import {
 } from "lucide-react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { StoryGrid } from "@/components/stories/StoryGrid";
+import { HomeSearchBar } from "@/components/home/HomeSearchBar";
 
 export const dynamic = "force-dynamic";
 
@@ -214,7 +215,8 @@ export default async function HomePage() {
       .slice(0, 8);
 
     return (
-      <main className="overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
+      <main className="relative overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
+        <HomeSearchBar />
         <HeroSection />
 
         {/* Library Stats */}
