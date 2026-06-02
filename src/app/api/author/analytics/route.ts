@@ -307,6 +307,131 @@ export async function GET() {
       },
     });
 
+    // Feature 6: Promotion Analytics Engine
+    const dbPromotions = await prisma.storyPromotion.findMany({
+      where: { story: { authorId: user.id } },
+      include: {
+        story: { select: { title: true, authorId: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    const promotionAnalytics = await Promise.all(dbPromotions.map(async (promo) => {
+      const timeWindow = { gte: promo.startDate, lte: promo.endDate };
+
+      // --- EXISTING: Reactions & Comments ---
+      const promoReactions = await prisma.storyReaction.count({
+        where: { storyId: promo.storyId, createdAt: timeWindow }
+      });
+      const promoComments = await prisma.comment.count({
+        where: { storyId: promo.storyId, createdAt: timeWindow }
+      });
+
+      const totalEngagements = promoReactions + promoComments;
+      const cpe = totalEngagements > 0 ? (promo.cost / totalEngagements).toFixed(2) : String(promo.cost);
+      const cpv = promo.promotionViews > 0 ? (promo.cost / promo.promotionViews).toFixed(2) : String(promo.cost);
+
+      let roiRating = "Low";
+      if (totalEngagements > 50 || promo.promotionViews > 500) roiRating = "Excellent";
+      else if (totalEngagements > 10 || promo.promotionViews > 100) roiRating = "Good";
+      else if (totalEngagements > 0 || promo.promotionViews > 0) roiRating = "Average";
+
+      // --- METRIC 1: Daily Engagement Velocity ---
+      const campaignDays = Math.max(1, Math.ceil((promo.endDate.getTime() - promo.startDate.getTime()) / (1000 * 60 * 60 * 24)));
+      const dailyEngagementVelocity = parseFloat((totalEngagements / campaignDays).toFixed(2));
+
+      // --- METRIC 2: Follower Conversion ---
+      const followersGained = await prisma.follow.count({
+        where: { followingId: promo.story.authorId, createdAt: timeWindow }
+      });
+
+      // --- METRIC 3: Financial Yield (Tips) ---
+      const promoTips = await prisma.tip.findMany({
+        where: { storyId: promo.storyId, status: 'COMPLETED', createdAt: timeWindow },
+        select: { amount: true }
+      });
+      const tipsEarned = promoTips.reduce((sum, t) => sum + t.amount, 0);
+      const tipCount = promoTips.length;
+
+      // --- METRIC 4: Reach Expansion (Shares) ---
+      const promoShares = await prisma.shareActivity.count({
+        where: { storyId: promo.storyId, createdAt: timeWindow }
+      });
+
+      // --- METRIC 5: Interaction Rate (CTR) ---
+      const interactionRate = promo.promotionViews > 0
+        ? parseFloat(((totalEngagements / promo.promotionViews) * 100).toFixed(2))
+        : 0;
+
+      // --- METRIC 6: Sentiment Conversion ---
+      const sentimentReactions = await prisma.storyReaction.groupBy({
+        by: ['reactionType'],
+        where: { storyId: promo.storyId, createdAt: timeWindow },
+        _count: true
+      });
+      const positiveTypes = ['LIKE', 'LOVE', 'FIRE', 'WOW'];
+      const positiveCount = sentimentReactions.filter(r => positiveTypes.includes(r.reactionType)).reduce((s, r) => s + r._count, 0);
+      const negativeCount = sentimentReactions.filter(r => !positiveTypes.includes(r.reactionType)).reduce((s, r) => s + r._count, 0);
+      const sentimentScore = promoReactions > 0
+        ? parseFloat(((positiveCount / promoReactions) * 100).toFixed(1))
+        : 0;
+
+      // --- METRIC 7: Library Saves (Retention) ---
+      const librarySaves = await prisma.bookSave.count({
+        where: { bookId: promo.storyId, createdAt: timeWindow }
+      });
+
+      // --- METRIC 8: Reading Time Generated ---
+      const readingLogs = await prisma.readingLog.findMany({
+        where: { storyId: promo.storyId, createdAt: timeWindow },
+        select: { minutes: true }
+      });
+      const totalReadingMinutes = readingLogs.reduce((sum, l) => sum + l.minutes, 0);
+
+      // --- METRIC 9: Cost Per Minute (Attention Value) ---
+      const costPerMinute = totalReadingMinutes > 0
+        ? parseFloat((promo.cost / totalReadingMinutes).toFixed(2))
+        : promo.cost;
+
+      // --- METRIC 10: Deep Engagement (Inline Comments) ---
+      const inlineCommentsCount = await prisma.inlineComment.count({
+        where: { storyId: promo.storyId, createdAt: timeWindow }
+      });
+
+      return {
+        id: promo.id,
+        storyTitle: promo.story.title,
+        tier: promo.tier,
+        cost: promo.cost,
+        status: promo.status,
+        startDate: promo.startDate.toISOString(),
+        endDate: promo.endDate.toISOString(),
+        campaignDays,
+        // Existing
+        promotionViews: promo.promotionViews,
+        reactionsGenerated: promoReactions,
+        commentsGenerated: promoComments,
+        totalEngagements,
+        costPerEngagement: cpe,
+        costPerView: cpv,
+        roiRating,
+        // 10 Advanced Metrics
+        dailyEngagementVelocity,
+        followersGained,
+        tipsEarned,
+        tipCount,
+        promoShares,
+        interactionRate,
+        sentimentScore,
+        positiveReactions: positiveCount,
+        negativeReactions: negativeCount,
+        librarySaves,
+        totalReadingMinutes,
+        costPerMinute,
+        inlineCommentsCount
+      };
+    }));
+
     return NextResponse.json({
       stats: {
         totalViews,
@@ -351,7 +476,8 @@ export async function GET() {
         totalSeriesViews,
         universes: universeAnalytics,
         series: seriesAnalytics,
-      }
+      },
+      promotionAnalytics
     });
   } catch (error) {
     console.error('Error fetching analytics:', error);

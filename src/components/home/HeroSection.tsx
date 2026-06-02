@@ -3,39 +3,46 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BookOpen, Sparkles, Play, ArrowRight, Star } from "lucide-react";
+import { Suspense } from "react";
+import { HomeSearchBar } from "./HomeSearchBar";
 
 export function HeroSection() {
   return (
-    <section className="relative w-full h-screen min-h-[800px] flex items-start pt-12 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
+    <section className="relative w-full h-screen min-h-[800px] flex items-start pt-4 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] dark:opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent" />
-        
+
         {/* Animated Orbs - Subtle in Light Mode */}
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.2, 1],
             opacity: [0.1, 0.2, 0.1],
             x: [0, 50, 0],
             y: [0, -50, 0]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-zinc-200 dark:bg-zinc-800 rounded-full blur-[128px]" 
+          className="absolute top-1/4 -left-32 w-96 h-96 bg-zinc-200 dark:bg-zinc-800 rounded-full blur-[128px]"
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.5, 1],
             opacity: [0.05, 0.15, 0.05],
             x: [0, -50, 0],
             y: [0, 50, 0]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-zinc-100 dark:bg-zinc-900 rounded-full blur-[128px]" 
+          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-zinc-100 dark:bg-zinc-900 rounded-full blur-[128px]"
         />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+
+        <Suspense fallback={<div className="h-16 w-full max-w-2xl mx-auto mb-12" />}>
+          <HomeSearchBar />
+        </Suspense>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -81,7 +88,7 @@ export function HeroSection() {
             <span>Start Reading</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
           </Link>
-          
+
           <Link
             href="/stories"
             className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-transparent border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 rounded font-bold text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white hover:scale-105"

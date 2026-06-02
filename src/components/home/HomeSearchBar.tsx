@@ -6,9 +6,9 @@ import { Search, TrendingUp, Book, User, Compass, Loader2, Mic } from "lucide-re
 import toast from "react-hot-toast";
 
 const PLACEHOLDERS = [
-  "Search books, stories, authors, or universes...",
+  "Search books, stories...",
   "Try searching 'Adventure'...",
-  "Find your next adventure...",
+  "Find your next series...",
   "Discover trending authors...",
   "Search for 'Space Opera'...",
 ];
@@ -70,7 +70,7 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
     recognition.onerror = (event: any) => {
       setIsListening(false);
       if (event.error === "not-allowed") {
-        toast.error("Microphone access denied. Please enable it in your browser settings.");
+        toast.error("Microphone blocked. Click the lock icon in your browser's URL bar to allow it, or ensure you are on localhost (HTTPS is required for IPs).", { duration: 5000 });
       } else if (event.error === "network") {
         toast.error("Network error occurred during speech recognition.");
       } else {
@@ -147,8 +147,8 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
 
   const inner = (
     <div className={`relative w-full ${variant === "searchPage" ? "max-w-3xl mx-auto z-50 mb-16" : "max-w-2xl"}`}>
-      <form onSubmit={handleSearch} className="relative flex items-center group z-20">
-        <Search className="absolute left-5 w-4 h-4 text-zinc-400 group-focus-within:text-zinc-900 dark:group-focus-within:text-white transition-colors z-10" />
+      <form onSubmit={handleSearch} className="relative flex items-center group z-20 w-full">
+        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-zinc-900 dark:group-focus-within:text-white transition-colors z-10" />
         <input
           type="text"
           value={query}
@@ -156,19 +156,18 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
           onBlur={() => setIsFocused(false)}
           onChange={(e) => setQuery(e.target.value)}
           placeholder={PLACEHOLDERS[placeholderIdx]}
-          className={`w-full pl-14 ${hasSpeechSupport ? 'pr-32' : 'pr-24'} py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-full text-[11px] font-bold outline-none focus:border-zinc-300 dark:focus:border-zinc-700 transition-all shadow-sm placeholder:text-zinc-400 focus:bg-white dark:focus:bg-zinc-950 relative z-10 transition-all duration-500 ease-in-out`}
+          className={`w-full pl-14 ${hasSpeechSupport ? 'pr-32' : 'pr-24'} py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-full text-[11px] font-bold outline-none focus:border-zinc-300 dark:focus:border-zinc-700 transition-all shadow-sm placeholder:text-zinc-400 focus:bg-white dark:focus:bg-zinc-950 relative z-10 duration-500 ease-in-out`}
         />
-        <div className="absolute right-2 flex items-center gap-1 z-10">
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 z-10">
           {hasSpeechSupport && (
             <button
               type="button"
               onClick={handleVoiceSearch}
               title="Voice Search"
-              className={`p-2.5 rounded-full transition-all ${
-                isListening 
-                  ? "bg-red-100 text-red-500 animate-pulse" 
+              className={`p-2.5 rounded-full transition-all ${isListening
+                  ? "bg-red-100 text-red-500 animate-pulse"
                   : "text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100"
-              }`}
+                }`}
             >
               <Mic className="w-4 h-4" />
             </button>
@@ -242,7 +241,7 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
   }
 
   return (
-    <div className="w-full bg-white dark:bg-zinc-950 border-b border-zinc-100 dark:border-zinc-900 pt-4 px-6 flex justify-center z-50 relative">
+    <div className="w-full max-w-2xl mx-auto mb-12 relative z-50">
       {inner}
     </div>
   );

@@ -125,6 +125,23 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         data: { viewCount: { increment: 1 } },
       });
       
+      // Increment promotion views if there is an active promotion right now
+      const activePromotions = await prisma.storyPromotion.findMany({
+        where: {
+          storyId: id,
+          status: "ACTIVE",
+          startDate: { lte: new Date() },
+          endDate: { gte: new Date() }
+        }
+      });
+      
+      if (activePromotions.length > 0) {
+        await prisma.storyPromotion.updateMany({
+          where: { id: { in: activePromotions.map(p => p.id) } },
+          data: { promotionViews: { increment: 1 } }
+        });
+      }
+      
       // Milestone check
       const milestones = [100, 500, 1000, 5000, 10000];
       if (milestones.includes(updated.viewCount)) {

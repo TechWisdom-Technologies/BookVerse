@@ -630,6 +630,7 @@ model StoryPromotion {
   senderNumber  String?  @map("sender_number")
   transactionId String?  @unique @map("transaction_id")
   status        String   @default("PENDING") // PENDING, ACTIVE, ENDED, PAUSED, DECLINED
+  promotionViews Int     @default(0) @map("promotion_views")
   createdAt     DateTime @default(now()) @map("created_at")
 
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)

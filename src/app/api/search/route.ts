@@ -36,8 +36,25 @@ export async function GET(request: Request) {
       ? Prisma.sql`to_tsquery('english', ${tsQueryString})` 
       : Prisma.sql`plainto_tsquery('english', ${searchQuery})`;
 
-    const banglaSqlExtension = hasBanglaEquivalent && tsBanglaQueryString
-      ? Prisma.sql`|| to_tsquery('english', ${tsBanglaQueryString})` 
+    const banglaSqlExtension = hasBanglaEquivalent && avroBanglaQuery
+      ? Prisma.sql`
+          OR s.title ILIKE ${'%' + avroBanglaQuery + '%'}
+          OR s.search_index ILIKE ${'%' + avroBanglaQuery + '%'}
+          OR s.summary ILIKE ${'%' + avroBanglaQuery + '%'}
+          OR array_to_string(s.tags, ' ') ILIKE ${'%' + avroBanglaQuery + '%'}
+        `
+      : Prisma.empty;
+
+    const banglaRankBoost = hasBanglaEquivalent && avroBanglaQuery
+      ? Prisma.sql`
+          + CASE 
+              WHEN s.title ILIKE ${'%' + avroBanglaQuery + '%'} THEN 2.0
+              WHEN s.search_index ILIKE ${'%' + avroBanglaQuery + '%'} THEN 1.5
+              WHEN s.summary ILIKE ${'%' + avroBanglaQuery + '%'} THEN 1.0
+              WHEN array_to_string(s.tags, ' ') ILIKE ${'%' + avroBanglaQuery + '%'} THEN 1.0
+              ELSE 0.0
+            END
+        `
       : Prisma.empty;
 
     const results: any[] = [];
@@ -129,12 +146,15 @@ export async function GET(request: Request) {
               s.promotion_score AS "promotionScore",
               u.display_name AS "authorDisplayName",
               u.username AS "authorUsername",
-              ts_rank_cd(
-                setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
-                setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
-                setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C'),
-                ${englishSearchExp} ${banglaSqlExtension}
+              (
+                ts_rank_cd(
+                  setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
+                  setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
+                  setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
+                  setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C'),
+                  ${englishSearchExp}
+                )
+                ${banglaRankBoost}
               ) AS rank
             FROM stories s
             JOIN users u ON u.id = s.author_id
@@ -146,10 +166,16 @@ export async function GET(request: Request) {
                   setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
                   setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
                   setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C')
-                ) @@ (${englishSearchExp} ${banglaSqlExtension})
+                ) @@ (${englishSearchExp})
+                ${banglaSqlExtension}
               )
             ORDER BY 
-              s.promotion_score DESC, 
+              CASE 
+                WHEN s.promotion_score = 200 THEN 1000
+                WHEN s.promotion_score = 500 THEN 900
+                WHEN s.promotion_score = 100 THEN 800
+                ELSE s.promotion_score
+              END DESC, 
               rank DESC, 
               s.view_count DESC
             LIMIT ${take} OFFSET ${skip};
@@ -169,7 +195,8 @@ export async function GET(request: Request) {
                     setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
                     setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
                     setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C')
-                  ) @@ (${englishSearchExp} ${banglaSqlExtension})
+                  ) @@ (${englishSearchExp})
+                  ${banglaSqlExtension}
                 )
             `;
             const countRaw = await prisma.$queryRaw(countQuery) as any[];
@@ -317,11 +344,34 @@ export async function GET(request: Request) {
     await Promise.all(promises);
 
     if (type === "all") {
-      // Re-sort results for 'all' to mix them reasonably, prioritizing promoted stories if any exist
+      // Re-sort results for 'all' to prioritize promoted stories, then order by type, then by creation date
+      const typeWeight: Record<string, number> = {
+        story: 4,
+        book: 3,
+        universe: 2,
+        author: 1
+      };
+
       results.sort((a, b) => {
-        const scoreA = a.promotionScore || 0;
-        const scoreB = b.promotionScore || 0;
+        const getRankScore = (score: number) => {
+          if (score === 200) return 1000;
+          if (score === 500) return 900;
+          if (score === 100) return 800;
+          return score;
+        };
+        
+        const scoreA = getRankScore(a.promotionScore || 0);
+        const scoreB = getRankScore(b.promotionScore || 0);
+        
+        // 1. Promoted/Featured/Trending first
         if (scoreA !== scoreB) return scoreB - scoreA;
+        
+        // 2. Stories -> Books -> Universes -> Authors
+        const weightA = typeWeight[a._type] || 0;
+        const weightB = typeWeight[b._type] || 0;
+        if (weightA !== weightB) return weightB - weightA;
+        
+        // 3. Finally, sort by recency
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
       total = results.length;

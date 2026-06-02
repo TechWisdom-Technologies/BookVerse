@@ -183,6 +183,18 @@ interface DashboardData {
     servedByAuthor: boolean;
     marketNicheScore: number;
   }>;
+  activePromotions: Array<{
+    id: string;
+    storyId: string;
+    storyTitle: string;
+    tier: string;
+    cost: number;
+    status: string;
+    startDate: string;
+    endDate: string;
+    createdAt: string;
+  }>;
+  myStories: Array<{ id: string; title: string }>;
 }
 
 export default function AuthorDashboardPage() {
@@ -193,6 +205,7 @@ export default function AuthorDashboardPage() {
   const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [selectedPromoStory, setSelectedPromoStory] = useState<string>('');
 
   const fetchDashboardData = async () => {
     try {
@@ -311,7 +324,9 @@ export default function AuthorDashboardPage() {
     warningsAudit,
     giftMemberships,
     safetyReports,
-    genreMatchmaker
+    genreMatchmaker,
+    activePromotions,
+    myStories
   } = data;
 
   return (
@@ -788,6 +803,131 @@ export default function AuthorDashboardPage() {
           </div>
 
         </div>
+
+        {/* ========================================== */}
+        {/* NEW FEATURE: Advertising & Promotions Registry */}
+        {/* ========================================== */}
+        <section className="mt-16 pt-12 border-t border-zinc-100 dark:border-zinc-900">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
+              <div>
+                <h2 className="text-sm font-black uppercase tracking-[0.2em]">Advertising & Promotions Registry</h2>
+                <p className="text-xs text-zinc-400 font-medium mt-1">Track active campaigns, expenditures, and remaining days for your promoted stories.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedPromoStory}
+                onChange={(e) => setSelectedPromoStory(e.target.value)}
+                className="px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-bold text-zinc-900 dark:text-zinc-100 rounded-xl focus:outline-none focus:border-indigo-500 transition-colors w-48"
+              >
+                <option value="">Select a Story...</option>
+                {myStories.map(story => (
+                  <option key={story.id} value={story.id}>{story.title}</option>
+                ))}
+              </select>
+              <button 
+                onClick={() => {
+                  if (selectedPromoStory) {
+                    router.push(`/write/story/${selectedPromoStory}/edit`);
+                  } else {
+                    alert("Please select a story first.");
+                  }
+                }}
+                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors shadow flex items-center gap-2"
+              >
+                <TrendingUp className="w-3.5 h-3.5" /> Start New Campaign
+              </button>
+            </div>
+          </div>
+
+          {activePromotions.length === 0 ? (
+            <div className="py-20 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-50/50 dark:bg-zinc-900/20 flex flex-col items-center justify-center text-center p-6">
+              <Radio className="w-10 h-10 text-zinc-300 dark:text-zinc-700 mb-6" />
+              <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 italic mb-2">No promotion campaigns running.</p>
+              <p className="text-[10px] text-zinc-500 max-w-md">Boost your manuscript visibility by initiating a Featured, Promoted, or Trending campaign.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {activePromotions.map((promo) => {
+                const isEnded = new Date(promo.endDate) < new Date() || promo.status === "ENDED";
+                const isActive = promo.status === "ACTIVE" && !isEnded;
+                const isPending = promo.status === "PENDING";
+                
+                // Calculate time remaining
+                const remainingTimeMs = new Date(promo.endDate).getTime() - new Date().getTime();
+                const remainingDays = Math.max(0, Math.ceil(remainingTimeMs / (1000 * 60 * 60 * 24)));
+                
+                let statusColor = "bg-zinc-100 dark:bg-zinc-900 text-zinc-500";
+                if (isActive) statusColor = "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
+                else if (isPending) statusColor = "bg-amber-500/10 text-amber-500 border border-amber-500/20";
+                else if (promo.status === "DECLINED") statusColor = "bg-rose-500/10 text-rose-500 border border-rose-500/20";
+                else if (isEnded) statusColor = "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"; // Red for ended
+                
+                let tierColor = "bg-indigo-500/10 text-indigo-500";
+                if (promo.tier === "FEATURED") tierColor = "bg-amber-500/10 text-amber-500";
+                if (promo.tier === "TRENDING") tierColor = "bg-emerald-500/10 text-emerald-500";
+
+                return (
+                  <div key={promo.id} className={`p-6 rounded-3xl border transition-all shadow-sm relative overflow-hidden ${isActive ? 'bg-indigo-50/10 dark:bg-indigo-950/10 border-indigo-500/20' : 'bg-white dark:bg-zinc-950 border-zinc-100 dark:border-zinc-900'}`}>
+                    {isActive && <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />}
+                    
+                    <div className="flex justify-between items-start mb-4">
+                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${tierColor}`}>
+                        {promo.tier}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusColor}`}>
+                        {isEnded ? "ENDED" : promo.status}
+                      </span>
+                    </div>
+                    
+                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white truncate mb-4" title={promo.storyTitle}>
+                      {promo.storyTitle}
+                    </h3>
+                    
+                    <div className="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-zinc-500 font-medium">Cost</span>
+                        <span className="font-mono font-bold text-zinc-900 dark:text-white">৳{promo.cost.toLocaleString()}</span>
+                      </div>
+                      
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="text-zinc-500 font-medium">Duration</span>
+                        <span className="font-mono font-bold text-zinc-900 dark:text-white">
+                          {new Date(promo.startDate).toLocaleDateString()} - {new Date(promo.endDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                      
+                      {isActive && (
+                        <div className="flex justify-between items-center text-xs pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+                          <span className="text-indigo-500 dark:text-indigo-400 font-bold uppercase tracking-wider text-[10px] flex items-center gap-1.5">
+                            <Clock className="w-3 h-3 animate-pulse" /> Time Remaining
+                          </span>
+                          <span className="font-black text-indigo-600 dark:text-indigo-300">
+                            {remainingDays} {remainingDays === 1 ? 'Day' : 'Days'}
+                          </span>
+                        </div>
+                      )}
+                      
+                      {isEnded && (
+                        <div className="pt-4 mt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+                          <Link 
+                            href={`/write/story/${promo.storyId}/edit`}
+                            className="w-full py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-zinc-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
+                          >
+                            <TrendingUp className="w-3.5 h-3.5" /> Promote Again
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
 
         {/* ========================================== */}
         {/* 5 NEW ADVANCED CREATOR TOOL CARDS SECTION */}

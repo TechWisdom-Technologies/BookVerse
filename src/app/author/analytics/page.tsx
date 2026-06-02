@@ -105,6 +105,36 @@ interface Analytics {
     subscribers: Array<{ id?: string; email?: string; username?: string; displayName?: string | null; avatarUrl?: string | null }>;
     tippers: Array<{ amount: number; createdAt: string; sender: { id?: string; username: string; displayName?: string | null; avatarUrl?: string | null } }>;
   };
+  promotionAnalytics?: Array<{
+    id: string;
+    storyTitle: string;
+    tier: string;
+    cost: number;
+    status: string;
+    startDate: string;
+    endDate: string;
+    campaignDays: number;
+    promotionViews: number;
+    reactionsGenerated: number;
+    commentsGenerated: number;
+    totalEngagements: number;
+    costPerEngagement: string;
+    costPerView: string;
+    roiRating: string;
+    dailyEngagementVelocity: number;
+    followersGained: number;
+    tipsEarned: number;
+    tipCount: number;
+    promoShares: number;
+    interactionRate: number;
+    sentimentScore: number;
+    positiveReactions: number;
+    negativeReactions: number;
+    librarySaves: number;
+    totalReadingMinutes: number;
+    costPerMinute: number;
+    inlineCommentsCount: number;
+  }>;
 }
 
 type SortKey = 'title' | 'views' | 'reactions' | 'comments' | 'tips' | 'chapters' | 'engagementRate';
@@ -123,6 +153,7 @@ export default function AuthorAnalyticsPage() {
   const [sortKey, setSortKey] = useState<SortKey>('views');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [selectedRetentionStory, setSelectedRetentionStory] = useState<string>('all');
+  const [selectedPromotion, setSelectedPromotion] = useState<string>('');
 
   useEffect(() => {
     if (authLoading) return;
@@ -134,6 +165,9 @@ export default function AuthorAnalyticsPage() {
         if (res.ok) {
           const data = await res.json();
           setAnalytics(data);
+          if (data.promotionAnalytics && data.promotionAnalytics.length > 0) {
+            setSelectedPromotion(data.promotionAnalytics[0].id);
+          }
         } else if (res.status === 402) {
           const data = await res.json();
           setUpgradeUrl(data.upgradeUrl || '/premium/checkout?plan=creator');
@@ -253,7 +287,8 @@ export default function AuthorAnalyticsPage() {
     focusIndex,
     annotationsHeatmap,
     cohortRetention,
-    collections
+    collections,
+    promotionAnalytics
   } = analytics;
 
   // Compute sentiment breakdown
@@ -754,6 +789,197 @@ export default function AuthorAnalyticsPage() {
           </div>
 
         </section>
+
+        {/* ========================================== */}
+        {/* NEW FEATURE: Promotion Analytics Engine */}
+        {/* ========================================== */}
+        {promotionAnalytics && promotionAnalytics.length > 0 && (
+          <section className="mb-16 space-y-8 animate-fade-in">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
+              <div>
+                <h2 className="text-sm font-black uppercase tracking-[0.2em]">Promotion Campaign Analytics</h2>
+                <p className="text-[10px] text-zinc-400 font-bold uppercase mt-0.5">Enterprise-grade ROI intelligence across {promotionAnalytics.length} campaign{promotionAnalytics.length > 1 ? 's' : ''}.</p>
+              </div>
+            </div>
+
+            {/* Overall Promotion Summary */}
+            {(() => {
+              const totalSpent = promotionAnalytics.reduce((s, p) => s + p.cost, 0);
+              const totalPromoViews = promotionAnalytics.reduce((s, p) => s + p.promotionViews, 0);
+              const totalPromoEngagements = promotionAnalytics.reduce((s, p) => s + p.totalEngagements, 0);
+              const totalFollowersGained = promotionAnalytics.reduce((s, p) => s + p.followersGained, 0);
+              const totalTipsEarned = promotionAnalytics.reduce((s, p) => s + p.tipsEarned, 0);
+              const totalReadMin = promotionAnalytics.reduce((s, p) => s + p.totalReadingMinutes, 0);
+              return (
+                <div className="grid grid-cols-2 lg:grid-cols-6 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 rounded-3xl overflow-hidden shadow-sm">
+                  {[
+                    { label: 'Total Ad Spend', value: `৳${totalSpent}` },
+                    { label: 'Total Promo Views', value: totalPromoViews.toLocaleString() },
+                    { label: 'Total Engagements', value: totalPromoEngagements.toLocaleString() },
+                    { label: 'Followers Gained', value: totalFollowersGained.toLocaleString() },
+                    { label: 'Tips Earned', value: `৳${totalTipsEarned}` },
+                    { label: 'Reading Time', value: `${totalReadMin} min` },
+                  ].map((s, i) => (
+                    <div key={i} className="p-5 bg-white dark:bg-zinc-950 flex flex-col justify-between min-h-[100px]">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400">{s.label}</span>
+                      <div className="text-lg font-black tracking-tight mt-2">{s.value}</div>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
+
+            {/* Individual Campaign Cards Selection */}
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Select Campaign</span>
+              <select
+                value={selectedPromotion}
+                onChange={(e) => setSelectedPromotion(e.target.value)}
+                className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-[10px] font-bold uppercase px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-[250px]"
+              >
+                {promotionAnalytics.map((promo) => (
+                  <option key={promo.id} value={promo.id}>
+                    {promo.storyTitle} ({new Date(promo.startDate).toLocaleDateString()})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-8">
+              {(selectedPromotion === 'all' ? promotionAnalytics : promotionAnalytics.filter(p => p.id === selectedPromotion)).map((promo) => (
+                <div key={promo.id} className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm">
+                  
+                  {/* Card Header */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800/40 mb-6 gap-3">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-md">{promo.tier}</span>
+                      <h3 className="text-sm font-bold truncate text-zinc-900 dark:text-white max-w-xs" title={promo.storyTitle}>{promo.storyTitle}</h3>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400">{new Date(promo.startDate).toLocaleDateString()} — {new Date(promo.endDate).toLocaleDateString()} ({promo.campaignDays}d)</span>
+                      <span className={`text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md ${
+                        promo.status === 'ACTIVE' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500' :
+                        promo.status === 'ENDED' ? 'bg-rose-50 dark:bg-rose-900/30 text-rose-500' :
+                        'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'
+                      }`}>{promo.status}</span>
+                      <span className={`text-[9px] font-black uppercase tracking-widest ${
+                        promo.roiRating === 'Excellent' ? 'text-emerald-500' :
+                        promo.roiRating === 'Good' ? 'text-indigo-500' :
+                        promo.roiRating === 'Average' ? 'text-amber-500' : 'text-rose-500'
+                      }`}>ROI: {promo.roiRating}</span>
+                    </div>
+                  </div>
+
+                  {/* Core Cost Metrics */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div className="p-4 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/50 rounded-2xl">
+                      <span className="block text-[8px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Campaign Cost</span>
+                      <span className="text-xl font-black font-mono">৳{promo.cost}</span>
+                    </div>
+                    <div className="p-4 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/50 rounded-2xl">
+                      <span className="block text-[8px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Views Generated</span>
+                      <span className="text-xl font-black font-mono">{promo.promotionViews.toLocaleString()}</span>
+                    </div>
+                    <div className="p-4 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/50 rounded-2xl">
+                      <span className="block text-[8px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Cost Per View</span>
+                      <span className="text-xl font-black font-mono text-emerald-500">৳{promo.costPerView}</span>
+                    </div>
+                    <div className="p-4 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-800/50 rounded-2xl">
+                      <span className="block text-[8px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Cost Per Engagement</span>
+                      <span className="text-xl font-black font-mono text-indigo-500">৳{promo.costPerEngagement}</span>
+                    </div>
+                  </div>
+
+                  {/* 10 Advanced Metrics Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                    {/* 1. Daily Velocity */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Daily Velocity</span>
+                      <span className="text-sm font-black font-mono">{promo.dailyEngagementVelocity || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">engagements/day</span>
+                    </div>
+                    {/* 2. Interaction Rate */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Interaction Rate</span>
+                      <span className="text-sm font-black font-mono text-indigo-500">{promo.interactionRate || 0}%</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">of viewers engaged</span>
+                    </div>
+                    {/* 3. Followers Gained */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Followers Gained</span>
+                      <span className="text-sm font-black font-mono text-emerald-500">+{promo.followersGained || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">during campaign</span>
+                    </div>
+                    {/* 4. Tips Earned */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Tips Earned</span>
+                      <span className="text-sm font-black font-mono text-amber-500">৳{promo.tipsEarned || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">{promo.tipCount || 0} tip{promo.tipCount !== 1 ? 's' : ''}</span>
+                    </div>
+                    {/* 5. Shares */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Reach Expansion</span>
+                      <span className="text-sm font-black font-mono">{promo.promoShares || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">shares logged</span>
+                    </div>
+                    {/* 6. Library Saves */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Library Saves</span>
+                      <span className="text-sm font-black font-mono text-indigo-500">{promo.librarySaves || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">readers saved</span>
+                    </div>
+                    {/* 7. Reading Time */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Reading Time</span>
+                      <span className="text-sm font-black font-mono">{promo.totalReadingMinutes || 0} min</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">attention captured</span>
+                    </div>
+                    {/* 8. Cost Per Minute */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Cost Per Minute</span>
+                      <span className="text-sm font-black font-mono text-rose-500">৳{promo.costPerMinute || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">attention value</span>
+                    </div>
+                    {/* 9. Deep Engagement */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Deep Engagement</span>
+                      <span className="text-sm font-black font-mono">{promo.inlineCommentsCount || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">inline comments</span>
+                    </div>
+                    {/* 10. Reactions + Comments breakdown */}
+                    <div className="p-3 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                      <span className="block text-[7px] font-bold uppercase tracking-widest text-zinc-400 mb-1">Engagements</span>
+                      <span className="text-sm font-black font-mono">{promo.totalEngagements || 0}</span>
+                      <span className="block text-[7px] text-zinc-400 mt-0.5">{promo.reactionsGenerated || 0} reactions · {promo.commentsGenerated || 0} comments</span>
+                    </div>
+                  </div>
+
+                  {/* Sentiment Conversion Bar */}
+                  <div className="p-4 bg-zinc-50/30 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-800/40 rounded-xl">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400">Sentiment Conversion</span>
+                      <span className="text-[9px] font-black font-mono">
+                        <span className="text-emerald-500">{promo.sentimentScore}% Positive</span>
+                        <span className="text-zinc-300 dark:text-zinc-700 mx-1">·</span>
+                        <span className="text-rose-400">{promo.positiveReactions + promo.negativeReactions > 0 ? (100 - promo.sentimentScore).toFixed(1) : 0}% Negative</span>
+                      </span>
+                    </div>
+                    <div className="w-full h-3 bg-zinc-100 dark:bg-zinc-800 rounded-full overflow-hidden flex">
+                      <div className="h-full bg-emerald-500 rounded-l-full transition-all duration-500" style={{ width: `${promo.sentimentScore}%` }} />
+                      <div className="h-full bg-rose-400 rounded-r-full transition-all duration-500" style={{ width: `${promo.positiveReactions + promo.negativeReactions > 0 ? 100 - promo.sentimentScore : 0}%` }} />
+                    </div>
+                    <div className="flex justify-between mt-1.5 text-[7px] font-bold uppercase tracking-widest text-zinc-400">
+                      <span>👍 {promo.positiveReactions} positive</span>
+                      <span>😢 {promo.negativeReactions} negative</span>
+                    </div>
+                  </div>
+
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Top Performers List */}
         {topStories.length > 0 && (

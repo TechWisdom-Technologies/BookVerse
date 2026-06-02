@@ -252,6 +252,27 @@ export async function GET() {
       redeemedAt: g.redeemedAt?.toISOString() || null
     }));
 
+    // NEW FEATURE: Advertising & Promotions Registry
+    const dbPromotions = await prisma.storyPromotion.findMany({
+      where: { story: { authorId: user.id } },
+      include: {
+        story: { select: { title: true } }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 20
+    });
+
+    const activePromotions = dbPromotions.map(p => ({
+      id: p.id,
+      storyTitle: p.story.title,
+      tier: p.tier,
+      cost: p.cost,
+      status: p.status,
+      startDate: p.startDate.toISOString(),
+      endDate: p.endDate.toISOString(),
+      createdAt: p.createdAt.toISOString()
+    }));
+
     // Feature 4: Safety, Integrity & Content Flags Board
     const dbReports = await prisma.contentReport.findMany({
       where: { storyId: { in: myStoriesMeta.map(s => s.id) } },
@@ -375,7 +396,9 @@ export async function GET() {
       warningsAudit: { warningsSummary, avgAgeRating },
       giftMemberships,
       safetyReports,
-      genreMatchmaker
+      genreMatchmaker,
+      activePromotions,
+      myStories: myStoriesMeta.map(s => ({ id: s.id, title: s.title }))
     });
   } catch (error) {
     console.error('Error fetching creator dashboard analytics:', error);
