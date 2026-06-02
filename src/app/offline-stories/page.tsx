@@ -28,7 +28,7 @@ import {
 } from "@/lib/offline-storage";
 import { TTSPlayer } from "@/components/stories/TTSPlayer";
 
-// Removed inline reader in favor of direct navigation
+// Removed inline reader in favor of direct navigation - wait, bringing it back to avoid SW fallback!
 
 export default function OfflineStoriesPage() {
   const [stories, setStories] = useState<OfflineStory[]>([]);
@@ -37,6 +37,10 @@ export default function OfflineStoriesPage() {
   const [isOnline, setIsOnline] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"savedAt" | "expiresAt">("savedAt");
+
+  // Inline reader state
+  const [readingStory, setReadingStory] = useState<OfflineStory | null>(null);
+  const [readingChapterIndex, setReadingChapterIndex] = useState(0);
 
   useEffect(() => {
     setIsOnline(navigator.onLine);
@@ -77,6 +81,9 @@ export default function OfflineStoriesPage() {
     try {
       await deleteOfflineStory(id);
       setStories((prev) => prev.filter((s) => s.id !== id));
+      if (readingStory?.id === id) {
+        setReadingStory(null);
+      }
       const size = await getOfflineStorageSize();
       setStorageSize(size);
       toast.success("অফলাইন থেকে মুছে ফেলা হয়েছে");
@@ -91,10 +98,17 @@ export default function OfflineStoriesPage() {
       await clearAllOfflineStories();
       setStories([]);
       setStorageSize(0);
+      setReadingStory(null);
       toast.success("সব অফলাইন গল্প মুছে ফেলা হয়েছে");
     } catch {
       toast.error("মুছে ফেলতে ব্যর্থ হয়েছে");
     }
+  };
+
+  const handleReadStory = (story: OfflineStory) => {
+    setReadingStory(story);
+    setReadingChapterIndex(0);
+    window.scrollTo(0, 0);
   };
 
   const filteredStories = stories
@@ -127,6 +141,137 @@ export default function OfflineStoriesPage() {
     );
   }
 
+  // === INLINE READER RENDER ===
+  if (readingStory) {
+    const chapter = readingStory.chapters[readingChapterIndex];
+    if (!chapter) {
+      return (
+        <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <h1 className="text-lg font-bold">Chapter not found</h1>
+            <button
+              onClick={() => setReadingStory(null)}
+              className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded"
+            >
+              Back to Offline Stories
+            </button>
+          </div>
+        </main>
+      );
+    }
+
+    const prevChapter = readingChapterIndex > 0 ? readingStory.chapters[readingChapterIndex - 1] : null;
+    const nextChapter = readingChapterIndex < readingStory.chapters.length - 1 ? readingStory.chapters[readingChapterIndex + 1] : null;
+
+    const htmlContent = chapter.htmlContent;
+
+    return (
+      <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-40">
+        <div className="max-w-3xl mx-auto px-6 py-12">
+          {/* Navigation */}
+          <div className="mb-12 flex items-center justify-between">
+            <button
+              onClick={() => {
+                setReadingStory(null);
+                window.scrollTo(0, 0);
+              }}
+              className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+            >
+              <ArrowLeft className="w-3 h-3" />
+              Back to Offline Library
+            </button>
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded-full">
+              <WifiOff className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+              <span className="text-[9px] font-bold uppercase tracking-widest text-amber-700 dark:text-amber-400">
+                Offline Reading
+              </span>
+            </div>
+          </div>
+
+          {/* Chapter Header */}
+          <header className="mb-16 pb-8 border-b border-zinc-100 dark:border-zinc-900">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                <BookOpen className="w-3.5 h-3.5" />
+                Chapter {chapter.chapterOrder.toString().padStart(2, "0")}
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold tracking-tight mb-2">
+                  {chapter.title}
+                </h1>
+                <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
+                  <Clock className="w-3 h-3 text-blue-500" />
+                  <span className="text-blue-500">
+                    {Math.max(1, Math.ceil((chapter.htmlContent?.length || 0) / 1000))} min read
+                  </span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          {/* Chapter Content */}
+          <article className="prose prose-zinc max-w-none font-serif leading-relaxed dark:prose-invert text-zinc-700 dark:text-zinc-300">
+            {htmlContent ? (
+              <div
+                dangerouslySetInnerHTML={{ __html: htmlContent }}
+                className="text-lg"
+              />
+            ) : (
+              <p className="text-xs font-medium text-zinc-400 italic">
+                No content available for this chapter.
+              </p>
+            )}
+          </article>
+
+          {/* Chapter Navigation */}
+          <nav className="mt-20 pt-12 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4">
+            {prevChapter ? (
+              <button
+                onClick={() => {
+                  setReadingChapterIndex(readingChapterIndex - 1);
+                  window.scrollTo(0, 0);
+                }}
+                className="flex items-center gap-3 px-6 py-3 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 transition-all group"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  {prevChapter.title}
+                </span>
+              </button>
+            ) : (
+              <div className="hidden sm:block" />
+            )}
+
+            {nextChapter ? (
+              <button
+                onClick={() => {
+                  setReadingChapterIndex(readingChapterIndex + 1);
+                  window.scrollTo(0, 0);
+                }}
+                className="flex items-center gap-3 px-6 py-3 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 transition-all group"
+              >
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  {nextChapter.title}
+                </span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setReadingStory(null);
+                  window.scrollTo(0, 0);
+                }}
+                className="px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all"
+              >
+                Back to Offline Library
+              </button>
+            )}
+          </nav>
+        </div>
+      </main>
+    );
+  }
+  // === END INLINE READER ===
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
@@ -301,13 +446,13 @@ export default function OfflineStoriesPage() {
                 {/* Actions */}
                 <div className="flex items-center border-t border-zinc-50 dark:border-zinc-900">
                   {story.chapters.length > 0 ? (
-                    <Link
-                      href={`/offline-stories/${story.id}/chapters/${story.chapters[0].id}`}
+                    <button
+                      onClick={() => handleReadStory(story)}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all"
                     >
                       <BookOpen className="w-3 h-3" />
                       Read Offline
-                    </Link>
+                    </button>
                   ) : (
                     <span className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400">
                       No Chapters
