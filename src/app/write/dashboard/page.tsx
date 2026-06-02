@@ -10,7 +10,6 @@ import {
   MessageSquare,
   BookOpen,
   Users,
-  Compass,
   Layers,
   GitBranch,
   ArrowLeft,
@@ -26,12 +25,10 @@ import {
   Calendar,
   Radio,
   Vote,
-  Bookmark,
   Gift,
   Copy,
   CheckCircle2,
-  Target,
-  AlertTriangle
+  Target
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
@@ -808,7 +805,7 @@ export default function AuthorDashboardPage() {
         {/* NEW FEATURE: Advertising & Promotions Registry */}
         {/* ========================================== */}
         <section className="mt-16 pt-12 border-t border-zinc-100 dark:border-zinc-900">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
             <div className="flex items-center gap-3">
               <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
               <div>
@@ -817,11 +814,11 @@ export default function AuthorDashboardPage() {
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <select
                 value={selectedPromoStory}
                 onChange={(e) => setSelectedPromoStory(e.target.value)}
-                className="px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-bold text-zinc-900 dark:text-zinc-100 rounded-xl focus:outline-none focus:border-indigo-500 transition-colors w-48"
+                className="px-3 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-xs font-bold text-zinc-900 dark:text-zinc-100 rounded-xl focus:outline-none focus:border-indigo-500 transition-colors w-full sm:w-48"
               >
                 <option value="">Select a Story...</option>
                 {myStories.map(story => (
@@ -836,7 +833,7 @@ export default function AuthorDashboardPage() {
                     alert("Please select a story first.");
                   }
                 }}
-                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors shadow flex items-center gap-2"
+                className="px-5 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors shadow flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 <TrendingUp className="w-3.5 h-3.5" /> Start New Campaign
               </button>
