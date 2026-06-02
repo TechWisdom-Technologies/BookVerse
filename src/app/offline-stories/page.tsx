@@ -60,7 +60,7 @@ export default function OfflineStoriesPage() {
         // Auto-purge expired stories first
         const purged = await purgeExpiredStories();
         if (purged > 0) {
-          toast.success(`${purged}টি মেয়াদোত্তীর্ণ গল্প মুছে ফেলা হয়েছে`);
+          toast.success(`${purged} expired stories have been purged`);
         }
 
         const allStories = await getAllOfflineStories();
@@ -86,22 +86,22 @@ export default function OfflineStoriesPage() {
       }
       const size = await getOfflineStorageSize();
       setStorageSize(size);
-      toast.success("অফলাইন থেকে মুছে ফেলা হয়েছে");
+      toast.success("Removed from offline library");
     } catch {
-      toast.error("মুছে ফেলতে ব্যর্থ হয়েছে");
+      toast.error("Failed to remove");
     }
   };
 
   const handleClearAll = async () => {
-    if (!confirm("আপনি কি সব অফলাইন গল্প মুছে ফেলতে চান?")) return;
+    if (!confirm("Are you sure you want to clear all offline stories?")) return;
     try {
       await clearAllOfflineStories();
       setStories([]);
       setStorageSize(0);
       setReadingStory(null);
-      toast.success("সব অফলাইন গল্প মুছে ফেলা হয়েছে");
+      toast.success("All offline stories have been cleared");
     } catch {
-      toast.error("মুছে ফেলতে ব্যর্থ হয়েছে");
+      toast.error("Failed to remove");
     }
   };
 
@@ -292,7 +292,7 @@ export default function OfflineStoriesPage() {
           <div className="mb-6 flex items-center gap-3 px-4 py-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 rounded">
             <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <p className="text-xs font-bold text-amber-700 dark:text-amber-400">
-              আপনি বর্তমানে অফলাইনে আছেন। শুধুমাত্র সেভ করা গল্পগুলো পড়তে পারবেন।
+              You are currently offline. You can only read stories that have been saved offline.
             </p>
           </div>
         )}
@@ -305,10 +305,10 @@ export default function OfflineStoriesPage() {
               Offline Library
             </div>
             <h1 className="text-2xl font-bold tracking-tight">
-              অফলাইন গল্পসমূহ
+              Offline Stories
             </h1>
             <p className="text-xs text-zinc-500 font-medium max-w-md">
-              ইন্টারনেট ছাড়াই পড়ুন। গল্পগুলো সেভ করার ৭ দিন পর স্বয়ংক্রিয়ভাবে মুছে যাবে।
+              Read without internet. Saved stories are automatically deleted after 7 days.
             </p>
           </div>
 
@@ -340,7 +340,7 @@ export default function OfflineStoriesPage() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
               <input
                 type="text"
-                placeholder="গল্প বা লেখক খুঁজুন..."
+                placeholder="Search stories or authors..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-9 pr-4 py-2.5 text-xs font-medium bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded placeholder:text-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-700"
@@ -376,12 +376,12 @@ export default function OfflineStoriesPage() {
           <div className="flex flex-col items-center justify-center py-24 space-y-4">
             <WifiOff className="w-12 h-12 text-zinc-200 dark:text-zinc-800" />
             <p className="text-sm font-bold text-zinc-400">
-              {searchQuery ? "কোনো গল্প পাওয়া যায়নি" : "কোনো অফলাইন গল্প নেই"}
+              {searchQuery ? "No stories found" : "No offline stories"}
             </p>
             <p className="text-xs text-zinc-400 max-w-sm text-center">
               {searchQuery
-                ? "অন্য কিছু দিয়ে খুঁজুন।"
-                : "গল্পের পৃষ্ঠায় গিয়ে \"Save Offline\" বাটনে ক্লিক করে গল্প ডাউনলোড করুন।"}
+                ? "Try searching with different keywords."
+                : "Download stories by clicking the \"Save Offline\" button on any story page."}
             </p>
             {!searchQuery && (
               <Link
