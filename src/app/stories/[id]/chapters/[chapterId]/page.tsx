@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { generateHTML } from "@tiptap/html";
+import { generateHTML } from "@tiptap/html/server";
 import { type JSONContent } from "@tiptap/core";
 import DOMPurify from "isomorphic-dompurify";
 import ImageExtension from "@tiptap/extension-image";
@@ -31,12 +31,6 @@ function sanitizeHtml(htmlString: string): string {
 function renderChapterContent(content: unknown) {
   if (!content || typeof content !== "object") return null;
   try {
-    const { Window } = require("happy-dom");
-    const window = new Window();
-    const g = global as unknown as Record<string, unknown>;
-    g.window = window;
-    g.document = window.document;
-    try { g.navigator = window.navigator; } catch { /* ignore */ }
     const rawHtml = generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
     return rawHtml ? sanitizeHtml(rawHtml) : null;
   } catch (error) {

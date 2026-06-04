@@ -4,9 +4,8 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import type { ReactionType } from "@prisma/client";
-import { generateHTML } from "@tiptap/html";
+import { generateHTML } from "@tiptap/html/server";
 import { type JSONContent } from "@tiptap/core";
-import { Window } from "happy-dom";
 import ImageExtension from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -77,11 +76,6 @@ function estimateReadingTime(content: any): number {
 function renderChapterContentToHtml(content: unknown): string {
   if (!content || typeof content !== "object") return "";
   try {
-    const window = new Window();
-    const g = global as unknown as Record<string, unknown>;
-    g.window = window;
-    g.document = window.document;
-    try { g.navigator = window.navigator; } catch { /* ignore */ }
     const rawHtml = generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
     return rawHtml || "";
   } catch {
