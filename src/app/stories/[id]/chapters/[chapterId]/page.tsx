@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { generateHTML } from "@tiptap/html";
 import { type JSONContent } from "@tiptap/core";
-import { Window } from "happy-dom";
+import DOMPurify from "isomorphic-dompurify";
 import ImageExtension from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -21,49 +21,17 @@ interface ChapterReaderPageProps {
 }
 
 function sanitizeHtml(htmlString: string): string {
-  const window = new Window();
-  const document = window.document;
-  const body = document.createElement("body");
-  body.innerHTML = htmlString;
-
-  // 1. Remove dangerous tags
-  const forbiddenTags = ["script", "iframe", "object", "embed", "style", "form", "input", "button", "textarea", "meta", "link"];
-  for (const tag of forbiddenTags) {
-    const elements = body.querySelectorAll(tag);
-    for (const el of elements) {
-      el.remove();
-    }
-  }
-
-  // 2. Remove dangerous attributes and event handlers
-  const allElements = body.querySelectorAll("*");
-  for (const el of allElements) {
-    const attrs = Array.from(el.attributes);
-    for (const attr of attrs) {
-      if (attr.name.startsWith("on")) {
-        el.removeAttribute(attr.name);
-      }
-      if (attr.name === "href" && attr.value) {
-        const val = attr.value.trim().toLowerCase();
-        if (val.startsWith("javascript:") || val.startsWith("data:")) {
-          el.removeAttribute("href");
-        }
-      }
-      if (attr.name === "src" && attr.value) {
-        const val = attr.value.trim().toLowerCase();
-        if (val.startsWith("javascript:") || val.startsWith("data:")) {
-          el.removeAttribute("src");
-        }
-      }
-    }
-  }
-
-  return body.innerHTML;
+  return DOMPurify.sanitize(htmlString, {
+    FORBID_TAGS: ["style", "form", "input", "button", "textarea"],
+    FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
+    ALLOW_DATA_ATTR: false,
+  });
 }
 
 function renderChapterContent(content: unknown) {
   if (!content || typeof content !== "object") return null;
   try {
+    const { Window } = require("happy-dom");
     const window = new Window();
     const g = global as unknown as Record<string, unknown>;
     g.window = window;

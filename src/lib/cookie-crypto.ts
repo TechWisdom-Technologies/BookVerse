@@ -1,10 +1,10 @@
 const COOKIE_SECRET = (() => {
   const secret = process.env.COOKIE_SIGNING_SECRET || process.env.FIREBASE_ADMIN_PRIVATE_KEY;
   if (!secret) {
-    if (process.env.NODE_ENV === 'production') {
-      throw new Error("COOKIE_SIGNING_SECRET or FIREBASE_ADMIN_PRIVATE_KEY environment variable is required in production");
-    }
-    return "bookverse-fallback-secret-for-development";
+    throw new Error(
+      "COOKIE_SIGNING_SECRET or FIREBASE_ADMIN_PRIVATE_KEY environment variable is required. " +
+      "Set COOKIE_SIGNING_SECRET in your .env file (generate with: openssl rand -hex 32)."
+    );
   }
   return secret;
 })();

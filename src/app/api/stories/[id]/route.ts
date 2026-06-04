@@ -280,7 +280,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       );
     }
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to update story" },
+      { error: "Failed to update story" },
       { status: 500 }
     );
   }

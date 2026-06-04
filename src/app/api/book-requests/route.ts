@@ -92,6 +92,6 @@ export async function POST(req: Request) {
     return NextResponse.json(request, { status: 201 });
   } catch (error: any) {
     console.error('Error creating book request:', error);
-    return NextResponse.json({ error: 'Failed to submit book request', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to submit book request' }, { status: 500 });
   }
 }

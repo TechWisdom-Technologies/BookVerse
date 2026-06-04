@@ -102,7 +102,6 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({
       error: 'Failed to create series',
-      details: error.message
     }, { status: 500 });
   }
 }

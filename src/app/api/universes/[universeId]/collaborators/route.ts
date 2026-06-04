@@ -124,6 +124,6 @@ export async function POST(
     return NextResponse.json(collaborator, { status: 201 });
   } catch (error: any) {
     console.error('Error adding collaborator:', error);
-    return NextResponse.json({ error: 'Failed to add collaborator', details: error.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to add collaborator' }, { status: 500 });
   }
 }

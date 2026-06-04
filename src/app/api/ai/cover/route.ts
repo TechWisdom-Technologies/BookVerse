@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { uploadToR2 } from "@/lib/r2";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { randomUUID } from "crypto";
 
 export const maxDuration = 60;
@@ -83,6 +84,10 @@ async function generateWithPollinations(prompt: string): Promise<Buffer | null> 
 }
 
 export async function POST(req: Request) {
+  // Rate limit: 5 AI cover generations per minute per IP
+  const limitRes = await checkRateLimit(5, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { prompt } = await req.json();
 

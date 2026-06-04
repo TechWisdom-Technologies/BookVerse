@@ -3,10 +3,16 @@ import { resend } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
 import { adminAuth } from "@/lib/firebase-admin";
 import { hasFeatureAccess, paidFeatureError } from "@/lib/entitlements";
+import { checkRateLimit } from "@/lib/rate-limit";
+import DOMPurify from "isomorphic-dompurify";
 
 const from = process.env.RESEND_FROM_EMAIL || "BookVerse <onboarding@resend.dev>";
 
 export async function POST(req: Request) {
+  // Rate limit: 3 newsletter sends per minute
+  const limitRes = await checkRateLimit(3, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
@@ -51,12 +57,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Email service not configured" }, { status: 500 });
     }
 
+    // Sanitize HTML to prevent phishing forms, scripts, iframes, etc.
+    const sanitizedHtml = DOMPurify.sanitize(htmlContent, {
+      ALLOWED_TAGS: [
+        "h1", "h2", "h3", "h4", "h5", "h6", "p", "br", "hr",
+        "strong", "em", "b", "i", "u", "s", "a", "img",
+        "ul", "ol", "li", "blockquote", "pre", "code",
+        "table", "thead", "tbody", "tr", "th", "td",
+        "div", "span", "center",
+      ],
+      ALLOWED_ATTR: [
+        "href", "src", "alt", "title", "width", "height",
+        "style", "class", "target", "align",
+      ],
+      ALLOW_DATA_ATTR: false,
+    });
+
     const { data, error } = await resend.emails.send({
       from,
       to: user.email,
       bcc: subscriberEmails,
       subject: subject,
-      html: htmlContent,
+      html: sanitizedHtml,
       replyTo: user.email,
     });
 

@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import { Role } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
 import { uploadToR2 } from "@/lib/r2";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const MAX_COVER_SIZE = 5 * 1024 * 1024;
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
@@ -63,6 +64,10 @@ function validateFile(file: File, kind: UploadKind) {
 }
 
 export async function POST(request: Request) {
+  // Rate limit: 10 uploads per minute per IP
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { dbUser } = await verifyToken();
 

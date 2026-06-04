@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import util from "util";
-import path from "path";
 
-const execAsync = util.promisify(exec);
+const execFileAsync = util.promisify(execFile);
 
 const ALLOWED_SCRIPTS = {
   "rebuild-search": "scripts/rebuild-search.ts",
@@ -30,16 +29,19 @@ export async function POST(request: Request) {
 
     const scriptPath = ALLOWED_SCRIPTS[script as keyof typeof ALLOWED_SCRIPTS];
     
-    // Construct command
-    let command = `npx tsx ${scriptPath}`;
+    // Build arguments as an array — bypasses shell entirely, preventing injection
+    const args = [scriptPath];
     if (script === "bulk-upload") {
-      if (dir) command += ` --dir "${dir.replace(/"/g, '\\"')}"`;
-      if (email) command += ` --email "${email.replace(/"/g, '\\"')}"`;
+      if (dir && typeof dir === "string") {
+        args.push("--dir", dir);
+      }
+      if (email && typeof email === "string") {
+        args.push("--email", email);
+      }
     }
     
-    // Execute the script using npx tsx
-    // We pass the request.signal so that if the client aborts, the child process is terminated.
-    const { stdout, stderr } = await execAsync(command, {
+    // Use execFile with npx — no shell involved, arguments are passed directly
+    const { stdout, stderr } = await execFileAsync("npx", ["tsx", ...args], {
       cwd: process.cwd(),
       maxBuffer: 1024 * 1024 * 10, // 10MB buffer for large outputs
       signal: request.signal,
@@ -57,9 +59,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { 
         error: "Script execution failed", 
-        details: error.message,
-        stdout: error.stdout,
-        stderr: error.stderr 
+        details: process.env.NODE_ENV === "development" ? error.message : "Internal error",
       }, 
       { status: 500 }
     );

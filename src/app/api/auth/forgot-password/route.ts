@@ -26,19 +26,17 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ success: true });
     } catch (firebaseError: unknown) {
-      console.error("Firebase reset link generation failed:", firebaseError);
-      
       const fErr = firebaseError as Record<string, unknown>;
-      // Return a descriptive error if user is not found, otherwise generic
+      // Always return success to prevent user enumeration.
+      // Log the real error server-side for debugging.
       if (fErr?.code === "auth/user-not-found") {
-        return NextResponse.json(
-          { error: "No account exists with this email address." },
-          { status: 404 }
-        );
+        console.info("Password reset requested for non-existent email (suppressed).");
+        return NextResponse.json({ success: true });
       }
       
+      console.error("Firebase reset link generation failed:", firebaseError);
       return NextResponse.json(
-        { error: (fErr?.message as string) || "Failed to generate reset link." },
+        { error: "Failed to process request. Please try again later." },
         { status: 500 }
       );
     }
