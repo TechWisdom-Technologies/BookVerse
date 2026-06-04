@@ -2,17 +2,27 @@ import { NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebase-admin";
 import { sendPasswordResetEmail } from "@/lib/resend";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export async function POST(request: Request) {
   const limitRes = await checkRateLimit(5, 60000);
   if (limitRes.limited) return limitRes.response;
 
   try {
-    const { email } = await request.json();
+    const { email, captchaToken } = await request.json();
 
     if (!email) {
       return NextResponse.json(
         { error: "Email address is required." },
+        { status: 400 }
+      );
+    }
+
+    // Verify Turnstile CAPTCHA token server-side
+    const captchaResult = await verifyTurnstileToken(captchaToken);
+    if (!captchaResult.success) {
+      return NextResponse.json(
+        { error: captchaResult.error || "CAPTCHA verification failed." },
         { status: 400 }
       );
     }

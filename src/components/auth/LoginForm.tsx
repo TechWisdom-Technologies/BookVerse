@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, useRef, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Loader2, Shield } from "lucide-react";
 import { getFriendlyAuthErrorMessage } from "@/lib/auth-errors";
+import { Turnstile, type BoundTurnstileObject } from "react-turnstile";
 
 const loginSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -20,6 +21,8 @@ export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const boundTurnstileRef = useRef<BoundTurnstileObject | null>(null);
 
   useEffect(() => {
     if (!loading && user) {
@@ -43,6 +46,9 @@ export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
     } catch (err) {
       setError(getFriendlyAuthErrorMessage(err, "Failed to sign in."));
       setSubmitting(false);
+      // Reset captcha on failure so user can retry
+      setCaptchaToken(null);
+      boundTurnstileRef.current?.reset();
     }
   }
 
@@ -116,9 +122,23 @@ export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
         )}
 
         <div className="space-y-4 pt-2">
+          {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+            <div className="flex justify-center">
+              <Turnstile
+                sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                onSuccess={(token, _preClearance, boundTurnstile) => {
+                  setCaptchaToken(token);
+                  boundTurnstileRef.current = boundTurnstile;
+                }}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+                theme="auto"
+              />
+            </div>
+          )}
           <button
             type="submit"
-            disabled={loading || submitting}
+            disabled={loading || submitting || (!captchaToken && !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)}
             className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
           >
             {loading || submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : "Sign In"}

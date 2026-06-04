@@ -63,6 +63,7 @@
     "react-dom": "^19.2.6",
     "react-hot-toast": "^2.6.0",
     "react-reader": "^2.0.15",
+    "react-turnstile": "^1.1.5",
     "resend": "^6.12.3",
     "signal-exit": "^4.1.0",
     "stripe": "^22.1.1",

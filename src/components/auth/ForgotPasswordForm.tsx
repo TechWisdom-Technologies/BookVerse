@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useRef, type FormEvent } from "react";
 import Link from "next/link";
 import { z } from "zod";
 import { MailCheck } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getFriendlyAuthErrorMessage } from "@/lib/auth-errors";
+import { Turnstile, type BoundTurnstileObject } from "react-turnstile";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email address."),
@@ -17,6 +18,8 @@ export function ForgotPasswordForm({ redirectUrl = "/" }: { redirectUrl?: string
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const boundTurnstileRef = useRef<BoundTurnstileObject | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -31,10 +34,12 @@ export function ForgotPasswordForm({ redirectUrl = "/" }: { redirectUrl?: string
 
     setSubmitting(true);
     try {
-      await resetPassword(result.data.email);
+      await resetPassword(result.data.email, captchaToken || undefined);
       setSuccess("Reset link sent. Check your email inbox and spam folder.");
     } catch (err) {
       setError(getFriendlyAuthErrorMessage(err, "Failed to send reset email."));
+      setCaptchaToken(null);
+      boundTurnstileRef.current?.reset();
     } finally {
       setSubmitting(false);
     }
@@ -83,9 +88,23 @@ export function ForgotPasswordForm({ redirectUrl = "/" }: { redirectUrl?: string
         )}
 
         <div className="space-y-4 pt-2">
+          {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+            <div className="flex justify-center">
+              <Turnstile
+                sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                onSuccess={(token, _preClearance, boundTurnstile) => {
+                  setCaptchaToken(token);
+                  boundTurnstileRef.current = boundTurnstile;
+                }}
+                onExpire={() => setCaptchaToken(null)}
+                onError={() => setCaptchaToken(null)}
+                theme="auto"
+              />
+            </div>
+          )}
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || (!captchaToken && !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)}
             className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 disabled:opacity-50 transition-all"
           >
             {submitting ? "Sending..." : "Send Reset Link"}
