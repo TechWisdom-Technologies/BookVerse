@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { generateHTML } from "@tiptap/html/server";
 import { type JSONContent } from "@tiptap/core";
-import DOMPurify from "isomorphic-dompurify";
 import ImageExtension from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
@@ -20,19 +19,10 @@ interface ChapterReaderPageProps {
   params: Promise<{ id: string; chapterId: string; }>;
 }
 
-function sanitizeHtml(htmlString: string): string {
-  return DOMPurify.sanitize(htmlString, {
-    FORBID_TAGS: ["style", "form", "input", "button", "textarea"],
-    FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
-    ALLOW_DATA_ATTR: false,
-  });
-}
-
 function renderChapterContent(content: unknown) {
   if (!content || typeof content !== "object") return null;
   try {
-    const rawHtml = generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
-    return rawHtml ? sanitizeHtml(rawHtml) : null;
+    return generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]) || null;
   } catch (error) {
     console.error("Failed to render TipTap content:", error);
     return null;
