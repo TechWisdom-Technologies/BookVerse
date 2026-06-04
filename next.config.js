@@ -42,13 +42,20 @@ const nextConfig = {
     ],
   },
   async headers() {
+    // React/Next.js requires 'unsafe-eval' in development for debugging.
+    // In production, the stricter CSP without it is used automatically.
+    const isDev = process.env.NODE_ENV === 'development';
+    const scriptSrc = isDev
+      ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://apis.google.com https://checkout.stripe.com"
+      : "script-src 'self' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://apis.google.com https://checkout.stripe.com";
+
     return [
       {
         source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.firebaseapp.com https://*.googleapis.com https://apis.google.com https://checkout.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.stripe.com https://*.upstash.io; frame-src 'self' https://*.firebaseapp.com https://*.firebase.com https://js.stripe.com; object-src 'none';",
+            value: `default-src 'self'; ${scriptSrc}; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.stripe.com https://*.upstash.io; frame-src 'self' https://*.firebaseapp.com https://*.firebase.com https://js.stripe.com; object-src 'none';`,
           },
           {
             key: 'X-Frame-Options',
