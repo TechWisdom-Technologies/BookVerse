@@ -31,9 +31,12 @@ export async function syncStorySearchIndex(storyId: string) {
       }
     }
     
-    await prisma.story.update({
-      where: { id: storyId },
-      data: { searchIndex: fullText.trim().substring(0, 1000000) } // Safe limit
+    const safeText = fullText.trim().substring(0, 500000);
+    
+    await prisma.storySearchIndex.upsert({
+      where: { storyId },
+      update: { content: safeText },
+      create: { storyId, content: safeText },
     });
   } catch (error) {
     console.error(`Failed to sync search index for story ${storyId}:`, error);

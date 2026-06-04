@@ -19,9 +19,17 @@ export async function GET(request: Request) {
     }
 
     const searchQuery = q.trim();
-    const avroParsed = parse(searchQuery);
-    const avroBanglaQuery = avroParsed?.bangla;
-    const hasBanglaEquivalent = avroBanglaQuery && avroBanglaQuery !== searchQuery;
+    const searchTerms = new Set<string>();
+    searchTerms.add(searchQuery);
+
+    const avroParsed1 = parse(searchQuery)?.bangla;
+    if (avroParsed1 && avroParsed1 !== searchQuery) searchTerms.add(avroParsed1);
+
+    const capitalizedQuery = searchQuery.split(/\s+/).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const avroParsed2 = parse(capitalizedQuery)?.bangla;
+    if (avroParsed2 && avroParsed2 !== capitalizedQuery) searchTerms.add(avroParsed2);
+
+    const allSearchTerms = Array.from(searchTerms);
 
     const formatTsQuery = (text: string) => {
       const words = text.replace(/[^\w\s\u0980-\u09FF]/g, ' ').trim().split(/\s+/).filter(Boolean);
@@ -30,32 +38,34 @@ export async function GET(request: Request) {
     };
 
     const tsQueryString = formatTsQuery(searchQuery);
-    const tsBanglaQueryString = avroBanglaQuery ? formatTsQuery(avroBanglaQuery) : '';
+
 
     const englishSearchExp = tsQueryString 
       ? Prisma.sql`to_tsquery('english', ${tsQueryString})` 
       : Prisma.sql`plainto_tsquery('english', ${searchQuery})`;
 
-    const banglaSqlExtension = hasBanglaEquivalent && avroBanglaQuery
-      ? Prisma.sql`
-          OR s.title ILIKE ${'%' + avroBanglaQuery + '%'}
-          OR s.search_index ILIKE ${'%' + avroBanglaQuery + '%'}
-          OR s.summary ILIKE ${'%' + avroBanglaQuery + '%'}
-          OR array_to_string(s.tags, ' ') ILIKE ${'%' + avroBanglaQuery + '%'}
-        `
-      : Prisma.empty;
+    const banglaSqlExtension = Prisma.join(
+      allSearchTerms.map(term => Prisma.sql`
+          OR s.title ILIKE ${'%' + term + '%'}
+          OR si.content ILIKE ${'%' + term + '%'}
+          OR s.summary ILIKE ${'%' + term + '%'}
+          OR array_to_string(s.tags, ' ') ILIKE ${'%' + term + '%'}
+      `),
+      ' '
+    );
 
-    const banglaRankBoost = hasBanglaEquivalent && avroBanglaQuery
-      ? Prisma.sql`
+    const banglaRankBoost = Prisma.join(
+      allSearchTerms.map(term => Prisma.sql`
           + CASE 
-              WHEN s.title ILIKE ${'%' + avroBanglaQuery + '%'} THEN 2.0
-              WHEN s.search_index ILIKE ${'%' + avroBanglaQuery + '%'} THEN 1.5
-              WHEN s.summary ILIKE ${'%' + avroBanglaQuery + '%'} THEN 1.0
-              WHEN array_to_string(s.tags, ' ') ILIKE ${'%' + avroBanglaQuery + '%'} THEN 1.0
+              WHEN s.title ILIKE ${'%' + term + '%'} THEN 2.0
+              WHEN si.content ILIKE ${'%' + term + '%'} THEN 1.5
+              WHEN s.summary ILIKE ${'%' + term + '%'} THEN 1.0
+              WHEN array_to_string(s.tags, ' ') ILIKE ${'%' + term + '%'} THEN 1.0
               ELSE 0.0
             END
-        `
-      : Prisma.empty;
+      `),
+      ' '
+    );
 
     const results: any[] = [];
     let total = 0;
@@ -70,18 +80,12 @@ export async function GET(request: Request) {
           const [books, bookCount] = await Promise.all([
             prisma.book.findMany({
               where: {
-                OR: [
-                  { title: { contains: searchQuery, mode: "insensitive" as const } },
-                  { authorName: { contains: searchQuery, mode: "insensitive" as const } },
-                  { genre: { contains: searchQuery, mode: "insensitive" as const } },
-                  { description: { contains: searchQuery, mode: "insensitive" as const } },
-                  ...(hasBanglaEquivalent ? [
-                    { title: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { authorName: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { genre: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { description: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                  ] : []),
-                ],
+                OR: allSearchTerms.flatMap(term => [
+                  { title: { contains: term, mode: "insensitive" as const } },
+                  { authorName: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                ]),
               },
               select: {
                 id: true,
@@ -101,18 +105,12 @@ export async function GET(request: Request) {
             }),
             type === "books" ? prisma.book.count({
               where: {
-                OR: [
-                  { title: { contains: searchQuery, mode: "insensitive" as const } },
-                  { authorName: { contains: searchQuery, mode: "insensitive" as const } },
-                  { genre: { contains: searchQuery, mode: "insensitive" as const } },
-                  { description: { contains: searchQuery, mode: "insensitive" as const } },
-                  ...(hasBanglaEquivalent ? [
-                    { title: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { authorName: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { genre: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { description: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                  ] : []),
-                ],
+                OR: allSearchTerms.flatMap(term => [
+                  { title: { contains: term, mode: "insensitive" as const } },
+                  { authorName: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                ]),
               },
             }) : Promise.resolve(0),
           ]);
@@ -151,13 +149,14 @@ export async function GET(request: Request) {
                   setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
                   setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
                   setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                  setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C'),
+                  setweight(to_tsvector('english', coalesce(si.content, '')), 'C'),
                   ${englishSearchExp}
                 )
                 ${banglaRankBoost}
               ) AS rank
             FROM stories s
             JOIN users u ON u.id = s.author_id
+            LEFT JOIN story_search_index si ON si.story_id = s.id
             WHERE s.published = true
               AND (
                 ${searchQuery} = '' OR 
@@ -165,7 +164,7 @@ export async function GET(request: Request) {
                   setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
                   setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
                   setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                  setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C')
+                  setweight(to_tsvector('english', coalesce(si.content, '')), 'C')
                 ) @@ (${englishSearchExp})
                 ${banglaSqlExtension}
               )
@@ -187,6 +186,7 @@ export async function GET(request: Request) {
             const countQuery = Prisma.sql`
               SELECT COUNT(*)
               FROM stories s
+              LEFT JOIN story_search_index si ON si.story_id = s.id
               WHERE s.published = true
                 AND (
                   ${searchQuery} = '' OR 
@@ -194,7 +194,7 @@ export async function GET(request: Request) {
                     setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
                     setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
                     setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                    setweight(to_tsvector('english', coalesce(s.search_index, '')), 'C')
+                    setweight(to_tsvector('english', coalesce(si.content, '')), 'C')
                   ) @@ (${englishSearchExp})
                   ${banglaSqlExtension}
                 )
@@ -228,16 +228,11 @@ export async function GET(request: Request) {
           const [universes, universeCount] = await Promise.all([
             prisma.universe.findMany({
               where: {
-                OR: [
-                  { name: { contains: searchQuery, mode: "insensitive" as const } },
-                  { description: { contains: searchQuery, mode: "insensitive" as const } },
-                  { genre: { contains: searchQuery, mode: "insensitive" as const } },
-                  ...(hasBanglaEquivalent ? [
-                    { name: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { description: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { genre: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                  ] : []),
-                ],
+                OR: allSearchTerms.flatMap(term => [
+                  { name: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                ]),
               },
               select: {
                 id: true,
@@ -259,16 +254,11 @@ export async function GET(request: Request) {
             }),
             type === "universes" ? prisma.universe.count({
               where: {
-                OR: [
-                  { name: { contains: searchQuery, mode: "insensitive" as const } },
-                  { description: { contains: searchQuery, mode: "insensitive" as const } },
-                  { genre: { contains: searchQuery, mode: "insensitive" as const } },
-                  ...(hasBanglaEquivalent ? [
-                    { name: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { description: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { genre: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                  ] : []),
-                ],
+                OR: allSearchTerms.flatMap(term => [
+                  { name: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                ]),
               },
             }) : Promise.resolve(0),
           ]);
@@ -291,16 +281,11 @@ export async function GET(request: Request) {
           const [authors, authorCount] = await Promise.all([
             prisma.user.findMany({
               where: {
-                OR: [
-                  { username: { contains: searchQuery, mode: "insensitive" as const } },
-                  { displayName: { contains: searchQuery, mode: "insensitive" as const } },
-                  { bio: { contains: searchQuery, mode: "insensitive" as const } },
-                  ...(hasBanglaEquivalent ? [
-                    { username: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { displayName: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { bio: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                  ] : []),
-                ],
+                OR: allSearchTerms.flatMap(term => [
+                  { username: { contains: term, mode: "insensitive" as const } },
+                  { displayName: { contains: term, mode: "insensitive" as const } },
+                  { bio: { contains: term, mode: "insensitive" as const } },
+                ]),
               },
               select: {
                 id: true,
@@ -317,16 +302,11 @@ export async function GET(request: Request) {
             }),
             type === "authors" ? prisma.user.count({
               where: {
-                OR: [
-                  { username: { contains: searchQuery, mode: "insensitive" as const } },
-                  { displayName: { contains: searchQuery, mode: "insensitive" as const } },
-                  { bio: { contains: searchQuery, mode: "insensitive" as const } },
-                  ...(hasBanglaEquivalent ? [
-                    { username: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { displayName: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                    { bio: { contains: avroBanglaQuery, mode: "insensitive" as const } },
-                  ] : []),
-                ],
+                OR: allSearchTerms.flatMap(term => [
+                  { username: { contains: term, mode: "insensitive" as const } },
+                  { displayName: { contains: term, mode: "insensitive" as const } },
+                  { bio: { contains: term, mode: "insensitive" as const } },
+                ]),
               },
             }) : Promise.resolve(0),
           ]);

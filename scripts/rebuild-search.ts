@@ -46,15 +46,17 @@ async function main() {
       }
     }
 
-    // Limit size for search_index to prevent Postgres row size limits
+    // Upsert into the separate search index table (prevents stories table bloat)
     const safeText = fullText.trim().substring(0, 500000);
 
-    await prisma.story.update({
-      where: { id: story.id },
-      data: { searchIndex: safeText }
+    await prisma.storySearchIndex.upsert({
+      where: { storyId: story.id },
+      update: { content: safeText },
+      create: { storyId: story.id, content: safeText },
     });
 
     processed++;
+    console.log(`Indexed story: ${story.title} (${safeText.length} characters)`);
     if (processed % 10 === 0) {
       console.log(`Processed ${processed}/${stories.length} stories...`);
     }

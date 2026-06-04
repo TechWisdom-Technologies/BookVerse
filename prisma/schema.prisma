@@ -222,7 +222,6 @@ model Story {
   
   // Fiverr-Style Search Fields
   promotionScore Int @default(0) @map("promotion_score")
-  searchIndex String? @map("search_index")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -242,12 +241,24 @@ model Story {
   promotions        StoryPromotion[]
   contentReports    ContentReport[]    @relation("content_reports")
   dmcaNotices       DMCANotice[]       @relation("dmca_notices")
+  searchIndexEntry  StorySearchIndex?
 
   @@index([authorId])
   @@index([published])
   @@index([universeId])
   @@index([seriesId])
   @@map("stories")
+}
+
+model StorySearchIndex {
+  id        String   @id @default(cuid())
+  storyId   String   @unique @map("story_id")
+  content   String   @default("")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@map("story_search_index")
 }
 
 model StoryChapter {

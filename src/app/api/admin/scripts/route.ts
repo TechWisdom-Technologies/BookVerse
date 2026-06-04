@@ -40,11 +40,12 @@ export async function POST(request: Request) {
       }
     }
     
-    // Use execFile with npx — no shell involved, arguments are passed directly
+    // Use execFile with npx
     const { stdout, stderr } = await execFileAsync("npx", ["tsx", ...args], {
       cwd: process.cwd(),
       maxBuffer: 1024 * 1024 * 10, // 10MB buffer for large outputs
       signal: request.signal,
+      shell: process.platform === "win32",
     });
 
     return NextResponse.json({ 
