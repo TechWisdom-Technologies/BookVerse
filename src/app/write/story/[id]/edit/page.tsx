@@ -57,6 +57,7 @@ interface StoryData {
   universeId: string | null;
   seriesId: string | null;
   sequenceNumber: number | null;
+  genre: string | null;
   subGenres: string[];
   mood: string | null;
   contentWarnings: string[];
@@ -80,6 +81,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
 
   const [editTitle, setEditTitle] = useState("");
   const [editSummary, setEditSummary] = useState("");
+  const [editGenre, setEditGenre] = useState("");
   const [editCoverUrl, setEditCoverUrl] = useState("");
   const [editUniverseId, setEditUniverseId] = useState<string | null>(null);
   const [editSeriesId, setEditSeriesId] = useState<string | null>(null);
@@ -110,6 +112,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         setChapters(storyData.chapters);
         setEditTitle(storyData.title);
         setEditSummary(storyData.summary || "");
+        setEditGenre(storyData.genre || "");
         setEditCoverUrl(storyData.coverUrl || "");
         setEditUniverseId(storyData.universeId);
         setEditSeriesId(storyData.seriesId);
@@ -187,6 +190,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
         body: JSON.stringify({
           title: editTitle.trim(),
           summary: editSummary.trim() || null,
+          genre: editGenre || null,
           coverUrl: editCoverUrl || null,
           universeId: editUniverseId || null,
           seriesId: editSeriesId || null,
@@ -335,6 +339,19 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Summary</label>
                     <textarea value={editSummary} onChange={(e) => setEditSummary(e.target.value)} rows={5} className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm resize-none" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Primary Genre</label>
+                    <select
+                      value={editGenre}
+                      onChange={(e) => setEditGenre(e.target.value)}
+                      className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm appearance-none cursor-pointer"
+                    >
+                      <option value="">Select a Genre...</option>
+                      {["Fantasy", "Sci-Fi", "Romance", "Mystery", "Horror", "Thriller", "Historical", "Non-Fiction", "Poetry", "Adventure", "Drama", "Comedy"].map((g) => (
+                        <option key={g} value={g}>{g}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Associated Universe</label>

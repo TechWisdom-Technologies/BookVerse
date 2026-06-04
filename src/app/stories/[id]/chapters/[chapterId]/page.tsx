@@ -159,7 +159,7 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
         </article>
 
         {currentUserId && (
-          <ReadingProgressTracker storyId={storyId} chapterId={chapterId} />
+          <ReadingProgressTracker storyId={storyId} chapterId={chapterId} userId={currentUserId} />
         )}
 
         <ChapterPollManager storyId={storyId} chapterId={chapterId} isAuthor={isAuthor} userId={currentUserId} />

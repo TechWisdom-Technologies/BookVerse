@@ -6,9 +6,10 @@ import { toast } from 'react-hot-toast';
 interface ReadingProgressTrackerProps {
   storyId: string;
   chapterId: string;
+  userId: string;
 }
 
-export function ReadingProgressTracker({ storyId, chapterId }: ReadingProgressTrackerProps) {
+export function ReadingProgressTracker({ storyId, chapterId, userId }: ReadingProgressTrackerProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef(0);
@@ -107,6 +108,56 @@ export function ReadingProgressTracker({ storyId, chapterId }: ReadingProgressTr
       }
     };
   }, [storyId, chapterId]);
+
+  // Automatic Reading Time Tracker (Idle-Aware)
+  useEffect(() => {
+    if (!userId) return;
+
+    let lastActiveTime = Date.now();
+    let isTracking = true;
+
+    const updateActivity = () => {
+      lastActiveTime = Date.now();
+    };
+
+    window.addEventListener('scroll', updateActivity, { passive: true });
+    window.addEventListener('mousemove', updateActivity, { passive: true });
+    window.addEventListener('keydown', updateActivity, { passive: true });
+    window.addEventListener('touchstart', updateActivity, { passive: true });
+
+    const trackInterval = setInterval(async () => {
+      if (!isTracking) return;
+
+      const now = Date.now();
+      const timeSinceLastActive = now - lastActiveTime;
+
+      // If active in the last 2 minutes, log 1 minute of reading
+      if (timeSinceLastActive < 120000) {
+        try {
+          await fetch(`/api/reading-logs/${userId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              minutes: 1,
+              action: 'increment',
+              storyId,
+            }),
+          });
+        } catch (err) {
+          console.error('Failed to automatically log reading time:', err);
+        }
+      }
+    }, 60000); // Fire every 60 seconds
+
+    return () => {
+      isTracking = false;
+      clearInterval(trackInterval);
+      window.removeEventListener('scroll', updateActivity);
+      window.removeEventListener('mousemove', updateActivity);
+      window.removeEventListener('keydown', updateActivity);
+      window.removeEventListener('touchstart', updateActivity);
+    };
+  }, [userId, storyId]);
 
   return (
     <div className="fixed top-0 left-0 w-full h-1 bg-zinc-100 dark:bg-zinc-900/50 z-[9999]">

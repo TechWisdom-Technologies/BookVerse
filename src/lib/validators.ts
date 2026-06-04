@@ -15,6 +15,7 @@ export const storySchema = z.object({
   title: z.string().min(1),
   coverUrl: z.string().optional().nullable(),
   summary: z.string().optional().nullable(),
+  genre: z.string().optional().nullable(),
   published: z.boolean().optional(),
   universeId: z.string().optional().nullable(),
   seriesId: z.string().optional().nullable(),

@@ -10,6 +10,8 @@ export default function NewStoryPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
+  const [genre, setGenre] = useState("");
+  const [contentWarnings, setContentWarnings] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -26,6 +28,8 @@ export default function NewStoryPage() {
         body: JSON.stringify({
           title: title.trim(),
           summary: summary.trim() || null,
+          genre: genre || null,
+          contentWarnings: contentWarnings.split(",").map(s => s.trim()).filter(Boolean),
           coverUrl: coverUrl || null,
         }),
       });
@@ -81,6 +85,31 @@ export default function NewStoryPage() {
               placeholder="Provide a concise archival summary..."
               rows={4}
               className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all resize-none"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Primary Genre</label>
+            <select
+              value={genre}
+              onChange={(e) => setGenre(e.target.value)}
+              className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all appearance-none cursor-pointer"
+            >
+              <option value="">Select a Genre...</option>
+              {["Fantasy", "Sci-Fi", "Romance", "Mystery", "Horror", "Thriller", "Historical", "Non-Fiction", "Poetry", "Adventure", "Drama", "Comedy"].map((g) => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Content Warnings (Optional)</label>
+            <input
+              type="text"
+              value={contentWarnings}
+              onChange={(e) => setContentWarnings(e.target.value)}
+              placeholder="e.g. Mild Violence, Strong Language (comma separated)"
+              className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs font-medium outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
             />
           </div>
 

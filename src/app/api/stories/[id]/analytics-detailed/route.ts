@@ -34,10 +34,10 @@ export async function GET(
     // Fetch detailed analytics
     const readingLogs = await prisma.readingLog.findMany({
       where: { storyId: id },
-      select: { readTime: true, sessionsToCompletion: true },
+      select: { minutes: true, sessionsToCompletion: true },
     });
 
-    const totalReadTime = readingLogs.reduce((sum, log) => sum + (log.readTime || 0), 0);
+    const totalReadTime = readingLogs.reduce((sum, log) => sum + (log.minutes || 0), 0);
     const avgReadTime = readingLogs.length > 0 ? totalReadTime / readingLogs.length : 0;
     const completionRate = readingLogs.length > 0
       ? (readingLogs.filter(log => log.sessionsToCompletion).length / readingLogs.length) * 100

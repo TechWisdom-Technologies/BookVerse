@@ -97,6 +97,7 @@ export async function POST(
       data: {
         storyId: id,
         platform: normalizedPlatform,
+        sharedBy: user.id,
       },
     });
 

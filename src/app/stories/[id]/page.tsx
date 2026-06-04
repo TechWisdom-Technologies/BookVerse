@@ -10,7 +10,7 @@ import { Window } from "happy-dom";
 import ImageExtension from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft, Clock } from "lucide-react";
+import { BookOpen, ChevronRight, Eye, FilePenLine, MessageSquare, ArrowLeft, Clock, AlertTriangle } from "lucide-react";
 import { CommentSection } from "@/components/comments/CommentSection";
 import { ReactionBar } from "@/components/stories/ReactionBar";
 import { StoryViewTracker } from "@/components/stories/StoryViewTracker";
@@ -196,7 +196,26 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            {story.contentWarnings && story.contentWarnings.length > 0 && (
+              <div className="p-4 rounded-md border border-rose-500/20 bg-rose-500/5 max-w-2xl mt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <AlertTriangle className="w-4 h-4 text-rose-500" />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-500">Content Warnings</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {story.contentWarnings.map((warning, idx) => (
+                    <span key={idx} className="px-2 py-1 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-bold uppercase tracking-wider rounded border border-rose-500/10">
+                      {warning}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-6 text-[10px] font-bold uppercase tracking-widest text-zinc-400 mt-6">
+              {story.genre && (
+                <span className="flex items-center gap-1.5 text-emerald-500">{story.genre}</span>
+              )}
               {story.series ? (
                 <span className="flex items-center gap-1.5 text-indigo-500">{story.series.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}</span>
               ) : story.universe ? (

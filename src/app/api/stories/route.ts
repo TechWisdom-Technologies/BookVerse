@@ -99,6 +99,8 @@ export async function POST(request: Request) {
         title: parsed.title,
         summary: parsed.summary ?? null,
         coverUrl: parsed.coverUrl ?? null,
+        genre: parsed.genre ?? null,
+        contentWarnings: parsed.contentWarnings ?? [],
         authorId: dbUser.id,
         published: false,
       },

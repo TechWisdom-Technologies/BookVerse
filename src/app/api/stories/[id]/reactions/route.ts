@@ -83,9 +83,15 @@ export async function POST(request: Request, { params }: RouteParams) {
     if (existing) {
       if (existing.reactionType === reactionType) {
         // Same reaction — toggle it off
-        await prisma.storyReaction.delete({
-          where: { id: existing.id },
-        });
+        await prisma.$transaction([
+          prisma.storyReaction.delete({
+            where: { id: existing.id },
+          }),
+          prisma.story.update({
+            where: { id: storyId },
+            data: { reactionCount: { decrement: 1 } },
+          }),
+        ]);
         return new NextResponse(null, { status: 204 });
       }
       // Different reaction — update it
@@ -97,13 +103,19 @@ export async function POST(request: Request, { params }: RouteParams) {
     }
 
     // No existing reaction — create new
-    const reaction = await prisma.storyReaction.create({
-      data: {
-        storyId,
-        userId: dbUser.id,
-        reactionType,
-      },
-    });
+    const [reaction] = await prisma.$transaction([
+      prisma.storyReaction.create({
+        data: {
+          storyId,
+          userId: dbUser.id,
+          reactionType,
+        },
+      }),
+      prisma.story.update({
+        where: { id: storyId },
+        data: { reactionCount: { increment: 1 } },
+      }),
+    ]);
 
     // Notify story author (fire and forget)
     void prisma.story.findUnique({

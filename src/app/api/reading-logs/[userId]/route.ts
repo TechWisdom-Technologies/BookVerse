@@ -104,7 +104,7 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { pagesRead = 0, minutes = 0, date, storyId } = await req.json();
+    const { pagesRead = 0, minutes = 0, date, storyId, action } = await req.json();
 
     const logDate = date ? new Date(date) : new Date();
     logDate.setHours(0, 0, 0, 0);
@@ -130,8 +130,12 @@ export async function POST(
           },
         },
         data: {
-          pagesRead: Math.max(existing.pagesRead, pagesRead),
-          minutes: Math.max(existing.minutes, minutes),
+          pagesRead: action === 'increment' 
+            ? { increment: pagesRead } 
+            : Math.max(existing.pagesRead, pagesRead),
+          minutes: action === 'increment' 
+            ? { increment: minutes } 
+            : Math.max(existing.minutes, minutes),
         },
       });
     } else {

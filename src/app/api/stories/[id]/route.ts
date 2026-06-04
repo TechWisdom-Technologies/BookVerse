@@ -171,6 +171,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     if (body.title !== undefined) cleanBody.title = body.title;
     if (body.summary !== undefined) cleanBody.summary = body.summary || null;
     if (body.coverUrl !== undefined) cleanBody.coverUrl = body.coverUrl || null;
+    if (body.genre !== undefined) cleanBody.genre = body.genre || null;
     if (body.published !== undefined) cleanBody.published = body.published;
     if (body.universeId !== undefined) cleanBody.universeId = body.universeId || null;
     if (body.seriesId !== undefined) cleanBody.seriesId = body.seriesId || null;
@@ -199,6 +200,7 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         ...(parsed.title !== undefined && { title: parsed.title }),
         ...(parsed.summary !== undefined && { summary: parsed.summary }),
         ...(parsed.coverUrl !== undefined && { coverUrl: parsed.coverUrl }),
+        ...(parsed.genre !== undefined && { genre: parsed.genre }),
         ...(parsed.published !== undefined && { published: parsed.published }),
         ...(parsed.universeId !== undefined && {
           universe: parsed.universeId
