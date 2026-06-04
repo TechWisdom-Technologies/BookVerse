@@ -2,9 +2,14 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
 import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 
 export async function POST(req: Request) {
+  // Rate limit: Max 5 DMCA notices per 15 minutes per IP
+  const limitRes = await checkRateLimit(5, 15 * 60 * 1000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const user = await getAuth();
     if (!user) {
