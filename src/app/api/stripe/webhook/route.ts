@@ -52,10 +52,31 @@ export async function POST(req: Request) {
       const tipId = session.metadata?.tipId;
 
       if (tipId) {
-        const completedTip = await prisma.tip.update({
-          where: { id: tipId },
-          data: { status: "COMPLETED" },
-          include: { sender: true }
+        const completedTip = await prisma.$transaction(async (tx) => {
+          const currentTip = await tx.tip.findUnique({
+            where: { id: tipId },
+            include: { sender: true }
+          });
+
+          if (!currentTip || currentTip.status === "COMPLETED") {
+            return null; // Already processed
+          }
+
+          const updatedTip = await tx.tip.update({
+            where: { id: tipId },
+            data: { status: "COMPLETED" },
+            include: { sender: true }
+          });
+
+          // Convert USD cents to BDT using the standard 120 exchange rate
+          const amountInBDT = (updatedTip.amount / 100) * 120;
+
+          await tx.user.update({
+            where: { id: updatedTip.receiverId },
+            data: { walletBalance: { increment: amountInBDT } }
+          });
+
+          return updatedTip;
         });
         
         if (completedTip) {

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { recipientEmail, tier, duration, senderNumber, transactionId } = body;
+    let { recipientEmail, tier, duration, senderNumber, transactionId } = body;
 
     if (!recipientEmail || !tier || !duration) {
       return NextResponse.json(
@@ -23,6 +23,9 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    // Mathematical safety: enforce whole numbers and minimum 1 month duration
+    duration = Math.max(1, Math.round(Number(duration)));
 
     if (!senderNumber || typeof senderNumber !== 'string' || !senderNumber.trim()) {
       return NextResponse.json(

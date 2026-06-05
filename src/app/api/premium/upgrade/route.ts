@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     const dbUser = await prisma.user.findUnique({
       where: { id: user.id },
-      select: { membershipTier: true, membershipExpiry: true },
+      select: { membershipTier: true, membershipExpiry: true, email: true },
     });
 
     if (dbUser?.membershipTier) {
@@ -60,6 +60,10 @@ export async function POST(req: Request) {
       );
     }
 
+    // Extract IP address and Country from headers
+    const ipAddress = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "Unknown";
+    const country = req.headers.get("x-vercel-ip-country") || req.headers.get("cf-ipcountry") || "Unknown";
+
     // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 299 BDT, CREATOR = 799 BDT per month)
     const pricePerMonth = upperPlan === 'CREATOR' ? 799 : upperPlan === 'PRO' ? 299 : 99;
     const amount = pricePerMonth * months;
@@ -74,6 +78,9 @@ export async function POST(req: Request) {
         senderNumber: senderNumber.trim(),
         transactionId: cleanTxnId,
         status: 'PENDING',
+        ipAddress,
+        country,
+        email: dbUser?.email || user.email || null,
       },
     });
 

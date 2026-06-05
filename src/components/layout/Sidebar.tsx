@@ -15,6 +15,7 @@ import {
   ShieldAlert,
   Library,
   Headphones,
+  Wallet,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -27,6 +28,7 @@ const sidebarItems: SidebarItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/transactions", label: "Payments", icon: CreditCard },
+  { href: "/admin/payouts", label: "Author Payouts", icon: Wallet },
   { href: "/admin/books", label: "Books", icon: BookOpen },
   { href: "/admin/stories", label: "Stories", icon: FileText },
   { href: "/admin/comments", label: "Comments", icon: MessageSquare },

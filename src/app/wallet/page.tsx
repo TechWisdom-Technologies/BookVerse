@@ -407,21 +407,19 @@ export default function WalletPage() {
               </div>
             )}
 
-            {/* Portal details */}
+            {/* Payment Gateway Info */}
             <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-2xl bg-zinc-50/20 dark:bg-zinc-900/10 space-y-4">
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-zinc-400" />
-                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Merchant Credit Clearance</h3>
+                <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Payment Gateway</h3>
               </div>
               <p className="text-[11px] text-zinc-500 leading-relaxed font-medium uppercase">
-                Direct credit card gateways and international tips require card verification checks. Launch the secure Stripe customer portal to manage details.
+                All gateway payments (bKash, Nagad, Rocket, Cards) are processed securely via UddoktaPay and verified instantly. Manual bKash/Nagad transfers require admin approval.
               </p>
-              <button
-                disabled
-                className="inline-flex items-center gap-2 px-6 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-[9px] font-bold uppercase tracking-widest rounded text-zinc-400 dark:text-zinc-650 cursor-not-allowed font-mono shadow-sm"
-              >
-                Portal (Coming Soon)
-              </button>
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/5 border border-emerald-500/15 rounded text-emerald-600 dark:text-emerald-400">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-[9px] font-bold uppercase tracking-widest">UddoktaPay Gateway Active</span>
+              </div>
             </div>
 
           </div>

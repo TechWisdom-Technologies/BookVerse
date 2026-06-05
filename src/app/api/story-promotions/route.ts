@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     // Promotions are open to all authors; founding-user free access still applies elsewhere
 
     const body = await req.json();
-    const { storyId, duration, tier, customBudget, senderNumber, transactionId } = body;
+    let { storyId, duration, tier, customBudget, senderNumber, transactionId } = body;
 
     if (!storyId || !duration || !tier) {
       return NextResponse.json(
@@ -47,9 +47,12 @@ export async function POST(req: Request) {
       );
     }
 
-    if (tier === 'PROMOTED' && (!customBudget || isNaN(Number(customBudget)) || Number(customBudget) <= 0)) {
+    // Mathematical safety: enforce whole numbers and minimum 1 day
+    duration = Math.max(1, Math.round(Number(duration)));
+
+    if (tier === 'PROMOTED' && (!customBudget || isNaN(Number(customBudget)) || Number(customBudget) < 10)) {
       return NextResponse.json(
-        { error: 'Custom budget is required for PROMOTED tier' },
+        { error: 'Custom budget must be at least 10 Taka for PROMOTED tier' },
         { status: 400 }
       );
     }
@@ -72,7 +75,7 @@ export async function POST(req: Request) {
     const cleanTxnId = transactionId.trim();
 
     // Prevent duplicate Transaction ID submissions
-    const existingTxn = await prisma.storyPromotion.findUnique({
+    const existingTxn = await prisma.subscriptionTransaction.findFirst({
       where: { transactionId: cleanTxnId },
     });
 
@@ -105,6 +108,10 @@ export async function POST(req: Request) {
     const startDate = new Date();
     const endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
 
+    // Extract IP address and Country from headers
+    const ipAddress = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "Unknown";
+    const country = req.headers.get("x-vercel-ip-country") || req.headers.get("cf-ipcountry") || "Unknown";
+
     // Create both promotion and transaction records inside a database transaction to keep them synchronized
     const [promotion] = await prisma.$transaction([
       prisma.storyPromotion.create({
@@ -117,6 +124,9 @@ export async function POST(req: Request) {
           senderNumber: senderNumber.trim(),
           transactionId: cleanTxnId,
           status: 'PENDING',
+          ipAddress,
+          country,
+          email: dbUser.email,
         },
       }),
       prisma.subscriptionTransaction.create({
@@ -128,6 +138,9 @@ export async function POST(req: Request) {
           senderNumber: senderNumber.trim(),
           transactionId: cleanTxnId,
           status: 'PENDING',
+          ipAddress,
+          country,
+          email: dbUser.email,
         },
       }),
     ]);

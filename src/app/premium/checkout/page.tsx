@@ -10,7 +10,8 @@ import {
   Check, 
   Zap, 
   Heart,
-  Lock
+  Lock,
+  Globe
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -35,7 +36,7 @@ function CheckoutContent() {
   }
 
   // Form & Method Selection States
-  const [paymentMethod, setPaymentMethod] = useState<'none' | 'contact'>('none');
+  const [paymentMethod, setPaymentMethod] = useState<'none' | 'contact' | 'uddokta'>('none');
   const [senderNumber, setSenderNumber] = useState('');
   const [transactionId, setTransactionId] = useState('');
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
@@ -46,17 +47,17 @@ function CheckoutContent() {
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success'>('idle');
   const [paymentProgressText, setPaymentProgressText] = useState('');
 
-  const handleCheckout = async (e: React.FormEvent) => {
+  const totalAmount = planPrice * duration;
+
+  const handleManualCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (paymentMethod === 'contact') {
-      if (!senderNumber.trim()) {
-        toast.error('Please enter your bkash / Nagad sender mobile number');
-        return;
-      }
-      if (!transactionId.trim()) {
-        toast.error('Please enter your payment Transaction ID');
-        return;
-      }
+    if (!senderNumber.trim()) {
+      toast.error('Please enter your bkash / Nagad sender mobile number');
+      return;
+    }
+    if (!transactionId.trim()) {
+      toast.error('Please enter your payment Transaction ID');
+      return;
     }
 
     setProcessing(true);
@@ -105,6 +106,42 @@ function CheckoutContent() {
     }
   };
 
+  const handleUddoktaCheckout = async () => {
+    setProcessing(true);
+    setPaymentStep('processing');
+    setPaymentProgressText('Connecting to UddoktaPay secure gateway...');
+
+    try {
+      const res = await fetch('/api/payment/uddokta/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'PREMIUM',
+          amount: totalAmount,
+          metadata: {
+            plan: planName,
+            duration: String(duration),
+          },
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.payment_url) {
+        setPaymentProgressText('Redirecting to UddoktaPay...');
+        window.location.href = data.payment_url;
+      } else {
+        toast.error(data.error || 'Failed to create payment session');
+        setPaymentStep('idle');
+      }
+    } catch (error) {
+      toast.error('Failed to connect to payment gateway');
+      setPaymentStep('idle');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
       
@@ -126,7 +163,7 @@ function CheckoutContent() {
         <div className="border border-zinc-900 rounded-2xl p-12 bg-[#0c0c0e] shadow-xl text-center space-y-6">
           <Loader2 className="w-10 h-10 animate-spin text-white mx-auto" />
           <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-200">Submitting Receipt...</h2>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-200">Processing...</h2>
             <p className="text-[10px] text-zinc-450 font-medium italic animate-pulse">{paymentProgressText}</p>
           </div>
         </div>
@@ -191,7 +228,7 @@ function CheckoutContent() {
                 
                 <div className="pt-4 border-t border-zinc-900 flex justify-between items-baseline">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Total Value</span>
-                  <span className="text-xl font-bold tracking-tight text-white">৳{(planPrice * duration).toLocaleString()}</span>
+                  <span className="text-xl font-bold tracking-tight text-white">৳{totalAmount.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between items-center text-[10px] text-zinc-455 font-medium pt-1">
                   <span>Billing Cycle</span>
@@ -202,7 +239,7 @@ function CheckoutContent() {
               <div className="pt-4 border-t border-zinc-900 space-y-3">
                 <div className="flex items-start gap-2 text-[10px] text-zinc-400 leading-relaxed font-medium">
                   <Lock className="w-3.5 h-3.5 text-zinc-500 shrink-0 mt-0.5" />
-                  Your payment details are encrypted. Direct bkash details are secure.
+                  Your payment details are encrypted. All transactions are secure.
                 </div>
               </div>
             </div>
@@ -226,7 +263,7 @@ function CheckoutContent() {
 
               {paymentMethod === 'none' && (
                 <div className="space-y-4">
-                  {/* Option 1: bkash/Nagad */}
+                  {/* Option 1: bkash/Nagad Manual */}
                   <button
                     type="button"
                     onClick={() => {
@@ -242,40 +279,75 @@ function CheckoutContent() {
                     </div>
                   </button>
 
-                  {/* Option 2: Autopay Card */}
+                  {/* Option 2: UddoktaPay */}
                   <button
                     type="button"
-                    onClick={() => setWarningMsg("Card payments are under construction. Please use Direct Manual bkash/Nagad payment.")}
-                    className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4 opacity-50"
+                    onClick={() => {
+                      setPaymentMethod('uddokta');
+                      setWarningMsg(null);
+                    }}
+                    className="w-full p-5 border border-zinc-800 hover:border-emerald-500/50 rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-emerald-500/5 flex items-center gap-4 group"
                   >
-                    <div className="p-2.5 bg-white text-zinc-955 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">2</div>
-                    <div className="flex-1">
-                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Autopay with Credit Card</h4>
-                      <p className="text-[9px] text-zinc-450 font-medium italic">Recurring Stripe subscription gateway</p>
+                    <div className="p-2.5 bg-emerald-500 text-white rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">
+                      <Globe className="w-4 h-4" />
                     </div>
-                  </button>
-
-                  {/* Option 3: Merchant Pay */}
-                  <button
-                    type="button"
-                    onClick={() => setWarningMsg("Merchant payments are under construction. Please use Direct Manual bkash/Nagad payment.")}
-                    className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4 opacity-50"
-                  >
-                    <div className="p-2.5 bg-white text-zinc-955 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">3</div>
                     <div className="flex-1">
-                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Merchant Online Checkout</h4>
-                      <p className="text-[9px] text-zinc-450 font-medium italic">Redirect to online SSLCommerz secure merchant portal</p>
+                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Pay with UddoktaPay</h4>
+                      <p className="text-[9px] text-zinc-450 font-medium italic">bKash, Nagad, Rocket, Cards — Instant auto-verified gateway</p>
                     </div>
+                    <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[8px] font-bold uppercase tracking-wider rounded-full shrink-0">
+                      Instant
+                    </span>
                   </button>
                 </div>
               )}
 
+              {/* UddoktaPay Confirmation */}
+              {paymentMethod === 'uddokta' && (
+                <div className="space-y-6 animate-fade-in">
+                  <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-5 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <Globe className="w-4 h-4 text-emerald-400" />
+                      <h4 className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">UddoktaPay Checkout</h4>
+                    </div>
+                    <p className="text-[10px] text-zinc-400 leading-relaxed">
+                      You will be redirected to UddoktaPay&apos;s secure checkout page where you can pay using <span className="font-bold text-zinc-300">bKash, Nagad, Rocket, Upay, or Credit/Debit Card</span>. 
+                      Your <span className="font-bold text-white">{planName}</span> membership will be activated instantly after payment.
+                    </p>
+                    <div className="flex justify-between items-baseline pt-3 border-t border-emerald-500/10">
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Total</span>
+                      <span className="text-lg font-bold tracking-tight text-white">৳{totalAmount.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 pt-2">
+                    <button 
+                      type="button"
+                      onClick={() => setPaymentMethod('none')}
+                      className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-850"
+                    >
+                      Back
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={handleUddoktaCheckout}
+                      disabled={processing}
+                      className="flex-1 py-3 bg-emerald-500 text-white hover:bg-emerald-600 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all text-center flex items-center justify-center gap-1.5"
+                    >
+                      <Globe className="w-3.5 h-3.5" />
+                      Pay ৳{totalAmount.toLocaleString()}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Manual Payment Form */}
               {paymentMethod === 'contact' && (
-                <form onSubmit={handleCheckout} className="space-y-6 animate-fade-in">
+                <form onSubmit={handleManualCheckout} className="space-y-6 animate-fade-in">
                   <div className="bg-zinc-900/80 p-5 rounded-xl border border-zinc-800 space-y-3">
                     <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-455">Payment Instructions</h4>
                     <p className="text-[10px] text-zinc-350 leading-relaxed font-medium">
-                      Please Send Money (Personal bKash or Nagad) of **৳{(planPrice * duration).toLocaleString()} BDT** to:
+                      Please Send Money (Personal bKash or Nagad) of **৳{totalAmount.toLocaleString()} BDT** to:
                     </p>
                     <div className="p-3 bg-zinc-950 text-white rounded-xl font-mono text-xs text-center font-bold tracking-widest select-all border border-zinc-850">
                       01799269699

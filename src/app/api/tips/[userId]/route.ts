@@ -76,7 +76,9 @@ export async function POST(
 
     const { amount, message, storyId, senderNumber, transactionId } = await req.json();
 
-    if (!amount || amount < 1) {
+    const tipAmount = amount ? Math.max(1, Math.round(Number(amount))) : 0;
+
+    if (!tipAmount || tipAmount < 1) {
       return NextResponse.json(
         { error: 'Tip amount must be at least ৳1 Taka' },
         { status: 400 }
@@ -106,6 +108,10 @@ export async function POST(
 
     const cleanTxnId = transactionId.trim();
 
+    // Extract IP address and Country from headers
+    const ipAddress = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "Unknown";
+    const country = req.headers.get("x-vercel-ip-country") || req.headers.get("cf-ipcountry") || "Unknown";
+
     // Verify duplicate transaction submissions
     const [existingTxn, existingTip] = await Promise.all([
       prisma.subscriptionTransaction.findFirst({
@@ -127,7 +133,7 @@ export async function POST(
     const [tip] = await prisma.$transaction([
       prisma.tip.create({
         data: {
-          amount,
+          amount: tipAmount,
           currency: 'bdt',
           senderId: user.id,
           receiverId: userId,
@@ -136,6 +142,9 @@ export async function POST(
           status: 'PENDING',
           senderNumber: senderNumber.trim(),
           transactionId: cleanTxnId,
+          ipAddress,
+          country,
+          email: user.email,
         },
         include: {
           sender: {
@@ -151,10 +160,13 @@ export async function POST(
           userId: user.id,
           plan: 'TIP',
           duration: 1,
-          amount: amount,
+          amount: tipAmount,
           senderNumber: senderNumber.trim(),
           transactionId: cleanTxnId,
           status: 'PENDING',
+          ipAddress,
+          country,
+          email: user.email,
         },
       }),
     ]);

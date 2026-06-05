@@ -47,15 +47,21 @@ export async function GET() {
       orderBy: { createdAt: "desc" }
     });
 
-    // 4. Calculate aggregates in BDT
+    // 4. Calculate aggregates in BDT with currency awareness
+    const calculateBDT = (amount: number, currency: string) => {
+      if (currency?.toLowerCase() === 'bdt') return amount;
+      // Legacy USD cents fallback
+      return (amount / 100) * USD_TO_BDT;
+    };
+
     const successfulTipsReceived = tipsReceived.filter(t => t.status === "COMPLETED");
-    const totalEarnedTips = (successfulTipsReceived.reduce((acc, t) => acc + t.amount, 0) / 100) * USD_TO_BDT; 
+    const totalEarnedTips = successfulTipsReceived.reduce((acc, t) => acc + calculateBDT(t.amount, t.currency || 'USD'), 0); 
     
     const approvedSubs = subscriptions.filter(s => s.status === "APPROVED");
     const totalSpentSubs = approvedSubs.reduce((acc, s) => acc + s.amount, 0); 
 
     const successfulTipsSent = tipsSent.filter(t => t.status === "COMPLETED");
-    const totalSpentTips = (successfulTipsSent.reduce((acc, t) => acc + t.amount, 0) / 100) * USD_TO_BDT;
+    const totalSpentTips = successfulTipsSent.reduce((acc, t) => acc + calculateBDT(t.amount, t.currency || 'USD'), 0);
 
     // 5. Compile a unified transaction history in BDT
     interface UnifiedTransaction {
@@ -77,12 +83,12 @@ export async function GET() {
         history.push({
           id: t.id,
           type: "TIP_RECEIVED",
-          amount: (t.amount / 100) * USD_TO_BDT, // convert to BDT
+          amount: calculateBDT(t.amount, t.currency || 'USD'),
           currency: "BDT",
           status: t.status,
           createdAt: t.createdAt,
           description: `Received tip from @${t.sender?.username || 'anonymous'}${t.story ? ` on "${t.story.title}"` : ''}`,
-          method: t.stripeSessionId ? "Stripe (Card)" : (t.transactionId ? "Mobile Wallet" : "Card"),
+          method: t.currency?.toLowerCase() === 'bdt' ? (t.transactionId ? "Mobile Wallet" : "UddoktaPay") : "Stripe (Card)",
         });
       });
 
@@ -90,12 +96,12 @@ export async function GET() {
         history.push({
           id: t.id,
           type: "TIP_SENT",
-          amount: (t.amount / 100) * USD_TO_BDT, // convert to BDT
+          amount: calculateBDT(t.amount, t.currency || 'USD'),
           currency: "BDT",
           status: t.status,
           createdAt: t.createdAt,
           description: `Sent support tip to @${t.receiver?.username || 'author'}${t.story ? ` on "${t.story.title}"` : ''}`,
-          method: t.stripeSessionId ? "Stripe (Card)" : "Card",
+          method: t.currency?.toLowerCase() === 'bdt' ? (t.transactionId ? "Mobile Wallet" : "UddoktaPay") : "Stripe (Card)",
         });
       });
 

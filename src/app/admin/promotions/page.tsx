@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Loader2,
   Search,
@@ -10,7 +10,14 @@ import {
   X,
   AlertCircle,
   Megaphone,
-  Calendar
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Globe,
+  Mail,
+  Receipt,
+  Info
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
@@ -41,6 +48,13 @@ interface PromotionData {
     coverUrl: string | null;
     author: StoryAuthor;
   };
+  gatewayFee?: number | null;
+  chargedAmount?: number | null;
+  paymentMethod?: string | null;
+  invoiceId?: string | null;
+  ipAddress?: string | null;
+  country?: string | null;
+  email?: string | null;
 }
 
 export default function AdminPromotionsPage() {
@@ -48,6 +62,7 @@ export default function AdminPromotionsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPromotions();
@@ -197,7 +212,8 @@ export default function AdminPromotionsPage() {
                 </thead>
                 <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900">
                   {filteredPromotions.map((promo) => (
-                    <tr key={promo.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                    <React.Fragment key={promo.id}>
+                    <tr className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-4">
                           <div className="relative h-10 w-8 overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 shrink-0">
@@ -305,8 +321,57 @@ export default function AdminPromotionsPage() {
                             Processed
                           </span>
                         )}
+                        <button
+                          onClick={() => setExpandedId(expandedId === promo.id ? null : promo.id)}
+                          className="ml-4 p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                        >
+                          {expandedId === promo.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </button>
                       </td>
                     </tr>
+                    {expandedId === promo.id && (
+                      <tr className="bg-zinc-50/50 dark:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-900">
+                        <td colSpan={7} className="p-0">
+                          <div className="px-6 py-4 animate-in fade-in slide-in-from-top-2">
+                            <div className="flex items-center gap-2 mb-4 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                              <Info className="w-3.5 h-3.5" />
+                              Payment Telemetry Data
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><Globe className="w-3 h-3"/> IP Address</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300">{promo.ipAddress || "Unknown"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><MapPin className="w-3 h-3"/> Country</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300">{promo.country || "Unknown"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><Mail className="w-3 h-3"/> Billing Email</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300 truncate" title={promo.email || promo.story.author.email || ""}>{promo.email || promo.story.author.email || "Unknown"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><Receipt className="w-3 h-3"/> Invoice ID</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300">{promo.invoiceId || "N/A"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Payment Gateway</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300 uppercase">{promo.paymentMethod || "Manual"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Gateway Fee</div>
+                                <div className="text-xs font-mono text-rose-600 dark:text-rose-400">৳{promo.gatewayFee || "0"} BDT</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Total Charged</div>
+                                <div className="text-xs font-mono text-emerald-600 dark:text-emerald-400">৳{promo.chargedAmount || promo.cost} BDT</div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>

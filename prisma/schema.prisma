@@ -107,6 +107,7 @@ model User {
   readingProgressSync      Boolean                  @default(true) @map("reading_progress_sync")
   bkashNumber              String?                  @map("bkash_number")
   nagadNumber              String?                  @map("nagad_number")
+  walletBalance            Float                    @default(0) @map("wallet_balance")
   isDeactivated            Boolean                  @default(false) @map("is_deactivated")
   deactivatedUntil         DateTime?                @map("deactivated_until")
 
@@ -126,6 +127,7 @@ model User {
   readingProgress          ReadingProgress[]
   blockedUsers             UserBlock[]               @relation("blocker")
   blockedBy                UserBlock[]               @relation("blocked")
+  payouts                  AuthorPayout[]
 
   @@map("users")
 }
@@ -489,6 +491,17 @@ model Tip {
   senderNumber    String?   @map("sender_number")
   transactionId   String?   @unique @map("transaction_id")
   status          TipStatus @default(PENDING)
+  
+  // Additional Payment Information
+  gatewayFee      Float?    @map("gateway_fee")
+  chargedAmount   Float?    @map("charged_amount")
+  paymentMethod   String?   @map("payment_method")
+  invoiceId       String?   @unique @map("invoice_id")
+  ipAddress       String?   @map("ip_address")
+  country         String?
+  email           String?
+  metadata        Json?
+
   createdAt       DateTime  @default(now()) @map("created_at")
 
   sender   User?  @relation("TipsSent", fields: [senderId], references: [id], onDelete: SetNull)
@@ -642,6 +655,17 @@ model StoryPromotion {
   transactionId String?  @unique @map("transaction_id")
   status        String   @default("PENDING") // PENDING, ACTIVE, ENDED, PAUSED, DECLINED
   promotionViews Int     @default(0) @map("promotion_views")
+  
+  // Additional Payment Information
+  gatewayFee    Float?   @map("gateway_fee")
+  chargedAmount Float?   @map("charged_amount")
+  paymentMethod String?  @map("payment_method")
+  invoiceId     String?  @unique @map("invoice_id")
+  ipAddress     String?  @map("ip_address")
+  country       String?
+  email         String?
+  metadata      Json?
+
   createdAt     DateTime @default(now()) @map("created_at")
 
   story Story @relation(fields: [storyId], references: [id], onDelete: Cascade)
@@ -752,6 +776,17 @@ model SubscriptionTransaction {
   senderNumber  String   @map("sender_number")
   transactionId String   @unique @map("transaction_id")
   status        String   @default("PENDING") // PENDING, APPROVED, DECLINED
+  
+  // Additional Payment Information
+  gatewayFee    Float?   @map("gateway_fee")
+  chargedAmount Float?   @map("charged_amount")
+  paymentMethod String?  @map("payment_method")
+  invoiceId     String?  @unique @map("invoice_id")
+  ipAddress     String?  @map("ip_address")
+  country       String?
+  email         String?
+  metadata      Json?
+
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
@@ -840,3 +875,19 @@ model UserBlock {
   @@index([blockedId])
   @@map("user_blocks")
 }
+
+model AuthorPayout {
+  id            String   @id @default(cuid())
+  authorId      String   @map("author_id")
+  amount        Float
+  transactionId String   @map("transaction_id")
+  sentToNumber  String   @map("sent_to_number")
+  status        String   @default("COMPLETED")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  author        User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@map("author_payouts")
+}
+

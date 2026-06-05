@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarClock, Loader2, Megaphone, Users, CreditCard, ShieldCheck, Check, Lock, ArrowLeft } from "lucide-react";
+import { CalendarClock, Loader2, Megaphone, Users, CreditCard, ShieldCheck, Check, Lock, ArrowLeft, Globe } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
@@ -15,7 +15,7 @@ interface BetaReader {
   };
 }
 
-type PromotionStep = 'select-tier' | 'payment-method' | 'payment-form' | 'processing' | 'success';
+type PromotionStep = 'select-tier' | 'payment-method' | 'payment-form' | 'uddokta-confirm' | 'processing' | 'success';
 
 export function AuthorStoryTools({ storyId }: { storyId: string }) {
   const [chapterNumber, setChapterNumber] = useState(1);
@@ -129,6 +129,41 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
     }
   };
 
+  const handleUddoktaPromotion = async () => {
+    setPromotionStep('processing');
+    setPaymentProgressText('Connecting to UddoktaPay secure gateway...');
+
+    try {
+      const res = await fetch('/api/payment/uddokta/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'PROMOTION',
+          amount: getTotalCost(),
+          metadata: {
+            storyId,
+            tier: promotionTier,
+            duration: String(promotionDuration),
+            customBudget: promotionTier === 'PROMOTED' ? String(customBudget) : undefined,
+          },
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.payment_url) {
+        setPaymentProgressText('Redirecting to UddoktaPay...');
+        window.location.href = data.payment_url;
+      } else {
+        toast.error(data.error || 'Failed to create payment session');
+        setPromotionStep('payment-method');
+      }
+    } catch (error) {
+      toast.error('Failed to connect to payment gateway');
+      setPromotionStep('payment-method');
+    }
+  };
+
   const resetPromotion = () => {
     setPromotionStep('select-tier');
     setSenderNumber('');
@@ -182,7 +217,7 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
             <div className="flex flex-col items-center justify-center py-6 space-y-4">
               <Loader2 className="w-8 h-8 animate-spin text-zinc-900 dark:text-white" />
               <div className="space-y-1 text-center">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Submitting Receipt...</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Processing...</p>
                 <p className="text-[9px] text-zinc-400 font-medium italic animate-pulse">{paymentProgressText}</p>
               </div>
             </div>
@@ -261,7 +296,7 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
                 </div>
               )}
 
-              {/* Option 1: bkash/Nagad */}
+              {/* Option 1: bkash/Nagad Manual */}
               <button
                 type="button"
                 onClick={() => { setWarningMsg(null); setPromotionStep('payment-form'); }}
@@ -274,30 +309,22 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
                 </div>
               </button>
 
-              {/* Option 2: Card (disabled) */}
+              {/* Option 2: UddoktaPay */}
               <button
                 type="button"
-                onClick={() => setWarningMsg("Card payments are under construction. Use Direct Manual bkash/Nagad.")}
-                className="w-full p-3.5 border border-zinc-100 dark:border-zinc-800 rounded-lg text-left transition-all bg-zinc-50/50 dark:bg-zinc-900/40 flex items-center gap-3 opacity-50 cursor-not-allowed"
+                onClick={() => { setWarningMsg(null); setPromotionStep('uddokta-confirm'); }}
+                className="w-full p-3.5 border border-zinc-100 dark:border-zinc-800 hover:border-emerald-500/50 rounded-lg text-left transition-all bg-zinc-50/50 dark:bg-zinc-900/40 hover:bg-emerald-50/50 dark:hover:bg-emerald-500/5 flex items-center gap-3 group"
               >
-                <div className="p-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-md font-bold text-[9px] h-7 w-7 flex items-center justify-center shrink-0">2</div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Autopay with Credit Card</p>
-                  <p className="text-[8px] text-zinc-400 font-medium italic">Stripe subscription gateway</p>
+                <div className="p-2 bg-emerald-500 text-white rounded-md font-bold text-[9px] h-7 w-7 flex items-center justify-center shrink-0">
+                  <Globe className="w-3.5 h-3.5" />
                 </div>
-              </button>
-
-              {/* Option 3: Merchant (disabled) */}
-              <button
-                type="button"
-                onClick={() => setWarningMsg("Merchant payments are under construction. Use Direct Manual bkash/Nagad.")}
-                className="w-full p-3.5 border border-zinc-100 dark:border-zinc-800 rounded-lg text-left transition-all bg-zinc-50/50 dark:bg-zinc-900/40 flex items-center gap-3 opacity-50 cursor-not-allowed"
-              >
-                <div className="p-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-md font-bold text-[9px] h-7 w-7 flex items-center justify-center shrink-0">3</div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[9px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Merchant Online Checkout</p>
-                  <p className="text-[8px] text-zinc-400 font-medium italic">SSLCommerz secure merchant portal</p>
+                  <p className="text-[9px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Pay with UddoktaPay</p>
+                  <p className="text-[8px] text-zinc-400 font-medium italic">bKash, Nagad, Rocket, Cards — Instant</p>
                 </div>
+                <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[7px] font-bold uppercase tracking-wider rounded-full shrink-0">
+                  Instant
+                </span>
               </button>
 
               <button onClick={() => setPromotionStep('select-tier')} className="w-full text-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors py-1">
@@ -306,7 +333,40 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
             </div>
           )}
 
-          {/* Step: Payment Form (bkash/Nagad) */}
+          {/* Step: UddoktaPay Confirmation */}
+          {promotionStep === 'uddokta-confirm' && (
+            <div className="space-y-3">
+              <div className="bg-emerald-50/50 dark:bg-emerald-500/5 border border-emerald-200/50 dark:border-emerald-500/20 rounded-lg p-3 space-y-2">
+                <div className="flex items-center gap-1.5">
+                  <Globe className="w-3.5 h-3.5 text-emerald-500" />
+                  <p className="text-[9px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">UddoktaPay Checkout</p>
+                </div>
+                <p className="text-[9px] text-zinc-500 dark:text-zinc-400 leading-relaxed">
+                  You will be redirected to pay <span className="font-bold text-zinc-900 dark:text-white">৳{getTotalCost()}</span> for your <span className="font-bold text-zinc-900 dark:text-white">{promotionTier}</span> promotion ({promotionDuration} days). Payment is verified instantly.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setPromotionStep('payment-method')}
+                  className="flex-1 py-2 bg-zinc-50 dark:bg-zinc-900 text-zinc-400 text-[9px] font-bold uppercase tracking-widest rounded-lg border border-zinc-100 dark:border-zinc-800 transition-all hover:bg-zinc-100 dark:hover:bg-zinc-800 text-center"
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  onClick={handleUddoktaPromotion}
+                  className="flex-1 py-2 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all hover:bg-emerald-600 text-center flex items-center justify-center gap-1.5"
+                >
+                  <Globe className="w-3 h-3" />
+                  Pay ৳{getTotalCost()}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step: Payment Form (bkash/Nagad Manual) */}
           {promotionStep === 'payment-form' && (
             <div className="space-y-3">
               {/* Order Summary */}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 import { 
   Loader2, 
@@ -12,7 +12,14 @@ import {
   AlertCircle,
   TrendingUp,
   CreditCard,
-  Calendar
+  Calendar,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Globe,
+  Mail,
+  Receipt,
+  Info
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
@@ -35,7 +42,7 @@ interface SubscriptionTransaction {
   amount: number;
   senderNumber: string;
   transactionId: string;
-  status: "PENDING" | "APPROVED" | "DECLINED";
+  status: "PENDING" | "APPROVED" | "DECLINED" | "REJECTED";
   createdAt: string;
   user: UserProfile;
   details?: {
@@ -46,6 +53,13 @@ interface SubscriptionTransaction {
     recipientEmail?: string;
     tier?: string;
   } | null;
+  gatewayFee?: number | null;
+  chargedAmount?: number | null;
+  paymentMethod?: string | null;
+  invoiceId?: string | null;
+  ipAddress?: string | null;
+  country?: string | null;
+  email?: string | null;
 }
 
 export default function AdminTransactionsPage() {
@@ -53,6 +67,7 @@ export default function AdminTransactionsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [processingId, setProcessingId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchTransactions();
@@ -76,20 +91,21 @@ export default function AdminTransactionsPage() {
     }
   };
 
-  const handleAction = async (id: string, action: "APPROVE" | "DECLINE") => {
+  const handleAction = async (id: string, action: "APPROVE" | "DECLINE" | "REFUND") => {
     setProcessingId(id);
     try {
-      const res = await fetch(`/api/admin/transactions/${id}`, {
+      const url = action === "REFUND" ? `/api/admin/transactions/${id}/refund` : `/api/admin/transactions/${id}`;
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify(action === "REFUND" ? {} : { action }),
       });
 
       if (res.ok) {
-        toast.success(`Transaction ${action === "APPROVE" ? "Approved" : "Declined"} successfully!`);
+        toast.success(`Transaction ${action === "APPROVE" ? "Approved" : action === "REFUND" ? "Refunded" : "Declined"} successfully!`);
         // Update local state status
         setTransactions(prev =>
-          prev.map(t => (t.id === id ? { ...t, status: action === "APPROVE" ? "APPROVED" : "DECLINED" } : t))
+          prev.map(t => (t.id === id ? { ...t, status: action === "APPROVE" ? "APPROVED" : action === "REFUND" ? "REJECTED" : "DECLINED" } : t))
         );
       } else {
         const err = await res.json();
@@ -207,7 +223,8 @@ export default function AdminTransactionsPage() {
                 </thead>
                 <tbody className="divide-y divide-zinc-50 dark:divide-zinc-900">
                   {filteredTransactions.map((txn) => (
-                    <tr key={txn.id} className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
+                    <React.Fragment key={txn.id}>
+                    <tr className="group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-colors">
                       <td className="py-5 px-6">
                         <div className="flex items-center gap-4">
                           <div className="relative h-11 w-11 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 shrink-0">
@@ -361,13 +378,86 @@ export default function AdminTransactionsPage() {
                               )}
                             </button>
                           </div>
+                        ) : txn.status === "APPROVED" ? (
+                          <span className="text-[9px] font-bold uppercase tracking-widest text-emerald-500">
+                            Approved
+                          </span>
                         ) : (
                           <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">
-                            Processed
+                            {txn.status}
                           </span>
                         )}
+                        <button
+                          onClick={() => setExpandedId(expandedId === txn.id ? null : txn.id)}
+                          className="ml-4 p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                        >
+                          {expandedId === txn.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </button>
                       </td>
                     </tr>
+                    {expandedId === txn.id && (
+                      <tr className="bg-zinc-50/50 dark:bg-zinc-900/20 border-b border-zinc-100 dark:border-zinc-900">
+                        <td colSpan={7} className="p-0">
+                          <div className="px-6 py-4 animate-in fade-in slide-in-from-top-2">
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                                <Info className="w-3.5 h-3.5" />
+                                Payment Telemetry Data
+                              </div>
+                              {txn.status === "APPROVED" && (
+                                <button
+                                  onClick={() => {
+                                    if (window.confirm("Are you sure you want to refund this payment? This action is irreversible and the money will be sent back.")) {
+                                      handleAction(txn.id, "REFUND");
+                                    }
+                                  }}
+                                  disabled={processingId !== null}
+                                  title="Refund Transaction"
+                                  className="px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider text-rose-500 hover:text-white bg-rose-500/10 hover:bg-rose-500 transition-all border border-rose-500/20 rounded flex items-center gap-2"
+                                >
+                                  {processingId === txn.id ? (
+                                    <Loader2 className="w-3.5 h-3.5 animate-spin mx-auto" />
+                                  ) : (
+                                    "Issue Full Refund"
+                                  )}
+                                </button>
+                              )}
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><Globe className="w-3 h-3"/> IP Address</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300">{txn.ipAddress || "Unknown"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><MapPin className="w-3 h-3"/> Country</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300">{txn.country || "Unknown"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><Mail className="w-3 h-3"/> Billing Email</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300 truncate" title={txn.email || ""}>{txn.email || "Unknown"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5"><Receipt className="w-3 h-3"/> Invoice ID</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300">{txn.invoiceId || "N/A"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Payment Gateway</div>
+                                <div className="text-xs font-mono text-zinc-900 dark:text-zinc-300 uppercase">{txn.paymentMethod || "Manual"}</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Gateway Fee</div>
+                                <div className="text-xs font-mono text-rose-600 dark:text-rose-400">৳{txn.gatewayFee || "0"} BDT</div>
+                              </div>
+                              <div className="space-y-1">
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-500">Total Charged</div>
+                                <div className="text-xs font-mono text-emerald-600 dark:text-emerald-400">৳{txn.chargedAmount || txn.amount} BDT</div>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>

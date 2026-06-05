@@ -49,30 +49,52 @@ export async function POST(
       
       if (action === "APPROVE") {
         const now = new Date();
-        const promo = await prisma.storyPromotion.findFirst({
-          where: { transactionId: txn.transactionId }
-        });
+        
+        let finalEndDate = now;
 
-        let newEndDate = now;
-        if (promo) {
-          const durationMs = promo.endDate.getTime() - promo.startDate.getTime();
-          newEndDate = new Date(now.getTime() + durationMs);
-        }
+        await prisma.$transaction(async (tx) => {
+          const currentTxn = await tx.subscriptionTransaction.findUnique({
+            where: { id },
+          });
 
-        await prisma.$transaction([
-          prisma.subscriptionTransaction.update({
+          if (!currentTxn || currentTxn.status !== "PENDING") {
+            throw new Error("Already processed");
+          }
+
+          const promo = await tx.storyPromotion.findFirst({
+            where: { transactionId: txn.transactionId }
+          });
+
+          let newEndDate = now;
+          if (promo) {
+            const durationMs = promo.endDate.getTime() - promo.startDate.getTime();
+            newEndDate = new Date(now.getTime() + durationMs);
+            finalEndDate = newEndDate;
+          }
+
+          await tx.subscriptionTransaction.update({
             where: { id },
             data: { status: "APPROVED" },
-          }),
-          prisma.storyPromotion.updateMany({
+          });
+
+          await tx.storyPromotion.updateMany({
             where: { transactionId: txn.transactionId },
             data: {
               status: "ACTIVE",
               startDate: now,
               endDate: newEndDate,
             },
-          }),
-        ]);
+          });
+
+          if (promo) {
+            await tx.story.update({
+              where: { id: promo.storyId },
+              data: { promotionScore: { increment: Math.round(txn.amount) } },
+            });
+          }
+        });
+
+
 
         const storyPromotion = await prisma.storyPromotion.findFirst({
           where: { transactionId: txn.transactionId },
@@ -84,7 +106,7 @@ export async function POST(
             userId: txn.userId,
             type: "PROMOTION_APPROVED",
             title: `✨ Promotion Approved for "${storyPromotion.story.title}"!`,
-            message: `Your payment verification was successful. Your story is now promoted as ${tier} until ${newEndDate.toLocaleDateString()}.`,
+            message: `Your payment verification was successful. Your story is now promoted as ${tier} until ${finalEndDate.toLocaleDateString()}.`,
             link: `/stories/${storyPromotion.storyId}`,
           });
         }
@@ -95,16 +117,25 @@ export async function POST(
         });
       } else {
         // DECLINE Action
-        await prisma.$transaction([
-          prisma.subscriptionTransaction.update({
+        await prisma.$transaction(async (tx) => {
+          const currentTxn = await tx.subscriptionTransaction.findUnique({
+            where: { id },
+          });
+
+          if (!currentTxn || currentTxn.status !== "PENDING") {
+            throw new Error("Already processed");
+          }
+
+          await tx.subscriptionTransaction.update({
             where: { id },
             data: { status: "DECLINED" },
-          }),
-          prisma.storyPromotion.updateMany({
+          });
+
+          await tx.storyPromotion.updateMany({
             where: { transactionId: txn.transactionId },
             data: { status: "DECLINED" },
-          }),
-        ]);
+          });
+        });
 
         const storyPromotion = await prisma.storyPromotion.findFirst({
           where: { transactionId: txn.transactionId },
@@ -132,16 +163,25 @@ export async function POST(
       const tier = txn.plan.replace("GIFT_", "");
       
       if (action === "APPROVE") {
-        await prisma.$transaction([
-          prisma.subscriptionTransaction.update({
+        await prisma.$transaction(async (tx) => {
+          const currentTxn = await tx.subscriptionTransaction.findUnique({
+            where: { id },
+          });
+
+          if (!currentTxn || currentTxn.status !== "PENDING") {
+            throw new Error("Already processed");
+          }
+
+          await tx.subscriptionTransaction.update({
             where: { id },
             data: { status: "APPROVED" },
-          }),
-          prisma.giftMembership.updateMany({
+          });
+
+          await tx.giftMembership.updateMany({
             where: { transactionId: txn.transactionId },
             data: { status: "PENDING" }, // Make redeemable
-          }),
-        ]);
+          });
+        });
 
         await createNotification({
           userId: txn.userId,
@@ -157,16 +197,25 @@ export async function POST(
         });
       } else {
         // DECLINE Action
-        await prisma.$transaction([
-          prisma.subscriptionTransaction.update({
+        await prisma.$transaction(async (tx) => {
+          const currentTxn = await tx.subscriptionTransaction.findUnique({
+            where: { id },
+          });
+
+          if (!currentTxn || currentTxn.status !== "PENDING") {
+            throw new Error("Already processed");
+          }
+
+          await tx.subscriptionTransaction.update({
             where: { id },
             data: { status: "DECLINED" },
-          }),
-          prisma.giftMembership.updateMany({
+          });
+
+          await tx.giftMembership.updateMany({
             where: { transactionId: txn.transactionId },
             data: { status: "DECLINED" },
-          }),
-        ]);
+          });
+        });
 
         await createNotification({
           userId: txn.userId,
@@ -185,31 +234,54 @@ export async function POST(
 
     if (txn.plan === "TIP") {
       if (action === "APPROVE") {
-        const completedTip = await prisma.tip.findFirst({
-          where: { transactionId: txn.transactionId }
-        });
+        const completedTip = await prisma.$transaction(async (tx) => {
+          const currentTxn = await tx.subscriptionTransaction.findUnique({
+            where: { id },
+          });
 
-        if (!completedTip) {
-          return NextResponse.json({ error: "Tip record not found" }, { status: 404 });
-        }
+          if (!currentTxn || currentTxn.status !== "PENDING") {
+            throw new Error("Already processed");
+          }
 
-        await prisma.$transaction([
-          prisma.subscriptionTransaction.update({
+          const tip = await tx.tip.findFirst({
+            where: { transactionId: txn.transactionId }
+          });
+
+          if (!tip) {
+            throw new Error("Tip record not found");
+          }
+
+          await tx.subscriptionTransaction.update({
             where: { id },
             data: { status: "APPROVED" },
-          }),
-          prisma.tip.updateMany({
+          });
+
+          await tx.tip.updateMany({
             where: { transactionId: txn.transactionId },
             data: { status: "COMPLETED" },
-          }),
-        ]);
+          });
+
+          await tx.user.update({
+            where: { id: tip.receiverId },
+            data: {
+              walletBalance: { increment: tip.amount }
+            }
+          });
+
+          return tip;
+        });
+
+        // Fetch author details for notification
+        const author = await prisma.user.findUnique({ where: { id: completedTip.receiverId }, select: { bkashNumber: true, nagadNumber: true } });
+        const bkash = author?.bkashNumber || "N/A";
+        const nagad = author?.nagadNumber || "N/A";
 
         // Notify author who received the tip
         await createNotification({
           userId: completedTip.receiverId,
           type: "TIP",
           title: "🎉 You received a Tip!",
-          message: `A reader sent you a tip of ৳${completedTip.amount} Taka. Your manual payment is approved and cleared!`,
+          message: `A reader sent you a tip of ৳${completedTip.amount} Taka. You will get your tips amount at the month end at your bKash: ${bkash} / Nagad: ${nagad}.`,
           link: `/profile`,
         });
 
@@ -228,20 +300,25 @@ export async function POST(
         });
       } else {
         // DECLINE Action
-        const completedTip = await prisma.tip.findFirst({
-          where: { transactionId: txn.transactionId }
-        });
+        await prisma.$transaction(async (tx) => {
+          const currentTxn = await tx.subscriptionTransaction.findUnique({
+            where: { id },
+          });
 
-        await prisma.$transaction([
-          prisma.subscriptionTransaction.update({
+          if (!currentTxn || currentTxn.status !== "PENDING") {
+            throw new Error("Already processed");
+          }
+
+          await tx.subscriptionTransaction.update({
             where: { id },
             data: { status: "DECLINED" },
-          }),
-          prisma.tip.updateMany({
+          });
+
+          await tx.tip.updateMany({
             where: { transactionId: txn.transactionId },
             data: { status: "FAILED" },
-          }),
-        ]);
+          });
+        });
 
         await createNotification({
           userId: txn.userId,
@@ -282,20 +359,29 @@ export async function POST(
       }
 
       // Perform updates inside a transaction
-      await prisma.$transaction([
-        prisma.subscriptionTransaction.update({
+      await prisma.$transaction(async (tx) => {
+        const currentTxn = await tx.subscriptionTransaction.findUnique({
+          where: { id },
+        });
+
+        if (!currentTxn || currentTxn.status !== "PENDING") {
+          throw new Error("Already processed");
+        }
+
+        await tx.subscriptionTransaction.update({
           where: { id },
           data: { status: "APPROVED" },
-        }),
-        prisma.user.update({
+        });
+
+        await tx.user.update({
           where: { id: txn.userId },
           data: {
             membershipTier: txn.plan,
             membershipExpiry: membershipEndDate,
             role: newRole,
           },
-        }),
-      ]);
+        });
+      });
 
       // Create notification for user
       await createNotification({
@@ -312,9 +398,19 @@ export async function POST(
       });
     } else {
       // DECLINE Action
-      await prisma.subscriptionTransaction.update({
-        where: { id },
-        data: { status: "DECLINED" },
+      await prisma.$transaction(async (tx) => {
+        const currentTxn = await tx.subscriptionTransaction.findUnique({
+          where: { id },
+        });
+
+        if (!currentTxn || currentTxn.status !== "PENDING") {
+          throw new Error("Already processed");
+        }
+
+        await tx.subscriptionTransaction.update({
+          where: { id },
+          data: { status: "DECLINED" },
+        });
       });
 
       // Create notification for user
