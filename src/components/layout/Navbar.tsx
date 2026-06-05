@@ -188,7 +188,7 @@ export function Navbar() {
           }
         })
         .catch(err => console.error("Failed to fetch unread notifications", err));
-        
+
       fetch("/api/activity-feed")
         .then(res => res.json())
         .then(data => {
@@ -299,9 +299,10 @@ export function Navbar() {
                   className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105"
                   aria-label="Open profile menu"
                 >
-                  <div className={`absolute inset-0 rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
-                    }`} />
-                  <div className={`relative w-8 h-8 rounded-full shadow-sm transition-all duration-500 flex items-center justify-center ${isPro ? 'p-[2px] bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300' : 'border border-zinc-100 dark:border-zinc-800'}`}>
+                  <div className={`absolute inset-0 rounded-full transition-all duration-300 ${isPro ? "p-[1.5px] bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 shadow-sm" : ""}`}>
+                    <div className={`w-full h-full rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"}`} />
+                  </div>
+                  <div className={`relative w-8 h-8 rounded-full shadow-sm transition-all duration-500 flex items-center justify-center ${isPro ? 'border-[1.5px] border-white dark:border-zinc-950' : 'border border-zinc-100 dark:border-zinc-800'}`}>
                     <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-zinc-950 flex items-center justify-center">
                       {dbUser?.avatarUrl ? (
                         <img
@@ -729,9 +730,10 @@ export function Navbar() {
                 onClick={() => setProfileOpen(!profileOpen)}
                 className="relative group flex items-center justify-center w-11 h-11 rounded-full transition-all duration-300 hover:scale-105 ml-1"
               >
-                <div className={`absolute inset-0 rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
-                  }`} />
-                <div className={`relative w-9 h-9 rounded-full shadow-sm transition-all duration-500 flex items-center justify-center ${isPro ? 'p-[2px] bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300' : 'border border-zinc-100 dark:border-zinc-800'}`}>
+                <div className={`absolute inset-0 rounded-full transition-all duration-300 ${isPro ? "p-[1.5px] bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 shadow-sm" : ""}`}>
+                  <div className={`w-full h-full rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"}`} />
+                </div>
+                <div className={`relative w-9 h-9 rounded-full shadow-sm transition-all duration-500 flex items-center justify-center ${isPro ? 'border-[1.5px] border-white dark:border-zinc-950' : 'border border-zinc-100 dark:border-zinc-800'}`}>
                   <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-zinc-950 flex items-center justify-center">
                     {dbUser?.avatarUrl ? (
                       <img
