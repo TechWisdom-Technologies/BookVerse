@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
     const senderNumber = result.sender_number || "UddoktaPay Gateway";
     const transactionId = result.transaction_id || invoiceId;
     const paymentMethod = result.payment_method || "UddoktaPay";
-    
+
     // New fields
     const gatewayFee = parseFloat((result.fee || "0").replace(/,/g, ''));
     const chargedAmount = parseFloat((result.charged_amount || result.amount || "0").replace(/,/g, ''));
@@ -278,17 +278,28 @@ export async function GET(req: NextRequest) {
 
       // Notify the author
       try {
-        const author = await prisma.user.findUnique({ where: { id: receiverId }, select: { bkashNumber: true, nagadNumber: true } });
+        const author = await prisma.user.findUnique({ where: { id: receiverId }, select: { bkashNumber: true, nagadNumber: true, membershipTier: true } });
         const bkash = author?.bkashNumber || "N/A";
         const nagad = author?.nagadNumber || "N/A";
+        const tier = author?.membershipTier;
+
+        let customMessage = `A reader sent you a tip of ৳${amount} Taka. You will get your tips amount at the month end at your bKash: ${bkash} / Nagad: ${nagad}.`;
+
+        if (!tier || tier === "AUTHOR" || tier === "MEMBER") {
+          customMessage = `A reader sent you a tip of ৳${amount} Taka! Upgrade to Pro to see your balance, or Creator to see who sent it and the transaction history. Payouts of your all tips will be sent at the month end to your bKash: ${bkash} / Nagad: ${nagad}.`;
+        } else if (tier === "PRO") {
+          customMessage = `A reader sent you a tip of ৳${amount} Taka. Want to see who sent it and the transaction history? Upgrade to Creator! Payouts of your all tips will be sent at the month end to your bKash: ${bkash} / Nagad: ${nagad}.`;
+        } else {
+          customMessage = `A reader sent you a tip of ৳${amount} Taka. Check your wallet ledger to see who sent it! Payouts of your all tips will be sent at the month end to your bKash: ${bkash} / Nagad: ${nagad}.`;
+        }
 
         const { createNotification } = await import("@/lib/notifications");
         await createNotification({
           userId: receiverId,
           type: "TIP",
           title: "🎉 You received a Tip!",
-          message: `A reader sent you a tip of ৳${amount} Taka. You will get your tips amount at the month end at your bKash: ${bkash} / Nagad: ${nagad}.`,
-          link: `/profile`,
+          message: customMessage,
+          link: `/wallet`,
         });
       } catch (err) {
         console.error("Failed to send tip notification:", err);

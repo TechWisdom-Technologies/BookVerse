@@ -36,6 +36,7 @@ export default function WalletPage() {
   const [bkashNumber, setBkashNumber] = useState('');
   const [nagadNumber, setNagadNumber] = useState('');
   const [savingBilling, setSavingBilling] = useState(false);
+  const [showSetupModal, setShowSetupModal] = useState(false);
 
   // Ledger lists
   const [walletLoading, setWalletLoading] = useState(true);
@@ -53,6 +54,10 @@ export default function WalletPage() {
     if (dbUser) {
       setBkashNumber(dbUser.bkashNumber || '');
       setNagadNumber(dbUser.nagadNumber || '');
+      
+      if (!dbUser.bkashNumber && !dbUser.nagadNumber) {
+        setShowSetupModal(true);
+      }
     }
   }, [dbUser]);
 
@@ -427,6 +432,36 @@ export default function WalletPage() {
         </div>
 
       </div>
+
+      {/* Payout Setup Modal */}
+      {showSetupModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/80 backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded-2xl p-8 max-w-md w-full shadow-2xl relative overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            
+            <div className="flex items-center gap-4 mb-6 relative">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                <Wallet className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-zinc-900 dark:text-white uppercase tracking-tight">Setup Payout Method</h3>
+                <p className="text-[10px] text-zinc-500 font-medium uppercase tracking-widest mt-1">Required for receiving tips</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-8 leading-relaxed relative">
+              It looks like you haven't added a bKash or Nagad number yet. Please add at least one payout method so we can seamlessly send your earnings to you at the end of the month!
+            </p>
+
+            <button
+              onClick={() => setShowSetupModal(false)}
+              className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 transition-all shadow-sm relative"
+            >
+              Add Payout Method Now
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

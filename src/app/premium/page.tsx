@@ -76,7 +76,7 @@ const TIERS = [
 ];
 
 export default function PremiumPage() {
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
@@ -102,7 +102,12 @@ export default function PremiumPage() {
 
         {/* Pricing Tiers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 mb-20 shadow-sm">
-          {TIERS.map(tier => (
+          {TIERS.map(tier => {
+            const isCurrentPlan = user && tier.name.toUpperCase() === (dbUser?.membershipTier?.toUpperCase() || 'FREE');
+            const isDisabled = isCurrentPlan || (tier.name === 'Free');
+            const ctaText = isCurrentPlan ? 'Current Plan' : (tier.name === 'Free' ? 'Included' : tier.cta);
+
+            return (
             <div
               key={tier.name}
               className="p-10 bg-white dark:bg-zinc-950 flex flex-col h-full"
@@ -130,14 +135,14 @@ export default function PremiumPage() {
               <div className="mb-12">
                 {user ? (
                   <Link
-                    href={tier.ctaHref || '#'}
+                    href={isDisabled ? '#' : (tier.ctaHref || '#')}
                     className={`w-full block text-center py-3.5 px-4 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border ${
-                      tier.ctaDisabled
-                        ? 'bg-zinc-50 text-zinc-300 border-zinc-100 dark:bg-zinc-900 dark:text-zinc-700 dark:border-zinc-800 cursor-not-allowed'
+                      isDisabled
+                        ? 'bg-zinc-50 text-zinc-300 border-zinc-100 dark:bg-zinc-900 dark:text-zinc-700 dark:border-zinc-800 cursor-not-allowed pointer-events-none'
                         : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white hover:opacity-90 shadow-sm'
                     }`}
                   >
-                    {tier.cta}
+                    {ctaText}
                   </Link>
                 ) : (
                   <Link
@@ -159,7 +164,8 @@ export default function PremiumPage() {
                 ))}
               </div>
             </div>
-          ))}
+          );
+        })}
         </div>
 
         {/* Plan Comparison */}

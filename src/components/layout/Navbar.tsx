@@ -301,26 +301,28 @@ export function Navbar() {
                 >
                   <div className={`absolute inset-0 rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
                     }`} />
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500">
-                    {dbUser?.avatarUrl ? (
-                      <img
-                        src={dbUser.avatarUrl}
-                        alt=""
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 font-bold text-[9px] uppercase">
-                        {dbUser?.username?.[0]?.toUpperCase() || <User size={14} />}
-                      </div>
-                    )}
+                  <div className={`relative w-8 h-8 rounded-full shadow-sm transition-all duration-500 flex items-center justify-center ${isPro ? 'p-[2px] bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300' : 'border border-zinc-100 dark:border-zinc-800'}`}>
+                    <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-zinc-950 flex items-center justify-center">
+                      {dbUser?.avatarUrl ? (
+                        <img
+                          src={dbUser.avatarUrl}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 font-bold text-[9px] uppercase">
+                          {dbUser?.username?.[0]?.toUpperCase() || <User size={14} />}
+                        </div>
+                      )}
+                    </div>
                   </div>
                   {dbUser?.role === "ADMIN" ? (
                     <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-zinc-900 dark:bg-white rounded-full border border-white dark:border-zinc-950 flex items-center justify-center">
                       <Crown size={6} className="text-white dark:text-zinc-900" />
                     </div>
                   ) : isPro ? (
-                    <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-500 rounded-full border border-white dark:border-zinc-950 flex items-center justify-center shadow-sm">
-                      <Star size={6} className="text-white fill-white" />
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 rounded-full border-2 border-white dark:border-zinc-950 flex items-center justify-center shadow-md ring-1 ring-amber-500/50">
+                      <Crown size={8} className="text-white fill-white/20 drop-shadow-sm" />
                     </div>
                   ) : null}
                 </button>
@@ -565,7 +567,7 @@ export function Navbar() {
                   <div className="space-y-1">
                     <DropdownItem href={`/profile/${dbUser?.username || ""}`} icon={User} label="My Profile" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/write/dashboard" icon={Sparkles} label="Author Dashboard" onClick={() => setProfileOpen(false)} />
-                    <DropdownItem href="/author/analytics" icon={BarChart3} label="Analytics" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/author/analytics" icon={BarChart3} label="Analytics" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/shelf" icon={BookMarked} label="My Library" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/offline-stories" icon={Bookmark} label="Offline Stories" onClick={() => setProfileOpen(false)} />
                   </div>
@@ -577,12 +579,12 @@ export function Navbar() {
                     <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Author</h3>
                   </div>
                   <div className="space-y-1">
-                    <DropdownItem href="/wallet" icon={Wallet} label="Wallet" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/wallet" icon={Wallet} label="Wallet" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/write" icon={PenLine} label="Author Studio" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/write/new" icon={PlusCircle} label="New Story" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/write/universes" icon={Globe} label="Story Universes" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/write/series" icon={Layers} label="Story Series" onClick={() => setProfileOpen(false)} />
-                    <DropdownItem href="/author/newsletter" icon={Mail} label="Newsletter & Fans" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/author/newsletter" icon={Mail} label="Newsletter & Fans" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
                     {(dbUser?.role === "AUTHOR" || dbUser?.role === "ADMIN") && (
                       <DropdownItem href="/upload" icon={Upload} label="Upload Book" onClick={() => setProfileOpen(false)} />
                     )}
@@ -595,11 +597,11 @@ export function Navbar() {
                     <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Activity & More</h3>
                   </div>
                   <div className="space-y-1">
-                    <DropdownItem href="/reading-challenges" icon={Trophy} label="Challenges" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/reading-challenges" icon={Trophy} label="Challenges" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/settings" icon={Settings} label="Settings" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/docs" icon={BookOpen} label="Documentation" onClick={() => setProfileOpen(false)} />
-                    <DropdownItem href="/premium" icon={Premium} label="Premium" badge="PRO" onClick={() => setProfileOpen(false)} />
-                    <DropdownItem href="/gifts" icon={Gift} label="Gifts" badge="PRO" onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/premium" icon={Premium} label="Premium" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/gifts" icon={Gift} label="Gifts" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
                     {dbUser?.role === "ADMIN" && (
                       <DropdownItem href="/admin" icon={Shield} label="Admin Panel" badge="ADMIN" onClick={() => setProfileOpen(false)} />
                     )}
@@ -729,26 +731,28 @@ export function Navbar() {
               >
                 <div className={`absolute inset-0 rounded-full transition-all duration-300 ${profileOpen ? "bg-zinc-100 dark:bg-zinc-800" : "bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800"
                   }`} />
-                <div className="relative w-9 h-9 rounded-full overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500">
-                  {dbUser?.avatarUrl ? (
-                    <img
-                      src={dbUser.avatarUrl}
-                      alt=""
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 font-bold text-[10px] uppercase">
-                      {dbUser?.username?.[0]?.toUpperCase() || <User size={16} />}
-                    </div>
-                  )}
+                <div className={`relative w-9 h-9 rounded-full shadow-sm transition-all duration-500 flex items-center justify-center ${isPro ? 'p-[2px] bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300' : 'border border-zinc-100 dark:border-zinc-800'}`}>
+                  <div className="w-full h-full rounded-full overflow-hidden bg-white dark:bg-zinc-950 flex items-center justify-center">
+                    {dbUser?.avatarUrl ? (
+                      <img
+                        src={dbUser.avatarUrl}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-zinc-400 font-bold text-[10px] uppercase">
+                        {dbUser?.username?.[0]?.toUpperCase() || <User size={16} />}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 {dbUser?.role === "ADMIN" ? (
                   <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-zinc-900 dark:bg-white rounded-full border-2 border-white dark:border-zinc-950 flex items-center justify-center">
                     <Crown size={7} className="text-white dark:text-zinc-900" />
                   </div>
                 ) : isPro ? (
-                  <div className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-amber-500 rounded-full border-2 border-white dark:border-zinc-950 flex items-center justify-center shadow-sm">
-                    <Star size={7} className="text-white fill-white" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-tr from-amber-600 via-amber-400 to-yellow-300 rounded-full border-2 border-white dark:border-zinc-950 flex items-center justify-center shadow-md ring-1 ring-amber-500/50">
+                    <Crown size={8} className="text-white fill-white/20 drop-shadow-sm" />
                   </div>
                 ) : null}
 

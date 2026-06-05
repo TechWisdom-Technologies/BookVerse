@@ -108,6 +108,7 @@ export async function POST() {
         onboardingQuiz: {
           select: { completed: true }
         },
+        membershipTier: true,
       },
     });
 

@@ -272,17 +272,28 @@ export async function POST(
         });
 
         // Fetch author details for notification
-        const author = await prisma.user.findUnique({ where: { id: completedTip.receiverId }, select: { bkashNumber: true, nagadNumber: true } });
+        const author = await prisma.user.findUnique({ where: { id: completedTip.receiverId }, select: { bkashNumber: true, nagadNumber: true, membershipTier: true } });
         const bkash = author?.bkashNumber || "N/A";
         const nagad = author?.nagadNumber || "N/A";
+        const tier = author?.membershipTier;
+
+        let customMessage = `A reader sent you a tip of ৳${completedTip.amount} Taka. You will get your tips amount at the month end at your bKash: ${bkash} / Nagad: ${nagad}.`;
+        
+        if (!tier || tier === "AUTHOR" || tier === "MEMBER") {
+          customMessage = `A reader sent you a tip of ৳${completedTip.amount} Taka! Upgrade to Pro to see your balance, or Creator to see who sent it and the transaction history. Payouts are monthly via bKash: ${bkash} / Nagad: ${nagad}.`;
+        } else if (tier === "PRO") {
+          customMessage = `A reader sent you a tip of ৳${completedTip.amount} Taka. Want to see who sent it and the transaction history? Upgrade to Creator! Payouts are monthly via bKash: ${bkash} / Nagad: ${nagad}.`;
+        } else {
+          customMessage = `A reader sent you a tip of ৳${completedTip.amount} Taka. Check your wallet ledger to see who sent it! Payouts are monthly via bKash: ${bkash} / Nagad: ${nagad}.`;
+        }
 
         // Notify author who received the tip
         await createNotification({
           userId: completedTip.receiverId,
           type: "TIP",
           title: "🎉 You received a Tip!",
-          message: `A reader sent you a tip of ৳${completedTip.amount} Taka. You will get your tips amount at the month end at your bKash: ${bkash} / Nagad: ${nagad}.`,
-          link: `/profile`,
+          message: customMessage,
+          link: `/wallet`,
         });
 
         // Notify user who sent the tip

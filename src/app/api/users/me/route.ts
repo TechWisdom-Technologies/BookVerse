@@ -39,6 +39,7 @@ export async function GET() {
             stories: true,
           },
         },
+        membershipTier: true,
       },
     });
 
@@ -129,6 +130,7 @@ export async function PATCH(request: Request) {
             stories: true,
           },
         },
+        membershipTier: true,
       },
     });
 

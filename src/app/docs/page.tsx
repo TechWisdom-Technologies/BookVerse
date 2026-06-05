@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   BookOpen,
   Settings,
+  ArrowRight,
   PenTool,
   Users,
   Wallet,
@@ -13,7 +14,6 @@ import {
   Info,
   BookMarked,
   Sparkles,
-  ArrowRight,
   Search,
   Globe,
   Trophy,
@@ -21,15 +21,18 @@ import {
   Coins,
   Megaphone,
   CalendarClock,
-  Zap,
   Shield,
   MessageSquare,
   Gift,
-  Menu,
-  Layers
+  Layers,
+  ShieldAlert,
+  AlertTriangle,
+  Award,
+  RefreshCw,
+  Heart
 } from "lucide-react";
 
-type TabId = "getting-started" | "reading" | "writing" | "promotions" | "community" | "monetization" | "analytics";
+type TabId = "getting-started" | "reading" | "writing" | "promotions" | "community" | "monetization" | "analytics" | "safety-admin";
 
 interface TabConfig {
   id: TabId;
@@ -39,13 +42,14 @@ interface TabConfig {
 }
 
 const TABS: TabConfig[] = [
-  { id: "getting-started", label: "Getting Started", icon: Settings, description: "Account setup and basics" },
-  { id: "reading", label: "Reading & Library", icon: BookOpen, description: "Discover and read stories" },
-  { id: "writing", label: "Writing & Publishing", icon: PenTool, description: "Create and publish books" },
-  { id: "promotions", label: "Marketing & Promo", icon: Megaphone, description: "Promote and schedule" },
-  { id: "community", label: "Community", icon: Users, description: "Connect with readers and clubs" },
-  { id: "monetization", label: "Monetization & Premium", icon: Wallet, description: "Earn tips and go Pro" },
-  { id: "analytics", label: "Analytics", icon: BarChart3, description: "Track your performance" },
+  { id: "getting-started", label: "Getting Started", icon: Settings, description: "Account setup & finding books" },
+  { id: "reading", label: "Reading & Library", icon: BookOpen, description: "Your shelf, streaks & offline" },
+  { id: "writing", label: "Writing & Publishing", icon: PenTool, description: "Creating universes & stories" },
+  { id: "promotions", label: "Marketing & Growth", icon: Megaphone, description: "Get more readers & followers" },
+  { id: "community", label: "Social & Community", icon: Users, description: "Book clubs & discussions" },
+  { id: "monetization", label: "Earning & Wallets", icon: Wallet, description: "Tips, bKash/Nagad & Pro" },
+  { id: "analytics", label: "Author Analytics", icon: BarChart3, description: "Understand your audience" },
+  { id: "safety-admin", label: "Trust & Safety", icon: ShieldAlert, description: "Guidelines & reporting" },
 ];
 
 export default function DocumentationPage() {
@@ -58,28 +62,28 @@ export default function DocumentationPage() {
         <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900">
           <div className="flex items-center gap-2 text-xs font-bold text-zinc-400 uppercase tracking-widest mb-4">
             <Info className="w-4 h-4" />
-            BookVerse Comprehensive Platform Guide
+            BookVerse Help Center & Guide
           </div>
           <h1 className="text-3xl md:text-5xl font-black tracking-tight uppercase mb-4">
-            Documentation.
+            Welcome to BookVerse.
           </h1>
           <p className="text-sm md:text-base text-zinc-500 font-medium max-w-2xl leading-relaxed">
-            Welcome to the ultimate BookVerse handbook. From reading offline to advanced chapter scheduling and monetization algorithms, select a module to master the platform.
+            Your complete guide to reading, writing, and earning on BookVerse. Whether you're here to discover your next favorite novel or publish your own masterpiece, everything you need to know is right here!
           </p>
         </header>
 
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* Sidebar Navigation */}
           <aside className="w-full lg:w-72 shrink-0 space-y-2 lg:sticky lg:top-24 z-10">
-            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6 px-4 italic">Topics</h3>
+            <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6 px-4 italic">Help Topics</h3>
             <nav className="flex flex-col gap-2">
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex flex-col items-start w-full p-4 rounded-2xl transition-all duration-300 border ${activeTab === tab.id
-                      ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-lg scale-[1.02]"
-                      : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-lg scale-[1.02]"
+                    : "bg-zinc-50 dark:bg-zinc-900 text-zinc-500 border-transparent hover:border-zinc-200 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
                     }`}
                 >
                   <div className="flex items-center justify-between w-full mb-2">
@@ -106,43 +110,35 @@ export default function DocumentationPage() {
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
                     <Settings className="w-6 h-6 text-indigo-500" />
-                    Getting Started & Platform Architecture
+                    Getting Started & Basics
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse is a high-performance, full-stack literary ecosystem. It seamlessly bridges the gap between casual reading and professional publishing. Understanding the underlying mechanics is essential to maximizing your experience.
+                    Welcome aboard! Learn how to set up your profile, find amazing stories, and navigate BookVerse like a pro.
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Authentication & Identity</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Setting Up Your Profile</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      BookVerse utilizes a secure, stateless authentication mechanism. When you register or log in (via Google or Email), a secure session is established across all devices.
+                      Your profile is your home on BookVerse. A great profile helps you connect with other readers and authors!
                     </p>
                     <ul className="space-y-3 text-xs text-zinc-500 list-disc pl-5">
-                      <li><strong>Account Archetypes:</strong> Every user begins as a <em>Reader</em>. By navigating to the Author Studio and publishing your first work, your account dynamically unlocks <em>Author</em> privileges (dashboard access, analytics, monetization).</li>
-                      <li><strong>Profile Optimization:</strong> Your profile (`/profile/[username]`) is public. High-resolution avatars, a polished bio, and curated reading shelves act as your digital resume. Authors with fully completed profiles experience a 40% higher organic follow rate.</li>
-                      <li><strong>Privacy Controls:</strong> Within <strong>Settings</strong>, you maintain granular control over data visibility. You can toggle your reading history, current reading list, and follower counts between Public and Private states.</li>
+                      <li><strong>Avatar & Bio:</strong> Go to your settings to upload a fun profile picture and write a short bio about what you love to read.</li>
+                      <li><strong>Onboarding Quiz:</strong> When you first join, we ask about your favorite genres. We use this to magically recommend the perfect books for you on your homepage!</li>
+                      <li><strong>Public vs. Private:</strong> You can choose to show off your reading library to the world, or keep it totally private in your account settings.</li>
                     </ul>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">The Omni-Search Infrastructure</h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Finding Your Next Great Read</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      Finding content on BookVerse is powered by a custom indexing engine designed for literary discovery. The Omni-Search bar is accessible globally via the top navigation.
+                      With thousands of stories, our search tools make finding your next obsession super easy.
                     </p>
                     <ul className="space-y-3 text-xs text-zinc-500">
-                      <li className="flex gap-2 items-start"><Search className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" /> <strong>Fuzzy Matching:</strong> The engine automatically corrects minor typos and searches across Book Titles, Author Names, Series Names, and Universes simultaneously.</li>
-                      <li className="flex gap-2 items-start"><Globe className="w-4 h-4 shrink-0 mt-0.5 text-blue-500" /> <strong>Tag-Based Filtering:</strong> You can execute advanced queries by clicking on Genre Tags. Combining tags (e.g., #Sci-Fi + #Cyberpunk) narrows the database to highly specific intersections.</li>
-                      <li className="flex gap-2 items-start"><Menu className="w-4 h-4 shrink-0 mt-0.5 text-zinc-500" /> <strong>Global Dock & Sidebar:</strong> Desktop users benefit from the Global Dock for rapid switching between Library and Discovery, while the unified Sidebar (accessed via your Avatar) houses core administrative functions.</li>
+                      <li className="flex gap-2 items-start"><Search className="w-4 h-4 shrink-0 mt-0.5 text-rose-500" /> <strong>The Search Bar:</strong> Type in a book title, an author's name, or even a series name. Our smart search will find it instantly!</li>
+                      <li className="flex gap-2 items-start"><Globe className="w-4 h-4 shrink-0 mt-0.5 text-blue-500" /> <strong>Using Tags:</strong> Want a "Sci-Fi" story with "Enemies to Lovers"? Just click on the tags! You can combine tags to find exactly what you're in the mood for.</li>
                     </ul>
-                  </div>
-
-                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Real-Time Event Streams</h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed">
-                      The BookVerse notification system is asynchronous and real-time. You are subscribed to event streams based on your network graph. You receive immediate alerts for: new chapter publications from followed authors, direct replies to your comments, virtual gifts received, and daily reading streak reminders.
-                    </p>
                   </div>
                 </div>
               </div>
@@ -154,26 +150,35 @@ export default function DocumentationPage() {
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
                     <BookOpen className="w-6 h-6 text-emerald-500" />
-                    Mastering the Reading Experience
+                    Reading & Library
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse has engineered a distraction-free, customizable reading interface. Learn how to manage your digital library, leverage offline capabilities, and track your reading habits.
+                    BookVerse is designed to give you the most comfortable reading experience possible. Here's how to make the most of it.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-indigo-500">
-                      <BookMarked className="w-5 h-5" /> The Advanced PDF & Text Engine
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-emerald-500">
+                      <Trophy className="w-5 h-5" /> Reading Streaks & Achievements
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      Whether you are reading a web-novel format or a full PDF book, BookVerse utilizes highly optimized rendering engines to handle massive documents smoothly.
+                      We love rewarding readers! The more you read, the more you level up your profile.
                     </p>
                     <ul className="space-y-2 text-xs text-zinc-500 list-disc pl-5">
-                      <li><strong>Zoom & Pan:</strong> Intelligently scales PDF pages without losing resolution.</li>
-                      <li><strong>State Persistence:</strong> The platform remembers exactly which chapter or page you were on. If you leave and return to a book, you'll resume from the exact same spot.</li>
-                      <li><strong>Customization:</strong> Adjust font sizes, line spacing, and switch between light, dark, and sepia themes for web-novels to prevent eye strain.</li>
+                      <li><strong>Daily Streaks:</strong> Read at least a few pages or for 5 minutes a day to keep your reading streak alive. Watch your flame icon grow!</li>
+                      <li><strong>Badges:</strong> Complete books to earn beautiful profile badges like "Novice Reader" or "Scholar". Show them off to your friends!</li>
+                      <li><strong>Auto-Save:</strong> Never lose your place. If you close the app, we remember exactly which chapter or page you were on.</li>
                     </ul>
+                  </div>
+
+                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
+                      <BookMarked className="w-5 h-5 text-indigo-500" /> Highlighting & Notes
+                    </h3>
+                    <p className="text-xs text-zinc-500 leading-relaxed">
+                      Did you find a quote you absolutely love? Just select the text while reading to highlight it! You can pick your favorite colors and even attach personal notes to your highlights. All your highlights are saved safely in your Library.
+                    </p>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
@@ -181,23 +186,7 @@ export default function DocumentationPage() {
                       <Shield className="w-5 h-5 text-amber-500" /> Offline Reading Vault
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Going on a flight? Commuting? You can cache stories directly to your device. Navigate to any story, click "Save for Offline", and it will be stored securely in your browser's IndexedDB. Access them anytime from the <strong>Offline Stories</strong> tab in your profile menu, even with airplane mode on! Note: Pro Readers have no limits on offline storage.
-                    </p>
-                  </div>
-
-                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <BarChart3 className="w-5 h-5 text-purple-500" /> Reading Stats & Analytics
-                    </h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed">
-                      Visit your <strong>Reading Stats</strong> dashboard to see your literary journey visualized. We track your total pages read, books completed, and favorite genres. Watch your reading streak grow day by day, and earn special profile badges for hitting reading milestones.
-                    </p>
-                  </div>
-
-                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">The Personal Shelf Architecture</h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed">
-                      Your Library (Shelf) is your command center. It tracks your exact reading progress percentages (e.g., 45% complete). You can organize books into custom folders or tags. When you finish a book, it moves to your "Completed" section, contributing to your global reading stats and Reading Challenge metrics.
+                      Going on a trip with no internet? Simply click "Save for Offline" on any book. You can then access it from your Offline Vault anytime, anywhere! <em>Note: Pro Readers get unlimited offline storage!</em>
                     </p>
                   </div>
                 </div>
@@ -210,31 +199,31 @@ export default function DocumentationPage() {
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
                     <PenTool className="w-6 h-6 text-rose-500" />
-                    Author Studio & Content Architecture
+                    Writing & Publishing
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse provides a professional-grade suite for managing complex literary worlds. We do not just host files; we build ecosystems.
+                    Ready to share your imagination with the world? The Author Studio has everything you need to publish your masterpiece.
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="p-6 bg-zinc-900 rounded-2xl border border-zinc-800 shadow-lg text-white">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-4 text-rose-400">The Hierarchical Data Model</h3>
-                    <p className="text-xs text-zinc-400 leading-relaxed mb-6">
-                      To keep large franchises organized, content is structured in three rigid layers. You must understand this to publish successfully.
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-4 text-rose-400">Organizing Your Books</h3>
+                    <p className="text-xs text-zinc-400 leading-relaxed mb-4">
+                      BookVerse helps you organize massive epic stories easily using three simple levels:
                     </p>
                     <div className="space-y-4">
-                      <div className="bg-zinc-950 p-5 rounded-xl">
-                        <strong className="uppercase tracking-widest block mb-2 text-rose-300 text-[11px] flex items-center gap-2"><Globe className="w-4 h-4" /> Tier 1: Universes</strong>
-                        <span className="text-zinc-400 text-xs">The absolute top level. E.g., "The Marvel Universe" or "The Cosmere". A universe houses infinite series and standalone books. It defines the overarching lore and timeline.</span>
+                      <div className="bg-zinc-950 p-5 rounded-xl border border-zinc-800">
+                        <strong className="uppercase tracking-widest block mb-2 text-rose-300 text-[11px] flex items-center gap-2"><Globe className="w-4 h-4" /> 1. Universes</strong>
+                        <span className="text-zinc-400 text-xs">The biggest category. Think of it like "The Marvel Universe" where many different stories take place.</span>
                       </div>
-                      <div className="bg-zinc-950 p-5 rounded-xl">
-                        <strong className="uppercase tracking-widest block mb-2 text-amber-300 text-[11px] flex items-center gap-2"><Layers className="w-4 h-4" /> Tier 2: Series</strong>
-                        <span className="text-zinc-400 text-xs">A sequential narrative chain. E.g., "Harry Potter". Books placed in a series will automatically display a "Next in Series" prompt to readers.</span>
+                      <div className="bg-zinc-950 p-5 rounded-xl border border-zinc-800">
+                        <strong className="uppercase tracking-widest block mb-2 text-amber-300 text-[11px] flex items-center gap-2"><Layers className="w-4 h-4" /> 2. Series</strong>
+                        <span className="text-zinc-400 text-xs">Books that must be read in order, like "Harry Potter". We'll automatically suggest the next book in the series to your readers!</span>
                       </div>
-                      <div className="bg-zinc-950 p-5 rounded-xl">
-                        <strong className="uppercase tracking-widest block mb-2 text-emerald-300 text-[11px] flex items-center gap-2"><BookOpen className="w-4 h-4" /> Tier 3: Stories & Books</strong>
-                        <span className="text-zinc-400 text-xs">The actual novel. A story can be a serial web-novel with chapters, or a single uploaded PDF Book. It can be assigned to a Series, a Universe, both, or neither (Standalone).</span>
+                      <div className="bg-zinc-950 p-5 rounded-xl border border-zinc-800">
+                        <strong className="uppercase tracking-widest block mb-2 text-emerald-300 text-[11px] flex items-center gap-2"><BookOpen className="w-4 h-4" /> 3. Stories & Chapters</strong>
+                        <span className="text-zinc-400 text-xs">The actual book! You can either write chapters directly in our beautiful text editor, or upload a finished PDF.</span>
                       </div>
                     </div>
                   </div>
@@ -242,151 +231,97 @@ export default function DocumentationPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                       <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <PenTool className="w-4 h-4 text-indigo-500" /> The Manuscript Editor vs PDF Upload
+                        <Users className="w-4 h-4 text-indigo-500" /> Beta Readers
                       </h3>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Authors have two choices: write directly in our rich-text editor (perfect for episodic serials) or upload a finished PDF (perfect for traditional books). The editor automatically calculates reading times based on word count, and allows drag-and-drop chapter reordering.
+                        Want some feedback before you officially publish a chapter? You can invite specific friends as "Beta Readers." They get early access to read your drafts and help you improve the story before everyone else sees it!
                       </p>
                     </div>
 
                     <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                       <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-purple-500" /> AI Covers & Illustrations
+                        <MessageSquare className="w-4 h-4 text-pink-500" /> Interactive Chapters
                       </h3>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Struggling with art? Our integrated AI pipelines can generate a beautiful cover image for your story instantly based on your prompt. For web-novel chapters, you can also generate specific chapter illustrations to enhance the reading experience.
+                        At the end of your chapters, you can add fun Polls (e.g., "Who do you think the killer is?"). Also, readers can comment on specific paragraphs to react to big plot twists as they happen!
                       </p>
                     </div>
-                  </div>
-
-                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Publishing Requirements & DMCA</h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      Before a story goes live and enters the global search index, it must meet strict metadata standards. Furthermore, all content is subject to our DMCA policy.
-                    </p>
-                    <ul className="space-y-2 text-xs text-zinc-500 list-disc pl-5">
-                      <li><strong>Synopsis & Tags:</strong> At least 150 characters to engage readers. Select primary genres (Fantasy, Sci-Fi) and custom tags to fuel the recommendation engine.</li>
-                      <li><strong>Status:</strong> Mark as 'Ongoing', 'Completed', or 'Hiatus'.</li>
-                      <li><strong>Copyright:</strong> Do not upload copyrighted works that you do not own. Our DMCA takedown process is active and heavily monitored.</li>
-                    </ul>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Marketing & Promos (NEW EXPANDED) */}
+            {/* Promotions */}
             {activeTab === "promotions" && (
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
-                    <Megaphone className="w-6 h-6 text-rose-500" />
-                    Marketing, Scheduling & Promotions
+                    <Megaphone className="w-6 h-6 text-amber-500" />
+                    Marketing & Getting Readers
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    Writing the book is only 50% of the battle. The Author Studio equips you with tools to manipulate the algorithm, run campaigns, and maintain reader engagement through strategic releases.
+                    Writing the book is only half the fun. Here is how you get your story in front of thousands of readers!
                   </p>
                 </div>
 
                 <div className="space-y-6">
-
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-indigo-500">
-                      <CalendarClock className="w-5 h-5" /> Chapter Release Scheduling
-                    </h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">How to Get on the Trending Page</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      The algorithm favors consistent updates. Instead of publishing manually, utilize the <strong>Scheduling Engine</strong>.
+                      The homepage features "Trending" stories. BookVerse picks these automatically based on how much readers love your book! Here is what helps you trend:
                     </p>
                     <ul className="space-y-3 text-xs text-zinc-500">
-                      <li><strong>Queueing:</strong> Draft multiple chapters and assign them future go-live dates (e.g., Every Friday at 5 PM EST).</li>
-                      <li><strong>Timezone Normalization:</strong> The scheduler automatically converts your local time to UTC to ensure global readers get updates synchronously.</li>
-                      <li><strong>Notification Triggers:</strong> The exact millisecond a scheduled chapter goes live, the system fires WebSocket events to all your followers, instantly pushing them a notification.</li>
+                      <li><strong>Consistent Updates:</strong> Uploading chapters regularly keeps readers coming back, which boosts your rank.</li>
+                      <li><strong>Comments & Likes:</strong> Encourage your readers to leave comments and likes! The more they interact, the higher you climb.</li>
+                      <li><strong>Tips & Gifts:</strong> When a reader loves your work enough to send a tip or a virtual gift, it gives your story a massive boost on the charts!</li>
+                      <li><strong>Sharing:</strong> When your readers share your book link to Facebook or WhatsApp, it tells our system your book is going viral!</li>
                     </ul>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-rose-500">
-                      <Zap className="w-5 h-5" /> Algorithmic Boosting & Promotions
-                    </h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      How does a story reach the "Trending" section on the homepage?
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl">
-                        <strong className="uppercase tracking-widest block mb-1 text-[10px] text-zinc-900 dark:text-white">Velocity Metric</strong>
-                        <p className="text-xs text-zinc-500">The system calculates views-per-hour. A sudden influx of views (velocity) heavily outweighs total lifetime views for trending placement.</p>
-                      </div>
-                      <div className="bg-zinc-50 dark:bg-zinc-900 p-4 rounded-xl">
-                        <strong className="uppercase tracking-widest block mb-1 text-[10px] text-zinc-900 dark:text-white">Engagement Weight</strong>
-                        <p className="text-xs text-zinc-500">1 Tip = 50 Views. 1 Comment = 10 Views. Earning tips massively spikes your algorithm score.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-emerald-500">
-                      <Gift className="w-5 h-5" /> Author Newsletters (Creator Tier)
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-indigo-500">
+                      <CalendarClock className="w-5 h-5" /> Scheduling Chapters
                     </h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      If you are on the <strong>Creator Tier</strong>, readers can subscribe directly to your author profile. You gain the ability to blast HTML newsletters directly to their email inboxes. Use this to announce upcoming releases, run giveaways, or share exclusive lore drops. Newsletters bypass social media algorithms and guarantee a 100% reach to your loyal fanbase.
+                      Don't want to wake up at 3 AM to post a chapter? Use the Scheduler! Write 5 chapters on Sunday, and set them to automatically publish one-by-one every day of the week. When they go live, all your followers instantly get a notification!
                     </p>
                   </div>
-
                 </div>
               </div>
             )}
 
-            {/* Community */}
+            {/* Social & Community */}
             {activeTab === "community" && (
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
                     <Users className="w-6 h-6 text-blue-500" />
-                    Social Dynamics & Community
+                    Community & Social
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse thrives on interaction. Discover how the social mechanics operate beneath the hood.
+                    BookVerse isn't just a library; it's a massive book club. Connect with readers and authors who love what you love!
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-blue-500" /> The Global Activity Feed
-                    </h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      The Feed is the pulse of BookVerse. Every public action—publishing a book, leaving a 5-star review, achieving a challenge, or unlocking a badge—is broadcasted to the feed.
-                    </p>
-                    <ul className="space-y-2 text-xs text-zinc-500 list-disc pl-5">
-                      <li>Toggle between "Global" (everyone) and "Following" (curated network).</li>
-                      <li>Rich embeds allow users to click directly into a book or profile from a feed item.</li>
-                      <li>Comment, like, and interact directly on activity updates.</li>
-                    </ul>
-                  </div>
-
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Users className="w-4 h-4 text-indigo-500" /> Book Clubs
-                    </h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Following & The Feed</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Clubs are micro-communities. An admin creates a club, sets rules, and curates a "Club Reading List". Members get localized discussion forums tied to specific books on that list. Great for book-of-the-month events!
+                      Click the "Follow" button on your favorite authors. Whenever they publish a new book, hit a milestone, or post an update, it will appear right on your personalized Activity Feed!
                     </p>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-amber-500" /> Reading Challenges & Achievements
-                    </h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Book Clubs</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Participate in seasonal Reading Challenges (e.g., "Read 5 Sci-Fi books in June"). The backend tracking engine automatically cross-references your completed books to update your leaderboard ranking. Unlock permanent Profile Achievements and Badges for hitting major milestones.
+                      Join a Book Club to discuss your favorite genres! Club admins pick a "Book of the Month", and members can chat in dedicated discussion threads without worrying about spoiling the book for outsiders.
                     </p>
                   </div>
-                  
+
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm md:col-span-2">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Gift className="w-4 h-4 text-pink-500" /> Virtual Gifts & Tipping
-                    </h3>
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2">Book Requests</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed">
-                      Show appreciation for your favorite authors by sending them Virtual Gifts or direct Tips! Gifts appear prominently on the story page and in the author's notifications, providing both financial support and algorithmic boosts to the story.
+                      Are you dying for a sequel? You can submit a "Book Request" to an author! If enough readers request a spin-off, the author might just write it. When they do, you'll be the first to know!
                     </p>
                   </div>
                 </div>
@@ -398,63 +333,67 @@ export default function DocumentationPage() {
               <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
-                    <Wallet className="w-6 h-6 text-amber-500" />
-                    Economics, Wallets & Monetization
+                    <Coins className="w-6 h-6 text-amber-500" />
+                    Earning & Wallets
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    BookVerse integrates a robust financial ledger and multi-gateway system, designed to empower creators in Bangladesh and beyond. It transforms reading platforms into sustainable economies.
+                    BookVerse empowers authors to earn a living doing what they love. Here is how our Creator Economy works.
                   </p>
                 </div>
 
                 <div className="space-y-6">
                   <div className="p-6 bg-zinc-900 rounded-2xl border border-zinc-800 shadow-lg text-white">
-                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-emerald-400">
-                      <Star className="w-5 h-5" /> The Subscription Engine
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-4 text-amber-400 flex items-center gap-2">
+                      <Wallet className="w-5 h-5" /> Getting Paid (Tips & Gifts)
                     </h3>
-                    <p className="text-xs text-zinc-400 leading-relaxed mb-4">
-                      Access and privileges on BookVerse are gated by a scalable entitlement engine.
-                    </p>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
-                        <strong className="text-zinc-300 block mb-1">FREE</strong>
-                        <ul className="text-[10px] text-zinc-500 space-y-1 list-disc pl-3">
-                          <li>Infinite reading access</li>
-                          <li>Basic author studio</li>
-                          <li>Standard community access</li>
-                        </ul>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div>
+                        <strong className="text-emerald-400 block mb-2 text-sm">Receiving Tips</strong>
+                        <p className="text-xs text-zinc-400 leading-relaxed">
+                          Readers can send you money directly using the "Tip Author" button on your story. We support fast, secure payments via <strong>bKash</strong>, <strong>Nagad</strong>, and <strong>Upay</strong>!
+                        </p>
                       </div>
-                      <div className="bg-zinc-950 p-4 rounded-xl border border-blue-900/50">
-                        <strong className="text-blue-400 block mb-1">PRO READER</strong>
-                        <ul className="text-[10px] text-zinc-500 space-y-1 list-disc pl-3">
-                          <li>Unlimited Offline Vault caching</li>
-                          <li>Exclusive Reading Challenges</li>
-                          <li>Zero advertisements</li>
-                        </ul>
+                      <div>
+                        <strong className="text-pink-400 block mb-2 text-sm">Withdrawing Your Money</strong>
+                        <p className="text-xs text-zinc-400 leading-relaxed">
+                          To get paid, go to your <strong>Wallet</strong> page and add your bKash or Nagad number. Once your earnings reach the minimum amount, we send the money straight to your phone account!
+                        </p>
                       </div>
-                      <div className="bg-zinc-950 p-4 rounded-xl border border-amber-900/50">
-                        <strong className="text-amber-400 block mb-1">CREATOR</strong>
-                        <ul className="text-[10px] text-zinc-500 space-y-1 list-disc pl-3">
-                          <li>Unlocks Wallet & Tip receiving</li>
-                          <li>Advanced Telemetry & Analytics</li>
-                          <li>Direct Newsletter Engine</li>
-                        </ul>
-                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+                      <h3 className="text-sm font-black uppercase tracking-wider mb-2 text-zinc-500">Free Tier</h3>
+                      <p className="text-xs text-zinc-500 leading-relaxed">
+                        Read infinite stories, publish your own books, and receive tips from readers completely for free!
+                      </p>
+                    </div>
+
+                    <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-blue-200 dark:border-blue-900 shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 right-0 bg-blue-500 text-white text-[9px] font-bold px-2 py-1 uppercase tracking-widest rounded-bl-lg">Pro</div>
+                      <h3 className="text-sm font-black uppercase tracking-wider mb-2 text-blue-500">Pro Reader</h3>
+                      <p className="text-xs text-zinc-500 leading-relaxed">
+                        Perfect for super-readers! Get unlimited offline vault storage so you can read on airplanes, enjoy a 100% ad-free experience, and view your basic wallet balances!
+                      </p>
+                    </div>
+
+                    <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-amber-200 dark:border-amber-900 shadow-sm relative overflow-hidden">
+                      <div className="absolute top-0 right-0 bg-amber-500 text-white text-[9px] font-bold px-2 py-1 uppercase tracking-widest rounded-bl-lg">Creator</div>
+                      <h3 className="text-sm font-black uppercase tracking-wider mb-2 text-amber-500">Creator</h3>
+                      <p className="text-xs text-zinc-500 leading-relaxed">
+                        For serious authors. Unlocks the full wallet ledger history, advanced audience analytics, and the ability to send email newsletters to your followers!
+                      </p>
                     </div>
                   </div>
 
                   <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
                     <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2">
-                      <Coins className="w-5 h-5 text-emerald-500" /> Tipping, MFS Integration & The Ledger
+                      <Gift className="w-4 h-4 text-pink-500" /> Gift Memberships
                     </h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed mb-4">
-                      The core of author monetization is the micro-transaction engine, fully integrated with Mobile Financial Services (MFS) popular in Bangladesh.
+                    <p className="text-xs text-zinc-500 leading-relaxed">
+                      Want to treat a friend? You can buy them a month of Pro or Creator! You'll receive a special "Gift Code". Tell your friend to go to the "Redeem Gift" page and enter the code to unlock their premium features instantly!
                     </p>
-                    <ul className="space-y-3 text-xs text-zinc-500">
-                      <li><strong>Wallet Configuration:</strong> Navigate to your Wallet dashboard to bind your <strong>bKash</strong>, <strong>Nagad</strong>, or <strong>Upay</strong> accounts. The system uses strict validation to ensure numbers are correctly formatted.</li>
-                      <li><strong>Immutable Ledger:</strong> Every financial action—whether a reader purchases a virtual gift for you, or sends a direct tip—is recorded in an immutable ledger. You can download CSV reports of all transactions for accounting purposes.</li>
-                      <li><strong>Payout Cycles:</strong> Funds accumulate in your BookVerse wallet in BDT (Bangladeshi Taka). Upon reaching the minimum threshold (e.g., 500 BDT), the automated disbursement engine processes payouts directly to your connected MFS account at the end of the month.</li>
-                      <li><strong>Platform Fee:</strong> To maintain servers and AI resources, BookVerse takes a nominal infrastructure fee on processed tips, clearly itemized in your wallet ledger.</li>
-                    </ul>
                   </div>
                 </div>
               </div>
@@ -466,47 +405,76 @@ export default function DocumentationPage() {
                 <div>
                   <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
                     <BarChart3 className="w-6 h-6 text-indigo-500" />
-                    Advanced Telemetry & Analytics
+                    Author Analytics
                   </h2>
                   <p className="text-zinc-500 text-sm leading-relaxed mb-6">
-                    Available exclusively to the <strong>Creator Tier</strong>, our analytics engine processes millions of reading events to provide actionable, data-driven insights. It is the most powerful tool an author has to refine their craft.
+                    If you are on the <strong>Creator Tier</strong>, you get access to our powerful Author Dashboard. Learn exactly what your readers love!
                   </p>
                 </div>
 
                 <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm mb-6">
-                  <h3 className="text-sm font-black uppercase tracking-wider mb-4">The Performance Registry: Beyond Page Views</h3>
-                  <p className="text-xs text-zinc-500 leading-relaxed mb-6">
-                    Vanity metrics like "Total Views" are notoriously misleading. The BookVerse engine tracks deeply contextual human behavior, calculating exactly how engaging your manuscript is on a paragraph-by-paragraph basis.
-                  </p>
+                  <h3 className="text-sm font-black uppercase tracking-wider mb-4">Understanding Your Dashboard</h3>
 
                   <div className="space-y-4">
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-rose-500">
-                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Reader Drop-off Matrix (Cohort Retention)</h4>
+                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Reader Drop-off</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        This matrix calculates the survival rate of your readership. It shows exactly what percentage of readers who start Chapter 1 proceed to Chapter 2, 3, etc. If the data shows a 40% sudden drop-off at Chapter 4, it scientifically pinpoints where your pacing dragged or a plot point failed, telling you exactly what to rewrite.
+                        This tells you exactly where readers stop reading. If 1,000 people read Chapter 1, but only 200 people read Chapter 2, you know exactly where to improve your hook to keep them reading!
                       </p>
                     </div>
 
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-indigo-500">
-                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Focus Index & Session Parsing</h4>
+                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Reading Time (Focus Index)</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        The engine tracks scroll velocity and dwell time to calculate the Focus Index (average session duration and pages read per session). A high Focus Index (e.g., 45 minutes continuous reading) proves readers are binge-reading, signaling high narrative immersion. Low dwell times indicate skimming.
+                        Are people just skimming your chapters, or are they glued to the screen for an hour? This metric tells you how long the average reader spends reading your book in one sitting!
                       </p>
                     </div>
 
                     <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-emerald-500">
-                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Viral Amplification & K-Factor</h4>
+                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><Heart className="w-3 h-3" /> Highlight Heatmaps</h4>
                       <p className="text-xs text-zinc-500 leading-relaxed">
-                        Measures the viral coefficient (K-Factor) by tracking how often your story link is shared off-platform (to Facebook, WhatsApp, etc.) compared to internal discovery. A K-Factor above 1.0 means your story is growing exponentially and organically through word-of-mouth.
+                        See exactly which sentences or jokes your readers highlighted the most! This is a great way to figure out which characters or dialogue your fans love the best.
                       </p>
                     </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
-                    <div className="bg-zinc-50 dark:bg-zinc-900 p-5 rounded-xl border-l-2 border-amber-500">
-                      <h4 className="text-xs font-black uppercase tracking-widest text-zinc-900 dark:text-white mb-2 flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Audience Sentiment & Annotation Heatmaps</h4>
-                      <p className="text-xs text-zinc-500 leading-relaxed">
-                        We aggregate micro-interactions (comments, likes, paragraph highlights) into a visual heatmap over your manuscript. See precisely which sentences readers highlighted the most. This instantly reveals which quotes, character interactions, or jokes resonated most powerfully with your audience.
-                      </p>
-                    </div>
+            {/* Trust, Safety & Admin */}
+            {activeTab === "safety-admin" && (
+              <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div>
+                  <h2 className="text-2xl font-black uppercase tracking-tight mb-4 flex items-center gap-3">
+                    <ShieldAlert className="w-6 h-6 text-rose-600" />
+                    Trust & Safety
+                  </h2>
+                  <p className="text-zinc-500 text-sm leading-relaxed mb-6">
+                    We want BookVerse to be a safe, welcoming, and fair environment for every reader and writer.
+                  </p>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="p-6 bg-white dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-800 shadow-sm">
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-amber-500">
+                      <AlertTriangle className="w-5 h-5" /> Reporting Inappropriate Content
+                    </h3>
+                    <p className="text-xs text-zinc-500 leading-relaxed">
+                      If you see a story or a comment that contains hate speech, bullying, or highly inappropriate content without warnings, please click the "Report" flag! Our moderation team reviews these reports daily. If a story gets enough reports, it will be temporarily hidden until we can check it to keep the community safe.
+                    </p>
+                  </div>
+
+                  <div className="p-6 bg-rose-50 dark:bg-rose-950/20 rounded-2xl border border-rose-100 dark:border-rose-900/50 shadow-sm">
+                    <h3 className="text-sm font-black uppercase tracking-wider mb-2 flex items-center gap-2 text-rose-600 dark:text-rose-400">
+                      <Shield className="w-5 h-5" /> Copyright Protection (DMCA)
+                    </h3>
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">
+                      Authors work incredibly hard on their stories. We take plagiarism and story-theft very seriously.
+                    </p>
+                    <ul className="space-y-3 text-xs text-zinc-600 dark:text-zinc-400 list-disc pl-5">
+                      <li><strong>Filing a Claim:</strong> If you find someone on BookVerse who has uploaded a story that you wrote on another website, you can file a Copyright Claim (DMCA Notice).</li>
+                      <li><strong>Our Action:</strong> We review claims incredibly fast. If someone is caught stealing work, the book is permanently deleted, and the user's account may be banned.</li>
+                    </ul>
                   </div>
                 </div>
               </div>
