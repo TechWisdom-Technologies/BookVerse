@@ -81,6 +81,7 @@ interface Analytics {
     avgPagesPerSession: number;
     avgMinutesPerSession: number;
     focusScore: number;
+    totalLogsCount: number;
   };
   annotationsHeatmap: {
     bookmarks: number;
@@ -652,7 +653,7 @@ export default function AuthorAnalyticsPage() {
                   <span className="text-[9px] font-black tracking-wider text-emerald-500">Active</span>
                 </div>
 
-                {focusIndex.focusScore === 0 ? (
+                {focusIndex.totalLogsCount === 0 ? (
                   <div className="py-10 text-center flex flex-col items-center justify-center space-y-2">
                     <Clock className="w-8 h-8 text-zinc-300 dark:text-zinc-800" />
                     <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">No session logs detected</p>

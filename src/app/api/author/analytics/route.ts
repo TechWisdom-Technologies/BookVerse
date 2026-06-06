@@ -46,7 +46,7 @@ export async function GET() {
     const totalTipsAmount = stories.reduce(
       (sum, s) => sum + s.tips.reduce((tipSum, t) => tipSum + t.amount, 0),
       0
-    );
+    ) / 100;
     const totalTips = stories.reduce((sum, s) => sum + s.tips.length, 0);
 
     // Fetch collections
@@ -142,7 +142,7 @@ export async function GET() {
         views: s.viewCount,
         reactions: s.reactions.length,
         comments: s.comments.length,
-        tips: s.tips.reduce((sum, t) => sum + t.amount, 0),
+        tips: s.tips.reduce((sum, t) => sum + t.amount, 0) / 100,
       }));
 
     // ==========================================
@@ -192,12 +192,13 @@ export async function GET() {
       ? dbReadingLogs.reduce((sum, log) => sum + log.minutes, 0) / totalLogsCount 
       : 0;
 
-    const focusScore = avgMinutesRead > 0 ? Math.min(100, Math.max(0, (avgPagesRead / avgMinutesRead) * 100)) : 0;
+    const focusScore = totalLogsCount > 0 ? Math.min(100, Math.max(0, (avgPagesRead / Math.max(1, avgMinutesRead)) * 100)) : 0;
 
     const focusIndex = {
       avgPagesPerSession: avgPagesRead,
       avgMinutesPerSession: avgMinutesRead,
-      focusScore
+      focusScore,
+      totalLogsCount
     };
 
     // Feature 3: Reader Annotation Heatmaps (100% Dynamic & Genuine)
@@ -350,7 +351,7 @@ export async function GET() {
         where: { storyId: promo.storyId, status: 'COMPLETED', createdAt: timeWindow },
         select: { amount: true }
       });
-      const tipsEarned = promoTips.reduce((sum, t) => sum + t.amount, 0);
+      const tipsEarned = promoTips.reduce((sum, t) => sum + t.amount, 0) / 100;
       const tipCount = promoTips.length;
 
       // --- METRIC 4: Reach Expansion (Shares) ---
@@ -458,7 +459,7 @@ export async function GET() {
         reactions: s.reactions.length,
         comments: s.comments.length,
         chapters: s.chapters.length,
-        tips: s.tips.reduce((sum, t) => sum + t.amount, 0),
+        tips: s.tips.reduce((sum, t) => sum + t.amount, 0) / 100,
       })),
       sentimentDistribution: sentimentGroups,
       readingCompletion: {
