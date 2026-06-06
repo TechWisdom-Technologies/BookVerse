@@ -11,7 +11,10 @@ export async function GET(
   try {
     const { universeId } = await params;
     const collaborators = await prisma.universeCollaborator.findMany({
-      where: { universeId },
+      where: { 
+        universeId,
+        status: { not: 'REJECTED' }
+      },
       include: {
         user: {
           select: {

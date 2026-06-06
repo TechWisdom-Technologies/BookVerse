@@ -20,6 +20,7 @@ import {
   User,
   ArrowRight,
   TrendingUp,
+  AlertCircle,
   Sparkles,
   ShieldAlert,
   Calendar,
@@ -87,6 +88,12 @@ interface InviteItem {
   id: string;
   universeId: string;
   message?: string | null;
+  user?: {
+    id: string;
+    username: string;
+    displayName: string | null;
+    avatarUrl: string | null;
+  };
   universe: {
     id: string;
     name: string;
@@ -135,6 +142,7 @@ interface ScheduledItem {
 
 interface DashboardData {
   pendingInvites: InviteItem[];
+  pendingRequests: InviteItem[];
   myUniverses: UniverseItem[];
   collabUniverses: UniverseItem[];
   mySeries: SeriesItem[];
@@ -205,6 +213,17 @@ export default function AuthorDashboardPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [selectedPromoStory, setSelectedPromoStory] = useState<string>('');
+  
+  const [removeStoryModal, setRemoveStoryModal] = useState<{ universeId: string; storyId: string; storyTitle: string } | null>(null);
+  const [removeReason, setRemoveReason] = useState("");
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const [leaveUniverseModal, setLeaveUniverseModal] = useState<{ universeId: string; universeName: string } | null>(null);
+  const [isLeaving, setIsLeaving] = useState(false);
+
+  const [removeCoAuthorModal, setRemoveCoAuthorModal] = useState<{ universeId: string; userId: string; username: string } | null>(null);
+  const [coAuthorRemoveReason, setCoAuthorRemoveReason] = useState("");
+  const [isRemovingCoAuthor, setIsRemovingCoAuthor] = useState(false);
 
   const fetchDashboardData = async () => {
     try {
@@ -233,12 +252,13 @@ export default function AuthorDashboardPage() {
     fetchDashboardData();
   }, [user, authLoading, router]);
 
-  const handleRespondInvite = async (universeId: string, accept: boolean) => {
+  const handleRespondInvite = async (universeId: string, accept: boolean, targetUserId?: string) => {
     if (!dbUser) return;
     try {
       setActionLoading(universeId);
       const method = accept ? 'PATCH' : 'DELETE';
-      const endpoint = `/api/universes/${universeId}/collaborators/${dbUser.id}`;
+      const uid = targetUserId || dbUser.id;
+      const endpoint = `/api/universes/${universeId}/collaborators/${uid}`;
 
       const response = await fetch(endpoint, {
         method,
@@ -257,6 +277,83 @@ export default function AuthorDashboardPage() {
       console.error('Failed to respond to collaboration invite:', err);
     } finally {
       setActionLoading(null);
+    }
+  };
+
+  const handleRemoveStory = async () => {
+    if (!removeStoryModal || !removeReason.trim()) return;
+    try {
+      setIsRemoving(true);
+      const res = await fetch(`/api/universes/${removeStoryModal.universeId}/stories/${removeStoryModal.storyId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: removeReason }),
+      });
+      if (res.ok) {
+        setRemoveStoryModal(null);
+        setRemoveReason("");
+        await fetchDashboardData();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to remove story.");
+      }
+    } catch (err) {
+      console.error("Failed to remove story:", err);
+      alert("An unexpected error occurred.");
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
+  const handleRemoveCoAuthor = async () => {
+    if (!removeCoAuthorModal) return;
+    if (!coAuthorRemoveReason.trim()) {
+      alert("Please provide a reason for removal.");
+      return;
+    }
+    try {
+      setIsRemovingCoAuthor(true);
+      const res = await fetch(`/api/universes/${removeCoAuthorModal.universeId}/collaborators/${removeCoAuthorModal.userId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: coAuthorRemoveReason.trim() }),
+      });
+
+      if (res.ok) {
+        setRemoveCoAuthorModal(null);
+        setCoAuthorRemoveReason("");
+        await fetchDashboardData();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to remove co-author.");
+      }
+    } catch (err) {
+      console.error("Failed to remove co-author:", err);
+      alert("An unexpected error occurred.");
+    } finally {
+      setIsRemovingCoAuthor(false);
+    }
+  };
+
+  const handleLeaveUniverse = async () => {
+    if (!leaveUniverseModal || !dbUser) return;
+    try {
+      setIsLeaving(true);
+      const res = await fetch(`/api/universes/${leaveUniverseModal.universeId}/collaborators/${dbUser.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setLeaveUniverseModal(null);
+        await fetchDashboardData();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to leave universe.");
+      }
+    } catch (err) {
+      console.error("Failed to leave universe:", err);
+      alert("An unexpected error occurred.");
+    } finally {
+      setIsLeaving(false);
     }
   };
 
@@ -281,7 +378,7 @@ export default function AuthorDashboardPage() {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-xl font-black uppercase tracking-wider">Creator Plan Required</h2>
+            <h2 className="text-xl font-black uppercase tracking-wider">Author Plan Required</h2>
             <p className="text-xs text-zinc-400 font-medium leading-relaxed">
               Unlock the advanced Performance Registry, Fan Book Requests Stream, and robust Universe Co-Authorship control decks.
             </p>
@@ -292,7 +389,7 @@ export default function AuthorDashboardPage() {
               href={upgradeUrl}
               className="w-full py-3 inline-flex items-center justify-center rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow"
             >
-              Upgrade to Creator
+              Upgrade Plan
             </Link>
           </div>
         </div>
@@ -313,6 +410,7 @@ export default function AuthorDashboardPage() {
 
   const {
     pendingInvites,
+    pendingRequests,
     myUniverses,
     mySeries,
     bookRequests,
@@ -416,6 +514,79 @@ export default function AuthorDashboardPage() {
                     <div className="p-4 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800/80 max-h-48 overflow-y-auto">
                       <p className="text-[11px] text-zinc-600 dark:text-zinc-400 italic leading-relaxed whitespace-pre-wrap break-words">
                         &quot;{invite.message}&quot;
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 1.5 Pending Co-Author Requests Section */}
+        {pendingRequests.length > 0 && (
+          <section className="mb-12 p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm">
+            <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+              <Sparkles className="w-4 h-4 text-zinc-400 animate-pulse" />
+              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+                Pending Co-Author Requests ({pendingRequests.length})
+              </h2>
+            </div>
+            <div className="flex flex-col gap-4">
+              {pendingRequests.map((req) => (
+                <div
+                  key={req.id}
+                  className="group bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in flex flex-col gap-4"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-800">
+                        {req.user?.avatarUrl ? (
+                          <img src={req.user.avatarUrl} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-5 h-5 text-zinc-400" />
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-zinc-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                          {req.user?.displayName || req.user?.username}
+                        </h4>
+                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                          Wants to co-author: {req.universe.name}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <button
+                        disabled={actionLoading === req.universeId}
+                        onClick={() => handleRespondInvite(req.universeId, true, req.user?.id)}
+                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                      >
+                        {actionLoading === req.universeId ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <><Check className="w-3.5 h-3.5" /> Accept</>
+                        )}
+                      </button>
+                      <button
+                        disabled={actionLoading === req.universeId}
+                        onClick={() => handleRespondInvite(req.universeId, false, req.user?.id)}
+                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-zinc-100 hover:bg-rose-50 dark:bg-zinc-900 dark:hover:bg-rose-950/30 text-zinc-600 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-500 border border-transparent hover:border-rose-200 dark:hover:border-rose-900/50 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {actionLoading === req.universeId ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <><X className="w-3.5 h-3.5" /> Decline</>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {req.message && (
+                    <div className="p-4 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800/80 max-h-48 overflow-y-auto">
+                      <p className="text-[11px] text-zinc-600 dark:text-zinc-400 italic leading-relaxed whitespace-pre-wrap break-words">
+                        &quot;{req.message}&quot;
                       </p>
                     </div>
                   )}
@@ -631,8 +802,15 @@ export default function AuthorDashboardPage() {
                                   ? 'bg-emerald-50/5 text-emerald-500'
                                   : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
                                 }`}>
-                                {c.status}
+                                {c.status === 'ACCEPTED' ? 'CO-AUTHOR' : c.status}
                               </span>
+                              <button
+                                onClick={() => setRemoveCoAuthorModal({ universeId: uni.id, userId: c.user.id, username: c.user.username })}
+                                className="ml-2 p-1 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded transition-colors"
+                                title="Remove Co-Author"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           ))}
                         </div>
@@ -655,25 +833,36 @@ export default function AuthorDashboardPage() {
                       ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           {uni.stories.map((story) => (
-                            <Link
-                              href={`/write/story/${story.id}/edit`}
+                            <div
                               key={story.id}
                               className="p-4 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-2xl flex items-center gap-3 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all shadow-sm"
                             >
-                              {story.coverUrl ? (
-                                <img src={story.coverUrl} className="w-10 h-14 object-cover rounded-lg shrink-0" />
-                              ) : (
-                                <div className="w-10 h-14 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shrink-0">
-                                  <BookOpen className="w-4 h-4 text-zinc-300" />
+                              <Link href={`/write/story/${story.id}/edit`} className="flex items-center gap-3 flex-1 min-w-0">
+                                {story.coverUrl ? (
+                                  <img src={story.coverUrl} className="w-10 h-14 object-cover rounded-lg shrink-0" />
+                                ) : (
+                                  <div className="w-10 h-14 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shrink-0">
+                                    <BookOpen className="w-4 h-4 text-zinc-300" />
+                                  </div>
+                                )}
+                                <div className="min-w-0">
+                                  <h5 className="text-xs font-bold truncate pr-2">{story.title}</h5>
+                                  <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider mt-1 truncate">
+                                    By {story.author.displayName || story.author.username}
+                                  </p>
                                 </div>
+                              </Link>
+                              
+                              {story.authorId !== dbUser?.id && (
+                                <button
+                                  onClick={() => setRemoveStoryModal({ universeId: uni.id, storyId: story.id, storyTitle: story.title })}
+                                  className="p-2 text-zinc-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition-colors shrink-0"
+                                  title="Remove co-author's story from universe"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
                               )}
-                              <div className="min-w-0">
-                                <h5 className="text-xs font-bold truncate pr-2">{story.title}</h5>
-                                <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider mt-1 truncate">
-                                  By {story.author.displayName || story.author.username}
-                                </p>
-                              </div>
-                            </Link>
+                            </div>
                           ))}
                         </div>
                       )}
@@ -702,12 +891,20 @@ export default function AuthorDashboardPage() {
                           <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider">{uni.name}</h3>
                           {uni.description && <p className="text-xs text-zinc-400 max-w-lg mt-1 font-medium leading-relaxed line-clamp-1">{uni.description}</p>}
                         </div>
-                        <Link
-                          href={`/write/universes`}
-                          className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800/80 hover:bg-indigo-500 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-zinc-200/40 dark:border-zinc-700/40 shrink-0"
-                        >
-                          View Universe
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => setLeaveUniverseModal({ universeId: uni.id, universeName: uni.name })}
+                            className="px-3 py-1.5 bg-rose-50 dark:bg-rose-950/30 hover:bg-rose-600 hover:text-white dark:hover:bg-rose-600 dark:hover:text-white text-rose-600 dark:text-rose-500 text-[9px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-rose-200 dark:border-rose-900/50 shrink-0"
+                          >
+                            Leave
+                          </button>
+                          <Link
+                            href={`/write/universes`}
+                            className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800/80 hover:bg-indigo-500 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-zinc-200/40 dark:border-zinc-700/40 shrink-0"
+                          >
+                            View Universe
+                          </Link>
+                        </div>
                       </div>
 
                       {/* Collaborator Roster */}
@@ -1227,6 +1424,151 @@ export default function AuthorDashboardPage() {
         </section>
 
       </div>
+      {/* Story Removal Modal */}
+      {removeStoryModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-zinc-950 w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-widest">
+                Remove Co-Author Story
+              </h3>
+              <button
+                onClick={() => {
+                  setRemoveStoryModal(null);
+                  setRemoveReason("");
+                }}
+                className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 rounded-lg transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-zinc-500 font-medium">
+                You are about to remove <span className="font-bold text-zinc-900 dark:text-white">&quot;{removeStoryModal.storyTitle}&quot;</span> from this universe. This will unlink the story but won&apos;t delete it.
+              </p>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                  Reason for Removal (Required)
+                </label>
+                <textarea
+                  value={removeReason}
+                  onChange={(e) => setRemoveReason(e.target.value)}
+                  className="w-full h-24 p-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs resize-none outline-none focus:border-indigo-500 transition-colors"
+                  placeholder="Explain why this story is being removed... This will be sent to the author."
+                  required
+                />
+              </div>
+            </div>
+            <div className="p-6 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-900 flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setRemoveStoryModal(null);
+                  setRemoveReason("");
+                }}
+                className="px-6 py-2.5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRemoveStory}
+                disabled={isRemoving || !removeReason.trim()}
+                className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isRemoving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Remove Story"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Leave Universe Modal */}
+      {leaveUniverseModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-zinc-950 w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-widest">
+                Leave Universe
+              </h3>
+              <button
+                onClick={() => setLeaveUniverseModal(null)}
+                className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 rounded-lg transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-zinc-500 font-medium">
+                Are you sure you want to leave <span className="font-bold text-zinc-900 dark:text-white">&quot;{leaveUniverseModal.universeName}&quot;</span>? This will completely remove you as a collaborator and unlink all your stories from this universe. This action cannot be undone.
+              </p>
+            </div>
+            <div className="p-6 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-900 flex justify-end gap-3">
+              <button
+                onClick={() => setLeaveUniverseModal(null)}
+                className="px-6 py-2.5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleLeaveUniverse}
+                disabled={isLeaving}
+                className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isLeaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Leave Universe"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remove Co-Author Modal */}
+      {removeCoAuthorModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white dark:bg-zinc-950 w-full max-w-md rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden flex flex-col">
+            <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-widest text-rose-500 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4" /> Remove Co-Author
+              </h3>
+              <button
+                onClick={() => setRemoveCoAuthorModal(null)}
+                className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 rounded-lg transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-xs text-zinc-500 font-medium">
+                Are you sure you want to remove <span className="font-bold text-zinc-900 dark:text-white">@{removeCoAuthorModal.username}</span> from this universe? This will also unlink all stories they have contributed to this universe.
+              </p>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5">
+                  Reason for Removal <span className="text-rose-500">*</span>
+                </label>
+                <textarea
+                  value={coAuthorRemoveReason}
+                  onChange={(e) => setCoAuthorRemoveReason(e.target.value)}
+                  placeholder="Required. This will be sent as a notification to the co-author..."
+                  className="w-full h-24 p-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-xs resize-none outline-none focus:border-rose-500 transition-colors"
+                />
+              </div>
+            </div>
+            <div className="p-6 bg-zinc-50 dark:bg-zinc-900/50 border-t border-zinc-100 dark:border-zinc-900 flex justify-end gap-3">
+              <button
+                onClick={() => setRemoveCoAuthorModal(null)}
+                className="px-6 py-2.5 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRemoveCoAuthor}
+                disabled={isRemovingCoAuthor || !coAuthorRemoveReason.trim()}
+                className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {isRemovingCoAuthor ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Remove Co-Author"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

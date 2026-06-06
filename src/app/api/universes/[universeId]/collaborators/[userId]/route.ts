@@ -52,6 +52,21 @@ export async function DELETE(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
+    // If owner is removing someone else, they must provide a reason
+    let reason = '';
+    if (user.id === universe.userId && user.id !== userId) {
+      try {
+        const body = await req.json();
+        reason = body.reason || '';
+      } catch (e) {
+        // body might be empty or invalid json
+      }
+      
+      if (!reason.trim()) {
+        return NextResponse.json({ error: 'Reason for removal is required.' }, { status: 400 });
+      }
+    }
+
     // 1. Delete all stories written by this collaborator in this universe as requested
     await prisma.story.deleteMany({
       where: {
@@ -69,6 +84,19 @@ export async function DELETE(
         },
       },
     });
+
+    // 3. Send Notification to the removed user (if removed by owner)
+    if (user.id === universe.userId && user.id !== userId) {
+      await prisma.notification.create({
+        data: {
+          userId: userId,
+          type: 'SYSTEM',
+          title: 'Removed from Universe',
+          message: `You have been removed from the universe "${universe.name}" by the architect. Reason: ${reason}`,
+          isRead: false,
+        },
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -88,8 +116,13 @@ export async function PATCH(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Allow either the collaborator themselves or any admin
-    if (user.id !== userId && user.role !== 'ADMIN') {
+    const universe = await prisma.universe.findUnique({ where: { id: universeId } });
+    if (!universe) {
+      return NextResponse.json({ error: 'Universe not found' }, { status: 404 });
+    }
+
+    // Allow either the collaborator themselves, the universe owner, or any admin
+    if (user.id !== userId && user.id !== universe.userId && user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

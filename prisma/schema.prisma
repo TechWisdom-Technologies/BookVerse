@@ -114,6 +114,7 @@ model User {
   address                  String?
   nationality              String?
   loginAlertsEnabled       Boolean                  @default(true) @map("login_alerts_enabled")
+  socialLinks              Json?                    @map("social_links")
 
   // Relationships to new models
   annotations              BookAnnotation[]
@@ -788,6 +789,7 @@ model UniverseCollaborator {
   userId     String             @map("user_id")
   status     CollaboratorStatus @default(PENDING)
   message    String?
+  type       String             @default("INVITE") // "INVITE" | "REQUEST"
   createdAt  DateTime           @default(now()) @map("created_at")
 
   universe Universe @relation(fields: [universeId], references: [id], onDelete: Cascade)

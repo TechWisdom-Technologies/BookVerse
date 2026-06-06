@@ -37,6 +37,21 @@ export async function GET(
             avatarUrl: true,
           },
         },
+        collaborators: {
+          select: {
+            userId: true,
+            status: true,
+            type: true,
+            user: {
+              select: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
       },
     });
 

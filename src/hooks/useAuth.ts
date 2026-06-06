@@ -34,6 +34,7 @@ type SyncedUser = {
   phoneNumber?: string | null;
   bkashNumber?: string | null;
   nagadNumber?: string | null;
+  socialLinks?: { platform: string; url: string }[] | null;
   _count?: {
     followers: number;
     following: number;

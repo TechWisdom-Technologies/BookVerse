@@ -55,6 +55,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       address: true,
       nationality: true,
       subGenres: true,
+      socialLinks: true,
       createdAt: true,
       _count: {
         select: {
@@ -129,6 +130,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   const fullUserData = {
     ...user,
+    socialLinks: user.socialLinks as { platform: string; url: string }[] | null,
     isFollowing: !!isFollowing,
     isSubscribed: !!isSubscribed,
     isOwnProfile: currentUserId === user.id,

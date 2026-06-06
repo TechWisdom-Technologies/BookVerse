@@ -50,7 +50,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function POST(_req: NextRequest, { params }: RouteParams) {
+export async function POST(req: NextRequest, { params }: RouteParams) {
   try {
     const { id: storyId } = await params;
     const user = await getAuth();
@@ -59,8 +59,12 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
-      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
+    // We require the author to have at least AUTHOR or PRO plan? The user didn't explicitly gate this, but let's check for PRO or maybe just continue with story ownership. Let's keep it checking for story ownership.
+    const body = await req.json();
+    const { username } = body;
+
+    if (!username) {
+      return NextResponse.json({ error: "Username is required" }, { status: 400 });
     }
 
     const story = await prisma.story.findUnique({
@@ -72,13 +76,25 @@ export async function POST(_req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
 
-    if (story.authorId === user.id) {
-      return NextResponse.json({ error: "Authors cannot beta-read their own story" }, { status: 400 });
+    if (story.authorId !== user.id) {
+      return NextResponse.json({ error: "Only the author can add beta readers" }, { status: 403 });
+    }
+
+    const targetUser = await prisma.user.findUnique({
+      where: { username },
+    });
+
+    if (!targetUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (targetUser.id === user.id) {
+      return NextResponse.json({ error: "Cannot add yourself as a beta reader" }, { status: 400 });
     }
 
     const betaReader = await prisma.betaReader.upsert({
-      where: { storyId_userId: { storyId, userId: user.id } },
-      create: { storyId, userId: user.id },
+      where: { storyId_userId: { storyId, userId: targetUser.id } },
+      create: { storyId, userId: targetUser.id },
       update: {},
     });
 

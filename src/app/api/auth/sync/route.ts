@@ -135,6 +135,7 @@ export async function POST() {
           select: { completed: true }
         },
         membershipTier: true,
+        socialLinks: true,
       },
     });
 

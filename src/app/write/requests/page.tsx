@@ -27,6 +27,7 @@ interface BookRequest {
 export default function BookRequestsDashboardPage() {
   const [requests, setRequests] = useState<BookRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
 
   useEffect(() => {
     fetchBookRequests();
@@ -38,6 +39,9 @@ export default function BookRequestsDashboardPage() {
       if (res.ok) {
         const data = await res.json();
         setRequests(data);
+      } else if (res.status === 402) {
+        const data = await res.json();
+        setUpgradeUrl(data.upgradeUrl || '/premium/checkout?plan=pro');
       }
     } catch (err) {
       console.error("Failed to load requests:", err);
@@ -54,6 +58,17 @@ export default function BookRequestsDashboardPage() {
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
     </div>
+  );
+
+  if (upgradeUrl) return (
+    <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
+      <div className="text-center space-y-6">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Pro plan required to view book requests.</p>
+        <Link href={upgradeUrl} className="inline-flex px-8 py-3 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest">
+          Upgrade to Pro
+        </Link>
+      </div>
+    </main>
   );
 
   return (

@@ -43,6 +43,7 @@ export async function GET() {
           },
         },
         membershipTier: true,
+        socialLinks: true,
       },
     });
 
@@ -104,6 +105,9 @@ export async function PATCH(request: Request) {
     if (parsed.phoneNumber !== undefined) updateData.phoneNumber = parsed.phoneNumber;
     if (parsed.address !== undefined) updateData.address = parsed.address;
     if (parsed.nationality !== undefined) updateData.nationality = parsed.nationality;
+    if (parsed.socialLinks !== undefined) {
+      updateData.socialLinks = parsed.socialLinks === null ? Prisma.JsonNull : parsed.socialLinks;
+    }
 
     const user = await prisma.user.update({
       where: { id: dbUser.id },
@@ -140,6 +144,7 @@ export async function PATCH(request: Request) {
           },
         },
         membershipTier: true,
+        socialLinks: true,
       },
     });
 

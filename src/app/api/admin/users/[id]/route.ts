@@ -25,6 +25,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         reactionCount: true,
         tags: true,
         subGenres: true,
+        socialLinks: true,
         bio: true,
         description: true,
         dateOfBirth: true,

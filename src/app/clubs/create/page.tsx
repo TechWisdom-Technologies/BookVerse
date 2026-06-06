@@ -25,7 +25,7 @@ const GENRES = [
 
 export default function CreateClubPage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, dbUser, loading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -57,6 +57,27 @@ export default function CreateClubPage() {
             className="w-full inline-flex justify-center py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded border border-zinc-900 dark:border-white hover:opacity-90 transition-all shadow-md"
           >
             Authenticate Portal
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const isAuthor = dbUser && ['AUTHOR', 'PRO', 'CREATOR'].includes(dbUser.membershipTier?.toUpperCase() || '');
+
+  if (!isAuthor) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-zinc-950 p-6">
+        <div className="text-center space-y-4 max-w-sm">
+          <span className="px-2 py-0.5 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 text-[9px] font-bold uppercase tracking-widest border border-zinc-100 dark:border-zinc-800">
+            Author Plan Required
+          </span>
+          <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">Upgrade to the Author plan to create and manage public book clubs.</p>
+          <Link
+            href="/premium/checkout?plan=author"
+            className="w-full inline-flex justify-center py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded border border-zinc-900 dark:border-white hover:opacity-90 transition-all shadow-md"
+          >
+            Upgrade to Author
           </Link>
         </div>
       </div>

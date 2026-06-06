@@ -22,6 +22,7 @@ interface ProfileHeaderProps {
     address?: string | null;
     nationality?: string | null;
     subGenres?: string[];
+    socialLinks?: { platform: string; url: string }[] | null;
     createdAt: Date | string;
     _count: {
       followers: number;
@@ -37,31 +38,68 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
   const [avatarError, setAvatarError] = useState(false);
   const displayName = user.displayName || user.username;
 
+  const PLATFORMS = {
+    facebook: { name: "Facebook", logo: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Logo_de_Facebook.png" },
+    x: { name: "X (Twitter)", logo: "https://images.seeklogo.com/logo-png/49/2/twitter-x-logo-png_seeklogo-492396.png" },
+    instagram: { name: "Instagram", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+    youtube: { name: "YouTube", logo: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" },
+    tiktok: { name: "TikTok", logo: "https://img.magnific.com/premium-psd/tiktok-logo_1131634-487.jpg?semt=ais_hybrid&w=740&q=80" },
+    linkedin: { name: "LinkedIn", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+    portfolio: { name: "Portfolio", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+    other: { name: "Other", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+  };
+
   return (
     <div className="relative">
       {/* Simple Header Background */}
       <div className="h-40 w-full bg-zinc-50/50 dark:bg-zinc-900/50 border-b border-zinc-100 dark:border-zinc-900 rounded-xl overflow-hidden" />
 
       <div className="flex flex-col md:flex-row items-center md:items-end gap-10 -mt-16 px-6 md:px-12 relative z-10">
-        {/* Profile Image */}
-        <div className="relative shrink-0">
-          <div className="h-32 w-32 md:h-40 md:w-40 rounded-xl overflow-hidden border-4 border-white dark:border-zinc-950 shadow-2xl bg-white dark:bg-zinc-900">
-            {user.avatarUrl && !avatarError ? (
-              <img
-                src={user.avatarUrl}
-                alt={displayName}
-                className="w-full h-full object-cover"
-                onError={() => setAvatarError(true)}
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-zinc-200 dark:text-zinc-800 uppercase">
-                {displayName[0]}
+        {/* Profile Image & Socials */}
+        <div className="shrink-0 flex flex-col items-center gap-4">
+          <div className="relative">
+            <div className="h-32 w-32 md:h-40 md:w-40 rounded-xl overflow-hidden border-4 border-white dark:border-zinc-950 shadow-2xl bg-white dark:bg-zinc-900">
+              {user.avatarUrl && !avatarError ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                  onError={() => setAvatarError(true)}
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-zinc-200 dark:text-zinc-800 uppercase">
+                  {displayName[0]}
+                </div>
+              )}
+            </div>
+            {user.role === "AUTHOR" && (
+              <div className="absolute -bottom-2 -right-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-2 rounded shadow-xl border-2 border-white dark:border-zinc-950">
+                <BookOpen className="w-4 h-4" />
               </div>
             )}
           </div>
-          {user.role === "AUTHOR" && (
-            <div className="absolute -bottom-2 -right-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 p-2 rounded shadow-xl border-2 border-white dark:border-zinc-950">
-              <BookOpen className="w-4 h-4" />
+          
+          {user.socialLinks && user.socialLinks.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2">
+              {user.socialLinks.map((link, idx) => {
+                const platformInfo = PLATFORMS[link.platform as keyof typeof PLATFORMS];
+                return (
+                  <a 
+                    key={idx} 
+                    href={link.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="w-6 h-6 rounded-full shadow-sm hover:scale-110 transition-transform overflow-hidden block"
+                    title={platformInfo?.name || link.platform}
+                  >
+                    <img 
+                      src={platformInfo?.logo || PLATFORMS.other.logo} 
+                      alt={platformInfo?.name || link.platform} 
+                      className="w-full h-full object-cover bg-white"
+                    />
+                  </a>
+                );
+              })}
             </div>
           )}
         </div>
@@ -100,18 +138,18 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                     <span>{formatDate(user.dateOfBirth)}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5">
-                  <Globe className="w-3 h-3 text-zinc-400" />
-                  <span className={user.nationality ? "" : "text-zinc-500 italic"}>
-                    {user.nationality || "Nationality not specified"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="w-3 h-3 text-zinc-400" />
-                  <span className={user.address ? "" : "text-zinc-500 italic"}>
-                    {user.address || "Location not specified"}
-                  </span>
-                </div>
+                {user.nationality && (
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-3 h-3 text-zinc-400" />
+                    <span>{user.nationality}</span>
+                  </div>
+                )}
+                {user.address && (
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-3 h-3 text-zinc-400" />
+                    <span>{user.address}</span>
+                  </div>
+                )}
               </div>
               
               {user.subGenres && user.subGenres.length > 0 && (
@@ -130,7 +168,7 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
               {user.isOwnProfile ? (
                 <Link
                   href="/settings"
-                  className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center gap-2"
+                  className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center justify-center gap-2 whitespace-nowrap min-w-[150px]"
                 >
                   <Settings className="w-3.5 h-3.5" />
                   Edit Profile

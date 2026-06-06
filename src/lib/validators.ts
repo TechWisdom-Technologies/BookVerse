@@ -73,5 +73,8 @@ export const profileSchema = z.object({
     })
     .optional()
     .nullable(),
+  socialLinks: z.array(z.object({
+    platform: z.string(),
+    url: z.string().url()
+  })).optional().nullable(),
 });
-

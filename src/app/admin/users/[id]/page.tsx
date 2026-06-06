@@ -569,6 +569,28 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                     </div>
                   </div>
                 </div>
+
+                <div>
+                  <h2 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400 mb-3">
+                    Social Links
+                  </h2>
+                  <div className="flex flex-col gap-2">
+                    {user.socialLinks && user.socialLinks.length > 0 ? (
+                      user.socialLinks.map((link: any, idx: number) => (
+                        <div key={idx} className="flex items-center gap-2 p-2 bg-zinc-50 dark:bg-zinc-950 rounded-lg border border-zinc-100 dark:border-zinc-900">
+                          <span className="text-[10px] font-bold uppercase text-zinc-500 bg-white dark:bg-zinc-900 px-2 py-1 rounded shadow-sm border border-zinc-200 dark:border-zinc-800 w-24 text-center">
+                            {link.platform}
+                          </span>
+                          <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-xs text-indigo-600 dark:text-indigo-400 font-medium hover:underline truncate flex-1">
+                            {link.url}
+                          </a>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-xs text-zinc-400 italic">No social links added.</p>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Onboarding Quiz Stats */}

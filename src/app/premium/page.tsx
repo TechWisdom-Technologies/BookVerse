@@ -56,7 +56,7 @@ const TIERS = [
   },
   {
     name: 'Creator',
-    price: 799,
+    price: 599,
     period: 'month',
     description: 'For serious authors and creators',
     features: [

@@ -64,8 +64,8 @@ export async function POST(req: Request) {
     const ipAddress = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "Unknown";
     const country = req.headers.get("x-vercel-ip-country") || req.headers.get("cf-ipcountry") || "Unknown";
 
-    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 299 BDT, CREATOR = 799 BDT per month)
-    const pricePerMonth = upperPlan === 'CREATOR' ? 799 : upperPlan === 'PRO' ? 299 : 99;
+    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 299 BDT, CREATOR = 599 BDT per month)
+    const pricePerMonth = upperPlan === 'CREATOR' ? 599 : upperPlan === 'PRO' ? 299 : 99;
     const amount = pricePerMonth * months;
 
     // Log the pending manual payment transaction

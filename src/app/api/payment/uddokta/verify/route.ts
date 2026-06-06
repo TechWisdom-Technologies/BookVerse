@@ -71,7 +71,7 @@ export async function GET(req: NextRequest) {
 
       // Fraud Prevention: Ensure they paid the correct amount for the plan
       let expectedPremiumAmount = 0;
-      if (plan === "CREATOR") expectedPremiumAmount = 799 * duration;
+      if (plan === "CREATOR") expectedPremiumAmount = 599 * duration;
       else if (plan === "PRO") expectedPremiumAmount = 299 * duration;
       else expectedPremiumAmount = 99 * duration;
 

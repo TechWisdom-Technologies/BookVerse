@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (!(await hasFeatureAccess(user, 'PRO'))) {
-      return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
+    if (!(await hasFeatureAccess(user, 'AUTHOR'))) {
+      return NextResponse.json(paidFeatureError('AUTHOR'), { status: 402 });
     }
 
     const { name, description, genre, isPrivate, coverUrl, maxMembers } = await req.json();

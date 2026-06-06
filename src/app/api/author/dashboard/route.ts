@@ -20,6 +20,7 @@ export async function GET() {
       where: {
         userId: user.id,
         status: 'PENDING',
+        type: 'INVITE',
       },
       include: {
         universe: {
@@ -38,11 +39,42 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     });
 
+    // 1.5 Fetch pending requests from authors who want to join my universes
+    const pendingRequests = await prisma.universeCollaborator.findMany({
+      where: {
+        universe: {
+          userId: user.id,
+        },
+        status: 'PENDING',
+        type: 'REQUEST',
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
+          },
+        },
+        universe: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
     // 2. Fetch universes owned by the user, including all co-authors and their works
     const myUniverses = await prisma.universe.findMany({
       where: { userId: user.id },
       include: {
         collaborators: {
+          where: {
+            status: { not: 'REJECTED' }
+          },
           include: {
             user: {
               select: {
@@ -409,6 +441,7 @@ export async function GET() {
 
     return NextResponse.json({
       pendingInvites,
+      pendingRequests,
       myUniverses,
       collabUniverses,
       mySeries,

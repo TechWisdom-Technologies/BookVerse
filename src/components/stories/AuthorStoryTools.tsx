@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { CalendarClock, Loader2, Megaphone, Users, CreditCard, ShieldCheck, Check, Lock, ArrowLeft, Globe } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { BetaReaderManager } from "./BetaReaderManager";
 
 interface BetaReader {
   id: string;
@@ -25,6 +27,8 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
   const [customBudget, setCustomBudget] = useState(100);
   const [betaReaders, setBetaReaders] = useState<BetaReader[]>([]);
   const [loading, setLoading] = useState<string | null>(null);
+  const { dbUser } = useAuth();
+  const isPro = dbUser && ["PRO", "CREATOR"].includes(dbUser.membershipTier?.toUpperCase() || "");
 
   // Payment flow states
   const [promotionStep, setPromotionStep] = useState<PromotionStep>('select-tier');
@@ -183,27 +187,14 @@ export function AuthorStoryTools({ storyId }: { storyId: string }) {
           </div>
           <input type="number" min={1} value={chapterNumber} onChange={(e) => setChapterNumber(Number(e.target.value))} className="w-full rounded border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-xs" />
           <input type="datetime-local" value={releaseDateTime} onChange={(e) => setReleaseDateTime(e.target.value)} className="w-full rounded border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 text-xs" />
-          <button onClick={scheduleChapter} disabled={loading === "schedule"} className="w-full px-3 py-2 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest disabled:opacity-50">
-            {loading === "schedule" ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : "Schedule"}
+          <button onClick={scheduleChapter} disabled={loading === "schedule" || !isPro} className="w-full px-3 py-2 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest disabled:opacity-50 flex items-center justify-center gap-2">
+            {!isPro && <Lock className="w-3 h-3" />}
+            {loading === "schedule" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Schedule"}
           </button>
+          {!isPro && <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest text-center mt-2">PRO Plan Required</p>}
         </div>
 
-        {/* Beta Readers */}
-        <div className="bg-white dark:bg-zinc-950 p-6 space-y-4">
-          <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-            <Users className="h-4 w-4" />
-            Beta Readers
-          </div>
-          <div className="space-y-2 max-h-36 overflow-auto">
-            {betaReaders.length === 0 ? (
-              <p className="text-xs text-zinc-400 italic">No beta readers yet.</p>
-            ) : betaReaders.map((reader) => (
-              <p key={reader.id} className="text-xs text-zinc-500">
-                {reader.user?.displayName || reader.user?.username || "Reader"}
-              </p>
-            ))}
-          </div>
-        </div>
+        <BetaReaderManager storyId={storyId} betaReaders={betaReaders} setBetaReaders={setBetaReaders} />
 
         {/* Paid Promotion — Full Payment Flow */}
         <div className="bg-white dark:bg-zinc-950 p-6 space-y-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef, useEffect, FormEvent } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from '@/components/auth/AuthProvider';
@@ -22,6 +22,7 @@ interface User {
   phoneNumber?: string | null;
   address?: string | null;
   nationality?: string | null;
+  socialLinks?: { platform: string; url: string }[] | null;
   _count?: {
     followers: number;
     following: number;
@@ -49,8 +50,42 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
   const [address, setAddress] = useState(user.address || "");
   const [nationality, setNationality] = useState(user.nationality || "");
+  const [socialLinks, setSocialLinks] = useState<{ platform: string; url: string }[]>(
+    user.socialLinks || []
+  );
+  const [openDropdown, setOpenDropdown] = useState<number | null>(null);
   const [usernameError, setUsernameError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setSocialLinks(user.socialLinks || []);
+  }, [user.socialLinks]);
+
+  const PLATFORMS = [
+    { id: "facebook", name: "Facebook", logo: "https://upload.wikimedia.org/wikipedia/commons/e/ee/Logo_de_Facebook.png" },
+    { id: "x", name: "X (Twitter)", logo: "https://images.seeklogo.com/logo-png/49/2/twitter-x-logo-png_seeklogo-492396.png" },
+    { id: "instagram", name: "Instagram", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+    { id: "youtube", name: "YouTube", logo: "https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" },
+    { id: "tiktok", name: "TikTok", logo: "https://img.magnific.com/premium-psd/tiktok-logo_1131634-487.jpg?semt=ais_hybrid&w=740&q=80" },
+    { id: "linkedin", name: "LinkedIn", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+    { id: "portfolio", name: "Portfolio", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+    { id: "other", name: "Other", logo: "https://img.magnific.com/premium-vector/purple-gradiend-social-media-logo_197792-1883.jpg?semt=ais_hybrid&w=740&q=80" },
+  ];
+
+  const handleAddSocialLink = () => {
+    setSocialLinks([...socialLinks, { platform: "facebook", url: "" }]);
+  };
+
+  const handleUpdateSocialLink = (index: number, field: "platform" | "url", value: string) => {
+    const newLinks = [...socialLinks];
+    newLinks[index][field] = value;
+    setSocialLinks(newLinks);
+  };
+
+  const handleRemoveSocialLink = (index: number) => {
+    const newLinks = socialLinks.filter((_, i) => i !== index);
+    setSocialLinks(newLinks);
+  };
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -138,6 +173,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           phoneNumber: phoneNumber || null,
           address: address || null,
           nationality: nationality || null,
+          socialLinks: socialLinks.filter(l => l.url.trim() !== ""),
         }),
       });
 
@@ -434,6 +470,78 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             className="w-full px-4 py-3 bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-500 cursor-not-allowed transition-all"
           />
         </div>
+      </div>
+
+      {/* Social Links */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <label className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+            Social Links
+          </label>
+          <button
+            type="button"
+            onClick={handleAddSocialLink}
+            className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            + Add Link
+          </button>
+        </div>
+        {socialLinks.map((link, index) => (
+          <div key={index} className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="w-full sm:w-1/3 relative">
+              <button
+                type="button"
+                onClick={() => setOpenDropdown(openDropdown === index ? null : index)}
+                className="w-full pl-10 pr-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none flex items-center justify-between transition-all"
+              >
+                <span className="capitalize">{PLATFORMS.find(p => p.id === link.platform)?.name || "Other"}</span>
+                <span className="text-[10px] text-zinc-400">▼</span>
+              </button>
+              
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                <img 
+                  src={PLATFORMS.find(p => p.id === link.platform)?.logo || PLATFORMS.find(p => p.id === 'other')?.logo} 
+                  alt="" 
+                  className="w-5 h-5 object-cover rounded-full bg-white"
+                />
+              </div>
+
+              {openDropdown === index && (
+                <div className="absolute top-full left-0 mt-1 w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto py-1">
+                  {PLATFORMS.map((p) => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => {
+                        handleUpdateSocialLink(index, "platform", p.id);
+                        setOpenDropdown(null);
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-xs text-zinc-900 dark:text-white text-left"
+                    >
+                      <img src={p.logo} alt={p.name} className="w-5 h-5 object-cover rounded-full bg-white shadow-sm" />
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <input
+              type="url"
+              value={link.url}
+              onChange={(e) => handleUpdateSocialLink(index, "url", e.target.value)}
+              placeholder="https://..."
+              className="w-full flex-1 px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+            />
+            <button
+              type="button"
+              onClick={() => handleRemoveSocialLink(index)}
+              className="p-3 text-zinc-400 hover:text-rose-500 transition-colors"
+              title="Remove link"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ))}
       </div>
 
       <div className="pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-end gap-3 mt-8">
