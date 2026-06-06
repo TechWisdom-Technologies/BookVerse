@@ -54,6 +54,7 @@ export const profileSchema = z.object({
   mood: z.string().max(50).optional().nullable(),
   subGenres: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
+  phoneNumber: z.string().optional().nullable(),
   instructionSeen: z.boolean().optional(),
   readingFont: z.enum(["sans", "serif", "dyslexic"]).optional(),
   readerTheme: z.enum(["white", "sepia", "cream", "charcoal", "black"]).optional(),

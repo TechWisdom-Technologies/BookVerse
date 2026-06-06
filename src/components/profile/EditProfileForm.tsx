@@ -19,6 +19,7 @@ interface User {
   mood?: string | null;
   subGenres?: string[];
   tags?: string[];
+  phoneNumber?: string | null;
   _count?: {
     followers: number;
     following: number;
@@ -43,6 +44,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
   const [mood, setMood] = useState(user.mood || "");
   const [subGenres, setSubGenres] = useState(user.subGenres ? user.subGenres.join(", ") : "");
   const [tags, setTags] = useState(user.tags ? user.tags.join(", ") : "");
+  const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
   const [usernameError, setUsernameError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -129,6 +131,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           mood: mood || null,
           subGenres: subGenresArray,
           tags: tagsArray,
+          phoneNumber: phoneNumber || null,
         }),
       });
 
@@ -359,6 +362,24 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             value={dateOfBirth}
             onChange={(e) => setDateOfBirth(e.target.value)}
             className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+          />
+        </div>
+
+        {/* Phone Number */}
+        <div className="group">
+          <label
+            htmlFor="phoneNumber"
+            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+          >
+            Phone Number
+          </label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            placeholder="e.g. +88017XXXXXXXX"
           />
         </div>
 

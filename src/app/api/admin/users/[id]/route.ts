@@ -28,6 +28,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         bio: true,
         description: true,
         dateOfBirth: true,
+        phoneNumber: true,
         mood: true,
         contentWarnings: true,
         ageRating: true,

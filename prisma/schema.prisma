@@ -110,6 +110,7 @@ model User {
   walletBalance            Float                    @default(0) @map("wallet_balance")
   isDeactivated            Boolean                  @default(false) @map("is_deactivated")
   deactivatedUntil         DateTime?                @map("deactivated_until")
+  phoneNumber              String?                  @map("phone_number")
 
   // Relationships to new models
   annotations              BookAnnotation[]

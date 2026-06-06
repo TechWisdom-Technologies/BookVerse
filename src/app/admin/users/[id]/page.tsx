@@ -484,6 +484,10 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                     <span className="font-bold">{user.role}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
+                    <span className="text-zinc-450 font-medium">Phone Number</span>
+                    <span className="font-mono text-xs">{user.phoneNumber || "—"}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
                     <span className="text-zinc-450 font-medium">Date of Birth</span>
                     <span>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "—"}</span>
                   </div>

@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { genrePreferences, readingLevel, favoriteAuthors } = body;
+    const { genrePreferences, readingLevel, favoriteAuthors, phoneNumber } = body;
 
     if (!genrePreferences || genrePreferences.length === 0) {
       return NextResponse.json(
@@ -60,6 +60,13 @@ export async function POST(req: Request) {
         completed: true,
       },
     });
+
+    if (phoneNumber !== undefined) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { phoneNumber: phoneNumber || null },
+      });
+    }
 
     return NextResponse.json(quiz, { status: 201 });
   } catch (error) {

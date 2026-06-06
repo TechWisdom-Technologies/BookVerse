@@ -98,6 +98,7 @@ export async function PATCH(request: Request) {
     if (parsed.readingProgressSync !== undefined) updateData.readingProgressSync = parsed.readingProgressSync;
     if (parsed.bkashNumber !== undefined) updateData.bkashNumber = parsed.bkashNumber;
     if (parsed.nagadNumber !== undefined) updateData.nagadNumber = parsed.nagadNumber;
+    if (parsed.phoneNumber !== undefined) updateData.phoneNumber = parsed.phoneNumber;
 
     const user = await prisma.user.update({
       where: { id: dbUser.id },

@@ -31,6 +31,7 @@ type SyncedUser = {
   readingFont?: string;
   readerTheme?: string;
   readingProgressSync?: boolean;
+  phoneNumber?: string | null;
   bkashNumber?: string | null;
   nagadNumber?: string | null;
   _count?: {
@@ -52,6 +53,21 @@ export function useAuth() {
       if (!u) {
         setDbUser(null);
         setLoading(false);
+        
+        const protectedPages = [
+          "/write",
+          "/upload",
+          "/admin",
+          "/shelf",
+          "/profile/edit",
+          "/settings",
+          "/wallet",
+        ];
+        const pathname = window.location.pathname;
+        const isProtectedPage = protectedPages.some((p) => pathname.startsWith(p));
+        if (isProtectedPage) {
+          window.location.href = `/login?redirect=${encodeURIComponent(pathname)}`;
+        }
         return;
       }
 
