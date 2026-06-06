@@ -103,9 +103,26 @@ export default function PremiumPage() {
         {/* Pricing Tiers Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 mb-20 shadow-sm">
           {TIERS.map(tier => {
-            const isCurrentPlan = user && tier.name.toUpperCase() === (dbUser?.membershipTier?.toUpperCase() || 'FREE');
-            const isDisabled = isCurrentPlan || (tier.name === 'Free');
-            const ctaText = isCurrentPlan ? 'Current Plan' : (tier.name === 'Free' ? 'Included' : tier.cta);
+            const currentTier = dbUser?.membershipTier?.toUpperCase() || 'FREE';
+            const tierRank = (t: string) => t === 'CREATOR' ? 3 : t === 'PRO' ? 2 : t === 'AUTHOR' ? 1 : 0;
+            const currentRank = tierRank(currentTier);
+            const thisRank = tierRank(tier.name.toUpperCase());
+            
+            const isActive = dbUser && (!dbUser.membershipExpiry || new Date(dbUser.membershipExpiry).getTime() > Date.now());
+            
+            const isCurrentPlan = user && tier.name.toUpperCase() === currentTier && isActive;
+            const isLowerTier = user && isActive && currentRank > thisRank;
+            
+            const isDisabled = isCurrentPlan || (tier.name === 'Free') || isLowerTier;
+            
+            let ctaText = tier.cta;
+            if (isCurrentPlan) {
+              ctaText = 'Current Plan';
+            } else if (tier.name === 'Free') {
+              ctaText = 'Included';
+            } else if (isLowerTier) {
+              ctaText = `Included in ${dbUser?.membershipTier || 'Plan'}`;
+            }
 
             return (
             <div

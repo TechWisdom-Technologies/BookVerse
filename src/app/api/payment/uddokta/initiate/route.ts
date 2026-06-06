@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAuth } from "@/lib/auth";
 import { initiatePayment } from "@/lib/uddoktapay";
+import { prisma } from "@/lib/prisma";
 
 /**
  * POST /api/payment/uddokta/initiate
@@ -39,6 +40,26 @@ export async function POST(req: Request) {
         { error: "Amount must be at least ৳1 Taka" },
         { status: 400 }
       );
+    }
+
+    if (type === "PREMIUM") {
+      const dbUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        select: { membershipTier: true, membershipExpiry: true },
+      });
+
+      if (dbUser?.membershipTier) {
+        const isActive = !dbUser.membershipExpiry || new Date(dbUser.membershipExpiry).getTime() > Date.now();
+        if (isActive) {
+          const tierRank = (t: string) => t === 'CREATOR' ? 3 : t === 'PRO' ? 2 : t === 'AUTHOR' ? 1 : 0;
+          const requestedPlan = metadata?.plan?.toUpperCase();
+          if (tierRank(dbUser.membershipTier) >= tierRank(requestedPlan)) {
+            return NextResponse.json({ 
+              error: `You already have an active ${dbUser.membershipTier} plan or higher. You cannot purchase a lower tier.` 
+            }, { status: 400 });
+          }
+        }
+      }
     }
 
     // Build the redirect/cancel URLs based on the current origin
