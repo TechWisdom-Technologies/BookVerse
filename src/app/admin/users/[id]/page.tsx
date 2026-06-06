@@ -492,6 +492,14 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                     <span>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "—"}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
+                    <span className="text-zinc-450 font-medium">Nationality</span>
+                    <span>{user.nationality || "—"}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
+                    <span className="text-zinc-450 font-medium">Location / Address</span>
+                    <span className="text-right max-w-[200px] truncate" title={user.address}>{user.address || "—"}</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
                     <span className="text-zinc-450 font-medium">Current Mood Status</span>
                     <span className="font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
                       <Smile className="w-3.5 h-3.5 text-amber-500" />

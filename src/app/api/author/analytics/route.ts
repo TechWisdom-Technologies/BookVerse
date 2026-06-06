@@ -185,11 +185,11 @@ export async function GET() {
     });
 
     const totalLogsCount = dbReadingLogs.length;
-    const avgPagesRead = totalLogsCount > 0 
-      ? dbReadingLogs.reduce((sum, log) => sum + log.pagesRead, 0) / totalLogsCount 
+    const avgPagesRead = totalLogsCount > 0
+      ? dbReadingLogs.reduce((sum, log) => sum + log.pagesRead, 0) / totalLogsCount
       : 0;
-    const avgMinutesRead = totalLogsCount > 0 
-      ? dbReadingLogs.reduce((sum, log) => sum + log.minutes, 0) / totalLogsCount 
+    const avgMinutesRead = totalLogsCount > 0
+      ? dbReadingLogs.reduce((sum, log) => sum + log.minutes, 0) / totalLogsCount
       : 0;
 
     const focusScore = totalLogsCount > 0 ? Math.min(100, Math.max(0, (avgPagesRead / Math.max(1, avgMinutesRead)) * 100)) : 0;
@@ -253,11 +253,11 @@ export async function GET() {
     }).filter((order): order is number => order !== null);
 
     const maxChapterOrder = authorChapters.reduce((max, ch) => Math.max(max, ch.chapterOrder), 1);
-    
+
     const calculateRetention = (storyId: string | null) => {
       const filteredChapters = storyId ? authorChapters.filter(c => c.storyId === storyId) : authorChapters;
       const filteredProgress = storyId ? dbReadingProgress.filter(p => p.storyId === storyId) : dbReadingProgress;
-      
+
       const progressChapters = filteredProgress.map(rp => {
         const match = filteredChapters.find(ch => ch.id === rp.chapterId);
         return match ? match.chapterOrder : null;
@@ -271,7 +271,7 @@ export async function GET() {
       for (let order = 1; order <= Math.min(6, localMaxChapterOrder); order++) {
         const reachedCount = progressChapters.filter(o => o >= order).length;
         const rate = baseCount > 0 ? Math.round((reachedCount / baseCount) * 100) : 0;
-        
+
         const chapterTitle = filteredChapters.find(ch => ch.chapterOrder === order)?.title || `Chapter ${order}`;
         retentionCohorts.push({
           chapter: `Ch ${order}: ${chapterTitle}`,

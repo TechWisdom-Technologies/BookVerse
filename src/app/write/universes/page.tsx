@@ -355,6 +355,7 @@ function CollaboratorsSection({ universeId }: { universeId: string }) {
   const [collaborators, setCollaborators] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [newUsername, setNewUsername] = useState("");
+  const [newMessage, setNewMessage] = useState("");
   const [adding, setAdding] = useState(false);
   const [removingUser, setRemovingUser] = useState<any | null>(null);
   const [removingStories, setRemovingStories] = useState<any[]>([]);
@@ -387,12 +388,13 @@ function CollaboratorsSection({ universeId }: { universeId: string }) {
       const res = await fetch(`/api/universes/${universeId}/collaborators`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: newUsername.trim() }),
+        body: JSON.stringify({ username: newUsername.trim(), message: newMessage.trim() || undefined }),
       });
       const data = await res.json();
       if (res.ok) {
         toast.success("Collaborator added successfully!");
         setNewUsername("");
+        setNewMessage("");
         fetchCollaborators();
       } else {
         toast.error(data.error || "Failed to add collaborator.");
@@ -449,22 +451,31 @@ function CollaboratorsSection({ universeId }: { universeId: string }) {
       </div>
 
       {/* Add Form */}
-      <form onSubmit={handleAddCollaborator} className="flex gap-2">
-        <input
-          type="text"
-          value={newUsername}
-          onChange={(e) => setNewUsername(e.target.value)}
-          placeholder="Enter co-author username..."
-          className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+      <form onSubmit={handleAddCollaborator} className="flex flex-col gap-2">
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newUsername}
+            onChange={(e) => setNewUsername(e.target.value)}
+            placeholder="Enter co-author username..."
+            className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+          />
+          <button
+            type="submit"
+            disabled={adding}
+            className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded flex items-center gap-1 hover:opacity-90 disabled:opacity-50 shrink-0"
+          >
+            {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
+            Add
+          </button>
+        </div>
+        <textarea
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          placeholder="Optional: Send a message with rules, characters, or expectations..."
+          rows={2}
+          className="w-full px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-medium outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm resize-none"
         />
-        <button
-          type="submit"
-          disabled={adding}
-          className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded flex items-center gap-1 hover:opacity-90 disabled:opacity-50"
-        >
-          {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
-          Add
-        </button>
       </form>
 
       {/* Collaborators List */}
@@ -488,7 +499,12 @@ function CollaboratorsSection({ universeId }: { universeId: string }) {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-bold">{c.user.displayName || c.user.username}</span>
-                  <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest">@{c.user.username}</span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest">@{c.user.username}</span>
+                    <span className={`text-[8px] font-bold uppercase px-1.5 py-0.5 rounded ${c.status === 'ACCEPTED' ? 'bg-emerald-500/10 text-emerald-500' : c.status === 'REJECTED' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}`}>
+                      {c.status}
+                    </span>
+                  </div>
                 </div>
               </div>
               <button

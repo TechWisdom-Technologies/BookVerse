@@ -70,6 +70,54 @@ export async function GET() {
       orderBy: { createdAt: 'desc' },
     });
 
+    // 2.2 Fetch universes where user is a co-author (accepted collaborator, not owner)
+    const collabUniverses = await prisma.universe.findMany({
+      where: {
+        userId: { not: user.id },
+        collaborators: {
+          some: {
+            userId: user.id,
+            status: 'ACCEPTED'
+          }
+        }
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
+          }
+        },
+        collaborators: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        stories: {
+          include: {
+            author: {
+              select: {
+                id: true,
+                username: true,
+                displayName: true,
+              },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
     // 2.5 Fetch series owned by the user
     const mySeries = await prisma.series.findMany({
       where: { userId: user.id },
@@ -362,6 +410,7 @@ export async function GET() {
     return NextResponse.json({
       pendingInvites,
       myUniverses,
+      collabUniverses,
       mySeries,
       bookRequests,
       stats: {

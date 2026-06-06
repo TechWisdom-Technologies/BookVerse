@@ -60,7 +60,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { username } = body;
+    const { username, message } = body;
 
     if (!username || !username.trim()) {
       return NextResponse.json({ error: 'Username is required' }, { status: 400 });
@@ -96,6 +96,7 @@ export async function POST(
       data: {
         universeId,
         userId: targetUser.id,
+        message,
       },
       include: {
         user: {
@@ -114,7 +115,9 @@ export async function POST(
         userId: targetUser.id,
         type: 'COLLABORATOR_INVITE',
         title: 'Collaboration Invite!',
-        message: `${user.displayName || user.username} has invited you to collaborate on their universe "${universe.name}"!`,
+        message: message 
+          ? `${user.displayName || user.username} invited you: "${message}"`
+          : `${user.displayName || user.username} has invited you to collaborate on their universe "${universe.name}"!`,
         link: '/write/dashboard',
       });
     } catch (notifError) {

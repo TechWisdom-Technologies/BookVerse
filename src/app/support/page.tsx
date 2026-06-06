@@ -57,6 +57,86 @@ const FAQS = [
   {
     q: "How do I delete my account?",
     a: "You can permanently delete your account and all associated data from the Settings page. Please note that this action is irreversible and will remove all your stories.",
+  },
+  {
+    q: "How do I report a bug or issue?",
+    a: "You can report bugs using the Information Desk form on this page or by contacting our support team directly via email or WhatsApp.",
+  },
+  {
+    q: "Is there a limit to how many stories I can read?",
+    a: "No, free users can read unlimited free stories. Premium stories and advanced chapters require a Pro or Creator subscription.",
+  },
+  {
+    q: "Can I co-author a story?",
+    a: "Yes! BookVerse supports collaborative writing. You can invite other authors to contribute to your story or Universe from the story dashboard.",
+  },
+  {
+    q: "How do I change my profile picture?",
+    a: "Navigate to your Profile Settings, click on your current avatar, and upload a new image. Supported formats include JPG, PNG, and GIF.",
+  },
+  {
+    q: "What are the rules for writing in Universes?",
+    a: "Each Universe has its own set of rules established by the creator. Be sure to read the Universe guidelines before submitting a story for approval.",
+  },
+  {
+    q: "How does the review system work?",
+    a: "Readers can leave reviews and ratings on published stories. Authors can reply to reviews, pin their favorites, and moderate the comment section.",
+  },
+  {
+    q: "Are there genre restrictions?",
+    a: "BookVerse accepts all genres, but mature or explicit content must be properly tagged and is only available to readers 18 and older.",
+  },
+  {
+    q: "Can I export my stories?",
+    a: "Yes, authors can export their published and drafted stories as PDF or ePub formats directly from the Author Dashboard.",
+  },
+  {
+    q: "How do I participate in writing contests?",
+    a: "Keep an eye on our Announcements page for upcoming contests! You can submit entries directly through the contest portal when one is active.",
+  },
+  {
+    q: "Is there a BookVerse mobile app?",
+    a: "Our dedicated mobile app is currently in development. For now, our website is fully responsive and optimized for mobile browsers.",
+  },
+  {
+    q: "How do I change my reading font or theme?",
+    a: "You can customize your reading experience by tapping the settings gear icon while reading any chapter. You can choose from various fonts (including dyslexic-friendly) and themes (light, dark, sepia).",
+  },
+  {
+    q: "Can I gift a premium subscription to a friend?",
+    a: "Yes! You can purchase a Gift Membership from the Premium page and send it directly to another user's email address.",
+  },
+  {
+    q: "What happens if my subscription expires?",
+    a: "If your subscription expires, your account will revert to the Free tier. You will lose access to premium chapters, but your published stories and account data will remain intact.",
+  },
+  {
+    q: "Is there a word count limit for chapters?",
+    a: "We recommend keeping chapters between 1,500 and 5,000 words for the best reader experience, but there is no strict technical limit.",
+  },
+  {
+    q: "How do I add a co-author to my Universe?",
+    a: "Go to your Universe dashboard, click on 'Manage Collaborators', and enter the username of the author you wish to invite.",
+  },
+  {
+    q: "How are trending stories determined?",
+    a: "Trending algorithms consider a mix of recent reads, new followers, ratings, and chapter updates over the last 7 days.",
+  },
+  {
+    q: "Can I reply to reader comments?",
+    a: "Yes, authors can reply directly to reader comments on their chapters to build engagement and community.",
+  },
+  {
+    q: "What are Story Promotions?",
+    a: "Authors can use BookVerse credits to feature their stories on the Discover page to reach a wider audience.",
+  },
+  {
+    q: "How do I block a user?",
+    a: "Navigate to the user's profile, click the three dots icon, and select 'Block'. They will no longer be able to interact with your content.",
+  },
+  {
+    q: "Does BookVerse claim ownership of my stories?",
+    a: "No. You retain 100% of the copyright and ownership of any original content you publish on BookVerse.",
   }
 ];
 
@@ -246,7 +326,7 @@ export default function SupportPage() {
                 Frequently Answered
               </h2>
               <div className="space-y-3">
-                {FAQS.map((faq, idx) => (
+                {FAQS.slice(0, 15).map((faq, idx) => (
                   <div
                     key={idx}
                     className="border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden"
@@ -273,8 +353,8 @@ export default function SupportPage() {
             </div>
           </div>
 
-          {/* Right Column: Information Desk request form */}
-          <div className="lg:col-span-7">
+          {/* Right Column: Information Desk request form and FAQs */}
+          <div className="lg:col-span-7 space-y-12">
             <div className="border border-zinc-100 dark:border-zinc-900 rounded-xl p-8 bg-white dark:bg-zinc-950 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-[3px] bg-zinc-900 dark:bg-white" />
 
@@ -411,6 +491,41 @@ export default function SupportPage() {
                   </div>
                 </form>
               )}
+            </div>
+
+            {/* Right Side FAQs */}
+            <div className="space-y-6">
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 mb-6 italic">
+                More Frequently Answered
+              </h2>
+              <div className="space-y-3">
+                {FAQS.slice(15, 30).map((faq, idx) => {
+                  const faqIdx = idx + 15;
+                  return (
+                    <div
+                      key={faqIdx}
+                      className="border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 overflow-hidden"
+                    >
+                      <button
+                        onClick={() => setExpandedFaq(expandedFaq === faqIdx ? null : faqIdx)}
+                        className="w-full flex items-center justify-between p-4 text-left font-bold text-[10px] uppercase tracking-widest hover:bg-zinc-50 dark:hover:bg-zinc-900/20 transition-colors"
+                      >
+                        <span>{faq.q}</span>
+                        {expandedFaq === faqIdx ? (
+                          <ChevronUp className="w-3.5 h-3.5 text-zinc-400" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5 text-zinc-400" />
+                        )}
+                      </button>
+                      {expandedFaq === faqIdx && (
+                        <div className="p-4 pt-0 border-t border-zinc-50 dark:border-zinc-900 text-[11px] font-medium text-zinc-500 leading-relaxed italic bg-zinc-50/10 dark:bg-zinc-900/5">
+                          {faq.a}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

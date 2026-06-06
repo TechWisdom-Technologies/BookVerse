@@ -111,6 +111,8 @@ model User {
   isDeactivated            Boolean                  @default(false) @map("is_deactivated")
   deactivatedUntil         DateTime?                @map("deactivated_until")
   phoneNumber              String?                  @map("phone_number")
+  address                  String?
+  nationality              String?
   loginAlertsEnabled       Boolean                  @default(true) @map("login_alerts_enabled")
 
   // Relationships to new models
@@ -445,8 +447,9 @@ model ClubMember {
   id       String   @id @default(cuid())
   clubId   String   @map("club_id")
   userId   String   @map("user_id")
-  role     ClubRole @default(MEMBER)
-  joinedAt DateTime @default(now()) @map("joined_at")
+  role       ClubRole @default(MEMBER)
+  joinedAt   DateTime @default(now()) @map("joined_at")
+  lastReadAt DateTime @default(now()) @map("last_read_at")
 
   club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -477,6 +480,7 @@ model ClubDiscussion {
   authorId  String   @map("author_id")
   title     String
   content   String
+  isEdited  Boolean  @default(false) @map("is_edited")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -783,6 +787,7 @@ model UniverseCollaborator {
   universeId String             @map("universe_id")
   userId     String             @map("user_id")
   status     CollaboratorStatus @default(PENDING)
+  message    String?
   createdAt  DateTime           @default(now()) @map("created_at")
 
   universe Universe @relation(fields: [universeId], references: [id], onDelete: Cascade)

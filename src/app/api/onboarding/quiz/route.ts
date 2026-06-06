@@ -35,7 +35,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { genrePreferences, readingLevel, favoriteAuthors, phoneNumber } = body;
+    const { genrePreferences, readingLevel, favoriteAuthors, phoneNumber, address, nationality } = body;
 
     if (!genrePreferences || genrePreferences.length === 0) {
       return NextResponse.json(
@@ -61,10 +61,14 @@ export async function POST(req: Request) {
       },
     });
 
-    if (phoneNumber !== undefined) {
+    if (phoneNumber !== undefined || address !== undefined || nationality !== undefined) {
       await prisma.user.update({
         where: { id: user.id },
-        data: { phoneNumber: phoneNumber || null },
+        data: {
+          ...(phoneNumber !== undefined && { phoneNumber: phoneNumber || null }),
+          ...(address !== undefined && { address: address || null }),
+          ...(nationality !== undefined && { nationality: nationality || null }),
+        },
       });
     }
 

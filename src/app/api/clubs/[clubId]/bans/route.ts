@@ -38,9 +38,6 @@ export async function GET(
         user: {
           select: { id: true, username: true, displayName: true, avatarUrl: true },
         },
-        bannedByUser: {
-          select: { id: true, username: true, displayName: true },
-        },
       },
       orderBy: { bannedAt: 'desc' },
     });

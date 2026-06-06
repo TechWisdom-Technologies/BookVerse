@@ -86,6 +86,7 @@ interface BookRequestItem {
 interface InviteItem {
   id: string;
   universeId: string;
+  message?: string | null;
   universe: {
     id: string;
     name: string;
@@ -135,6 +136,7 @@ interface ScheduledItem {
 interface DashboardData {
   pendingInvites: InviteItem[];
   myUniverses: UniverseItem[];
+  collabUniverses: UniverseItem[];
   mySeries: SeriesItem[];
   bookRequests: BookRequestItem[];
   stats: {
@@ -352,61 +354,71 @@ export default function AuthorDashboardPage() {
 
         {/* 1. Pending Collaboration Invitations Section */}
         {pendingInvites.length > 0 && (
-          <section className="mb-12 bg-indigo-50/10 dark:bg-indigo-950/5 border border-indigo-500/10 rounded-3xl p-8 relative overflow-hidden backdrop-blur-sm animate-fade-in">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
-            <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 mb-6 flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5" /> Pending Collaboration Invitations ({pendingInvites.length})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <section className="mb-12 p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-3xl shadow-sm">
+            <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+              <Sparkles className="w-4 h-4 text-zinc-400 animate-pulse" />
+              <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">
+                Pending Collaboration Invitations ({pendingInvites.length})
+              </h2>
+            </div>
+            <div className="flex flex-col gap-4">
               {pendingInvites.map((invite) => (
                 <div
                   key={invite.id}
-                  className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-2xl p-6 flex items-center justify-between gap-6 shadow-sm hover:border-indigo-500/20 transition-all animate-fade-in"
+                  className="group bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 animate-fade-in flex flex-col gap-4"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-full bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-100 dark:border-zinc-800">
-                      {invite.universe.user.avatarUrl ? (
-                        <img src={invite.universe.user.avatarUrl} className="w-full h-full object-cover" />
-                      ) : (
-                        <User className="w-4 h-4 text-zinc-400" />
-                      )}
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-800">
+                        {invite.universe.user.avatarUrl ? (
+                          <img src={invite.universe.user.avatarUrl} className="w-full h-full object-cover" />
+                        ) : (
+                          <User className="w-5 h-5 text-zinc-400" />
+                        )}
+                      </div>
+                      <div>
+                        <h4 className="text-base font-bold text-zinc-900 dark:text-white group-hover:text-indigo-500 transition-colors">
+                          {invite.universe.name}
+                        </h4>
+                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                          Invited by @{invite.universe.user.username}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-xs font-bold text-zinc-900 dark:text-white">
-                        {invite.universe.name}
-                      </h4>
-                      <p className="text-[10px] text-zinc-400 font-medium">
-                        Invited by @{invite.universe.user.username}
-                      </p>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <button
+                        disabled={actionLoading === invite.universeId}
+                        onClick={() => handleRespondInvite(invite.universeId, true)}
+                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-[10px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                      >
+                        {actionLoading === invite.universeId ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <><Check className="w-3.5 h-3.5" /> Accept</>
+                        )}
+                      </button>
+                      <button
+                        disabled={actionLoading === invite.universeId}
+                        onClick={() => handleRespondInvite(invite.universeId, false)}
+                        className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-zinc-100 hover:bg-rose-50 dark:bg-zinc-900 dark:hover:bg-rose-950/30 text-zinc-600 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-500 border border-transparent hover:border-rose-200 dark:hover:border-rose-900/50 text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                      >
+                        {actionLoading === invite.universeId ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <><X className="w-3.5 h-3.5" /> Decline</>
+                        )}
+                      </button>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      disabled={actionLoading === invite.universeId}
-                      onClick={() => handleRespondInvite(invite.universeId, true)}
-                      className="p-2.5 rounded-xl bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-500 hover:bg-emerald-500 hover:text-white dark:hover:bg-emerald-500 dark:hover:text-white border border-emerald-500/10 shadow-sm transition-all flex items-center justify-center"
-                      title="Accept Invite"
-                    >
-                      {actionLoading === invite.universeId ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <Check className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                    <button
-                      disabled={actionLoading === invite.universeId}
-                      onClick={() => handleRespondInvite(invite.universeId, false)}
-                      className="p-2.5 rounded-xl bg-rose-50/50 dark:bg-rose-950/20 text-rose-500 hover:bg-rose-500 hover:text-white dark:hover:bg-rose-500 dark:hover:text-white border border-rose-500/10 shadow-sm transition-all flex items-center justify-center"
-                      title="Decline Invite"
-                    >
-                      {actionLoading === invite.universeId ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      ) : (
-                        <X className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </div>
+                  {invite.message && (
+                    <div className="p-4 rounded-xl bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800/80 max-h-48 overflow-y-auto">
+                      <p className="text-[11px] text-zinc-600 dark:text-zinc-400 italic leading-relaxed whitespace-pre-wrap break-words">
+                        &quot;{invite.message}&quot;
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -671,6 +683,100 @@ export default function AuthorDashboardPage() {
               </div>
             )}
 
+            {/* Co-Authored Universes Section */}
+            {data.collabUniverses && data.collabUniverses.length > 0 && (
+              <>
+                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-100 dark:border-zinc-900 mt-12">
+                  <GitBranch className="w-4 h-4 text-zinc-400" />
+                  <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Co-Authored Universes</h2>
+                </div>
+
+                <div className="space-y-6">
+                  {data.collabUniverses.map((uni) => (
+                    <div
+                      key={uni.id}
+                      className="p-6 bg-zinc-50/20 dark:bg-zinc-900/10 border border-zinc-100 dark:border-zinc-900 rounded-3xl space-y-6 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between gap-4">
+                        <div>
+                          <h3 className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-wider">{uni.name}</h3>
+                          {uni.description && <p className="text-xs text-zinc-400 max-w-lg mt-1 font-medium leading-relaxed line-clamp-1">{uni.description}</p>}
+                        </div>
+                        <Link
+                          href={`/write/universes`}
+                          className="px-3 py-1.5 bg-zinc-100 dark:bg-zinc-800/80 hover:bg-indigo-500 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white text-[9px] font-bold uppercase tracking-widest rounded-lg transition-colors border border-zinc-200/40 dark:border-zinc-700/40 shrink-0"
+                        >
+                          View Universe
+                        </Link>
+                      </div>
+
+                      {/* Collaborator Roster */}
+                      <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/40 space-y-4">
+                        <h4 className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Co-Authors Roster</h4>
+                        <div className="flex flex-wrap gap-3">
+                          {uni.collaborators.map((c) => (
+                            <div
+                              key={c.id}
+                              className="px-3 py-1.5 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-xl flex items-center gap-2 text-xs"
+                            >
+                              <div className="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
+                                {c.user.avatarUrl ? (
+                                  <img src={c.user.avatarUrl} className="w-full h-full object-cover" />
+                                ) : (
+                                  <User className="w-2.5 h-2.5 text-zinc-400" />
+                                )}
+                              </div>
+                              <span className="font-bold">{c.user.displayName || c.user.username}</span>
+                              <span className={`text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${c.status === 'ACCEPTED'
+                                  ? 'bg-emerald-50/5 text-emerald-500'
+                                  : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
+                                }`}>
+                                {c.status}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Shared Works */}
+                      <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/40 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Manuscripts & Contributions</h4>
+                        </div>
+                        {uni.stories.length === 0 ? (
+                          <p className="text-xs text-zinc-400 italic">No collaborative manuscripts compiled in this universe yet.</p>
+                        ) : (
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {uni.stories.map((story) => (
+                              <Link
+                                href={`/write/story/${story.id}/edit`}
+                                key={story.id}
+                                className="p-4 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-2xl flex items-center gap-3 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all shadow-sm"
+                              >
+                                {story.coverUrl ? (
+                                  <img src={story.coverUrl} className="w-10 h-14 object-cover rounded-lg shrink-0" />
+                                ) : (
+                                  <div className="w-10 h-14 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 flex items-center justify-center shrink-0">
+                                    <BookOpen className="w-4 h-4 text-zinc-300" />
+                                  </div>
+                                )}
+                                <div className="min-w-0">
+                                  <h5 className="text-xs font-bold truncate pr-2">{story.title}</h5>
+                                  <p className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider mt-1 truncate">
+                                    By {story.author.displayName || story.author.username}
+                                  </p>
+                                </div>
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
             {/* Series Block */}
             <div className="flex items-center gap-2 mb-2 mt-12 pb-2 border-b border-zinc-100 dark:border-zinc-900">
               <Layers className="w-4 h-4 text-zinc-400" />
@@ -742,7 +848,7 @@ export default function AuthorDashboardPage() {
           </div>
 
 
-          {/* Column 3: Recent Book Requests Feed */}
+          {/* Column 3: Book Requests & Notifications Feed */}
           <div className="space-y-6">
             <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-900">
               <div className="flex items-center gap-2">

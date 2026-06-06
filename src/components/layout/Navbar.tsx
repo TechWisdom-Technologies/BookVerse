@@ -159,6 +159,7 @@ export function Navbar() {
   const { user, dbUser, loading, signOut } = useAuth();
   const [profileOpen, setProfileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [hasUnreadClubs, setHasUnreadClubs] = useState(false);
   const [hasNewFeed, setHasNewFeed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isLibrarianOpen, setIsLibrarianOpen] = useState(false);
@@ -188,6 +189,15 @@ export function Navbar() {
           }
         })
         .catch(err => console.error("Failed to fetch unread notifications", err));
+
+      fetch("/api/clubs/unread")
+        .then(res => res.json())
+        .then(data => {
+          if (data.hasUnread !== undefined) {
+            setHasUnreadClubs(data.hasUnread);
+          }
+        })
+        .catch(err => console.error("Failed to fetch unread clubs", err));
 
       fetch("/api/activity-feed")
         .then(res => res.json())
@@ -221,7 +231,7 @@ export function Navbar() {
     ? [
       { href: "/support", label: "Support", icon: HelpCircle },
       ...dynamicAuthLeftItems,
-      ...leftNavItems,
+      ...leftNavItems.map(item => item.label === "Clubs" ? { ...item, badge: hasUnreadClubs } : item),
     ]
     : [
       { href: "/support", label: "Support", icon: HelpCircle },

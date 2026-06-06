@@ -21,6 +21,8 @@ export function OnboardingQuiz() {
   const [selected, setSelected] = useState<string[]>([]);
   const [readingLevel, setReadingLevel] = useState('INTERMEDIATE');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [nationality, setNationality] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleGenreToggle = (genre: string) => {
@@ -44,6 +46,8 @@ export function OnboardingQuiz() {
           genrePreferences: selected,
           readingLevel,
           phoneNumber,
+          address,
+          nationality,
         }),
       });
 
@@ -120,6 +124,34 @@ export function OnboardingQuiz() {
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="Enter your phone number"
+          className="w-full px-5 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+        />
+      </div>
+
+      <div className="mb-12 space-y-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Layers className="w-3.5 h-3.5 text-zinc-300" />
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Nationality</h3>
+        </div>
+        <input
+          type="text"
+          value={nationality}
+          onChange={(e) => setNationality(e.target.value)}
+          placeholder="e.g. Bangladeshi"
+          className="w-full px-5 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+        />
+      </div>
+
+      <div className="mb-12 space-y-4">
+        <div className="flex items-center gap-2 mb-4">
+          <Layers className="w-3.5 h-3.5 text-zinc-300" />
+          <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Address</h3>
+        </div>
+        <input
+          type="text"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          placeholder="e.g. Dhaka, Bangladesh"
           className="w-full px-5 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
         />
       </div>

@@ -21,12 +21,26 @@ interface Club {
 
 export default function ClubsPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, dbUser } = useAuth();
   const [clubs, setClubs] = useState<Club[]>([]);
   const [filteredClubs, setFilteredClubs] = useState<Club[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [genreFilter, setGenreFilter] = useState('');
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    if (user) {
+      fetch('/api/clubs/unread')
+        .then(res => res.json())
+        .then(data => {
+          if (data.unreadCountsByClub) {
+            setUnreadCounts(data.unreadCountsByClub);
+          }
+        })
+        .catch(err => console.error('Error fetching unread counts:', err));
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchClubs = async () => {
@@ -120,9 +134,59 @@ export default function ClubsPage() {
           </div>
         </div>
 
-        {/* Club Grid */}
+        {/* My Clubs Section */}
+        {dbUser && filteredClubs.filter(c => c.members.some(m => m.userId === dbUser.id)).length > 0 && (
+          <div className="mb-16">
+            <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">My Clubs</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
+              {filteredClubs.filter(c => c.members.some(m => m.userId === dbUser.id)).map(club => (
+                <Link
+                  key={club.id}
+                  href={`/clubs/${club.id}`}
+                  className="relative group flex flex-col p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
+                >
+                  <div className="flex justify-between items-start mb-6">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 px-2 py-0.5 border border-zinc-100 dark:border-zinc-800 rounded">
+                      {club.genre || 'General'}
+                    </span>
+                    {club.isPrivate && <Shield className="w-3.5 h-3.5 text-emerald-500" />}
+                  </div>
+
+                  <h3 className="text-sm font-bold mb-2 uppercase tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
+                    {club.name}
+                  </h3>
+                  <p className="text-[11px] text-zinc-500 font-medium leading-relaxed mb-10 line-clamp-2 italic">
+                    {club.description || 'A community gathering for readers.'}
+                  </p>
+
+                  {unreadCounts[club.id] > 0 && (
+                    <div className="absolute top-8 right-8 flex items-center justify-center w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-md animate-in zoom-in">
+                      {unreadCounts[club.id]}
+                    </div>
+                  )}
+
+                  <div className="mt-auto pt-6 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[9px] font-bold border border-zinc-100 dark:border-zinc-800">
+                        {club.owner.username[0].toUpperCase()}
+                      </div>
+                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{club.owner.displayName || club.owner.username}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300 uppercase tracking-widest">
+                      <Users className="w-3.5 h-3.5" />
+                      {club.members.length}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Discover Clubs Section */}
+        <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">Discover Clubs</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
-          {filteredClubs.map(club => (
+          {filteredClubs.filter(c => !dbUser || !c.members.some(m => m.userId === dbUser.id)).map(club => (
             <Link
               key={club.id}
               href={`/clubs/${club.id}`}

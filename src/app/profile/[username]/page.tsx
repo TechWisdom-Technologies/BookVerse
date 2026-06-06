@@ -49,6 +49,12 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       bio: true,
       role: true,
       membershipTier: true,
+      phoneNumber: true,
+      email: true,
+      dateOfBirth: true,
+      address: true,
+      nationality: true,
+      subGenres: true,
       createdAt: true,
       _count: {
         select: {

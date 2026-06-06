@@ -5,7 +5,7 @@ import Link from "next/link";
 import { formatDate } from "@/lib/utils";
 import { FollowButton } from "./FollowButton";
 import { NewsletterSubscribeButton } from "./NewsletterSubscribeButton";
-import { BookOpen, Award, BarChart3, Settings } from "lucide-react";
+import { BookOpen, Award, BarChart3, Settings, Mail, Phone, Calendar, Tag, MapPin, Globe } from "lucide-react";
 
 interface ProfileHeaderProps {
   user: {
@@ -16,6 +16,12 @@ interface ProfileHeaderProps {
     bio: string | null;
     role: string;
     membershipTier?: string | null;
+    phoneNumber?: string | null;
+    email?: string | null;
+    dateOfBirth?: Date | string | null;
+    address?: string | null;
+    nationality?: string | null;
+    subGenres?: string[];
     createdAt: Date | string;
     _count: {
       followers: number;
@@ -72,6 +78,51 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed italic">
                   &quot;{user.bio}&quot;
                 </p>
+              )}
+
+              {/* Additional Author Details */}
+              <div className="flex flex-wrap items-center gap-4 mt-4 text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                {user.email && (
+                  <div className="flex items-center gap-1.5">
+                    <Mail className="w-3 h-3" />
+                    <span>{user.email}</span>
+                  </div>
+                )}
+                {user.phoneNumber && (
+                  <div className="flex items-center gap-1.5">
+                    <Phone className="w-3 h-3" />
+                    <span>{user.phoneNumber}</span>
+                  </div>
+                )}
+                {user.dateOfBirth && (
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-3 h-3 text-zinc-400" />
+                    <span>{formatDate(user.dateOfBirth)}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-1.5">
+                  <Globe className="w-3 h-3 text-zinc-400" />
+                  <span className={user.nationality ? "" : "text-zinc-500 italic"}>
+                    {user.nationality || "Nationality not specified"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="w-3 h-3 text-zinc-400" />
+                  <span className={user.address ? "" : "text-zinc-500 italic"}>
+                    {user.address || "Location not specified"}
+                  </span>
+                </div>
+              </div>
+              
+              {user.subGenres && user.subGenres.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {user.subGenres.map(genre => (
+                    <span key={genre} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                      <Tag className="w-3 h-3" />
+                      {genre}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
 

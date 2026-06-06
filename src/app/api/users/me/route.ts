@@ -25,6 +25,9 @@ export async function GET() {
         mood: true,
         subGenres: true,
         tags: true,
+        phoneNumber: true,
+        address: true,
+        nationality: true,
         adminInstruction: true,
         instructionSeen: true,
         readingFont: true,
@@ -99,6 +102,8 @@ export async function PATCH(request: Request) {
     if (parsed.bkashNumber !== undefined) updateData.bkashNumber = parsed.bkashNumber;
     if (parsed.nagadNumber !== undefined) updateData.nagadNumber = parsed.nagadNumber;
     if (parsed.phoneNumber !== undefined) updateData.phoneNumber = parsed.phoneNumber;
+    if (parsed.address !== undefined) updateData.address = parsed.address;
+    if (parsed.nationality !== undefined) updateData.nationality = parsed.nationality;
 
     const user = await prisma.user.update({
       where: { id: dbUser.id },
@@ -117,6 +122,9 @@ export async function PATCH(request: Request) {
         mood: true,
         subGenres: true,
         tags: true,
+        phoneNumber: true,
+        address: true,
+        nationality: true,
         adminInstruction: true,
         instructionSeen: true,
         readingFont: true,

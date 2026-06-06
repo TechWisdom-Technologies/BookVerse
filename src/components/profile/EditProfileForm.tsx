@@ -20,6 +20,8 @@ interface User {
   subGenres?: string[];
   tags?: string[];
   phoneNumber?: string | null;
+  address?: string | null;
+  nationality?: string | null;
   _count?: {
     followers: number;
     following: number;
@@ -45,6 +47,8 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
   const [subGenres, setSubGenres] = useState(user.subGenres ? user.subGenres.join(", ") : "");
   const [tags, setTags] = useState(user.tags ? user.tags.join(", ") : "");
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
+  const [address, setAddress] = useState(user.address || "");
+  const [nationality, setNationality] = useState(user.nationality || "");
   const [usernameError, setUsernameError] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -132,6 +136,8 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           subGenres: subGenresArray,
           tags: tagsArray,
           phoneNumber: phoneNumber || null,
+          address: address || null,
+          nationality: nationality || null,
         }),
       });
 
@@ -373,6 +379,42 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             onChange={(e) => setPhoneNumber(e.target.value)}
             className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-mono font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
             placeholder="e.g. +88017XXXXXXXX"
+          />
+        </div>
+
+        {/* Nationality */}
+        <div className="space-y-3">
+          <label
+            htmlFor="nationality"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
+          >
+            Nationality
+          </label>
+          <input
+            type="text"
+            id="nationality"
+            value={nationality}
+            onChange={(e) => setNationality(e.target.value)}
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+            placeholder="e.g. Bangladeshi"
+          />
+        </div>
+
+        {/* Address */}
+        <div className="space-y-3 md:col-span-2">
+          <label
+            htmlFor="address"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
+          >
+            Location / Address
+          </label>
+          <input
+            type="text"
+            id="address"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+            placeholder="e.g. Dhaka, Bangladesh"
           />
         </div>
 

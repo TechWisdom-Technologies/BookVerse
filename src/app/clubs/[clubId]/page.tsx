@@ -17,7 +17,9 @@ import {
   ShieldCheck,
   Plus,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Trash2,
+  Pencil
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
@@ -50,6 +52,7 @@ interface Club {
     id: string;
     title: string;
     content: string;
+    isEdited: boolean;
     createdAt: string;
     author: {
       id: string;
@@ -77,6 +80,9 @@ export default function ClubDetailPage() {
   const [expandedMessages, setExpandedMessages] = useState<Set<string>>(new Set());
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(5);
+  const [editingDiscussionId, setEditingDiscussionId] = useState<string | null>(null);
+  const [editDiscussionTitle, setEditDiscussionTitle] = useState('');
+  const [editDiscussionContent, setEditDiscussionContent] = useState('');
 
   useEffect(() => {
     const fetchClub = async () => {
@@ -93,6 +99,9 @@ export default function ClubDetailPage() {
           if (dbUser) {
             const isMemberCheck = clubData.members.some((m: any) => m.userId === dbUser.id);
             setIsMember(isMemberCheck);
+            if (isMemberCheck) {
+              fetch(`/api/clubs/${clubId}/read`, { method: 'POST' }).catch(console.error);
+            }
           }
         }
       } catch (error) {
@@ -163,7 +172,13 @@ export default function ClubDetailPage() {
         setNewDiscussionContent('');
         setShowNewDiscussion(false);
         setReplyingTo(null);
-        window.location.reload();
+        
+        // Fetch discussions again instead of full page reload
+        const discussionsRes = await fetch(`/api/clubs/${clubId}/discussions`);
+        if (discussionsRes.ok) {
+          const discussionsData = await discussionsRes.json();
+          setClub(prev => prev ? { ...prev, discussions: discussionsData } : null);
+        }
       } else {
         const data = await res.json();
         toast.error(data.error || 'Failed to post message');
@@ -172,6 +187,56 @@ export default function ClubDetailPage() {
       toast.error('Network error. Please try again.');
     } finally {
       setIsPosting(false);
+    }
+  };
+
+  const handleEditDiscussion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editDiscussionTitle.trim() || !editDiscussionContent.trim() || !editingDiscussionId) return;
+    try {
+      setIsPosting(true);
+      const res = await fetch(`/api/clubs/${clubId}/discussions/${editingDiscussionId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          title: editDiscussionTitle, 
+          content: editDiscussionContent
+        }),
+      });
+      if (res.ok) {
+        toast.success('Message updated!');
+        setEditingDiscussionId(null);
+        const discussionsRes = await fetch(`/api/clubs/${clubId}/discussions`);
+        if (discussionsRes.ok) {
+          const discussionsData = await discussionsRes.json();
+          setClub(prev => prev ? { ...prev, discussions: discussionsData } : null);
+        }
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to update message');
+      }
+    } catch (error) {
+      toast.error('Network error. Please try again.');
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
+  const handleDeleteDiscussion = async (discussionId: string) => {
+    if (!confirm('Delete this message?')) return;
+    try {
+      const res = await fetch(`/api/clubs/${clubId}/discussions/${discussionId}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success('Message deleted');
+        setClub(prev => prev ? { 
+          ...prev, 
+          discussions: prev.discussions.filter(d => d.id !== discussionId) 
+        } : null);
+      } else {
+        toast.error('Failed to delete message');
+      }
+    } catch (error) {
+      toast.error('Network error');
     }
   };
 
@@ -307,47 +372,99 @@ export default function ClubDetailPage() {
 
                   return (
                     <article key={discussion.id} className="p-8 border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 group hover:border-zinc-300 dark:hover:border-zinc-700 transition-all">
-                      {/* Author Info */}
-                      <div className="flex items-center gap-4 mb-6">
-                        <div className="w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[10px] font-bold border border-zinc-100 dark:border-zinc-800 overflow-hidden">
-                          {discussion.author.avatarUrl ? (
-                            <img src={discussion.author.avatarUrl} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            discussion.author.username[0].toUpperCase()
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <span className="text-[11px] font-bold text-zinc-900 dark:text-white block mb-0.5 uppercase">
-                            {discussion.author.displayName || discussion.author.username}
-                          </span>
-                          <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest">
-                            {new Date(discussion.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-                            {' · '}
-                            {new Date(discussion.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                      </div>
+                      {editingDiscussionId === discussion.id ? (
+                        <form onSubmit={handleEditDiscussion} className="space-y-4">
+                          <input
+                            type="text"
+                            value={editDiscussionTitle}
+                            onChange={e => setEditDiscussionTitle(e.target.value)}
+                            className="w-full bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 px-4 py-2.5 text-xs font-bold outline-none rounded focus:border-zinc-900 dark:focus:border-white"
+                            required
+                          />
+                          <textarea
+                            value={editDiscussionContent}
+                            onChange={e => setEditDiscussionContent(e.target.value)}
+                            rows={4}
+                            className="w-full bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 px-4 py-2.5 text-xs outline-none resize-none rounded focus:border-zinc-900 dark:focus:border-white leading-relaxed"
+                            required
+                          />
+                          <div className="flex gap-2">
+                            <button type="submit" disabled={isPosting} className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all">
+                              {isPosting ? 'Saving...' : 'Save'}
+                            </button>
+                            <button type="button" onClick={() => setEditingDiscussionId(null)} className="px-4 py-2 text-zinc-400 text-[10px] font-bold uppercase tracking-widest">
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <>
+                          {/* Author Info */}
+                          <div className="flex justify-between items-start mb-6">
+                            <div className="flex items-center gap-4">
+                              <div className="w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[10px] font-bold border border-zinc-100 dark:border-zinc-800 overflow-hidden">
+                                {discussion.author.avatarUrl ? (
+                                  <img src={discussion.author.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                ) : (
+                                  discussion.author.username[0].toUpperCase()
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <span className="text-[11px] font-bold text-zinc-900 dark:text-white block mb-0.5 uppercase">
+                                  {discussion.author.displayName || discussion.author.username}
+                                </span>
+                                <span className="text-[9px] font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
+                                  <span>
+                                    {new Date(discussion.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
+                                    {' · '}
+                                    {new Date(discussion.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                                  </span>
+                                  {discussion.isEdited && <span className="text-zinc-400 italic">(edited)</span>}
+                                </span>
+                              </div>
+                            </div>
+                            
+                            {(dbUser?.id === discussion.author.id || isOwner) && (
+                              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {dbUser?.id === discussion.author.id && (
+                                  <button onClick={() => {
+                                    setEditingDiscussionId(discussion.id);
+                                    setEditDiscussionTitle(discussion.title);
+                                    setEditDiscussionContent(discussion.content);
+                                  }} className="p-1.5 text-zinc-400 hover:text-indigo-500 rounded transition-colors" title="Edit message">
+                                    <Pencil className="w-3.5 h-3.5" />
+                                  </button>
+                                )}
+                                <button onClick={() => handleDeleteDiscussion(discussion.id)} className="p-1.5 text-zinc-400 hover:text-rose-500 rounded transition-colors" title="Delete message">
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
 
-                      {/* Title */}
-                      <h3 className="text-sm font-bold mb-4 uppercase tracking-tight">
-                        {discussion.title}
-                      </h3>
+                          {/* Title */}
+                          <h3 className="text-sm font-bold mb-4 uppercase tracking-tight">
+                            {discussion.title}
+                          </h3>
 
-                      {/* Full Message Content */}
-                      <div className="mb-6">
-                        <p className={`text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-wrap ${!isExpanded && isLong ? 'line-clamp-6' : ''}`}>
-                          {discussion.content}
-                        </p>
-                        {isLong && (
-                          <button
-                            onClick={() => toggleExpand(discussion.id)}
-                            className="flex items-center gap-1.5 mt-3 text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
-                          >
-                            {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-                            {isExpanded ? 'Show Less' : 'Read Full Message'}
-                          </button>
-                        )}
-                      </div>
+                          {/* Full Message Content */}
+                          <div className="mb-6">
+                            <p className={`text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed whitespace-pre-wrap ${!isExpanded && isLong ? 'line-clamp-6' : ''}`}>
+                              {discussion.content}
+                            </p>
+                            {isLong && (
+                              <button
+                                onClick={() => toggleExpand(discussion.id)}
+                                className="flex items-center gap-1.5 mt-3 text-[9px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+                              >
+                                {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                                {isExpanded ? 'Show Less' : 'Read Full Message'}
+                              </button>
+                            )}
+                          </div>
+                        </>
+                      )}
+
 
                     </article>
                   );
