@@ -42,3 +42,8 @@ next-env.d.ts
 
 # prisma generated client
 /src/generated/client
+
+# Documentation
+/document
+/documents
+/docs
