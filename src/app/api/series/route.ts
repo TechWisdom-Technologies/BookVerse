@@ -73,6 +73,10 @@ export async function POST(req: Request) {
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    const { hasFeatureAccess } = await import('@/lib/entitlements');
+    if (!(await hasFeatureAccess(user, 'AUTHOR'))) {
+      return NextResponse.json({ error: 'Author plan required' }, { status: 402 });
+    }
 
     const body = await req.json();
     const { name, description, coverUrl } = body;

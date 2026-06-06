@@ -4,6 +4,7 @@ import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
 import { Prisma } from "@prisma/client";
 import { publishScheduledChapters } from "@/lib/publish-chapters";
+import { hasFeatureAccess } from "@/lib/entitlements";
 
 export async function GET(request: Request) {
   try {
@@ -87,8 +88,8 @@ export async function POST(request: Request) {
   try {
     const { dbUser } = await verifyToken();
 
-    if (dbUser.role !== "AUTHOR" && dbUser.role !== "ADMIN") {
-      return NextResponse.json({ error: "Only authors can create stories." }, { status: 403 });
+    if (!(await hasFeatureAccess(dbUser, "AUTHOR"))) {
+      return NextResponse.json({ error: "Author plan required to create stories." }, { status: 403 });
     }
 
     const body = await request.json();
