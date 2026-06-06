@@ -31,6 +31,7 @@ interface ProfileHeaderProps {
     isFollowing: boolean;
     isSubscribed?: boolean;
     isOwnProfile: boolean;
+    isFoundingUser?: boolean;
   };
 }
 
@@ -108,9 +109,17 @@ export function ProfileHeader({ user }: ProfileHeaderProps) {
         <div className="flex-1 w-full pb-2">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
             <div className="text-center md:text-left">
-              <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white mb-1 uppercase">
-                {displayName}
-              </h1>
+              <div className="flex flex-col md:flex-row md:items-center gap-3 mb-1 justify-center md:justify-start">
+                <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-white uppercase">
+                  {displayName}
+                </h1>
+                {user.isFoundingUser && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-[0.2em] rounded shadow-sm whitespace-nowrap">
+                    <Award className="w-3 h-3" />
+                    Founding User
+                  </span>
+                )}
+              </div>
               <p className="text-xs font-bold text-zinc-400 dark:text-zinc-500 mb-6 tracking-widest">@{user.username}</p>
               {user.bio && (
                 <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed italic">

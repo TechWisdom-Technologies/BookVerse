@@ -5,6 +5,7 @@ import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
 import { prisma } from "@/lib/prisma";
 import { adminAuth } from "@/lib/firebase-admin";
+import { isFoundingUser } from "@/lib/entitlements";
 
 interface ProfilePageProps {
   params: Promise<{ username: string }>;
@@ -128,12 +129,15 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       })
     : null;
 
+  const isFounding = await isFoundingUser({ id: user.id, createdAt: user.createdAt });
+
   const fullUserData = {
     ...user,
     socialLinks: user.socialLinks as { platform: string; url: string }[] | null,
     isFollowing: !!isFollowing,
     isSubscribed: !!isSubscribed,
     isOwnProfile: currentUserId === user.id,
+    isFoundingUser: isFounding,
   };
 
   return (
