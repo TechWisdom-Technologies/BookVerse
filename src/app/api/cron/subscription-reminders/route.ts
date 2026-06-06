@@ -47,7 +47,24 @@ export async function GET(req: Request) {
       }
     });
 
-    let notificationsSent = 0;
+    // Bulk fetch recent SYSTEM notifications to prevent spam
+    const recentNotifications = await prisma.notification.findMany({
+      where: {
+        type: 'SYSTEM',
+        createdAt: { gte: twentyFourHoursAgo },
+        userId: { in: expiringUsers.map(u => u.id) }
+      },
+      select: { userId: true, message: true }
+    });
+
+    const recentNotifsMap = new Map<string, string[]>();
+    for (const notif of recentNotifications) {
+      const messages = recentNotifsMap.get(notif.userId) || [];
+      messages.push(notif.message);
+      recentNotifsMap.set(notif.userId, messages);
+    }
+
+    const notificationsToCreate = [];
 
     for (const user of expiringUsers) {
       if (!user.membershipExpiry) continue;
@@ -61,28 +78,27 @@ export async function GET(req: Request) {
 
       if (daysLeft === 0) continue; // Not in an exact milestone window
 
-      // Check if we already sent a notification for this milestone in the last 24 hours to prevent spam
-      const recentNotification = await prisma.notification.findFirst({
-        where: {
+      const userMessages = recentNotifsMap.get(user.id) || [];
+      const hasRecentMilestone = userMessages.some(msg => msg.includes(`${daysLeft} day`));
+
+      if (!hasRecentMilestone) {
+        notificationsToCreate.push({
           userId: user.id,
           type: 'SYSTEM',
-          message: { contains: `${daysLeft} day` },
-          createdAt: { gte: twentyFourHoursAgo }
-        }
-      });
-
-      if (!recentNotification) {
-        await prisma.notification.create({
-          data: {
-            userId: user.id,
-            type: 'SYSTEM',
-            title: 'Premium Expiring Soon ⚠️',
-            message: `Your Premium membership is expiring in exactly ${daysLeft} day${daysLeft > 1 ? 's' : ''}! Please stack your duration or top-up your wallet to avoid losing your benefits.`,
-            link: '/wallet'
-          }
+          title: 'Premium Expiring Soon ⚠️',
+          message: `Your Premium membership is expiring in exactly ${daysLeft} day${daysLeft > 1 ? 's' : ''}! Please stack your duration or top-up your wallet to avoid losing your benefits.`,
+          link: '/wallet'
         });
-        notificationsSent++;
       }
+    }
+
+    let notificationsSent = 0;
+    if (notificationsToCreate.length > 0) {
+      const result = await prisma.notification.createMany({
+        data: notificationsToCreate,
+        skipDuplicates: true
+      });
+      notificationsSent = result.count;
     }
 
     // 3. Process Automatic Downgrades for Expired Users
@@ -94,17 +110,25 @@ export async function GET(req: Request) {
       select: { id: true, role: true }
     });
 
+    const adminExpired = expiredUsers.filter(u => u.role === 'ADMIN').map(u => u.id);
+    const nonAdminExpired = expiredUsers.filter(u => u.role !== 'ADMIN').map(u => u.id);
+
     let downgradesProcessed = 0;
-    for (const user of expiredUsers) {
-      const newRole = user.role === 'ADMIN' ? 'ADMIN' : 'MEMBER';
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          membershipTier: null,
-          role: newRole,
-        }
+    
+    if (adminExpired.length > 0) {
+      const result = await prisma.user.updateMany({
+        where: { id: { in: adminExpired } },
+        data: { membershipTier: null }
       });
-      downgradesProcessed++;
+      downgradesProcessed += result.count;
+    }
+
+    if (nonAdminExpired.length > 0) {
+      const result = await prisma.user.updateMany({
+        where: { id: { in: nonAdminExpired } },
+        data: { membershipTier: null, role: 'MEMBER' }
+      });
+      downgradesProcessed += result.count;
     }
 
     return NextResponse.json({

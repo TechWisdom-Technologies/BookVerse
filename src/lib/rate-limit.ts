@@ -59,26 +59,20 @@ type RateLimitStore = {
 
 const store = new Map<string, RateLimitStore>();
 
-// Background interval to garbage collect expired keys and prevent memory leaks
-if (typeof global !== "undefined") {
-  const g = global as typeof globalThis & { __rateLimitCleanupInterval?: NodeJS.Timeout };
-  if (!g.__rateLimitCleanupInterval) {
-    g.__rateLimitCleanupInterval = setInterval(() => {
-      const now = Date.now();
-      for (const [key, value] of store.entries()) {
-        if (now > value.resetTime) {
-          store.delete(key);
-        }
-      }
-    }, 60000);
-  }
-}
+// We use lazy pruning within the check itself to prevent serverless memory leaks.
+// If the store grows too large (e.g., > 10,000 entries), we prune expired ones.
 
 function rateLimitInMemory(ip: string, limit: number, windowMs: number): { success: boolean; limit: number; remaining: number } {
   const now = Date.now();
   const record = store.get(ip);
 
   if (!record) {
+    // Lazy pruning to prevent massive memory footprint in local dev
+    if (store.size > 5000) {
+      for (const [key, value] of store.entries()) {
+        if (now > value.resetTime) store.delete(key);
+      }
+    }
     store.set(ip, { count: 1, resetTime: now + windowMs });
     return { success: true, limit, remaining: limit - 1 };
   }

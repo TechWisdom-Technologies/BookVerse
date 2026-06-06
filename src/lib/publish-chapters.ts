@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { createNotification } from "@/lib/notifications";
+import { createNotificationsBatch } from "@/lib/notifications";
 
 export async function publishScheduledChapters() {
   try {
@@ -30,6 +30,12 @@ export async function publishScheduledChapters() {
         data: {
           status: "PUBLISHED",
         },
+      });
+
+      // 3. Delete the scheduled chapter entry IMMEDIATELY
+      // This prevents the infinite loop crash if notifications fail or timeout
+      await prisma.scheduledChapter.delete({
+        where: { id: item.id },
       });
 
       if (updatedChapters.count > 0) {
@@ -63,9 +69,11 @@ export async function publishScheduledChapters() {
             where: { followingId: story.authorId },
           });
 
-          for (const follower of followers) {
-            await createNotification({
-              userId: follower.followerId,
+          if (followers.length > 0) {
+            const followerIds = followers.map((f) => f.followerId);
+            
+            await createNotificationsBatch({
+              userIds: followerIds,
               type: "STORY_POST",
               title: "New Chapter Released!",
               message: `${authorName} just released "${chapter?.title || `Chapter ${item.chapterNumber}`}" of "${story.title}"`,
@@ -80,11 +88,6 @@ export async function publishScheduledChapters() {
           published: true,
         });
       }
-
-      // 3. Delete the scheduled chapter entry
-      await prisma.scheduledChapter.delete({
-        where: { id: item.id },
-      });
     }
 
     return results;

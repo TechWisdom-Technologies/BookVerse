@@ -65,8 +65,9 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
     }
 
-    // Generate unique gift code
-    const giftCode = `GIFT-${Date.now()}-${Math.random().toString(36).substring(7).toUpperCase()}`;
+    // Generate unique gift code securely
+    const secureRandom = crypto.randomUUID().split('-')[0].toUpperCase();
+    const giftCode = `GIFT-${Date.now()}-${secureRandom}`;
 
     const tierPricing: Record<string, number> = {
       PRO: 499,

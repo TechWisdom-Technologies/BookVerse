@@ -3,7 +3,7 @@ import { cookies, headers } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { generateUsername } from "@/lib/utils";
-import { sendWelcomeEmail } from "@/lib/resend";
+import { sendWelcomeEmail, sendLoginAlertEmail } from "@/lib/resend";
 import { signRole } from "@/lib/cookie-crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { Role } from "@prisma/client";
@@ -25,8 +25,33 @@ export async function POST() {
   const limitRes = await checkRateLimit(60, 60000);
   if (limitRes.limited) return limitRes.response;
 
+  const h = await headers();
   const token = await readToken();
   if (!token) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const ipAddress = h.get("x-forwarded-for")?.split(",")[0] || "Unknown IP";
+  const userAgent = h.get("user-agent") || "Unknown Browser";
+  const deviceId = h.get("x-device-id");
+
+  const getBrowser = (ua: string) => {
+    if (ua.includes("Firefox")) return "Firefox";
+    if (ua.includes("Edg")) return "Edge";
+    if (ua.includes("Chrome")) return "Chrome";
+    if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+    return "Unknown Browser";
+  };
+
+  const getOS = (ua: string) => {
+    if (ua.includes("Win")) return "Windows";
+    if (ua.includes("Mac")) return "macOS";
+    if (ua.includes("Linux")) return "Linux";
+    if (ua.includes("Android")) return "Android";
+    if (ua.includes("like Mac")) return "iOS";
+    return "Unknown OS";
+  };
+
+  const browser = getBrowser(userAgent);
+  const os = getOS(userAgent);
 
   try {
     const decoded = await adminAuth.verifyIdToken(token);
@@ -98,6 +123,7 @@ export async function POST() {
         readingProgressSync: true,
         bkashNumber: true,
         nagadNumber: true,
+        loginAlertsEnabled: true,
         _count: {
           select: {
             followers: true,
@@ -114,8 +140,60 @@ export async function POST() {
 
     const needsOnboarding = !user.onboardingQuiz || !user.onboardingQuiz.completed;
 
+    if (user.loginAlertsEnabled) {
+      // Check if this IP and Browser combo was seen before for this user
+      const previousLogins = await prisma.loginHistory.findFirst({
+        where: {
+          userId: user.id,
+          ipAddress,
+          browser,
+          os
+        }
+      });
+      if (!previousLogins) {
+        // Send alert asynchronously so we don't block the request
+        void sendLoginAlertEmail(user.email, { ipAddress, browser, os });
+      }
+    }
+
+    // Track Login History
+    await prisma.loginHistory.create({
+      data: {
+        userId: user.id,
+        ipAddress,
+        userAgent,
+        browser,
+        os,
+        status: "SUCCESS"
+      }
+    });
+
+    // Track Device Session
+    if (deviceId) {
+      await prisma.deviceSession.upsert({
+        where: { deviceIdentifier: deviceId },
+        create: {
+          userId: user.id,
+          deviceIdentifier: deviceId,
+          ipAddress,
+          userAgent,
+          browser,
+          os,
+          lastActive: new Date()
+        },
+        update: {
+          ipAddress,
+          userAgent,
+          browser,
+          os,
+          lastActive: new Date(),
+          userId: user.id // In case they logged in as a different user on the same device
+        }
+      });
+    }
+
     const res = NextResponse.json({ user, needsOnboarding });
-    
+
     const isProd = process.env.NODE_ENV === "production";
     res.cookies.set("firebase-token", token, {
       httpOnly: true,
@@ -124,7 +202,7 @@ export async function POST() {
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
-    
+
     res.cookies.set("user-role", user.role, {
       httpOnly: true,
       secure: isProd,
@@ -132,7 +210,7 @@ export async function POST() {
       path: "/",
       maxAge: 60 * 60 * 24 * 7,
     });
-    
+
     const roleSig = await signRole(user.role);
     res.cookies.set("user-role-sig", roleSig, {
       httpOnly: true,

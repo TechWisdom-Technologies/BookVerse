@@ -111,6 +111,7 @@ model User {
   isDeactivated            Boolean                  @default(false) @map("is_deactivated")
   deactivatedUntil         DateTime?                @map("deactivated_until")
   phoneNumber              String?                  @map("phone_number")
+  loginAlertsEnabled       Boolean                  @default(true) @map("login_alerts_enabled")
 
   // Relationships to new models
   annotations              BookAnnotation[]
@@ -129,8 +130,45 @@ model User {
   blockedUsers             UserBlock[]               @relation("blocker")
   blockedBy                UserBlock[]               @relation("blocked")
   payouts                  AuthorPayout[]
+  loginHistory             LoginHistory[]
+  deviceSessions           DeviceSession[]
 
   @@map("users")
+}
+
+model LoginHistory {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  browser   String?
+  os        String?
+  country   String?
+  city      String?
+  status    String   // "SUCCESS", "FAILED"
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("login_history")
+}
+
+model DeviceSession {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+  deviceIdentifier String   @unique @map("device_identifier") // Client UUID
+  ipAddress        String?  @map("ip_address")
+  userAgent        String?  @map("user_agent")
+  browser          String?
+  os               String?
+  lastActive       DateTime @default(now()) @map("last_active")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("device_sessions")
 }
 
 model Notification {

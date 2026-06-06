@@ -4,7 +4,7 @@ import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
 
 import { Role, type ReactionType } from "@prisma/client";
-import { createNotification } from "@/lib/notifications";
+import { createNotification, createNotificationsBatch } from "@/lib/notifications";
 import { publishScheduledChapters } from "@/lib/publish-chapters";
 
 interface RouteParams {
@@ -253,19 +253,21 @@ export async function PATCH(request: Request, { params }: RouteParams) {
 
     if (parsed.published === true && !existing.published) {
       // Notify followers
-      void prisma.follow.findMany({
+      // Notify followers securely without floating promises
+      const followers = await prisma.follow.findMany({
         where: { followingId: story.authorId },
-      }).then(async (followers) => {
-        for (const follower of followers) {
-          await createNotification({
-            userId: follower.followerId,
-            type: "STORY_POST",
-            title: "New Story Published!",
-            message: `${story.author.displayName || story.author.username} just published "${story.title}"`,
-            link: `/stories/${story.id}`,
-          });
-        }
+        select: { followerId: true }
       });
+      
+      if (followers.length > 0) {
+        await createNotificationsBatch({
+          userIds: followers.map(f => f.followerId),
+          type: "STORY_POST",
+          title: "New Story Published!",
+          message: `${story.author.displayName || story.author.username} just published "${story.title}"`,
+          link: `/stories/${story.id}`,
+        });
+      }
     }
 
     return NextResponse.json({ story });

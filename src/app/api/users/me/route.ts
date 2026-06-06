@@ -173,7 +173,7 @@ export async function DELETE() {
     });
 
     const response = NextResponse.json({ success: true, message: "Account successfully deleted." });
-    
+
     // Clear cookies/session
     response.cookies.set("firebase-token", "", { maxAge: 0, path: "/" });
     response.cookies.set("user-role", "", { maxAge: 0, path: "/" });

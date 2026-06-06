@@ -157,12 +157,12 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-10">
+    <form onSubmit={handleSubmit} className="space-y-8">
       {/* Avatar Upload */}
-      <div className="flex flex-col sm:flex-row items-center gap-8">
+      <div className="flex flex-col sm:flex-row items-center gap-8 p-8 border border-zinc-100 dark:border-zinc-900 rounded-2xl bg-zinc-50/20 dark:bg-zinc-900/10">
         <div
           onClick={handleAvatarClick}
-          className="group relative h-32 w-32 sm:h-40 sm:w-40 cursor-pointer overflow-hidden rounded-full shadow-2xl transition-transform hover:scale-[1.02]"
+          className="group relative h-28 w-28 cursor-pointer overflow-hidden rounded-full shadow-sm border-4 border-white dark:border-zinc-900 transition-transform hover:scale-[1.02]"
         >
           {avatarUrl ? (
             <Image
@@ -172,14 +172,14 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
               className="object-cover"
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand to-rose-500 text-5xl font-black text-white">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-950 dark:from-zinc-100 dark:to-zinc-300 text-4xl font-black text-white dark:text-zinc-900">
               {(displayName || username)[0]?.toUpperCase()}
             </div>
           )}
           <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:opacity-100">
-            <div className="transform translate-y-4 transition-transform duration-300 group-hover:translate-y-0 flex flex-col items-center gap-2">
-              <Camera className="h-8 w-8 text-white" />
-              <span className="text-xs font-bold text-white tracking-wider uppercase">Change</span>
+            <div className="transform translate-y-4 transition-transform duration-300 group-hover:translate-y-0 flex flex-col items-center gap-1.5">
+              <Camera className="h-5 w-5 text-white" />
+              <span className="text-[9px] font-bold text-white tracking-widest uppercase">Change</span>
             </div>
           </div>
         </div>
@@ -190,22 +190,20 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
           onChange={handleFileChange}
           className="hidden"
         />
-        <div className="text-center sm:text-left">
-          <h3 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Profile Photo</h3>
-          <p className="text-zinc-500 dark:text-zinc-400 max-w-xs">
-            We recommend an image of at least 400x400. Max size 5MB.
+        <div className="text-center sm:text-left space-y-2">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Profile Photo</h3>
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400 font-medium max-w-xs uppercase">
+            Recommended size: 400x400px.<br/>Maximum size: 5MB.
           </p>
         </div>
       </div>
 
-      <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800" />
-
-      <div className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Display Name */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="displayName"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
             Display Name
           </label>
@@ -215,92 +213,86 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             maxLength={50}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
             placeholder="How you want to be known"
           />
         </div>
 
         {/* Username */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="username"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
             Username
           </label>
-          <div className="flex rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 transition-all focus-within:border-brand focus-within:bg-white focus-within:ring-4 focus-within:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:focus-within:bg-zinc-900">
-            <span className="flex items-center pl-6 pr-2 text-xl font-bold text-zinc-400">
-              @
-            </span>
+          <div className="relative">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-zinc-400">@</span>
             <input
               type="text"
               id="username"
               value={username}
               onChange={handleUsernameChange}
-              className="block w-full rounded-r-2xl bg-transparent px-2 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 focus:outline-none dark:text-white"
+              className="w-full pl-9 pr-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
               placeholder="username"
             />
           </div>
           {usernameError ? (
-            <p className="mt-3 ml-2 text-sm font-medium text-rose-500">{usernameError}</p>
+            <p className="text-[10px] font-bold text-rose-500 tracking-wider uppercase">{usernameError}</p>
           ) : (
-            <p className="mt-3 ml-2 text-sm text-zinc-500 dark:text-zinc-400">
-              Lowercase letters, numbers, and underscores only.
-            </p>
+            <p className="text-[10px] text-zinc-400 uppercase tracking-widest font-medium">Letters, numbers, underscores</p>
           )}
         </div>
+      </div>
 
-        {/* Bio */}
-        <div className="group">
-          <label
-            htmlFor="bio"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
-          >
-            Bio (Short summary)
-          </label>
-          <textarea
-            id="bio"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            rows={2}
-            maxLength={500}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 resize-none"
-            placeholder="Tell us about yourself briefly..."
-          />
-          <p className="mt-3 text-right text-sm font-medium text-zinc-400">
-            {bio.length} / 500
-          </p>
-        </div>
+      {/* Bio */}
+      <div className="space-y-3">
+        <label
+          htmlFor="bio"
+          className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
+        >
+          <span>Short Bio</span>
+          <span className="text-zinc-400">{bio.length} / 500</span>
+        </label>
+        <textarea
+          id="bio"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          rows={2}
+          maxLength={500}
+          className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all resize-none"
+          placeholder="Tell us about yourself briefly..."
+        />
+      </div>
 
-        {/* Extended Description */}
-        <div className="group">
-          <label
-            htmlFor="description"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
-          >
-            Extended Description (About)
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={5}
-            maxLength={1000}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900 resize-none"
-            placeholder="Write a longer description about your background, projects, or genres..."
-          />
-          <p className="mt-3 text-right text-sm font-medium text-zinc-400">
-            {description.length} / 1000
-          </p>
-        </div>
+      {/* Extended Description */}
+      <div className="space-y-3">
+        <label
+          htmlFor="description"
+          className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
+        >
+          <span>Extended Description</span>
+          <span className="text-zinc-400">{description.length} / 1000</span>
+        </label>
+        <textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={5}
+          maxLength={1000}
+          className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all resize-none"
+          placeholder="Write a longer description about your background, projects, or genres..."
+        />
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Mood */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="mood"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
-            Current Mood / Status
+            Current Status / Mood
           </label>
           <input
             type="text"
@@ -308,51 +300,52 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             value={mood}
             onChange={(e) => setMood(e.target.value)}
             maxLength={50}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
-            placeholder="e.g. 📚 Reading intensively, 😊 Writing, ☕ Coffee lover"
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+            placeholder="e.g. 📚 Reading intensively"
           />
         </div>
 
         {/* Subgenres */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="subGenres"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
-            Favorite Subgenres (Separated by commas)
+            Favorite Subgenres
           </label>
           <input
             type="text"
             id="subGenres"
             value={subGenres}
             onChange={(e) => setSubGenres(e.target.value)}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
-            placeholder="e.g. Fantasy, Sci-Fi, Cyberpunk, Mystery"
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+            placeholder="Comma separated"
           />
         </div>
 
         {/* Tags */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="tags"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
-            Profile Tags (Separated by commas)
+            Profile Tags
           </label>
           <input
             type="text"
             id="tags"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
-            placeholder="e.g. worldbuilder, darkfantasy, novelartist"
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+            placeholder="Comma separated"
           />
         </div>
+        
         {/* Date of Birth */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="dateOfBirth"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
             Date of Birth
           </label>
@@ -361,15 +354,15 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             id="dateOfBirth"
             value={dateOfBirth}
             onChange={(e) => setDateOfBirth(e.target.value)}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-mono font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
           />
         </div>
 
         {/* Phone Number */}
-        <div className="group">
+        <div className="space-y-3">
           <label
             htmlFor="phoneNumber"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2 group-focus-within:text-brand transition-colors"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
             Phone Number
           </label>
@@ -378,16 +371,16 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             id="phoneNumber"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-50/50 px-6 py-4 text-lg font-medium text-zinc-900 placeholder-zinc-400 transition-all focus:border-brand focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand/10 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-white dark:focus:bg-zinc-900"
+            className="w-full px-4 py-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-mono font-medium text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
             placeholder="e.g. +88017XXXXXXXX"
           />
         </div>
 
         {/* Email (read-only) */}
-        <div>
+        <div className="space-y-3">
           <label
             htmlFor="email"
-            className="block text-sm font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 mb-3 ml-2"
+            className="block text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400"
           >
             Email Address
           </label>
@@ -396,39 +389,27 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
             id="email"
             value={user.email}
             disabled
-            className="block w-full rounded-2xl border-2 border-zinc-200 bg-zinc-100 px-6 py-4 text-lg font-medium text-zinc-500 cursor-not-allowed dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-500"
+            className="w-full px-4 py-3 bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-500 cursor-not-allowed transition-all"
           />
-          <p className="mt-3 ml-2 text-sm font-medium text-zinc-400">
-            Your email is managed via your authentication provider.
-          </p>
         </div>
       </div>
 
-      <div className="w-full h-px bg-zinc-100 dark:bg-zinc-800 mt-10 mb-8" />
-
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row items-center justify-end gap-4">
+      <div className="pt-6 border-t border-zinc-100 dark:border-zinc-900 flex flex-col sm:flex-row items-center justify-end gap-3 mt-8">
         <Link
           href={`/profile/${user.username}`}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-8 py-4 text-base font-bold text-zinc-500 hover:text-zinc-900 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-zinc-400 dark:hover:text-white transition-all"
+          className="w-full sm:w-auto px-6 py-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white text-[10px] font-bold uppercase tracking-widest rounded border border-zinc-100 dark:border-zinc-800 transition-all text-center"
         >
           Cancel
         </Link>
         <button
           type="submit"
           disabled={isLoading || !!usernameError}
-          className="w-full sm:w-auto group inline-flex items-center justify-center gap-3 rounded-full bg-brand px-10 py-4 text-base font-bold text-white transition-all hover:bg-orange-600 hover:shadow-xl hover:shadow-brand/20 hover:-translate-y-1 disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-none"
+          className="w-full sm:w-auto px-8 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isLoading ? (
-            <>
-              <Loader2 className="h-5 w-5 animate-spin" />
-              Saving...
-            </>
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
           ) : (
-            <>
-              <Check className="h-5 w-5 transition-transform group-hover:scale-110" />
-              Save Changes
-            </>
+            'Save Changes'
           )}
         </button>
       </div>

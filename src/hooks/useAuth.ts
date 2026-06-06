@@ -41,6 +41,22 @@ type SyncedUser = {
   };
 };
 
+function getOrCreateDeviceId() {
+  if (typeof window === "undefined") return "";
+  let deviceId = localStorage.getItem("bookverse_device_id");
+  if (!deviceId) {
+    if (crypto.randomUUID) {
+      deviceId = crypto.randomUUID();
+    } else {
+      const array = new Uint32Array(4);
+      crypto.getRandomValues(array);
+      deviceId = Array.from(array, dec => dec.toString(16).padStart(8, '0')).join('-');
+    }
+    localStorage.setItem("bookverse_device_id", deviceId);
+  }
+  return deviceId;
+}
+
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [dbUser, setDbUser] = useState<SyncedUser | null>(null);
@@ -53,7 +69,7 @@ export function useAuth() {
       if (!u) {
         setDbUser(null);
         setLoading(false);
-        
+
         const protectedPages = [
           "/write",
           "/upload",
@@ -77,12 +93,13 @@ export function useAuth() {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
+            "x-device-id": getOrCreateDeviceId(),
           },
         });
         if (response.ok) {
           const payload = (await response.json()) as { user?: SyncedUser, needsOnboarding?: boolean };
           setDbUser(payload.user ?? null);
-          
+
           // Redirect to onboarding if needed
           if (payload.needsOnboarding && window.location.pathname !== '/onboarding') {
             window.location.href = '/onboarding';

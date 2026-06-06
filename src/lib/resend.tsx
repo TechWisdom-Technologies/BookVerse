@@ -5,6 +5,7 @@ import { CommentNotification } from "@/emails/CommentNotification";
 import { FollowNotification } from "@/emails/FollowNotification";
 import { ResetPasswordEmail } from "@/emails/ResetPasswordEmail";
 import { SupportRequestNotification } from "@/emails/SupportRequestNotification";
+import { LoginAlertEmail } from "@/emails/LoginAlertEmail";
 
 const apiKey = process.env.RESEND_API_KEY;
 const from = process.env.RESEND_FROM_EMAIL || "BookVerse <onboarding@resend.dev>";
@@ -28,6 +29,21 @@ export function sendPasswordResetEmail(to: string, resetLink: string) {
     to,
     "Reset your BookVerse password",
     <ResetPasswordEmail resetLink={resetLink} />
+  );
+}
+
+// Login Alert email - sent when a login occurs from a new IP/Device
+export function sendLoginAlertEmail(to: string, data: { ipAddress: string; browser: string; os: string }) {
+  void sendEmail(
+    to,
+    "Security Alert: New Sign-In to BookVerse",
+    <LoginAlertEmail 
+      email={to} 
+      ipAddress={data.ipAddress} 
+      browser={data.browser} 
+      os={data.os} 
+      time={new Date().toLocaleString()} 
+    />
   );
 }
 

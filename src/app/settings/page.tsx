@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/components/auth/AuthProvider';
-import { 
-  User, 
-  Palette, 
-  Shield, 
-  ArrowLeft, 
-  Check, 
-  Type, 
-  Moon, 
-  Sun, 
+import {
+  User,
+  Palette,
+  Shield,
+  ArrowLeft,
+  Check,
+  Type,
+  Moon,
+  Sun,
   Monitor,
   Loader2,
   ShieldCheck,
@@ -35,6 +35,8 @@ import { useTheme } from 'next-themes';
 import { EditProfileForm } from '@/components/profile/EditProfileForm';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import { EmailAuthProvider, reauthenticateWithCredential, updateEmail } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface WalletTransaction {
   id: string;
@@ -50,7 +52,7 @@ interface WalletTransaction {
 export default function SettingsPage() {
   const { dbUser, loading: authLoading, refreshUser, resetPassword } = useAuth();
   const { theme, setTheme } = useTheme();
-  
+
   const [activeTab, setActiveTab] = useState('profile');
   const [mounted, setMounted] = useState(false);
 
@@ -73,6 +75,17 @@ export default function SettingsPage() {
   const [walletHistory, setWalletHistory] = useState<WalletTransaction[]>([]);
 
   // Security & Deactivation states
+  const [loginAlertsEnabled, setLoginAlertsEnabled] = useState(true);
+  const [activeSessions, setActiveSessions] = useState<any[]>([]);
+  const [loginHistory, setLoginHistory] = useState<any[]>([]);
+  const [loadingSessions, setLoadingSessions] = useState(false);
+  const [revokingSessionId, setRevokingSessionId] = useState<string | null>(null);
+
+  // Email Change States
+  const [changingEmail, setChangingEmail] = useState(false);
+  const [newEmail, setNewEmail] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+
   const [deactivatePeriod, setDeactivatePeriod] = useState('login'); // 'login' | '15' | '30' | '45' | '90' | '175' | 'custom'
   const [customDays, setCustomDays] = useState('');
   const [deactivating, setDeactivating] = useState(false);
@@ -81,7 +94,7 @@ export default function SettingsPage() {
   const [deleteConfirm, setDeleteConfirm] = useState('');
 
   // Block List States
-  const [blockedUsers, setBlockedUsers] = useState<{id: string; userId: string; username: string; displayName: string | null; reason: string; createdAt: string}[]>([]);
+  const [blockedUsers, setBlockedUsers] = useState<{ id: string; userId: string; username: string; displayName: string | null; reason: string; createdAt: string }[]>([]);
   const [newBlockedUser, setNewBlockedUser] = useState('');
   const [blockingUser, setBlockingUser] = useState(false);
   const [blocksLoading, setBlocksLoading] = useState(false);
@@ -197,8 +210,8 @@ export default function SettingsPage() {
     }
   };
 
-  useEffect(() => { 
-    setMounted(true); 
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   // Sync DB user data to component state once loaded
@@ -209,8 +222,112 @@ export default function SettingsPage() {
       setReadingProgressSync(dbUser.readingProgressSync ?? true);
       setBkashNumber(dbUser.bkashNumber || '');
       setNagadNumber(dbUser.nagadNumber || '');
+      // Ensure typescript doesn't complain about missing properties we just added to the DB but not SyncedUser type
+      setLoginAlertsEnabled((dbUser as any).loginAlertsEnabled ?? true);
     }
   }, [dbUser]);
+
+  const fetchSessions = async () => {
+    setLoadingSessions(true);
+    try {
+      const res = await fetch('/api/users/me/sessions');
+      if (res.ok) {
+        const data = await res.json();
+        setActiveSessions(data.activeSessions || []);
+        setLoginHistory(data.loginHistory || []);
+      }
+    } catch (err) {
+      console.error('Failed to fetch sessions:', err);
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
+
+  const handleRevokeSession = async (deviceId: string) => {
+    if (!confirm('This will revoke ALL your active sessions including this one for security purposes. Continue?')) {
+      return;
+    }
+    setRevokingSessionId(deviceId);
+    try {
+      const res = await fetch('/api/users/me/sessions', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviceId })
+      });
+      if (res.ok) {
+        toast.success('Session revoked. You will be logged out securely.');
+        setTimeout(() => { window.location.href = '/login'; }, 1500);
+      } else {
+        toast.error('Failed to revoke session');
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Network error revoking session');
+    } finally {
+      setRevokingSessionId(null);
+    }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newEmail || !currentPassword) return;
+    if (!auth.currentUser || !dbUser?.email) return;
+
+    setChangingEmail(true);
+    try {
+      // 1. Re-authenticate
+      const credential = EmailAuthProvider.credential(dbUser.email, currentPassword);
+      await reauthenticateWithCredential(auth.currentUser, credential);
+
+      // 2. Update email in Firebase
+      await updateEmail(auth.currentUser, newEmail);
+
+      // 3. Sync to PostgreSQL
+      const res = await fetch('/api/users/me/email', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newEmail })
+      });
+
+      if (res.ok) {
+        toast.success('Email updated successfully!');
+        setNewEmail('');
+        setCurrentPassword('');
+        refreshUser();
+      } else {
+        const data = await res.json();
+        toast.error(data.error || 'Failed to sync email to database');
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/wrong-password') {
+        toast.error('Incorrect current password');
+      } else if (err.code === 'auth/email-already-in-use') {
+        toast.error('This email is already in use by another account');
+      } else {
+        toast.error('Failed to update email. Please try again.');
+      }
+    } finally {
+      setChangingEmail(false);
+    }
+  };
+
+  const toggleLoginAlerts = async () => {
+    const newValue = !loginAlertsEnabled;
+    setLoginAlertsEnabled(newValue);
+    try {
+      await fetch('/api/users/me/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ loginAlertsEnabled: newValue })
+      });
+      toast.success(newValue ? 'Login alerts enabled' : 'Login alerts disabled');
+    } catch (err) {
+      console.error(err);
+      setLoginAlertsEnabled(!newValue); // revert
+      toast.error('Failed to update preferences');
+    }
+  };
 
   // Load wallet transaction history when billing tab is selected
   const fetchWalletDetails = async () => {
@@ -238,6 +355,9 @@ export default function SettingsPage() {
     if (activeTab === 'privacy') {
       fetchBlockList();
     }
+    if (activeTab === 'security') {
+      fetchSessions();
+    }
   }, [activeTab]);
 
   if (!mounted) return null;
@@ -248,6 +368,11 @@ export default function SettingsPage() {
         <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
       </div>
     );
+  }
+
+  if (!dbUser) {
+    window.location.href = "/login";
+    return null;
   }
 
   const tabs = [
@@ -316,7 +441,7 @@ export default function SettingsPage() {
 
   const handleDeactivateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     let days: number | null = null;
     if (deactivatePeriod !== 'login') {
       const parsedDays = deactivatePeriod === 'custom' ? Number(customDays) : Number(deactivatePeriod);
@@ -327,11 +452,10 @@ export default function SettingsPage() {
       days = parsedDays;
     }
 
-    if (!confirm(`Are you sure you want to deactivate your account? ${
-      days 
-        ? `Your profile will be hidden for ${days} days, or until you log in again.` 
+    if (!confirm(`Are you sure you want to deactivate your account? ${days
+        ? `Your profile will be hidden for ${days} days, or until you log in again.`
         : 'Your profile will be hidden until you log back in.'
-    }`)) {
+      }`)) {
       return;
     }
 
@@ -403,7 +527,7 @@ export default function SettingsPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        
+
         {/* Simple Header */}
         <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
@@ -422,7 +546,7 @@ export default function SettingsPage() {
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-20">
-          
+
           {/* Sidebar Navigation */}
           <aside>
             <nav className="flex flex-col gap-2">
@@ -430,11 +554,10 @@ export default function SettingsPage() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center justify-between px-5 py-4 rounded transition-all group ${
-                    activeTab === tab.id 
-                      ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md' 
+                  className={`w-full flex items-center justify-between px-5 py-4 rounded transition-all group ${activeTab === tab.id
+                      ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md'
                       : 'text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <tab.icon className={`w-4 h-4 ${activeTab === tab.id ? 'text-inherit' : 'text-zinc-200 group-hover:text-inherit'}`} />
@@ -448,15 +571,15 @@ export default function SettingsPage() {
 
           {/* Content Area */}
           <section className="max-w-3xl">
-            
+
             {/* PROFILE TAB */}
             {activeTab === 'profile' && (
-              <div className="space-y-12 animate-in fade-in duration-500">
-                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Profile Settings</h2>
-                  <p className="text-[11px] text-zinc-500 font-medium italic">Update your name, bio, and public information.</p>
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-150 dark:border-zinc-900">
+                  <h2 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Profile Settings</h2>
+                  <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Update your name, bio, and public identity.</p>
                 </div>
-                <div className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded p-10 shadow-sm">
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-2xl bg-white dark:bg-zinc-950 shadow-sm">
                   <EditProfileForm user={dbUser as unknown as Parameters<typeof EditProfileForm>[0]["user"]} />
                 </div>
               </div>
@@ -464,10 +587,10 @@ export default function SettingsPage() {
 
             {/* READING PREFERENCES TAB */}
             {activeTab === 'reading' && (
-              <div className="space-y-12 animate-in fade-in duration-500">
-                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Reading Preferences</h2>
-                  <p className="text-[11px] text-zinc-500 font-medium italic">Customize how you read chapters and stories across BookVerse.</p>
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-150 dark:border-zinc-900">
+                  <h2 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Reading Preferences</h2>
+                  <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Customize how you read chapters and stories across BookVerse.</p>
                 </div>
 
                 <form onSubmit={handleSaveReading} className="space-y-10">
@@ -484,11 +607,10 @@ export default function SettingsPage() {
                           key={f.id}
                           type="button"
                           onClick={() => setReadingFont(f.id)}
-                          className={`flex flex-col text-left p-6 border rounded transition-all ${
-                            readingFont === f.id
+                          className={`flex flex-col text-left p-6 border rounded transition-all ${readingFont === f.id
                               ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
                               : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
-                          }`}
+                            }`}
                         >
                           <span className={`text-base font-bold mb-1 ${f.fontClass}`}>Aa</span>
                           <span className="text-[10px] font-bold uppercase tracking-widest block">{f.label}</span>
@@ -513,9 +635,8 @@ export default function SettingsPage() {
                           key={themeOpt.id}
                           type="button"
                           onClick={() => setReaderTheme(themeOpt.id)}
-                          className={`p-4 border rounded flex flex-col items-center gap-3 transition-all ${themeOpt.bg} ${themeOpt.text} ${themeOpt.border} ${
-                            readerTheme === themeOpt.id ? 'ring-2 ring-zinc-900 dark:ring-white scale-105' : 'opacity-80 hover:opacity-100'
-                          }`}
+                          className={`p-4 border rounded flex flex-col items-center gap-3 transition-all ${themeOpt.bg} ${themeOpt.text} ${themeOpt.border} ${readerTheme === themeOpt.id ? 'ring-2 ring-zinc-900 dark:ring-white scale-105' : 'opacity-80 hover:opacity-100'
+                            }`}
                         >
                           <div className="text-[10px] font-bold uppercase tracking-widest leading-none">A</div>
                           <span className="text-[9px] font-bold uppercase tracking-wider">{themeOpt.label}</span>
@@ -525,22 +646,20 @@ export default function SettingsPage() {
                   </div>
 
                   {/* Progress Sync */}
-                  <div className="p-6 border border-zinc-100 dark:border-zinc-900 rounded-lg flex items-center justify-between gap-6 bg-zinc-50/20 dark:bg-zinc-900/10">
+                  <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-2xl flex items-center justify-between gap-6 bg-white dark:bg-zinc-950 shadow-sm">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 block">Synchronize Reading Progress</span>
-                      <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block">Auto-save pages and scroll milestones across devices.</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white block">Synchronize Reading Progress</span>
+                      <span className="text-[10px] text-zinc-500 font-medium uppercase block">Auto-save pages and scroll milestones across devices.</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setReadingProgressSync(!readingProgressSync)}
-                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                        readingProgressSync ? 'bg-zinc-900 dark:bg-white' : 'bg-zinc-200 dark:bg-zinc-800'
-                      }`}
+                      className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${readingProgressSync ? 'bg-zinc-900 dark:bg-white' : 'bg-zinc-200 dark:bg-zinc-800'
+                        }`}
                     >
                       <span
-                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-zinc-900 shadow ring-0 transition duration-200 ease-in-out ${
-                          readingProgressSync ? 'translate-x-5' : 'translate-x-0'
-                        }`}
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-zinc-900 shadow ring-0 transition duration-200 ease-in-out ${readingProgressSync ? 'translate-x-5' : 'translate-x-0'
+                          }`}
                       />
                     </button>
                   </div>
@@ -562,12 +681,12 @@ export default function SettingsPage() {
 
             {/* APPEARANCE TAB */}
             {activeTab === 'appearance' && (
-              <div className="space-y-12 animate-in fade-in duration-500">
-                <div className="pb-6 border-b border-zinc-50 dark:border-zinc-900">
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-2 italic">Appearance</h2>
-                  <p className="text-[11px] text-zinc-500 font-medium italic">Toggle between light and dark themes.</p>
+              <div className="space-y-8 animate-in fade-in duration-500">
+                <div className="pb-6 border-b border-zinc-150 dark:border-zinc-900">
+                  <h2 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Appearance</h2>
+                  <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Toggle between light and dark themes.</p>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
                     { id: 'light', label: 'Light', icon: Sun, desc: 'Clean White' },
@@ -577,11 +696,10 @@ export default function SettingsPage() {
                     <button
                       key={t.id}
                       onClick={() => setTheme(t.id)}
-                      className={`flex flex-col items-center gap-8 p-10 border rounded transition-all group ${
-                        theme === t.id 
-                          ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900/50 shadow-sm' 
+                      className={`flex flex-col items-center gap-8 p-10 border rounded transition-all group ${theme === t.id
+                          ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900/50 shadow-sm'
                           : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
-                      }`}
+                        }`}
                     >
                       <div className={`p-5 rounded transition-all ${theme === t.id ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' : 'bg-zinc-50 dark:bg-zinc-900 text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white'}`}>
                         <t.icon className="w-8 h-8" />
@@ -757,17 +875,16 @@ export default function SettingsPage() {
                       {walletHistory.map((item) => {
                         const isReceived = item.type === 'TIP_RECEIVED';
                         const isSub = item.type === 'SUBSCRIPTION';
-                        
+
                         return (
                           <div key={item.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:bg-zinc-50/30 dark:hover:bg-zinc-900/30 transition-all">
                             <div className="flex items-start gap-4">
-                              <div className={`p-2.5 rounded shrink-0 ${
-                                isReceived 
-                                  ? 'bg-emerald-500/10 text-emerald-500' 
-                                  : isSub 
-                                  ? 'bg-blue-500/10 text-blue-500' 
-                                  : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
-                              }`}>
+                              <div className={`p-2.5 rounded shrink-0 ${isReceived
+                                  ? 'bg-emerald-500/10 text-emerald-500'
+                                  : isSub
+                                    ? 'bg-blue-500/10 text-blue-500'
+                                    : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
+                                }`}>
                                 {isReceived ? (
                                   <ArrowDownLeft className="w-4 h-4" />
                                 ) : isSub ? (
@@ -791,22 +908,20 @@ export default function SettingsPage() {
 
                             <div className="flex items-center sm:justify-end gap-4 shrink-0 justify-between">
                               {/* Status Badge */}
-                              <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded ${
-                                item.status === 'COMPLETED' || item.status === 'APPROVED'
+                              <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded ${item.status === 'COMPLETED' || item.status === 'APPROVED'
                                   ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
                                   : item.status === 'DECLINED' || item.status === 'FAILED'
-                                  ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
-                                  : 'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse'
-                              }`}>
+                                    ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+                                    : 'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse'
+                                }`}>
                                 {item.status}
                               </span>
-                              
+
                               {/* Amount in BDT */}
-                              <span className={`text-xs font-mono font-black ${
-                                isReceived 
-                                  ? 'text-emerald-500' 
+                              <span className={`text-xs font-mono font-black ${isReceived
+                                  ? 'text-emerald-500'
                                   : 'text-zinc-950 dark:text-zinc-50'
-                              }`}>
+                                }`}>
                                 {isReceived ? '+' : '-'}৳{item.amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                               </span>
                             </div>
@@ -842,6 +957,72 @@ export default function SettingsPage() {
                   <p className="text-[11px] text-zinc-500 font-medium italic">Manage your password, temporarily deactivate your public profile, or safely delete account datasets.</p>
                 </div>
 
+                {/* Login Alerts Toggle */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                      Login Alerts
+                    </span>
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Receive an email notification whenever your account is accessed from a new IP address or unrecognized browser.
+                    </span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input 
+                      type="checkbox" 
+                      className="sr-only peer" 
+                      checked={loginAlertsEnabled}
+                      onChange={toggleLoginAlerts} 
+                    />
+                    <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-500"></div>
+                  </label>
+                </div>
+
+                {/* Secure Email Change */}
+                <form onSubmit={handleChangeEmail} className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
+                      Change Primary Email
+                    </span>
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Your current email is {dbUser?.email}. To securely update it, enter your new email and current password.
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block">New Email Address</label>
+                      <input
+                        type="email"
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                        placeholder="new.email@example.com"
+                        className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 block">Current Password</label>
+                      <input
+                        type="password"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="w-full px-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={changingEmail || !newEmail || !currentPassword}
+                    className="px-6 py-3 border border-zinc-900 dark:border-zinc-100 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    {changingEmail ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : 'Securely Update Email'}
+                  </button>
+                </form>
+
                 {/* Trigger password reset */}
                 <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                   <div className="space-y-1">
@@ -864,6 +1045,99 @@ export default function SettingsPage() {
                       'Trigger Reset Email'
                     )}
                   </button>
+                </div>
+
+                {/* Active Sessions */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <Laptop className="w-3.5 h-3.5 text-emerald-500" />
+                      Active Sessions
+                    </span>
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      Devices currently signed in to your account.
+                    </span>
+                  </div>
+                  {loadingSessions ? (
+                    <div className="py-8 flex justify-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-zinc-300 dark:text-zinc-700" />
+                    </div>
+                  ) : activeSessions.length === 0 ? (
+                    <div className="py-8 text-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 italic border border-dashed border-zinc-100 dark:border-zinc-900 rounded">
+                      No session data available.
+                    </div>
+                  ) : (
+                    <div className="grid gap-3">
+                      {activeSessions.map((session) => (
+                        <div key={session.id} className="flex items-center justify-between p-4 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/[0.01]">
+                          <div className="flex items-center gap-4">
+                            <div className="p-2.5 rounded-full bg-zinc-100 dark:bg-zinc-900">
+                              {session.os === 'iOS' || session.os === 'Android' ? (
+                                <Smartphone className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+                              ) : (
+                                <Monitor className="w-4 h-4 text-zinc-600 dark:text-zinc-400" />
+                              )}
+                            </div>
+                            <div className="space-y-0.5">
+                              <span className="text-[10px] font-bold text-zinc-900 dark:text-white block">
+                                {session.os} - {session.browser}
+                              </span>
+                              <span className="text-[8px] text-zinc-500 uppercase tracking-wider font-bold block">
+                                IP: {session.ipAddress} • Last Active: {new Date(session.lastActive).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleRevokeSession(session.deviceIdentifier)}
+                            disabled={revokingSessionId === session.deviceIdentifier}
+                            className="px-4 py-2 border border-rose-500/30 text-rose-600 hover:bg-rose-500/10 text-[8px] font-bold uppercase tracking-widest rounded transition-all disabled:opacity-50 flex items-center gap-2"
+                          >
+                            {revokingSessionId === session.deviceIdentifier ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Revoke'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Login Activity Log */}
+                <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 space-y-6">
+                  <div className="space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                      <TrendingUp className="w-3.5 h-3.5 text-zinc-400" />
+                      Login Activity Log
+                    </span>
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                      A read-only timeline of your recent authentication events.
+                    </span>
+                  </div>
+                  {loadingSessions ? (
+                    <div className="py-8 flex justify-center">
+                      <Loader2 className="w-5 h-5 animate-spin text-zinc-300 dark:text-zinc-700" />
+                    </div>
+                  ) : loginHistory.length === 0 ? (
+                    <div className="py-8 text-center text-[9px] font-bold uppercase tracking-widest text-zinc-400 italic border border-dashed border-zinc-100 dark:border-zinc-900 rounded">
+                      No recent login activity found.
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                      {loginHistory.map((log) => (
+                        <div key={log.id} className="flex items-center justify-between p-3 border border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/[0.01]">
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] font-bold text-zinc-900 dark:text-white block">
+                              Signed in from {log.os} ({log.browser})
+                            </span>
+                            <span className="text-[8px] text-zinc-500 uppercase tracking-wider font-bold block">
+                              {new Date(log.createdAt).toLocaleString()} • IP: {log.ipAddress}
+                            </span>
+                          </div>
+                          <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded ${log.status === 'SUCCESS' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                            {log.status}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Account Deactivation Section */}
@@ -989,7 +1263,7 @@ export default function SettingsPage() {
                           {serv.desc}
                         </span>
                       </div>
-                      
+
                       <div className="flex items-center gap-4 shrink-0">
                         <span className="px-2.5 py-1 text-[8px] font-black uppercase tracking-widest rounded bg-amber-500/10 text-amber-600 border border-amber-500/20">
                           Coming Soon
