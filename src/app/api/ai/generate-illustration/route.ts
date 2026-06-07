@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess } from "@/lib/entitlements";
 import { uploadToR2 } from "@/lib/r2";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { randomUUID } from "crypto";
@@ -94,6 +95,11 @@ export async function POST(request: Request) {
     // Check if user is author or admin (basic protection)
     if (dbUser.role !== "AUTHOR" && dbUser.role !== "ADMIN") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    // Enforce Pro plan
+    if (!(await hasFeatureAccess(dbUser as any, "PRO"))) {
+      return NextResponse.json({ error: "Pro plan required" }, { status: 403 });
     }
 
     const { prompt } = await request.json();

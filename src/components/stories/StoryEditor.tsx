@@ -6,6 +6,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
+import { ExtractTextFeature } from "./ExtractTextFeature";
 import {
   Bold,
   Italic,
@@ -189,6 +190,7 @@ export default function StoryEditor({
           <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Line Break">
             <Minus className="w-3.5 h-3.5" />
           </ToolbarButton>
+          <ExtractTextFeature onExtracted={(text) => editor.chain().focus().insertContent(text).run()} />
         </div>
 
         <div className="flex items-center gap-1 px-2">
