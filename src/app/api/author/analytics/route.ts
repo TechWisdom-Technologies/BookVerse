@@ -30,6 +30,9 @@ export async function GET() {
         comments: {
           select: { id: true },
         },
+        inlineComments: {
+          select: { id: true },
+        },
         tips: {
           where: { status: 'COMPLETED' },
           select: { amount: true },
@@ -42,7 +45,7 @@ export async function GET() {
     const totalStories = stories.length;
     const totalChapters = stories.reduce((sum, s) => sum + s.chapters.length, 0);
     const totalReactions = stories.reduce((sum, s) => sum + s.reactions.length, 0);
-    const totalComments = stories.reduce((sum, s) => sum + s.comments.length, 0);
+    const totalComments = stories.reduce((sum, s) => sum + s.comments.length + (s.inlineComments?.length || 0), 0);
     const totalTipsAmount = stories.reduce(
       (sum, s) => sum + s.tips.reduce((tipSum, t) => tipSum + t.amount, 0),
       0
@@ -141,7 +144,7 @@ export async function GET() {
         title: s.title,
         views: s.viewCount,
         reactions: s.reactions.length,
-        comments: s.comments.length,
+        comments: s.comments.length + (s.inlineComments?.length || 0),
         tips: s.tips.reduce((sum, t) => sum + t.amount, 0) / 100,
       }));
 
@@ -457,7 +460,7 @@ export async function GET() {
         published: s.published,
         views: s.viewCount,
         reactions: s.reactions.length,
-        comments: s.comments.length,
+        comments: s.comments.length + (s.inlineComments?.length || 0),
         chapters: s.chapters.length,
         tips: s.tips.reduce((sum, t) => sum + t.amount, 0) / 100,
       })),

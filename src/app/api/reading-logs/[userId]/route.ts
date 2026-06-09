@@ -76,7 +76,7 @@ export async function GET(
       totalPages,
       totalMinutes,
       avgPagesPerSession,
-      daysRead: readingLogs.length,
+      daysRead: logDates.size,
       logs: readingLogs,
     });
   } catch (error) {
@@ -108,13 +108,12 @@ export async function POST(
     const logDate = date ? new Date(date) : new Date();
     logDate.setHours(0, 0, 0, 0);
 
-    // Check if entry already exists for this date
-    const existing = await prisma.readingLog.findUnique({
+    // Check if entry already exists for this date and story
+    const existing = await prisma.readingLog.findFirst({
       where: {
-        userId_date: {
-          userId: userId,
-          date: logDate,
-        },
+        userId: userId,
+        date: logDate,
+        storyId: storyId || null,
       },
     });
 
@@ -123,10 +122,7 @@ export async function POST(
       // Update existing entry
       result = await prisma.readingLog.update({
         where: {
-          userId_date: {
-            userId: userId,
-            date: logDate,
-          },
+          id: existing.id,
         },
         data: {
           pagesRead: action === 'increment' 

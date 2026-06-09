@@ -171,13 +171,17 @@ export default async function HomePage() {
     );
     
     const formattedStories = stories.map(story => {
-      const activePromo = activePromotions.find((ap: { storyId: string; tier: string }) => ap.storyId === story.id);
+      const storyPromos = activePromotions.filter((ap: { storyId: string; tier: string }) => ap.storyId === story.id);
+      const hasTrending = storyPromos.some(p => p.tier === 'TRENDING');
+      const hasPromoted = storyPromos.some(p => p.tier === 'PROMOTED');
+      const hasFeatured = storyPromos.some(p => p.tier === 'FEATURED');
+
       return {
         ...story,
         createdAt: story.createdAt.toISOString(),
-        isTrendingPromo: activePromo?.tier === 'TRENDING',
-        isPromotedPromo: activePromo?.tier === 'PROMOTED',
-        isFeaturedPromo: activePromo?.tier === 'FEATURED'
+        isTrendingPromo: hasTrending,
+        isPromotedPromo: !hasTrending && hasPromoted,
+        isFeaturedPromo: !hasTrending && !hasPromoted && hasFeatured
       };
     });
     
@@ -198,21 +202,36 @@ export default async function HomePage() {
           cost: p.cost,
           startDate: p.startDate,
           qualityScore,
-          isPromotedPromo: true
+          tiers: new Set([p.tier])
         });
+      } else {
+        const existing = uniquePromotedMap.get(story.id);
+        existing.tiers.add(p.tier);
+        if (p.cost > existing.cost) existing.cost = p.cost;
       }
     });
 
     const formattedPromotedStories = Array.from(uniquePromotedMap.values())
       .sort((a: any, b: any) => {
-        // 1. Budget (cost) descending
         if (b.cost !== a.cost) return b.cost - a.cost;
-        // 2. Quality score descending
+        if (b.viewCount !== a.viewCount) return b.viewCount - a.viewCount;
         if (b.qualityScore !== a.qualityScore) return b.qualityScore - a.qualityScore;
-        // 3. Oldest promotion first (startDate ascending)
         return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
       })
-      .slice(0, 8);
+      .slice(0, 8)
+      .map((story) => {
+        const hasTrending = story.tiers.has('TRENDING');
+        const hasPromoted = story.tiers.has('PROMOTED');
+        const hasFeatured = story.tiers.has('FEATURED');
+        const { tiers, ...rest } = story;
+        
+        return {
+          ...rest,
+          isTrendingPromo: hasTrending,
+          isPromotedPromo: !hasTrending && hasPromoted,
+          isFeaturedPromo: !hasTrending && !hasPromoted && hasFeatured
+        };
+      });
 
     return (
       <main className="relative overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">

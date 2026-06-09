@@ -19,6 +19,7 @@ import { SaveOfflineButton } from "@/components/stories/SaveOfflineButton";
 import { PromotionBadge } from "@/components/promotions/PromotionBadge";
 import { StoryRecommendations } from "@/components/stories/StoryRecommendations";
 import { StoryModerationActions } from "@/components/stories/StoryModerationActions";
+import { DynamicBackButton } from "@/components/stories/DynamicBackButton";
 
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
@@ -134,10 +135,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Minimal Navigation */}
         <div className="mb-12">
-          <Link href="/stories" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-            <ArrowLeft className="w-3 h-3" />
-            Story Archives
-          </Link>
+          <DynamicBackButton />
         </div>
 
         {/* Story Header Dossier */}

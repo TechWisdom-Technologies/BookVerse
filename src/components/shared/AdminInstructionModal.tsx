@@ -23,18 +23,52 @@ export function AdminInstructionModal() {
       dbUser.adminInstruction.trim().length > 0 &&
       !dbUser.instructionSeen;
 
+    let timer: NodeJS.Timeout;
     if (hasUnseen) {
       setInstruction(dbUser.adminInstruction!);
       // Show after the DevPhaseModal has had time to appear and be dismissed
       const devDismissed = localStorage.getItem(`dev-notice-dismissed-${user.uid}`);
       const delay = devDismissed ? 600 : 3000;
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         setIsOpen(true);
       }, delay);
-      return () => clearTimeout(timer);
     } else {
       setIsOpen(false);
     }
+
+    // Poll for new admin instructions every 15 seconds while active on the site
+    const interval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/users/me?t=${Date.now()}`, { 
+          cache: "no-store",
+          headers: {
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache"
+          }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            const hasUnseenPoll =
+              data.user.adminInstruction &&
+              data.user.adminInstruction.trim().length > 0 &&
+              !data.user.instructionSeen;
+
+            if (hasUnseenPoll) {
+              setInstruction(data.user.adminInstruction);
+              setIsOpen(true);
+            }
+          }
+        }
+      } catch (err) {
+        // Ignore poll errors silently
+      }
+    }, 15000);
+
+    return () => {
+      if (timer) clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, [user, dbUser]);
 
   const handleDismiss = async () => {

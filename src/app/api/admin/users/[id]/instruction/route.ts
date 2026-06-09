@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role } from "@prisma/client";
+import { createNotification } from "@/lib/notifications";
 
 // POST: Admin sends an instruction to a user
 export async function POST(
@@ -28,6 +29,14 @@ export async function POST(
         instructionSeen: false,
       },
       select: { id: true, username: true, adminInstruction: true },
+    });
+
+    await createNotification({
+      userId: id,
+      type: "SYSTEM_ALERT",
+      title: "Message from Admin",
+      message: `An administrator has sent you a direct instruction:\n\n"${instruction.trim()}"\n\nPlease check your account settings.`,
+      link: "/settings",
     });
 
     return NextResponse.json({ success: true, user });

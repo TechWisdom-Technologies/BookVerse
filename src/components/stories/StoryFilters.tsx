@@ -7,15 +7,16 @@ interface StoryFiltersProps {
 }
 
 const sortOptions = [
+  { value: "popular", label: "Popular" },
   { value: "recent", label: "Newest" },
-  { value: "popular", label: "Most Viewed" },
+  { value: "views", label: "Most Viewed" },
   { value: "reactions", label: "Most Reactions" },
 ];
 
 export function StoryFilters({ genres }: StoryFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentSort = searchParams.get("sort") || "recent";
+  const currentSort = searchParams.get("sort") || "popular";
   const currentGenre = searchParams.get("genre") || "";
 
   function updateParam(key: string, value: string) {

@@ -388,7 +388,7 @@ model ReadingLog {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, date])
+  @@unique([userId, storyId, date])
   @@index([userId])
   @@map("reading_logs")
 }

@@ -141,7 +141,13 @@ export async function GET(request: Request) {
               s.published,
               s.created_at AS "createdAt",
               s.view_count AS "viewCount",
-              s.promotion_score AS "promotionScore",
+              (
+                SELECT sp.tier 
+                FROM story_promotions sp 
+                WHERE sp.story_id = s.id AND sp.status = 'ACTIVE' AND sp.end_date > NOW()
+                ORDER BY CASE sp.tier WHEN 'PROMOTED' THEN 2 WHEN 'FEATURED' THEN 1 ELSE 0 END DESC
+                LIMIT 1
+              ) AS "activeTier",
               u.display_name AS "authorDisplayName",
               u.username AS "authorUsername",
               (
@@ -169,12 +175,17 @@ export async function GET(request: Request) {
                 ${banglaSqlExtension}
               )
             ORDER BY 
-              CASE 
-                WHEN s.promotion_score = 200 THEN 1000
-                WHEN s.promotion_score = 500 THEN 900
-                WHEN s.promotion_score = 100 THEN 800
-                ELSE s.promotion_score
-              END DESC, 
+              CASE (
+                SELECT sp.tier 
+                FROM story_promotions sp 
+                WHERE sp.story_id = s.id AND sp.status = 'ACTIVE' AND sp.end_date > NOW()
+                ORDER BY CASE sp.tier WHEN 'PROMOTED' THEN 2 WHEN 'FEATURED' THEN 1 ELSE 0 END DESC
+                LIMIT 1
+              )
+                WHEN 'PROMOTED' THEN 2
+                WHEN 'FEATURED' THEN 1
+                ELSE 0
+              END DESC,
               rank DESC, 
               s.view_count DESC
             LIMIT ${take} OFFSET ${skip};
@@ -210,7 +221,7 @@ export async function GET(request: Request) {
             coverUrl: story.coverUrl,
             published: story.published,
             viewCount: story.viewCount,
-            promotionScore: story.promotionScore,
+            activeTier: story.activeTier,
             _type: "story" as const,
             authorName: story.authorDisplayName || story.authorUsername,
             createdAt: new Date(story.createdAt).toISOString(),
@@ -333,19 +344,16 @@ export async function GET(request: Request) {
       };
 
       results.sort((a, b) => {
-        const getRankScore = (score: number) => {
-          if (score === 200) return 1000;
-          if (score === 500) return 900;
-          if (score === 100) return 800;
-          return score;
+        // 1. Promoted/Featured active stories first
+        const getTierScore = (tier?: string) => {
+          if (tier === 'PROMOTED') return 2;
+          if (tier === 'FEATURED') return 1;
+          return 0;
         };
-        
-        const scoreA = getRankScore(a.promotionScore || 0);
-        const scoreB = getRankScore(b.promotionScore || 0);
-        
-        // 1. Promoted/Featured/Trending first
+        const scoreA = getTierScore(a.activeTier);
+        const scoreB = getTierScore(b.activeTier);
         if (scoreA !== scoreB) return scoreB - scoreA;
-        
+
         // 2. Stories -> Books -> Universes -> Authors
         const weightA = typeWeight[a._type] || 0;
         const weightB = typeWeight[b._type] || 0;

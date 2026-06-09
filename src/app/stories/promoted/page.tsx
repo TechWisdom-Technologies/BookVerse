@@ -7,7 +7,6 @@ export const dynamic = "force-dynamic";
 
 export default async function PromotedStoriesPage() {
   try {
-    // Query active spotlight promotions
     const promotions = await prisma.storyPromotion.findMany({
       where: {
         tier: "PROMOTED",
@@ -33,35 +32,48 @@ export default async function PromotedStoriesPage() {
       }
     });
 
-    // Sort by custom budget descending, quality score descending, and oldest first
-    const sortedStories = promotions
-      .map((p) => {
-        const reactions = p.story._count.reactions || 0;
-        const comments = p.story._count.comments || 0;
-        const inlineComments = p.story._count.inlineComments || 0;
-        const shares = p.story._count.shareActivities || 0;
-        const qualityScore = reactions + comments + inlineComments + shares;
-        return {
-          ...p.story,
+    const uniquePromotedMap = new Map();
+    promotions.forEach((p) => {
+      const story = p.story;
+      const reactions = story._count.reactions || 0;
+      const comments = story._count.comments || 0;
+      const inlineComments = story._count.inlineComments || 0;
+      const shares = story._count.shareActivities || 0;
+      const qualityScore = reactions + comments + inlineComments + shares;
+
+      if (!uniquePromotedMap.has(story.id)) {
+        uniquePromotedMap.set(story.id, {
+          ...story,
+          createdAt: story.createdAt.toISOString(),
           cost: p.cost,
           startDate: p.startDate,
           qualityScore,
-          isPromotedPromo: true
-        };
-      })
+          tiers: new Set([p.tier])
+        });
+      } else {
+        const existing = uniquePromotedMap.get(story.id);
+        existing.tiers.add(p.tier);
+        // keep the highest cost
+        if (p.cost > existing.cost) existing.cost = p.cost;
+      }
+    });
+
+    const sortedStories = Array.from(uniquePromotedMap.values())
       .sort((a, b) => {
-        // 1. Budget descending
         if (b.cost !== a.cost) return b.cost - a.cost;
-        // 2. Quality Score descending
+        if (b.viewCount !== a.viewCount) return b.viewCount - a.viewCount;
         if (b.qualityScore !== a.qualityScore) return b.qualityScore - a.qualityScore;
-        // 3. Oldest first
         return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
       });
 
-    const serializedStories = sortedStories.map((story) => ({
-      ...story,
-      createdAt: story.createdAt.toISOString(),
-    }));
+    const serializedStories = sortedStories.map((story) => {
+      return {
+        ...story,
+        isTrendingPromo: false,
+        isPromotedPromo: true,
+        isFeaturedPromo: false
+      };
+    });
 
     return (
       <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">

@@ -33,6 +33,8 @@ export async function GET(req: Request) {
           chapters: true,
           reactions: true,
           comments: true,
+          inlineComments: true,
+          shareActivities: true
         },
       },
     };
@@ -121,7 +123,7 @@ export async function GET(req: Request) {
       recommendedStories = [...recommendedStories, ...popularStories];
     }
 
-    // Prioritize active FEATURED promotions first within recommendations list
+    // Prioritize and sort active FEATURED promotions within recommendations list
     try {
       const activeFeaturedPromotions = await prisma.storyPromotion.findMany({
         where: {
@@ -130,27 +132,45 @@ export async function GET(req: Request) {
           endDate: { gt: new Date() },
           story: { published: true }
         },
-        select: { storyId: true }
+        select: { storyId: true, cost: true, startDate: true }
       });
-      const featuredStoryIds = activeFeaturedPromotions.map(fp => fp.storyId);
+      
+      const featuredPromoMap = new Map();
+      activeFeaturedPromotions.forEach(p => {
+        if (!featuredPromoMap.has(p.storyId) || p.cost > featuredPromoMap.get(p.storyId).cost) {
+          featuredPromoMap.set(p.storyId, p);
+        }
+      });
 
       // Sort so featured stories come first, preserving secondary viewCount/popularity ordering
       recommendedStories.sort((a, b) => {
-        const aFeatured = featuredStoryIds.includes(a.id);
-        const bFeatured = featuredStoryIds.includes(b.id);
-        if (aFeatured && !bFeatured) return -1;
-        if (!aFeatured && bFeatured) return 1;
+        const promoA = featuredPromoMap.get(a.id);
+        const promoB = featuredPromoMap.get(b.id);
+        
+        if (promoA && !promoB) return -1;
+        if (!promoA && promoB) return 1;
+        if (promoA && promoB) {
+          if (promoB.cost !== promoA.cost) return promoB.cost - promoA.cost;
+          if (b.viewCount !== a.viewCount) return b.viewCount - a.viewCount;
+          
+          const qualityA = (a._count?.reactions || 0) + (a._count?.comments || 0) + (a._count?.inlineComments || 0) + (a._count?.shareActivities || 0);
+          const qualityB = (b._count?.reactions || 0) + (b._count?.comments || 0) + (b._count?.inlineComments || 0) + (b._count?.shareActivities || 0);
+          if (qualityB !== qualityA) return qualityB - qualityA;
+          
+          return new Date(promoA.startDate).getTime() - new Date(promoB.startDate).getTime();
+        }
         return 0;
       });
     } catch (err) {
       console.error('Error sorting featured recommendations:', err);
     }
 
-    // Fetch all active promotions to populate badges
+    // Fetch only FEATURED promotions to populate badges as per strict isolation rules
     let activePromotions: { storyId: string; tier: string }[] = [];
     try {
       activePromotions = await prisma.storyPromotion.findMany({
         where: {
+          tier: 'FEATURED',
           status: 'ACTIVE',
           endDate: { gt: new Date() },
         },
@@ -165,13 +185,13 @@ export async function GET(req: Request) {
 
     // Serialize dates and attach promotion flags for Client Component safety
     const serialized = recommendedStories.map((story) => {
-      const activePromo = activePromotions.find((ap) => ap.storyId === story.id);
+      const isFeatured = activePromotions.some((ap) => ap.storyId === story.id);
       return {
         ...story,
         createdAt: story.createdAt.toISOString(),
-        isTrendingPromo: activePromo?.tier === 'TRENDING',
-        isPromotedPromo: activePromo?.tier === 'PROMOTED',
-        isFeaturedPromo: activePromo?.tier === 'FEATURED',
+        isTrendingPromo: false,
+        isPromotedPromo: false,
+        isFeaturedPromo: isFeatured,
       };
     });
 

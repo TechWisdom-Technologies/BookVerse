@@ -5,6 +5,7 @@ import { storySchema } from "@/lib/validators";
 import { Prisma } from "@prisma/client";
 import { publishScheduledChapters } from "@/lib/publish-chapters";
 import { hasFeatureAccess } from "@/lib/entitlements";
+import { getSortedStoryIds } from "@/lib/story-ranking";
 
 export async function GET(request: Request) {
   try {
@@ -14,57 +15,41 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(100, parseInt(searchParams.get("limit") || "12"));
-    const sort = searchParams.get("sort") || "recent";
+    const sort = searchParams.get("sort") || "popular"; // DEFAULT to popular!
     const genre = searchParams.get("genre") || "";
     const skip = (page - 1) * limit;
 
-    const where: Prisma.StoryWhereInput = { 
-      published: true,
-      author: {
-        isDeactivated: false,
-      }
-    };
-    if (genre) {
-      where.summary = { contains: genre, mode: "insensitive" };
-    }
+    const { ids: rankedStoryIds, total } = await getSortedStoryIds(genre, sort);
+    const paginatedIds = rankedStoryIds.slice(skip, skip + limit);
 
-    type StoryOrderBy =
-      | { createdAt: "desc" }
-      | { viewCount: "desc" };
-
-    let orderBy: StoryOrderBy = { createdAt: "desc" };
-    if (sort === "popular") {
-      orderBy = { viewCount: "desc" };
-    }
-
-    const [stories, total] = await Promise.all([
-      prisma.story.findMany({
-        where,
-        include: {
-          author: {
-            select: {
-              id: true,
-              username: true,
-              displayName: true,
-              avatarUrl: true,
-            },
-          },
-          series: { select: { name: true } },
-          universe: { select: { name: true } },
-          _count: {
-            select: {
-              chapters: true,
-              reactions: true,
-              comments: true,
-            },
+    // Fetch full data for only the paginated stories
+    const storiesUnsorted = await prisma.story.findMany({
+      where: { id: { in: paginatedIds } },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
           },
         },
-        orderBy,
-        skip,
-        take: limit,
-      }),
-      prisma.story.count({ where }),
-    ]);
+        series: { select: { name: true } },
+        universe: { select: { name: true } },
+        _count: {
+          select: {
+            chapters: true,
+            reactions: true,
+            comments: true,
+          },
+        },
+      },
+    });
+
+    // Re-order the fetched stories to match the ranked order
+    const stories = paginatedIds
+      .map(id => storiesUnsorted.find(s => s.id === id))
+      .filter((s): s is NonNullable<typeof s> => s !== undefined);
 
     const totalPages = Math.ceil(total / limit);
 

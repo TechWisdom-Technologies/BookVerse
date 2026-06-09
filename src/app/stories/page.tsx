@@ -9,6 +9,7 @@ import { StoryRecommendations } from "@/components/stories/StoryRecommendations"
 import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { ContinueReadingDashboard } from "@/components/home/ContinueReadingDashboard";
+import { getSortedStoryIds } from "@/lib/story-ranking";
 
 export const dynamic = "force-dynamic";
 
@@ -38,97 +39,26 @@ interface StoriesPageProps {
 export default async function StoriesPage({ searchParams }: StoriesPageProps) {
   const params = await searchParams;
   const page = Math.max(1, Number.parseInt(params.page || "1", 10));
-  const sort = params.sort || "recent";
+  const sort = params.sort || "popular";
   const genre = params.genre || "";
   const limit = 12;
   const skip = (page - 1) * limit;
 
-  // 1. Fetch active trending promotions on page 1
-  const trendingStoriesResolved: any[] = [];
-  if (page === 1) {
-    try {
-      const activeTrendingPromotions = await prisma.storyPromotion.findMany({
-        where: {
-          tier: 'TRENDING',
-          status: 'ACTIVE',
-          endDate: { gt: new Date() },
-          story: { published: true }
-        },
-        include: {
-          story: {
-            include: {
-              author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
-              series: { select: { name: true } },
-              universe: { select: { name: true } },
-              _count: {
-                select: {
-                  chapters: true,
-                  reactions: true,
-                  comments: true,
-                  inlineComments: true,
-                  shareActivities: true
-                }
-              },
-            }
-          }
-        }
-      });
-
-      const activeTrending = activeTrendingPromotions.map((p) => {
-        const reactions = p.story._count.reactions || 0;
-        const comments = p.story._count.comments || 0;
-        const inlineComments = p.story._count.inlineComments || 0;
-        const shares = p.story._count.shareActivities || 0;
-        const qualityScore = reactions + comments + inlineComments + shares;
-        return {
-          ...p.story,
-          qualityScore,
-          isTrendingPromo: true
-        };
-      });
-
-      activeTrending.sort((a, b) => b.qualityScore - a.qualityScore);
-      trendingStoriesResolved.push(...activeTrending);
-    } catch (err) {
-      console.error('Error fetching trending promotions:', err);
-    }
-  }
-
-  const trendingStoryIds = trendingStoriesResolved.map(s => s.id);
-  const where: Prisma.StoryWhereInput = { published: true };
-  if (genre) {
-    where.OR = [
-      { title: { contains: genre, mode: "insensitive" } },
-      { summary: { contains: genre, mode: "insensitive" } },
-    ];
-  }
-  if (trendingStoryIds.length > 0) {
-    where.id = { notIn: trendingStoryIds };
-  }
-
-  const orderBy: Prisma.StoryOrderByWithRelationInput =
-    sort === "popular"
-      ? { viewCount: "desc" }
-      : sort === "reactions"
-        ? { reactions: { _count: "desc" } }
-        : { createdAt: "desc" };
+  const { ids: rankedStoryIds, total } = await getSortedStoryIds(genre, sort);
+  const paginatedIds = rankedStoryIds.slice(skip, skip + limit);
 
   const currentUserId = await getCurrentUserId();
 
-  const [stories, total, recentProgress, recentBookBookmarks, activePromotions] = await Promise.all([
+  const [storiesUnsorted, recentProgress, recentBookBookmarks, activePromotions] = await Promise.all([
     prisma.story.findMany({
-      where,
+      where: { id: { in: paginatedIds } },
       include: {
         author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
         series: { select: { name: true } },
         universe: { select: { name: true } },
         _count: { select: { chapters: true, reactions: true, comments: true } },
       },
-      orderBy,
-      skip,
-      take: limit,
     }),
-    prisma.story.count({ where }),
     currentUserId
       ? prisma.readingProgress.findMany({
           where: { userId: currentUserId },
@@ -202,33 +132,26 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
   });
   const uniqueBookBookmarks = Array.from(uniqueBookBookmarksMap.values()).slice(0, 4); // Show only the last 4 bookmarked books!
 
-  const totalPages = Math.ceil((total + trendingStoryIds.length) / limit);
-  const seenStoryIds = new Set<string>();
-  const serializedStories: any[] = [];
+  const stories = paginatedIds
+    .map(id => storiesUnsorted.find(s => s.id === id))
+    .filter((s): s is NonNullable<typeof s> => s !== undefined);
 
-  for (const s of trendingStoriesResolved) {
-    if (!seenStoryIds.has(s.id)) {
-      seenStoryIds.add(s.id);
-      serializedStories.push({
-        ...s,
-        createdAt: s.createdAt.toISOString()
-      });
-    }
-  }
+  const totalPages = Math.ceil(total / limit);
 
-  for (const story of stories) {
-    if (!seenStoryIds.has(story.id)) {
-      seenStoryIds.add(story.id);
-      const activePromo = activePromotions.find((ap) => ap.storyId === story.id);
-      serializedStories.push({
-        ...story,
-        createdAt: story.createdAt.toISOString(),
-        isTrendingPromo: activePromo?.tier === 'TRENDING',
-        isPromotedPromo: activePromo?.tier === 'PROMOTED',
-        isFeaturedPromo: activePromo?.tier === 'FEATURED'
-      });
-    }
-  }
+  const serializedStories = stories.map(story => {
+    const storyPromos = activePromotions.filter((ap) => ap.storyId === story.id);
+    const hasTrending = storyPromos.some(p => p.tier === 'TRENDING');
+    const hasPromoted = storyPromos.some(p => p.tier === 'PROMOTED');
+    const hasFeatured = storyPromos.some(p => p.tier === 'FEATURED');
+
+    return {
+      ...story,
+      createdAt: story.createdAt.toISOString(),
+      isTrendingPromo: hasTrending,
+      isPromotedPromo: !hasTrending && hasPromoted,
+      isFeaturedPromo: !hasTrending && !hasPromoted && hasFeatured
+    };
+  });
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
