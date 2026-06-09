@@ -6,7 +6,7 @@ import { type JSONContent } from "@tiptap/core";
 import ImageExtension from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import StarterKit from "@tiptap/starter-kit";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 import { ArrowLeft, ChevronLeft, ChevronRight, BookOpen, Clock } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -24,7 +24,14 @@ function renderChapterContent(content: unknown) {
   if (!content || typeof content !== "object") return null;
   try {
     const rawHtml = generateHTML(content as JSONContent, [StarterKit, ImageExtension, Underline]);
-    return DOMPurify.sanitize(rawHtml) || null;
+    return sanitizeHtml(rawHtml, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'u', 'h1', 'h2', 's', 'del']),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        '*': ['class', 'style'],
+        'img': ['src', 'alt', 'title']
+      }
+    }) || null;
   } catch (error) {
     console.error("Failed to render TipTap content:", error);
     return null;

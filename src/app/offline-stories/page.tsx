@@ -27,7 +27,7 @@ import {
   type OfflineStory,
 } from "@/lib/offline-storage";
 import { TTSPlayer } from "@/components/stories/TTSPlayer";
-import DOMPurify from "isomorphic-dompurify";
+import DOMPurify from "dompurify";
 
 // Removed inline reader in favor of direct navigation - wait, bringing it back to avoid SW fallback!
 
