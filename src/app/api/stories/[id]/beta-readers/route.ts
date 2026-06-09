@@ -18,7 +18,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
 
     const story = await prisma.story.findUnique({
       where: { id: storyId },
-      select: { authorId: true },
+      include: { author: true },
     });
 
     if (!story) {
@@ -26,13 +26,17 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
     }
 
     if (story.authorId !== user.id && user.role !== "ADMIN") {
-      if (!(await hasFeatureAccess(user, 'CREATOR'))) {
-        return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
+      if (!(await hasFeatureAccess(story.author, 'CREATOR'))) {
+        return NextResponse.json({ betaReaders: [] });
       }
       const ownInvite = await prisma.betaReader.findUnique({
         where: { storyId_userId: { storyId, userId: user.id } },
       });
       return NextResponse.json({ betaReaders: ownInvite ? [ownInvite] : [] });
+    }
+
+    if (story.authorId === user.id && !(await hasFeatureAccess(user, 'CREATOR'))) {
+      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
     const betaReaders = await prisma.betaReader.findMany({
@@ -59,42 +63,51 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // We require the author to have at least AUTHOR or PRO plan? The user didn't explicitly gate this, but let's check for PRO or maybe just continue with story ownership. Let's keep it checking for story ownership.
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { username } = body;
-
-    if (!username) {
-      return NextResponse.json({ error: "Username is required" }, { status: 400 });
-    }
 
     const story = await prisma.story.findUnique({
       where: { id: storyId },
-      select: { id: true, authorId: true },
+      include: { author: true },
     });
 
     if (!story) {
       return NextResponse.json({ error: "Story not found" }, { status: 404 });
     }
 
-    if (story.authorId !== user.id) {
-      return NextResponse.json({ error: "Only the author can add beta readers" }, { status: 403 });
+    if (!(await hasFeatureAccess(story.author, 'CREATOR'))) {
+      if (story.authorId === user.id) {
+        return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
+      } else {
+        return NextResponse.json({ error: "The author must have a Creator plan to have beta readers" }, { status: 403 });
+      }
     }
 
-    const targetUser = await prisma.user.findUnique({
-      where: { username },
-    });
+    let targetUserId = user.id;
 
-    if (!targetUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (username) {
+      if (story.authorId !== user.id) {
+        return NextResponse.json({ error: "Only the author can add beta readers by username" }, { status: 403 });
+      }
+
+      const targetUser = await prisma.user.findUnique({
+        where: { username },
+      });
+
+      if (!targetUser) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+      }
+
+      targetUserId = targetUser.id;
     }
 
-    if (targetUser.id === user.id) {
-      return NextResponse.json({ error: "Cannot add yourself as a beta reader" }, { status: 400 });
+    if (targetUserId === story.authorId) {
+      return NextResponse.json({ error: "Cannot add the author as a beta reader" }, { status: 400 });
     }
 
     const betaReader = await prisma.betaReader.upsert({
-      where: { storyId_userId: { storyId, userId: targetUser.id } },
-      create: { storyId, userId: targetUser.id },
+      where: { storyId_userId: { storyId, userId: targetUserId } },
+      create: { storyId, userId: targetUserId },
       update: {},
     });
 
@@ -112,10 +125,6 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    if (!(await hasFeatureAccess(user, 'CREATOR'))) {
-      return NextResponse.json(paidFeatureError('CREATOR'), { status: 402 });
     }
 
     const body = await req.json().catch(() => ({}));
