@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
-import { createNotification } from '@/lib/notifications';
 
 /**
  * GET /api/reading-logs/[userId]
@@ -148,24 +147,6 @@ export async function POST(
           minutes,
           storyId, // Optional tracking of the story
         },
-      });
-    }
-
-    // Send notification to author if storyId exists and it's a new log
-    if (storyId) {
-      void prisma.story.findUnique({
-        where: { id: storyId },
-        select: { authorId: true, title: true }
-      }).then((story) => {
-        if (story && story.authorId !== userId) {
-          createNotification({
-            userId: story.authorId,
-            type: 'READ',
-            title: 'Someone is reading your story!',
-            message: `A reader just logged a reading session for "${story.title}" (${minutes} minutes).`,
-            link: `/stories/${storyId}`,
-          });
-        }
       });
     }
 

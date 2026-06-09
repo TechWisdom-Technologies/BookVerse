@@ -27,7 +27,7 @@ import {
   type OfflineStory,
 } from "@/lib/offline-storage";
 import { TTSPlayer } from "@/components/stories/TTSPlayer";
-import DOMPurify from "dompurify";
+import sanitizeHtml from "sanitize-html";
 
 // Removed inline reader in favor of direct navigation - wait, bringing it back to avoid SW fallback!
 
@@ -214,7 +214,16 @@ export default function OfflineStoriesPage() {
           <article className="prose prose-zinc max-w-none font-serif leading-relaxed dark:prose-invert text-zinc-700 dark:text-zinc-300">
             {htmlContent ? (
               <div
-                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(htmlContent) }}
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtml(htmlContent, {
+                    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'u', 'h1', 'h2', 's', 'del']),
+                    allowedAttributes: {
+                      ...sanitizeHtml.defaults.allowedAttributes,
+                      '*': ['class', 'style'],
+                      'img': ['src', 'alt', 'title']
+                    }
+                  })
+                }}
                 className="text-lg"
               />
             ) : (
