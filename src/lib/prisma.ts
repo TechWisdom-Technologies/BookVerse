@@ -15,6 +15,12 @@ const pool =
     connectionTimeoutMillis: 2000,
   });
 
+if (!globalForPrisma.pool) {
+  pool.on("error", (err) => {
+    console.error("Unexpected error on idle client", err);
+  });
+}
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({

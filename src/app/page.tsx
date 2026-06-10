@@ -453,7 +453,8 @@ export default async function HomePage() {
         </section>
       </main>
     );
-  } catch {
+  } catch (error) {
+    console.error("HomePage Data Fetching Error:", error);
     return (
       <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
         <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 animate-pulse italic">Platform Offline</p>
