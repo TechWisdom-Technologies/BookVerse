@@ -35,7 +35,16 @@ export async function verifyToken(): Promise<{
   const token = tokenFromHeader || tokenFromCookie;
   if (!token) throw new Error("UNAUTHORIZED");
 
-  const firebaseUser = await adminAuth.verifyIdToken(token);
+  let firebaseUser;
+  try {
+    firebaseUser = await adminAuth.verifyIdToken(token);
+  } catch (err: any) {
+    if (err.code === 'auth/id-token-expired') {
+      throw new Error("UNAUTHORIZED");
+    }
+    throw err;
+  }
+
   const dbUser = await prisma.user.findUnique({
     where: { firebaseUid: firebaseUser.uid },
   });

@@ -78,7 +78,7 @@ interface Analytics {
     amplificationScore: number;
   };
   focusIndex: {
-    avgPagesPerSession: number;
+    avgChaptersRead: number;
     avgMinutesPerSession: number;
     focusScore: number;
     totalLogsCount: number;
@@ -668,14 +668,14 @@ export default function AuthorAnalyticsPage() {
                       </div>
                       <div className="text-right">
                         <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400 block font-sans">Focus Metric</span>
-                        <span className="text-[9px] text-zinc-500 font-medium block mt-1 font-sans">Pages vs Minutes speed</span>
+                        <span className="text-[9px] text-zinc-500 font-medium block mt-1 font-sans">Chapters vs Minutes</span>
                       </div>
                     </div>
 
                     <div className="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/40 text-[10px] font-bold uppercase">
                       <div className="flex justify-between">
-                        <span className="text-zinc-400 font-sans">Avg Pages read</span>
-                        <span className="font-mono">{focusIndex.avgPagesPerSession.toFixed(1)} pages</span>
+                        <span className="text-zinc-400 font-sans">Avg Chapters read</span>
+                        <span className="font-mono">{focusIndex.avgChaptersRead.toFixed(1)} chapters</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-zinc-400 font-sans">Avg Session Duration</span>

@@ -115,6 +115,7 @@ model User {
   nationality              String?
   loginAlertsEnabled       Boolean                  @default(true) @map("login_alerts_enabled")
   socialLinks              Json?                    @map("social_links")
+  fcmTokens                String[]                 @default([]) @map("fcm_tokens")
 
   // Relationships to new models
   annotations              BookAnnotation[]

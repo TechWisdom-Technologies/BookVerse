@@ -184,21 +184,36 @@ export async function GET() {
       where: {
         storyId: { in: stories.map(s => s.id) }
       },
-      select: { pagesRead: true, minutes: true }
+      select: { minutes: true }
     });
 
     const totalLogsCount = dbReadingLogs.length;
-    const avgPagesRead = totalLogsCount > 0
-      ? dbReadingLogs.reduce((sum, log) => sum + log.pagesRead, 0) / totalLogsCount
-      : 0;
     const avgMinutesRead = totalLogsCount > 0
       ? dbReadingLogs.reduce((sum, log) => sum + log.minutes, 0) / totalLogsCount
       : 0;
 
-    const focusScore = totalLogsCount > 0 ? Math.min(100, Math.max(0, (avgPagesRead / Math.max(1, avgMinutesRead)) * 100)) : 0;
+    // Calculate Average Chapters Read
+    const totalReadingProgressCount = await prisma.readingProgress.count({
+      where: { storyId: { in: stories.map(s => s.id) } }
+    });
+    
+    const uniqueReaders = await prisma.readingProgress.groupBy({
+      by: ['userId'],
+      where: { storyId: { in: stories.map(s => s.id) } }
+    });
+    
+    const avgChaptersRead = uniqueReaders.length > 0 
+      ? totalReadingProgressCount / uniqueReaders.length 
+      : 0;
+
+    // Calculate Focus Score (Session Intensity) based on Chapters vs Minutes
+    // Intensity = (Chapters Read per Hour) relative to a benchmark (e.g., 4 chapters/hour = 100%)
+    const totalMinutesRead = dbReadingLogs.reduce((sum, log) => sum + log.minutes, 0);
+    const chaptersPerHour = totalMinutesRead > 0 ? (totalReadingProgressCount / (totalMinutesRead / 60)) : 0;
+    const focusScore = totalLogsCount > 0 ? Math.min(100, Math.max(0, (chaptersPerHour / 4) * 100)) : 0;
 
     const focusIndex = {
-      avgPagesPerSession: avgPagesRead,
+      avgChaptersRead: avgChaptersRead,
       avgMinutesPerSession: avgMinutesRead,
       focusScore,
       totalLogsCount
