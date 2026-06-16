@@ -1,4 +1,4 @@
-const CACHE_NAME = "bookverse-cache-v6";
+const CACHE_NAME = "bookverse-cache-v5";
 const OFFLINE_PAGE = "/offline.html";
 
 const ASSETS_TO_CACHE = [
@@ -51,13 +51,27 @@ self.addEventListener("fetch", (event) => {
   // For navigation requests (full page loads), use offline fallback
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(() => {
-        // Network failed — go straight to offline page.
-        // Don't serve cached HTML because dynamic server-rendered pages
-        // contain stale data and cause a confusing flash before
-        // Next.js hydration fails and shows the error boundary.
-        return caches.match(OFFLINE_PAGE);
-      })
+      fetch(event.request)
+        .then((networkResponse) => {
+          // Cache successful navigation responses
+          if (
+            networkResponse &&
+            networkResponse.status === 200 &&
+            networkResponse.type === "basic"
+          ) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // Network failed — try cache first, then fallback to offline page
+          return caches.match(event.request).then((cachedResponse) => {
+            return cachedResponse || caches.match(OFFLINE_PAGE);
+          });
+        })
     );
     return;
   }
