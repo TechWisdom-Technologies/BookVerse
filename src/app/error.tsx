@@ -5,7 +5,7 @@ import Link from "next/link";
 import { AlertTriangle, Home, RotateCcw, Terminal, WifiOff, BookOpen, Download } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 
-function isNetworkError(error: Error): boolean {
+function isNetworkError(error: Error & { digest?: string }): boolean {
   const msg = (error.message || "").toLowerCase();
   const networkKeywords = [
     "enotfound",
@@ -23,7 +23,14 @@ function isNetworkError(error: Error): boolean {
     "socket hang up",
     "connection refused",
   ];
-  return networkKeywords.some((keyword) => msg.includes(keyword));
+  // Direct keyword match in error message
+  if (networkKeywords.some((keyword) => msg.includes(keyword))) return true;
+  // Check browser offline status — most reliable indicator
+  if (typeof navigator !== "undefined" && !navigator.onLine) return true;
+  // Server component errors arrive with a digest but generic/stripped message.
+  // If we have a digest and the browser is offline, it's almost certainly a network error.
+  if (error.digest && typeof navigator !== "undefined" && !navigator.onLine) return true;
+  return false;
 }
 
 export default function ErrorPage({
