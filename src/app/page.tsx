@@ -155,7 +155,7 @@ export default async function HomePage() {
     };
 
     const [featuredWithRatings, recentWithRatings] = await Promise.all([addRatings(featured), addRatings(recent)]);
-    
+
     const categoriesWithCounts = await Promise.all(
       categoriesBase.map(async (cat) => {
         const [bookCount, storyCount] = await Promise.all([
@@ -169,7 +169,7 @@ export default async function HomePage() {
         };
       })
     );
-    
+
     const formattedStories = stories.map(story => {
       const storyPromos = activePromotions.filter((ap: { storyId: string; tier: string }) => ap.storyId === story.id);
       const hasTrending = storyPromos.some(p => p.tier === 'TRENDING');
@@ -184,7 +184,7 @@ export default async function HomePage() {
         isFeaturedPromo: !hasTrending && !hasPromoted && hasFeatured
       };
     });
-    
+
     // Deduplicate and sort promoted stories by budget (cost) and quality criteria
     const uniquePromotedMap = new Map();
     promotedStories.forEach((p) => {
@@ -194,7 +194,7 @@ export default async function HomePage() {
       const inlineComments = story._count.inlineComments || 0;
       const shares = story._count.shareActivities || 0;
       const qualityScore = reactions + comments + inlineComments + shares;
-      
+
       if (!uniquePromotedMap.has(story.id)) {
         uniquePromotedMap.set(story.id, {
           ...story,
@@ -224,7 +224,7 @@ export default async function HomePage() {
         const hasPromoted = story.tiers.has('PROMOTED');
         const hasFeatured = story.tiers.has('FEATURED');
         const { tiers, ...rest } = story;
-        
+
         return {
           ...rest,
           isTrendingPromo: hasTrending,
