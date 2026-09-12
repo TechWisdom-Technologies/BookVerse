@@ -77,8 +77,7 @@ const ERROR_MAP: [RegExp, string][] = [
   // R2 / Storage
   [/r2/i, "File upload failed. Please try again."],
   [/storage/i, "File upload failed. Please try again."],
-  // Stripe
-  [/stripe/i, "Payment processing encountered an issue. Please try again."],
+
   // Auth
   [/UNAUTHORIZED/i, "You are not logged in. Please log in first."],
   [/forbidden/i, "You don't have permission to do this."],

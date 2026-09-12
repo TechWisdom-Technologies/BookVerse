@@ -47,7 +47,7 @@ export default function GiftsPage() {
   const [redeemCode, setRedeemCode] = useState('');
   const [redeeming, setRedeeming] = useState(false);
 
-  // Mock Stripe Payment Dialog States
+  // Mock UddoktaPay Payment Dialog States
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState<'none' | 'contact'>('none');
   const [warningMsg, setWarningMsg] = useState<string | null>(null);
@@ -557,7 +557,7 @@ export default function GiftsPage() {
                       <div className="p-2 bg-white text-zinc-900 rounded-lg font-bold text-[10px] w-7 h-7 flex items-center justify-center shrink-0">2</div>
                       <div className="flex-1">
                         <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Autopay with Credit Card</h4>
-                        <p className="text-[9px] text-zinc-450 font-medium italic">Recurring Stripe subscription gateway</p>
+                        <p className="text-[9px] text-zinc-450 font-medium italic">Recurring UddoktaPay subscription gateway</p>
                       </div>
                     </button>
 

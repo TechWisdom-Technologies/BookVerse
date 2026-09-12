@@ -44,7 +44,7 @@ const FAQS = [
   },
   {
     q: "How do I send a tip to my favorite author?",
-    a: "While reading a published story, you can click the 'Send Tip' button to directly support the author financially using a secure Stripe transaction.",
+    a: "While reading a published story, you can click the 'Send Tip' button to directly support the author financially using a secure UddoktaPay transaction.",
   },
   {
     q: "Are my draft chapters public?",

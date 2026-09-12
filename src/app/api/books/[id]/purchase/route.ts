@@ -73,7 +73,7 @@ export async function POST(
       );
     }
 
-    // In production, integrate with Stripe to create a payment session
+    // In production, integrate with UddoktaPay to create a payment session
     // For now, this is a mock implementation
     const purchaseRecord = {
       id: `purchase-${Date.now()}`,
@@ -83,7 +83,7 @@ export async function POST(
       price: price || 0,
       status: 'pending',
       createdAt: new Date(),
-      stripeSessionId: null,
+      uddoktaSessionId: null,
     };
 
     // TODO: Create actual purchase record in database

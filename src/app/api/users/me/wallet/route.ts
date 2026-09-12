@@ -88,7 +88,7 @@ export async function GET() {
           status: t.status,
           createdAt: t.createdAt,
           description: `Received tip from @${t.sender?.username || 'anonymous'}${t.story ? ` on "${t.story.title}"` : ''}`,
-          method: t.currency?.toLowerCase() === 'bdt' ? (t.transactionId ? "Mobile Wallet" : "UddoktaPay") : "Stripe (Card)",
+          method: t.currency?.toLowerCase() === 'bdt' ? (t.transactionId ? "Mobile Wallet" : "UddoktaPay") : "Card",
         });
       });
 
@@ -101,7 +101,7 @@ export async function GET() {
           status: t.status,
           createdAt: t.createdAt,
           description: `Sent support tip to @${t.receiver?.username || 'author'}${t.story ? ` on "${t.story.title}"` : ''}`,
-          method: t.currency?.toLowerCase() === 'bdt' ? (t.transactionId ? "Mobile Wallet" : "UddoktaPay") : "Stripe (Card)",
+          method: t.currency?.toLowerCase() === 'bdt' ? (t.transactionId ? "Mobile Wallet" : "UddoktaPay") : "Card",
         });
       });
 
