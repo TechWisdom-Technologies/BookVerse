@@ -68,7 +68,7 @@ export function DevPhaseModal() {
           {/* Message */}
           <div className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed space-y-4">
             <p>
-              Welcome to <span className="font-bold text-zinc-900 dark:text-white">BookVerse By TechWisdom Technologies</span>! We are currently in the active development and testing phase.
+              Welcome to <span className="font-bold text-zinc-900 dark:text-white">BookVerse</span>! We are currently in the active development and testing phase.
             </p>
             <p className="px-4 py-3 bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-800/80 rounded-lg italic text-zinc-600 dark:text-zinc-300">
               &quot;If you find any bugs, glitches, or errors, feel free to submit a report, suggest features, or share your valuable feedback.&quot;

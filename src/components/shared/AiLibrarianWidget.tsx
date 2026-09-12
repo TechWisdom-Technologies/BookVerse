@@ -88,7 +88,7 @@ export function AiLibrarianWidget() {
                     AI Librarian
                   </h3>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    Powered by TechWisdom AI
+                    Powered by AI
                   </p>
                 </div>
               </div>

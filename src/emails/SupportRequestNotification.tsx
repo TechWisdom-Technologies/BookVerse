@@ -38,7 +38,7 @@ export function SupportRequestNotification({
           Support Desk
         </h2>
         <p style={{ fontSize: "9px", color: "#a1a1aa", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.15em", margin: 0 }}>
-          BookVerse By TechWisdom
+          BookVerse
         </p>
       </div>
 

@@ -138,7 +138,7 @@ export function Footer() {
                 <span className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-tight">
                   BookVerse
                 </span>
-                <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">By TechWisdom Technologies</p>
+
               </div>
             </Link>
             <p className="text-[11px] text-zinc-500 leading-relaxed font-medium max-w-md italic">
@@ -273,9 +273,7 @@ export function Footer() {
               <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">
                 © {new Date().getFullYear()} BookVerse. All rights reserved.
               </div>
-              <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
-                Design and Developed by TechWisdom Technologies
-              </div>
+
             </div>
           </div>
         </div>

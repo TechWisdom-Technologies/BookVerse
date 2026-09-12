@@ -85,7 +85,7 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
               />
               <div className="flex flex-col">
                 <span className="text-sm font-black text-zinc-900 dark:text-white leading-tight">Admin Panel</span>
-                <span className="text-[8px] font-bold uppercase tracking-widest text-zinc-400">By TechWisdom</span>
+
               </div>
             </Link>
             <button

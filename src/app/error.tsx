@@ -80,9 +80,7 @@ export default function ErrorPage({
                 <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                   BookVerse
                 </span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
-                  By TechWisdom Technologies
-                </span>
+
               </div>
             </Link>
 
@@ -158,9 +156,7 @@ export default function ErrorPage({
               <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                 BookVerse
               </span>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
-                By TechWisdom Technologies
-              </span>
+
             </div>
           </Link>
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-4">

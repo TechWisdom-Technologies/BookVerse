@@ -38,18 +38,7 @@ export function ResetPasswordEmail({ resetLink }: ResetPasswordEmailProps) {
         >
           BookVerse
         </h2>
-        <p
-          style={{
-            fontSize: "10px",
-            color: "#a1a1aa",
-            fontWeight: "bold",
-            textTransform: "uppercase",
-            letterSpacing: "0.15em",
-            margin: 0,
-          }}
-        >
-          By TechWisdom Technologies
-        </p>
+
       </div>
 
       {/* Content */}
