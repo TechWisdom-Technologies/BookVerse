@@ -32,6 +32,8 @@ type SyncedUser = {
   readerTheme?: string;
   readingProgressSync?: boolean;
   phoneNumber?: string | null;
+  address?: string | null;
+  nationality?: string | null;
   bkashNumber?: string | null;
   nagadNumber?: string | null;
   socialLinks?: { platform: string; url: string }[] | null;
