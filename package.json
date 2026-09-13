@@ -17,7 +17,6 @@
     "@prisma/client": "^6.2.1",
     "@radix-ui/react-dialog": "^1.1.15",
     "@react-email/components": "^1.0.12",
-    "@stripe/stripe-js": "^9.4.0",
     "@subhesadek/avro-phonetic": "^2.1.4",
     "@tiptap/extension-image": "^3.22.5",
     "@tiptap/extension-placeholder": "^3.22.5",

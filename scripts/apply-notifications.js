@@ -30,35 +30,6 @@ if (!storiesFile.includes('MILESTONE')) {
   fs.writeFileSync('src/app/api/stories/[id]/route.ts', storiesFile);
 }
 
-// 2. stripe/webhook/route.ts
-let webhookFile = fs.readFileSync('src/app/api/stripe/webhook/route.ts', 'utf8');
 
-if (!webhookFile.includes('createNotification')) {
-  webhookFile = webhookFile.replace('import { prisma } from "@/lib/prisma";', 'import { prisma } from "@/lib/prisma";\nimport { createNotification } from "@/lib/notifications";');
-  
-  const webhookTarget = `        await prisma.tip.update({
-          where: { id: tipId },
-          data: { status: "COMPLETED" },
-        });`;
-        
-  const webhookReplacement = `        const completedTip = await prisma.tip.update({
-          where: { id: tipId },
-          data: { status: "COMPLETED" },
-          include: { sender: true }
-        });
-        
-        if (completedTip) {
-          void createNotification({
-            userId: completedTip.receiverId,
-            type: "TIP",
-            title: "You received a Tip!",
-            message: \`\${completedTip.sender?.displayName || completedTip.sender?.username || 'Someone'} sent you a tip of $\${(completedTip.amount / 100).toFixed(2)}!\`,
-            link: \`/profile\`,
-          });
-        }`;
-        
-  webhookFile = webhookFile.replace(webhookTarget, webhookReplacement);
-  fs.writeFileSync('src/app/api/stripe/webhook/route.ts', webhookFile);
-}
 
 console.log('Done');

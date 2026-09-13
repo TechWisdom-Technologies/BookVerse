@@ -532,7 +532,6 @@ model Tip {
   receiverId      String    @map("receiver_id")
   storyId         String?   @map("story_id")
   message         String?
-  stripeSessionId String?   @unique @map("stripe_session_id")
   senderNumber    String?   @map("sender_number")
   transactionId   String?   @unique @map("transaction_id")
   status          TipStatus @default(PENDING)

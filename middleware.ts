@@ -8,9 +8,9 @@ export async function middleware(req: NextRequest) {
   // ─── CSRF / Origin validation for mutating API requests ───
   if (pathname.startsWith("/api/") && ["POST", "PATCH", "PUT", "DELETE"].includes(req.method)) {
     // Skip origin check for:
-    //   - Stripe webhooks (Stripe sends from its own servers)
+    //   - UddoktaPay webhooks (sent from their own servers)
     //   - Cron jobs (sent by Vercel/external cron services)
-    const isWebhook = pathname === "/api/stripe/webhook";
+    const isWebhook = pathname === "/api/payment/uddokta/webhook";
     const isCron = pathname.startsWith("/api/cron/");
 
     if (!isWebhook && !isCron) {
