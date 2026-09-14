@@ -32,6 +32,101 @@ import {
   BookOpen
 } from "lucide-react";
 
+const MOODS = ["Dark", "Romantic", "Adventurous", "Humorous", "Melancholic", "Mysterious", "Thrilling", "Lighthearted", "Epic", "Cozy", "Tense", "Whimsical", "Somber", "Nostalgic", "Suspenseful", "Heartwarming", "Bleak", "Hopeful", "Cynical", "Surreal", "Action-Packed", "Reflective", "Dreamy", "Gritty"];
+const SUB_GENRES = ["Cyberpunk", "Steampunk", "Hard Sci-Fi", "Space Opera", "High Fantasy", "Urban Fantasy", "Paranormal Romance", "Historical Romance", "Psychological Thriller", "Cosmic Horror", "LitRPG", "Grimdark", "Magical Realism", "Post-Apocalyptic", "Dystopian", "Sword and Sorcery", "Cozy Mystery", "Space Western", "Time Travel", "Alternative History", "Gothic Horror", "Dark Fantasy", "Wuxia", "Xianxia", "Isekai", "Slice of Life", "Military Sci-Fi", "Erotica", "Comedy", "Tragedy"];
+const CONTENT_WARNINGS = ["Mild Violence", "Strong Violence", "Strong Language", "Sexual Content", "Substance Abuse", "Self-Harm", "Mental Health Struggles", "Gore", "Death/Dying", "Abuse", "Sexual Assault", "Animal Cruelty", "Eating Disorders", "Suicide", "Torture", "Pregnancy / Childbirth", "Miscarriage", "Blood", "Kidnapping", "Phobias", "Grief / Loss", "Graphic Depictions"];
+const TAGS = ["futuristic", "neon", "space", "magic", "dragons", "vampires", "time-travel", "dystopian", "cozy-mystery", "enemies-to-lovers", "slow-burn", "found-family", "love-triangle", "fake-dating", "chosen-one", "anti-hero", "magic-school", "assassins", "royalty", "rebellion", "ai", "aliens", "zombies", "ghosts", "witches", "werewolves", "demons", "angels", "gods", "mythology", "superheroes", "villains", "revenge", "heist", "survival"];
+
+function MultiSelectDropdown({
+  label,
+  valueStr,
+  onChange,
+  options,
+  placeholder,
+  max
+}: {
+  label: string;
+  valueStr: string;
+  onChange: (val: string) => void;
+  options: string[];
+  placeholder: string;
+  max?: number;
+}) {
+  const [inputValue, setInputValue] = useState("");
+  const selected = valueStr.split(",").map(s => s.trim()).filter(Boolean);
+  const datalistId = label.replace(/\s+/g, '-').toLowerCase();
+  
+  const handleAdd = () => {
+    const val = inputValue.trim();
+    if (!val) return;
+    if (max && selected.length >= max) {
+      toast.error(`Maximum ${max} selections allowed.`);
+      return;
+    }
+    if (!selected.includes(val)) {
+      onChange([...selected, val].join(", "));
+    }
+    setInputValue("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAdd();
+    }
+  };
+
+  const handleRemove = (item: string) => {
+    onChange(selected.filter(s => s !== item).join(", "));
+  };
+
+  return (
+    <div className="space-y-2">
+      <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">{label}</label>
+      <div className="flex gap-2">
+        <input
+          list={datalistId}
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={placeholder}
+          className="flex-1 px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+        />
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={!inputValue.trim()}
+          className="px-4 py-3 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-[10px] font-bold uppercase tracking-widest rounded transition-colors disabled:opacity-50 border border-zinc-200 dark:border-zinc-800"
+        >
+          Add
+        </button>
+      </div>
+      <datalist id={datalistId}>
+        {options.filter(o => !selected.includes(o)).map(o => (
+          <option key={o} value={o} />
+        ))}
+      </datalist>
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-2">
+          {selected.map(item => (
+            <span key={item} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 text-[10px] font-bold tracking-widest uppercase">
+              {item}
+              <button
+                type="button"
+                onClick={() => handleRemove(item)}
+                className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
+              >
+                &times;
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const StoryEditor = dynamic(
   () => import("@/components/stories/StoryEditor"),
   {
@@ -446,7 +541,19 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Mood (e.g. Dark, Romantic, Adventurous)</label>
-                    <input type="text" value={editMood} onChange={(e) => setEditMood(e.target.value)} placeholder="e.g. Melancholic, Mysterious" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                    <input
+                      list="moods-datalist"
+                      type="text"
+                      value={editMood}
+                      onChange={(e) => setEditMood(e.target.value)}
+                      placeholder="Select or type a Mood..."
+                      className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+                    />
+                    <datalist id="moods-datalist">
+                      {MOODS.map(m => (
+                        <option key={m} value={m} />
+                      ))}
+                    </datalist>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Age Rating</label>
@@ -473,18 +580,28 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                   <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-305">Tags, subGenres & Warnings</h2>
                 </div>
                 <div className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Sub-Genres (Comma separated)</label>
-                    <input type="text" value={editSubGenres} onChange={(e) => setEditSubGenres(e.target.value)} placeholder="e.g. Space Opera, Cyberpunk, Hard Sci-Fi" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Content Warnings (Comma separated)</label>
-                    <input type="text" value={editContentWarnings} onChange={(e) => setEditContentWarnings(e.target.value)} placeholder="e.g. Mild Violence, Strong Language" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 ml-1">Search Tags (Comma separated)</label>
-                    <input type="text" value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder="e.g. futuristic, neon, space (max 5)" className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
-                  </div>
+                  <MultiSelectDropdown
+                    label="Sub-Genres (Comma separated)"
+                    valueStr={editSubGenres}
+                    onChange={setEditSubGenres}
+                    options={SUB_GENRES}
+                    placeholder="Select Sub-Genres..."
+                  />
+                  <MultiSelectDropdown
+                    label="Content Warnings (Comma separated)"
+                    valueStr={editContentWarnings}
+                    onChange={setEditContentWarnings}
+                    options={CONTENT_WARNINGS}
+                    placeholder="Select Content Warnings..."
+                  />
+                  <MultiSelectDropdown
+                    label="Search Tags (Comma separated)"
+                    valueStr={editTags}
+                    onChange={setEditTags}
+                    options={TAGS}
+                    placeholder="Select Search Tags (Max 5)"
+                    max={5}
+                  />
                 </div>
               </div>
             </div>
