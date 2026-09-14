@@ -49,19 +49,25 @@ export async function GET(
     );
 
     // Calculate streaks
+    let isCurrentStreakActive = true;
     for (let i = 0; i < 90; i++) {
       const checkDate = new Date(today);
       checkDate.setDate(checkDate.getDate() - i);
       checkDate.setHours(0, 0, 0, 0);
 
-      if (logDates.has(checkDate.getTime())) {
+      const hasLog = logDates.has(checkDate.getTime());
+
+      if (hasLog) {
         tempStreak++;
-        if (i === 0) {
+        maxStreak = Math.max(maxStreak, tempStreak);
+        if (isCurrentStreakActive) {
           currentStreak = tempStreak;
         }
-        maxStreak = Math.max(maxStreak, tempStreak);
-      } else if (i > 0) {
+      } else {
         tempStreak = 0;
+        if (i > 0) {
+          isCurrentStreakActive = false;
+        }
       }
     }
 

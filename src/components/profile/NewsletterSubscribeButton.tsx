@@ -56,12 +56,12 @@ export function NewsletterSubscribeButton({ authorId, initialIsSubscribed }: New
       <button
         onClick={handleToggleSubscribe}
         disabled={isLoading}
-        className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#0A0A0A] px-6 py-3 text-sm font-bold text-zinc-900 dark:text-white transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900 active:scale-[0.98] shadow-sm"
+        className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[10px] font-bold uppercase tracking-widest transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white disabled:opacity-50"
       >
         {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
         ) : (
-          <Check className="h-4 w-4 text-emerald-500" />
+          <Check className="h-3.5 w-3.5 text-emerald-500" />
         )}
         Subscribed
       </button>
@@ -72,14 +72,14 @@ export function NewsletterSubscribeButton({ authorId, initialIsSubscribed }: New
     <button
       onClick={handleToggleSubscribe}
       disabled={isLoading}
-      className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-bold text-white transition-all hover:bg-orange-600 hover:shadow-lg hover:shadow-brand/20 active:scale-[0.98]"
+      className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[10px] font-bold uppercase tracking-widest transition-all bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 disabled:opacity-50"
     >
       {isLoading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
       ) : (
-        <Mail className="h-4 w-4" />
+        <Mail className="h-3.5 w-3.5" />
       )}
-      Subscribe to Newsletter
+      Subscribe
     </button>
   );
 }

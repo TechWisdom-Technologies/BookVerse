@@ -65,29 +65,23 @@ export function ReadingLogForm({ userId, storyId, onSuccess }: ReadingLogFormPro
   };
 
   return (
-    <div className="relative overflow-hidden bg-white dark:bg-zinc-900 rounded-2xl p-6 border border-zinc-200 dark:border-zinc-800 shadow-sm transition-all hover:shadow-md">
-      {/* Decorative gradient blob */}
-      <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-500/10 dark:bg-blue-500/20 blur-3xl rounded-full pointer-events-none" />
-      
-      <div className="relative z-10 flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-xl font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-blue-500" />
-            Log Reading Session
-          </h3>
-          <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Track your progress and keep your streak alive.</p>
-        </div>
+    <div className="space-y-8">
+      <div className="flex items-center gap-2 pb-4 border-b border-zinc-100 dark:border-zinc-900">
+        <Sparkles className="w-3.5 h-3.5 text-zinc-400" />
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+          Log Reading Session
+        </h3>
       </div>
 
-      <form onSubmit={(e) => handleSubmit(e)} className="relative z-10 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <form onSubmit={(e) => handleSubmit(e)} className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+            <label className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest ml-1">
               Pages Read
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-blue-500 transition-colors">
-                <BookOpen className="h-5 w-5" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-300 dark:text-zinc-700">
+                <BookOpen className="h-4 w-4" />
               </div>
               <input
                 type="number"
@@ -95,18 +89,18 @@ export function ReadingLogForm({ userId, storyId, onSuccess }: ReadingLogFormPro
                 value={pagesRead}
                 onChange={e => setPagesRead(e.target.value)}
                 placeholder="0"
-                className="block w-full pl-10 pr-3 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all outline-none"
+                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 pl-10 pr-4 py-3 text-xs outline-none rounded focus:border-zinc-900 dark:focus:border-white transition-colors"
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wider">
+            <label className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest ml-1">
               Minutes Read
             </label>
             <div className="relative group">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400 group-focus-within:text-indigo-500 transition-colors">
-                <Clock className="h-5 w-5" />
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-300 dark:text-zinc-700">
+                <Clock className="h-4 w-4" />
               </div>
               <input
                 type="number"
@@ -114,15 +108,15 @@ export function ReadingLogForm({ userId, storyId, onSuccess }: ReadingLogFormPro
                 value={minutes}
                 onChange={e => setMinutes(e.target.value)}
                 placeholder="0"
-                className="block w-full pl-10 pr-3 py-3 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-xl text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all outline-none"
+                className="w-full bg-zinc-50 dark:bg-zinc-900/50 border border-zinc-100 dark:border-zinc-900 pl-10 pr-4 py-3 text-xs outline-none rounded focus:border-zinc-900 dark:focus:border-white transition-colors"
               />
             </div>
           </div>
         </div>
 
         {/* Quick Add Presets */}
-        <div className="space-y-2 pt-2">
-          <label className="text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
+        <div className="space-y-3">
+          <label className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
             <Plus className="w-3 h-3" /> Quick Add Time
           </label>
           <div className="flex flex-wrap gap-2">
@@ -132,10 +126,10 @@ export function ReadingLogForm({ userId, storyId, onSuccess }: ReadingLogFormPro
                 type="button"
                 onClick={() => handleSubmit(undefined, preset)}
                 disabled={isSubmitting}
-                className="px-4 py-2 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 rounded-lg text-sm font-medium transition-all focus:ring-2 focus:ring-blue-500 disabled:opacity-50 flex items-center gap-1.5"
+                className="px-4 py-2 bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 rounded text-[10px] font-bold uppercase tracking-widest transition-all focus:ring-1 focus:ring-zinc-900 dark:focus:ring-white disabled:opacity-50 flex items-center gap-1.5"
               >
-                <Clock className="w-3.5 h-3.5 opacity-70" />
-                +{preset} min
+                <Clock className="w-3 h-3 opacity-70" />
+                +{preset}m
               </button>
             ))}
           </div>
@@ -144,18 +138,18 @@ export function ReadingLogForm({ userId, storyId, onSuccess }: ReadingLogFormPro
         <button
           type="submit"
           disabled={isSubmitting || isSuccess || (!pagesRead && !minutes)}
-          className={`w-full relative overflow-hidden font-semibold py-3.5 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2
+          className={`w-full py-3.5 px-4 rounded text-[10px] font-bold uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2
             ${isSuccess 
-              ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' 
-              : 'bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-100 dark:hover:bg-white text-white dark:text-zinc-900 shadow-md disabled:bg-zinc-300 dark:disabled:bg-zinc-700 disabled:text-zinc-500 disabled:shadow-none'
+              ? 'bg-emerald-500 text-white' 
+              : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100 disabled:opacity-50 disabled:bg-zinc-100 dark:disabled:bg-zinc-900 disabled:text-zinc-400'
             }
           `}
         >
           {isSubmitting ? (
-            <Loader2 className="w-5 h-5 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" />
           ) : isSuccess ? (
             <>
-              <CheckCircle2 className="w-5 h-5" />
+              <CheckCircle2 className="w-4 h-4" />
               Logged Successfully
             </>
           ) : (

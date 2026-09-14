@@ -43,22 +43,22 @@ export function FollowButton({ targetUserId, isFollowing: initialIsFollowing }: 
     <button
       onClick={handleToggleFollow}
       disabled={isLoading}
-      className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+      className={`inline-flex items-center justify-center gap-2 px-6 py-3 rounded text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 ${
         isFollowing
-          ? "bg-zinc-100 text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
-          : "bg-indigo-600 text-white hover:bg-indigo-700"
-      } disabled:opacity-50`}
+          ? "bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-white"
+          : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:bg-zinc-800 dark:hover:bg-zinc-100"
+      }`}
     >
       {isLoading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
+        <Loader2 className="h-3.5 w-3.5 animate-spin" />
       ) : isFollowing ? (
         <>
-          <UserCheck className="h-4 w-4" />
+          <UserCheck className="h-3.5 w-3.5" />
           Following
         </>
       ) : (
         <>
-          <UserPlus className="h-4 w-4" />
+          <UserPlus className="h-3.5 w-3.5" />
           Follow
         </>
       )}

@@ -13,8 +13,11 @@ export async function getCurrentUser(): Promise<User | null> {
   try {
     const { dbUser } = await verifyToken();
     return dbUser;
-  } catch (error) {
-    console.error("Auth error:", error);
+  } catch (error: any) {
+    // Suppress expected auth errors so Next.js doesn't show the red error overlay in dev mode
+    if (error?.message !== "UNAUTHORIZED" && error?.message !== "USER_NOT_FOUND") {
+      console.error("Auth error:", error);
+    }
     return null;
   }
 }
