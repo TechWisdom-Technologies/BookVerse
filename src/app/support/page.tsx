@@ -238,42 +238,56 @@ export default function SupportPage() {
               </h2>
 
               {/* Email Card */}
-              <a
-                href="mailto:twtech.contact@gmail.com"
-                className="group flex items-start gap-4 p-5 border border-zinc-100 dark:border-zinc-900 rounded hover:bg-zinc-50 dark:hover:bg-zinc-900/45 hover:border-zinc-900 dark:hover:border-white transition-all shadow-sm duration-300 block"
-              >
-                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-900 dark:group-hover:bg-white text-zinc-600 dark:text-zinc-300 group-hover:text-white dark:group-hover:text-zinc-900 rounded-lg transition-colors shadow-sm">
+              <div className="group flex items-start gap-4 p-5 border border-zinc-100 dark:border-zinc-900 rounded hover:bg-zinc-50 dark:hover:bg-zinc-900/45 transition-all shadow-sm duration-300">
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 rounded-lg shadow-sm">
                   <Mail className="w-5 h-5" />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                    Email Desk <ExternalLink className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    Email Desk
                   </div>
-                  <div className="text-sm font-bold text-zinc-900 dark:text-white">twtech.contact@gmail.com</div>
-                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed italic">
+                  <div className="flex flex-col gap-1.5">
+                    <a href="mailto:bookverse@gmail.com" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      bookverse@gmail.com <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                    <a href="mailto:twtech.contact@gmail.com" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      twtech.contact@gmail.com <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                    <a href="mailto:official@techwisdom.site" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      official@techwisdom.site <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed italic mt-1">
                     For business inquiries, DMCA notices, or account restorations.
                   </p>
                 </div>
-              </a>
+              </div>
 
               {/* Phone Card */}
-              <a
-                href="tel:+8801799269699"
-                className="group flex items-start gap-4 p-5 border border-zinc-100 dark:border-zinc-900 rounded hover:bg-zinc-50 dark:hover:bg-zinc-900/45 hover:border-zinc-900 dark:hover:border-white transition-all shadow-sm duration-300 block"
-              >
-                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-900 dark:group-hover:bg-white text-zinc-600 dark:text-zinc-300 group-hover:text-white dark:group-hover:text-zinc-900 rounded-lg transition-colors shadow-sm">
+              <div className="group flex items-start gap-4 p-5 border border-zinc-100 dark:border-zinc-900 rounded hover:bg-zinc-50 dark:hover:bg-zinc-900/45 transition-all shadow-sm duration-300">
+                <div className="p-3 bg-zinc-50 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-300 rounded-lg shadow-sm">
                   <Phone className="w-5 h-5" />
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                    Voice Assistance <ExternalLink className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    Voice Assistance
                   </div>
-                  <div className="text-sm font-bold text-zinc-900 dark:text-white">+880 1799-269699</div>
-                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed italic">
+                  <div className="flex flex-col gap-1.5">
+                    <a href="tel:+8801799269699" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      +880 1799-269699 <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                    <a href="tel:+8801352215600" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      +880 1352-215600 <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                    <a href="tel:+8801641621584" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      +880 1641-621584 <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                  </div>
+                  <p className="text-[10px] text-zinc-500 font-medium leading-relaxed italic mt-1">
                     Available during operational hours for direct account triage.
                   </p>
                 </div>
-              </a>
+              </div>
 
               {/* WhatsApp Card */}
               <a
@@ -298,7 +312,7 @@ export default function SupportPage() {
 
               {/* Address Card */}
               <a
-                href="https://www.google.com/maps/search/?api=1&query=158/Cha,+Kuratoli+Rd,+Dhaka+1229,+Bangladesh"
+                href="https://www.google.com/maps/search/?api=1&query=Johra+Mension,+Koyalarbari+,+Kuratoli,+Kuril-1229,+Dhaka+,+Bangladesh"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group flex items-start gap-4 p-5 border border-zinc-100 dark:border-zinc-900 rounded hover:bg-zinc-50 dark:hover:bg-zinc-900/45 hover:border-zinc-900 dark:hover:border-white transition-all shadow-sm duration-300 block"
@@ -311,7 +325,7 @@ export default function SupportPage() {
                     Headquarters <ExternalLink className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <div className="text-[12px] font-bold leading-relaxed text-zinc-900 dark:text-white">
-                    158/Cha, Kuratoli Rd, Dhaka 1229, Bangladesh
+                    Johra Mension, Koyalarbari, Kuratoli, Kuril-1229, Dhaka, Bangladesh
                   </div>
                   <p className="text-[10px] text-zinc-500 font-medium leading-relaxed italic">
                     Visit us in person or send legal notices directly to our administrative office.

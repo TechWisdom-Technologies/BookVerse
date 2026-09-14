@@ -285,18 +285,18 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin size={14} className="text-zinc-300 mt-0.5 flex-shrink-0" />
                 <a
-                  href="https://www.google.com/maps/search/?api=1&query=158/Cha,+Kuratoli+Rd,+Dhaka+1229,+Bangladesh"
+                  href="https://www.google.com/maps/search/?api=1&query=Johra+Mension,+Koyalarbari+,+Kuratoli,+Kuril-1229,+Dhaka+,+Bangladesh"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors leading-relaxed"
                 >
-                  158/Cha, Kuratoli Rd<br />Dhaka 1229, Bangladesh
+                  Johra Mension, Koyalarbari<br />Kuratoli, Kuril-1229<br />Dhaka, Bangladesh
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail size={14} className="text-zinc-300 flex-shrink-0" />
-                <a href="mailto:twtech.contact@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-                  twtech.contact@gmail.com
+                <a href="mailto:bookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                  bookverse@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3">
