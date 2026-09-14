@@ -190,7 +190,7 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {stories.map((prog) => {
                   const isDeleting = deletingStories.includes(prog.storyId);
                   const isConfirming = storyConfirmDeleteId === prog.storyId;
@@ -340,7 +340,7 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {books.map((bookmark) => {
                   const isDeleting = deletingBooks.includes(bookmark.id);
                   const isConfirming = bookConfirmDeleteId === bookmark.id;
