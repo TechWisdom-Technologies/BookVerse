@@ -29,9 +29,11 @@ import {
   Gift,
   Copy,
   CheckCircle2,
-  Target
+  Target,
+  UserPlus
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 interface Collaborator {
   id: string;
@@ -213,6 +215,7 @@ export default function AuthorDashboardPage() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [selectedPromoStory, setSelectedPromoStory] = useState<string>('');
+  const [promoFilter, setPromoFilter] = useState<'all' | 'live' | 'ended'>('all');
   
   const [removeStoryModal, setRemoveStoryModal] = useState<{ universeId: string; storyId: string; storyTitle: string } | null>(null);
   const [removeReason, setRemoveReason] = useState("");
@@ -468,8 +471,8 @@ export default function AuthorDashboardPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-800">
-                        {invite.universe.user.avatarUrl ? (
-                          <img src={invite.universe.user.avatarUrl} className="w-full h-full object-cover" />
+                        {invite.universe.user.avatarUrl && invite.universe.user.avatarUrl !== "null" ? (
+                          <img src={invite.universe.user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${invite.universe.user.username}&background=random`; }} />
                         ) : (
                           <User className="w-5 h-5 text-zinc-400" />
                         )}
@@ -541,8 +544,8 @@ export default function AuthorDashboardPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0 border border-zinc-200 dark:border-zinc-800">
-                        {req.user?.avatarUrl ? (
-                          <img src={req.user.avatarUrl} className="w-full h-full object-cover" />
+                        {req.user?.avatarUrl && req.user.avatarUrl !== "null" ? (
+                          <img src={req.user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${req.user?.username || 'User'}&background=random`; }} />
                         ) : (
                           <User className="w-5 h-5 text-zinc-400" />
                         )}
@@ -721,8 +724,8 @@ export default function AuthorDashboardPage() {
               {betaReaders.map((br) => (
                 <div key={br.id} className="p-4 border border-zinc-100 dark:border-zinc-900 rounded-2xl bg-zinc-50/20 dark:bg-zinc-900/10 flex flex-col items-center text-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden border border-zinc-100 dark:border-zinc-800">
-                    {br.user.avatarUrl ? (
-                      <img src={br.user.avatarUrl} className="w-full h-full object-cover" />
+                    {br.user.avatarUrl && br.user.avatarUrl !== "null" ? (
+                      <img src={br.user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${br.user.username}&background=random`; }} />
                     ) : (
                       <User className="w-4 h-4 text-zinc-400" />
                     )}
@@ -791,8 +794,8 @@ export default function AuthorDashboardPage() {
                               className="px-3 py-1.5 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-xl flex items-center gap-2 text-xs"
                             >
                               <div className="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
-                                {c.user.avatarUrl ? (
-                                  <img src={c.user.avatarUrl} className="w-full h-full object-cover" />
+                                {c.user.avatarUrl && c.user.avatarUrl !== "null" ? (
+                                  <img src={c.user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${c.user.username}&background=random`; }} />
                                 ) : (
                                   <User className="w-2.5 h-2.5 text-zinc-400" />
                                 )}
@@ -815,6 +818,8 @@ export default function AuthorDashboardPage() {
                           ))}
                         </div>
                       )}
+                      
+                      <AddCoAuthorForm universeId={uni.id} onAdded={fetchDashboardData} />
                     </div>
 
                     {/* Collaborator Contributions */}
@@ -917,8 +922,8 @@ export default function AuthorDashboardPage() {
                               className="px-3 py-1.5 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded-xl flex items-center gap-2 text-xs"
                             >
                               <div className="w-5 h-5 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center overflow-hidden">
-                                {c.user.avatarUrl ? (
-                                  <img src={c.user.avatarUrl} className="w-full h-full object-cover" />
+                                {c.user.avatarUrl && c.user.avatarUrl !== "null" ? (
+                                  <img src={c.user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${c.user.username}&background=random`; }} />
                                 ) : (
                                   <User className="w-2.5 h-2.5 text-zinc-400" />
                                 )}
@@ -1071,8 +1076,8 @@ export default function AuthorDashboardPage() {
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-zinc-50 dark:bg-zinc-900 overflow-hidden shrink-0 border border-zinc-100 dark:border-zinc-800">
-                        {req.user.avatarUrl ? (
-                          <img src={req.user.avatarUrl} className="w-full h-full object-cover" />
+                        {req.user.avatarUrl && req.user.avatarUrl !== "null" ? (
+                          <img src={req.user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${req.user.username}&background=random`; }} />
                         ) : (
                           <User className="w-3.5 h-3.5 text-zinc-400" />
                         )}
@@ -1143,90 +1148,130 @@ export default function AuthorDashboardPage() {
             </div>
           </div>
 
-          {activePromotions.length === 0 ? (
-            <div className="py-20 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-50/50 dark:bg-zinc-900/20 flex flex-col items-center justify-center text-center p-6">
-              <Radio className="w-10 h-10 text-zinc-300 dark:text-zinc-700 mb-6" />
-              <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 italic mb-2">No promotion campaigns running.</p>
-              <p className="text-[10px] text-zinc-500 max-w-md">Boost your manuscript visibility by initiating a Featured, Promoted, or Trending campaign.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {activePromotions.map((promo) => {
-                const isEnded = new Date(promo.endDate) < new Date() || promo.status === "ENDED";
-                const isActive = promo.status === "ACTIVE" && !isEnded;
-                const isPending = promo.status === "PENDING";
-                
-                // Calculate time remaining
-                const remainingTimeMs = new Date(promo.endDate).getTime() - new Date().getTime();
-                const remainingDays = Math.max(0, Math.ceil(remainingTimeMs / (1000 * 60 * 60 * 24)));
-                
-                let statusColor = "bg-zinc-100 dark:bg-zinc-900 text-zinc-500";
-                if (isActive) statusColor = "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
-                else if (isPending) statusColor = "bg-amber-500/10 text-amber-500 border border-amber-500/20";
-                else if (promo.status === "DECLINED") statusColor = "bg-rose-500/10 text-rose-500 border border-rose-500/20";
-                else if (isEnded) statusColor = "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20"; // Red for ended
-                
-                let tierColor = "bg-indigo-500/10 text-indigo-500";
-                if (promo.tier === "FEATURED") tierColor = "bg-amber-500/10 text-amber-500";
-                if (promo.tier === "TRENDING") tierColor = "bg-emerald-500/10 text-emerald-500";
+          {/* Filter Tabs: All / Live / Ended */}
+          <div className="flex items-center gap-1.5 mb-8 bg-zinc-100/60 dark:bg-zinc-900/40 p-1 rounded-xl w-fit border border-zinc-200/50 dark:border-zinc-800/50">
+            {(['all', 'live', 'ended'] as const).map((tab) => {
+              const isTabActive = promoFilter === tab;
+              const label = tab === 'all' ? 'All' : tab === 'live' ? 'Live' : 'Ended';
+              const count = tab === 'all'
+                ? activePromotions.length
+                : tab === 'live'
+                  ? activePromotions.filter(p => p.status === 'ACTIVE' && new Date(p.endDate) >= new Date()).length
+                  : activePromotions.filter(p => new Date(p.endDate) < new Date() || p.status === 'ENDED' || p.status === 'DECLINED').length;
+              return (
+                <button
+                  key={tab}
+                  onClick={() => setPromoFilter(tab)}
+                  className={`px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${
+                    isTabActive
+                      ? 'bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm'
+                      : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300'
+                  }`}
+                >
+                  {label}{count > 0 ? ` (${count})` : ''}
+                </button>
+              );
+            })}
+          </div>
 
-                return (
-                  <div key={promo.id} className={`p-6 rounded-3xl border transition-all shadow-sm relative overflow-hidden ${isActive ? 'bg-indigo-50/10 dark:bg-indigo-950/10 border-indigo-500/20' : 'bg-white dark:bg-zinc-950 border-zinc-100 dark:border-zinc-900'}`}>
-                    {isActive && <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />}
-                    
-                    <div className="flex justify-between items-start mb-4">
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${tierColor}`}>
-                        {promo.tier}
-                      </span>
-                      <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusColor}`}>
-                        {isEnded ? "ENDED" : promo.status}
-                      </span>
-                    </div>
-                    
-                    <h3 className="text-sm font-bold text-zinc-900 dark:text-white truncate mb-4" title={promo.storyTitle}>
-                      {promo.storyTitle}
-                    </h3>
-                    
-                    <div className="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="text-zinc-500 font-medium">Cost</span>
-                        <span className="font-mono font-bold text-zinc-900 dark:text-white">৳{promo.cost.toLocaleString()}</span>
-                      </div>
+          {(() => {
+            const filteredPromotions = promoFilter === 'all'
+              ? activePromotions
+              : promoFilter === 'live'
+                ? activePromotions.filter(p => p.status === 'ACTIVE' && new Date(p.endDate) >= new Date())
+                : activePromotions.filter(p => new Date(p.endDate) < new Date() || p.status === 'ENDED' || p.status === 'DECLINED');
+
+            return filteredPromotions.length === 0 ? (
+              <div className="py-20 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-50/50 dark:bg-zinc-900/20 flex flex-col items-center justify-center text-center p-6">
+                <Radio className="w-10 h-10 text-zinc-300 dark:text-zinc-700 mb-6" />
+                <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 italic mb-2">
+                  {promoFilter === 'all' ? 'No promotion campaigns running.' : promoFilter === 'live' ? 'No live campaigns right now.' : 'No ended campaigns yet.'}
+                </p>
+                <p className="text-[10px] text-zinc-500 max-w-md">Boost your manuscript visibility by initiating a Featured, Promoted, or Trending campaign.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredPromotions.map((promo) => {
+                  const isEnded = new Date(promo.endDate) < new Date() || promo.status === "ENDED";
+                  const isLive = promo.status === "ACTIVE" && !isEnded;
+                  const isPending = promo.status === "PENDING";
+                  const isDeclined = promo.status === "DECLINED";
+                  
+                  // Calculate time remaining
+                  const remainingTimeMs = new Date(promo.endDate).getTime() - new Date().getTime();
+                  const remainingDays = Math.max(0, Math.ceil(remainingTimeMs / (1000 * 60 * 60 * 24)));
+                  
+                  // Determine display status text
+                  const displayStatus = isEnded ? 'ENDED' : promo.status;
+
+                  let statusColor = "bg-zinc-100 dark:bg-zinc-900 text-zinc-500";
+                  if (isLive) statusColor = "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20";
+                  else if (isPending) statusColor = "bg-amber-500/10 text-amber-500 border border-amber-500/20";
+                  else if (isDeclined) statusColor = "bg-rose-500/10 text-rose-500 border border-rose-500/20";
+                  else if (isEnded) statusColor = "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20";
+                  
+                  let tierColor = "bg-indigo-500/10 text-indigo-500";
+                  if (promo.tier === "FEATURED") tierColor = "bg-amber-500/10 text-amber-500";
+                  else if (promo.tier === "TRENDING") tierColor = "bg-emerald-500/10 text-emerald-500";
+
+                  return (
+                    <div key={promo.id} className={`p-6 rounded-3xl border transition-all shadow-sm relative overflow-hidden ${isLive ? 'bg-indigo-50/10 dark:bg-indigo-950/10 border-indigo-500/20' : 'bg-white dark:bg-zinc-950 border-zinc-100 dark:border-zinc-900'}`}>
+                      {isLive && <div className="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl pointer-events-none" />}
                       
-                      <div className="flex justify-between items-center text-xs">
-                        <span className="text-zinc-500 font-medium">Duration</span>
-                        <span className="font-mono font-bold text-zinc-900 dark:text-white">
-                          {new Date(promo.startDate).toLocaleDateString()} - {new Date(promo.endDate).toLocaleDateString()}
+                      <div className="flex justify-between items-start mb-4">
+                        <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${tierColor}`}>
+                          {promo.tier}
+                        </span>
+                        <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${statusColor}`}>
+                          {displayStatus}
                         </span>
                       </div>
                       
-                      {isActive && (
-                        <div className="flex justify-between items-center text-xs pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-                          <span className="text-indigo-500 dark:text-indigo-400 font-bold uppercase tracking-wider text-[10px] flex items-center gap-1.5">
-                            <Clock className="w-3 h-3 animate-pulse" /> Time Remaining
-                          </span>
-                          <span className="font-black text-indigo-600 dark:text-indigo-300">
-                            {remainingDays} {remainingDays === 1 ? 'Day' : 'Days'}
-                          </span>
-                        </div>
-                      )}
+                      <h3 className="text-sm font-bold text-zinc-900 dark:text-white truncate mb-4" title={promo.storyTitle}>
+                        {promo.storyTitle}
+                      </h3>
                       
-                      {isEnded && (
-                        <div className="pt-4 mt-2 border-t border-zinc-100 dark:border-zinc-800/50">
-                          <Link 
-                            href={`/write/story/${promo.storyId}/edit`}
-                            className="w-full py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-zinc-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
-                          >
-                            <TrendingUp className="w-3.5 h-3.5" /> Promote Again
-                          </Link>
+                      <div className="space-y-3 pt-4 border-t border-zinc-100 dark:border-zinc-800/50">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-zinc-500 font-medium">Cost</span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-white">৳{promo.cost.toLocaleString()}</span>
                         </div>
-                      )}
+                        
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="text-zinc-500 font-medium">Duration</span>
+                          <span className="font-mono font-bold text-zinc-900 dark:text-white">
+                            {new Date(promo.startDate).toLocaleDateString()} - {new Date(promo.endDate).toLocaleDateString()}
+                          </span>
+                        </div>
+                        
+                        {isLive && (
+                          <div className="flex justify-between items-center text-xs pt-2 mt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+                            <span className="text-indigo-500 dark:text-indigo-400 font-bold uppercase tracking-wider text-[10px] flex items-center gap-1.5">
+                              <Clock className="w-3 h-3 animate-pulse" /> Time Remaining
+                            </span>
+                            <span className="font-black text-indigo-600 dark:text-indigo-300">
+                              {remainingDays} {remainingDays === 1 ? 'Day' : 'Days'}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {isEnded && (
+                          <div className="pt-4 mt-2 border-t border-zinc-100 dark:border-zinc-800/50">
+                            <Link 
+                              href={`/write/story/${promo.storyId}/edit`}
+                              className="w-full py-2 bg-zinc-100 dark:bg-zinc-800 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 text-zinc-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors flex items-center justify-center gap-2"
+                            >
+                              <TrendingUp className="w-3.5 h-3.5" /> Promote Again
+                            </Link>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            );
+          })()}
         </section>
 
         {/* ========================================== */}
@@ -1570,5 +1615,70 @@ export default function AuthorDashboardPage() {
         </div>
       )}
     </main>
+  );
+}
+
+function AddCoAuthorForm({ universeId, onAdded }: { universeId: string, onAdded: () => void }) {
+  const [newUsername, setNewUsername] = useState("");
+  const [newMessage, setNewMessage] = useState("");
+  const [adding, setAdding] = useState(false);
+
+  const handleAddCollaborator = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUsername.trim()) return;
+    setAdding(true);
+    try {
+      const res = await fetch(`/api/universes/${universeId}/collaborators`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: newUsername.trim(), message: newMessage.trim() || undefined }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success("Collaborator added successfully!");
+        setNewUsername("");
+        setNewMessage("");
+        onAdded();
+      } else {
+        toast.error(data.error || "Failed to add collaborator.");
+      }
+    } catch (err) {
+      toast.error("Failed to add collaborator.");
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleAddCollaborator} className="flex flex-col gap-2 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800/40">
+      <div className="flex items-center gap-2 mb-1 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+        <UserPlus className="w-3.5 h-3.5" />
+        Add Co-Author
+      </div>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newUsername}
+          onChange={(e) => setNewUsername(e.target.value)}
+          placeholder="Enter co-author username..."
+          className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm"
+        />
+        <button
+          type="submit"
+          disabled={adding}
+          className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded-lg flex items-center gap-1 hover:opacity-90 disabled:opacity-50 shrink-0"
+        >
+          {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <UserPlus className="w-3.5 h-3.5" />}
+          Add
+        </button>
+      </div>
+      <textarea
+        value={newMessage}
+        onChange={(e) => setNewMessage(e.target.value)}
+        placeholder="Optional: Send a message with rules or expectations..."
+        rows={2}
+        className="w-full px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg text-[10px] font-medium outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm resize-none"
+      />
+    </form>
   );
 }

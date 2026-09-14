@@ -347,8 +347,8 @@ export async function GET() {
       });
 
       const totalEngagements = promoReactions + promoComments;
-      const cpe = totalEngagements > 0 ? (promo.cost / totalEngagements).toFixed(2) : String(promo.cost);
-      const cpv = promo.promotionViews > 0 ? (promo.cost / promo.promotionViews).toFixed(2) : String(promo.cost);
+      const cpe = totalEngagements > 0 ? (promo.cost / totalEngagements).toFixed(2) : '0.00';
+      const cpv = promo.promotionViews > 0 ? (promo.cost / promo.promotionViews).toFixed(2) : '0.00';
 
       let roiRating = "Low";
       if (totalEngagements > 50 || promo.promotionViews > 500) roiRating = "Excellent";
@@ -356,8 +356,13 @@ export async function GET() {
       else if (totalEngagements > 0 || promo.promotionViews > 0) roiRating = "Average";
 
       // --- METRIC 1: Daily Engagement Velocity ---
-      const campaignDays = Math.max(1, Math.ceil((promo.endDate.getTime() - promo.startDate.getTime()) / (1000 * 60 * 60 * 24)));
-      const dailyEngagementVelocity = parseFloat((totalEngagements / campaignDays).toFixed(2));
+      const now = new Date();
+      const totalPlannedDays = Math.max(1, Math.ceil((promo.endDate.getTime() - promo.startDate.getTime()) / (1000 * 60 * 60 * 24)));
+      // For active campaigns, use elapsed days (not total planned) for accurate velocity
+      const effectiveEndDate = promo.endDate < now ? promo.endDate : now;
+      const elapsedDays = Math.max(1, Math.ceil((effectiveEndDate.getTime() - promo.startDate.getTime()) / (1000 * 60 * 60 * 24)));
+      const campaignDays = totalPlannedDays;
+      const dailyEngagementVelocity = parseFloat((totalEngagements / elapsedDays).toFixed(2));
 
       // --- METRIC 2: Follower Conversion ---
       const followersGained = await prisma.follow.count({
@@ -410,7 +415,7 @@ export async function GET() {
       // --- METRIC 9: Cost Per Minute (Attention Value) ---
       const costPerMinute = totalReadingMinutes > 0
         ? parseFloat((promo.cost / totalReadingMinutes).toFixed(2))
-        : promo.cost;
+        : 0;
 
       // --- METRIC 10: Deep Engagement (Inline Comments) ---
       const inlineCommentsCount = await prisma.inlineComment.count({

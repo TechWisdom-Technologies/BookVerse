@@ -336,7 +336,7 @@ export async function GET() {
     const dbPromotions = await prisma.storyPromotion.findMany({
       where: { story: { authorId: user.id } },
       include: {
-        story: { select: { title: true } }
+        story: { select: { title: true, id: true } }
       },
       orderBy: { createdAt: 'desc' },
       take: 20
@@ -344,6 +344,7 @@ export async function GET() {
 
     const activePromotions = dbPromotions.map(p => ({
       id: p.id,
+      storyId: p.storyId,
       storyTitle: p.story.title,
       tier: p.tier,
       cost: p.cost,
@@ -394,7 +395,6 @@ export async function GET() {
 
     // Feature 5: Onboarding Genre Matchmaker & Under-Served Niches
     const onboardingQuizzes = await prisma.onboardingQuiz.findMany({
-      take: 50,
       select: { genrePreferences: true }
     });
 
