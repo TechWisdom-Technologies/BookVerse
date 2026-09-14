@@ -70,34 +70,62 @@ export function BookFilters({ genres, languages }: BookFiltersProps) {
 
       <div>
         <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Genre</label>
-        <select
+        <input
+          type="text"
+          list="genre-list"
+          placeholder="Type or select genre"
           value={currentGenre}
           onChange={(e) => updateFilter("genre", e.target.value)}
-          className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
-        >
-          <option value="">All Genres</option>
+          className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none"
+        />
+        <datalist id="genre-list">
           {genres.map((g) => (
-            <option key={g} value={g}>
-              {g}
-            </option>
+            <option key={g} value={g} />
           ))}
-        </select>
+        </datalist>
       </div>
 
       <div>
         <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Language</label>
-        <select
+        <input
+          type="text"
+          list="language-list"
+          placeholder="Type or select language"
           value={currentLanguage}
           onChange={(e) => updateFilter("language", e.target.value)}
-          className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
-        >
-          <option value="">All Languages</option>
+          className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none"
+        />
+        <datalist id="language-list">
           {languages.map((l) => (
-            <option key={l} value={l}>
-              {l}
-            </option>
+            <option key={l} value={l} />
           ))}
-        </select>
+        </datalist>
+      </div>
+
+      <div>
+        <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Tags</label>
+        <form onSubmit={(e) => { e.preventDefault(); updateFilter("tags", e.currentTarget.tags.value.trim()); }} className="mt-2 relative">
+          <input
+            type="text"
+            name="tags"
+            defaultValue={searchParams.get("tags") || ""}
+            placeholder="e.g. magic, space..."
+            className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none pr-8"
+          />
+          {searchParams.get("tags") && (
+            <button
+              type="button"
+              onClick={() => {
+                const form = document.querySelector('input[name="tags"]')?.closest('form');
+                if (form) form.reset();
+                updateFilter("tags", "");
+              }}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-300 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </form>
       </div>
 
       <div>

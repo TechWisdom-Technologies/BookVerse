@@ -136,6 +136,7 @@ model User {
   payouts                  AuthorPayout[]
   loginHistory             LoginHistory[]
   deviceSessions           DeviceSession[]
+  clubReactions            ClubDiscussionReaction[]
 
   @@map("users")
 }
@@ -206,6 +207,7 @@ model Book {
   uploadedById  String   @map("uploaded_by_id")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  tags          String[] @default([])
 
   uploadedBy  User              @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
   reviews     BookReview[]
@@ -432,6 +434,7 @@ model Club {
   genre       String?
   isPrivate   Boolean  @default(false) @map("is_private")
   maxMembers  Int?     @map("max_members")
+  rules       String?
   joinCode    String?  @unique @map("join_code")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
@@ -481,18 +484,38 @@ model ClubDiscussion {
   id        String   @id @default(cuid())
   clubId    String   @map("club_id")
   authorId  String   @map("author_id")
-  title     String
+  parentId  String?  @map("parent_id")
+  title     String   @default("")
   content   String
   isEdited  Boolean  @default(false) @map("is_edited")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  club     Club           @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  author   User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  club      Club             @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  author    User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent    ClubDiscussion?  @relation("ClubDiscussionReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   ClubDiscussion[] @relation("ClubDiscussionReplies")
+  reactions ClubDiscussionReaction[]
 
   @@index([clubId])
   @@index([authorId])
+  @@index([parentId])
   @@map("club_discussions")
+}
+
+model ClubDiscussionReaction {
+  id           String   @id @default(cuid())
+  discussionId String   @map("discussion_id")
+  userId       String   @map("user_id")
+  emoji        String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  discussion   ClubDiscussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([discussionId, userId, emoji])
+  @@index([discussionId])
+  @@map("club_discussion_reactions")
 }
 
 // --- Creator Tools Models (Batch 3) ---

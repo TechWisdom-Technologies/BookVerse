@@ -13,6 +13,7 @@ interface SearchParams {
   q?: string;
   genre?: string;
   language?: string;
+  tags?: string;
   fileType?: string;
   page?: string;
   sort?: string;
@@ -24,6 +25,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   const genre = params.genre || "";
   const language = params.language || "";
   const fileType = params.fileType || "";
+  const tagsStr = params.tags || "";
   const page = Math.max(1, parseInt(params.page || "1"));
   const limit = 12;
   const sort = params.sort || "recent";
@@ -48,6 +50,12 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     if (language) where.language = { equals: language, mode: "insensitive" };
     if (fileType === FileType.PDF || fileType === FileType.EPUB) {
       where.fileType = fileType;
+    }
+    if (tagsStr) {
+      const tagList = tagsStr.split(",").map(t => t.trim()).filter(Boolean);
+      if (tagList.length > 0) {
+        where.tags = { hasSome: tagList };
+      }
     }
 
     const orderBy: Prisma.BookOrderByWithRelationInput = {};

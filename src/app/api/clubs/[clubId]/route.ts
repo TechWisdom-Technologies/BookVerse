@@ -35,14 +35,6 @@ export async function GET(
             },
           },
         },
-        discussions: {
-          include: {
-            author: {
-              select: { id: true, username: true, displayName: true, avatarUrl: true },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
       },
     });
 
@@ -60,14 +52,6 @@ export async function GET(
                 select: { id: true, username: true, displayName: true, avatarUrl: true },
               },
             },
-          },
-          discussions: {
-            include: {
-              author: {
-                select: { id: true, username: true, displayName: true, avatarUrl: true },
-              },
-            },
-            orderBy: { createdAt: 'desc' },
           },
         },
       });
@@ -92,12 +76,6 @@ export async function GET(
           include: {
             owner: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true } },
             members: { include: { user: { select: { id: true, username: true, displayName: true, avatarUrl: true } } } },
-            discussions: {
-              include: {
-                author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
-              },
-              orderBy: { createdAt: 'desc' },
-            },
           },
         });
       } catch (err) {
@@ -150,7 +128,7 @@ export async function PATCH(
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { name, description, genre, isPrivate, coverUrl, maxMembers } = await req.json();
+    const { name, description, genre, isPrivate, coverUrl, maxMembers, rules } = await req.json();
 
     const updated = await prisma.club.update({
       where: { id: clubId },
@@ -161,6 +139,7 @@ export async function PATCH(
         ...(isPrivate !== undefined && { isPrivate }),
         ...(coverUrl !== undefined && { coverUrl }),
         ...(maxMembers !== undefined && { maxMembers: maxMembers ? parseInt(maxMembers) : null }),
+        ...(rules !== undefined && { rules }),
       },
       include: {
         owner: {

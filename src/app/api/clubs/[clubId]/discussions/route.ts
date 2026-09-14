@@ -17,11 +17,15 @@ export async function GET(
 
     // Fetch all discussions in the club
     const discussions = await prisma.clubDiscussion.findMany({
-      where: { clubId },
+      where: { clubId, parentId: null },
       include: {
         author: {
           select: { id: true, username: true, displayName: true, avatarUrl: true },
         },
+        reactions: true,
+        _count: {
+          select: { replies: true }
+        }
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -55,12 +59,13 @@ export async function POST(
     const params = await context.params;
     const clubId = params?.clubId || params?.id;
     console.log('POST discussions: ClubId:', clubId);
-    const { title, content, parentId } = await req.json();
+    let { title, content, parentId } = await req.json();
+    title = title || ""; // Fallback for removed subject
     console.log('POST discussions: Body:', { title: title?.slice(0, 20), content: content?.slice(0, 20), parentId });
 
-    if (!title || !content) {
+    if (!content) {
       return NextResponse.json(
-        { error: 'Title and content are required' },
+        { error: 'Content is required' },
         { status: 400 }
       );
     }
@@ -97,6 +102,21 @@ export async function POST(
         );
       }
 
+      // Check if user has already replied to this message
+      const existingReply = await prisma.clubDiscussion.findFirst({
+        where: {
+          parentId,
+          authorId: user.id
+        }
+      });
+
+      if (existingReply) {
+        return NextResponse.json(
+          { error: 'You can only reply once to a specific message' },
+          { status: 400 }
+        );
+      }
+
       // Notify parent author of reply
       if (parent.authorId !== user.id) {
         void createNotification({
@@ -114,6 +134,7 @@ export async function POST(
       data: {
         clubId,
         authorId: user.id,
+        parentId,
         title,
         content,
       },
