@@ -300,27 +300,7 @@ export default function NewsletterManagementPage() {
           </section>
         )}
 
-        {/* Growth Advisory Dossier */}
-        <section className="mt-16 p-8 border border-zinc-100 dark:border-zinc-900 bg-zinc-50/10 dark:bg-zinc-900/5 rounded-lg">
-          <div className="flex items-center gap-2 mb-6">
-            <Lightbulb className="w-3.5 h-3.5 text-zinc-400" />
-            <h3 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">Transmission Optimization Protocols</h3>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              "Embed 'Transmission Subscription' modules on core profiles.",
-              "Announce archival updates and new manuscript chapters.",
-              "Offer exclusive registry content for subscribers.",
-              "Engage with community feedback loops.",
-              "Share writing trajectory milestones and system updates."
-            ].map((tip, i) => (
-              <div key={i} className="flex items-start gap-3 text-xs text-zinc-500 font-medium leading-relaxed">
-                <div className="w-1.5 h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 shrink-0 mt-1.5" />
-                {tip}
-              </div>
-            ))}
-          </div>
-        </section>
+
       </div>
     </main>
   );

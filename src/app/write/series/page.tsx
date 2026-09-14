@@ -11,6 +11,7 @@ interface Series {
   name: string;
   description?: string;
   coverUrl?: string;
+  genre?: string;
   stories: Array<{
     id: string;
     title: string;
@@ -33,6 +34,15 @@ export default function SeriesStudioPage() {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [coverUrl, setCoverUrl] = useState('');
+  const [genre, setGenre] = useState('Fantasy');
+
+  const GENRES = [
+    'Action', 'Adventure', 'Comedy', 'Contemporary', 'Crime', 'Dystopian', 
+    'Epic Fantasy', 'Fairy Tale', 'Fantasy', 'Graphic Novel', 'Historical Fiction', 
+    'Horror', 'Literary Fiction', 'Magical Realism', 'Mystery', 'Non-Fiction', 
+    'Paranormal', 'Poetry', 'Romance', 'Science Fiction', 'Short Story', 
+    'Thriller', 'Urban Fantasy', 'Young Adult'
+  ];
 
   useEffect(() => {
     if (dbUser?.id) { fetchMySeries(); }
@@ -62,6 +72,7 @@ export default function SeriesStudioPage() {
             name: name.trim(),
             description: description.trim() || null,
             coverUrl: coverUrl.trim() || null,
+            genre,
           }),
         });
         if (res.ok) {
@@ -87,11 +98,12 @@ export default function SeriesStudioPage() {
             name: name.trim(),
             description: description.trim() || null,
             coverUrl: coverUrl.trim() || null,
+            genre,
           }),
         });
         if (res.ok) {
           toast.success('Series created.');
-          setName(''); setDescription(''); setCoverUrl('');
+          setName(''); setDescription(''); setCoverUrl(''); setGenre('Fantasy');
           fetchMySeries();
         } else {
           const data = await res.json();
@@ -110,6 +122,7 @@ export default function SeriesStudioPage() {
     setName(series.name || '');
     setDescription(series.description || '');
     setCoverUrl(series.coverUrl || '');
+    setGenre(series.genre || 'Fantasy');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -118,6 +131,7 @@ export default function SeriesStudioPage() {
     setName('');
     setDescription('');
     setCoverUrl('');
+    setGenre('Fantasy');
   };
 
   const handleDeleteSeries = async (seriesId: string) => {
@@ -202,6 +216,21 @@ export default function SeriesStudioPage() {
                   <input type="text" value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} placeholder="https://..." className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
                 </div>
 
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Genre</label>
+                  <select
+                    value={genre}
+                    onChange={(e) => setGenre(e.target.value)}
+                    className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm appearance-none"
+                  >
+                    {GENRES.map((g) => (
+                      <option key={g} value={g}>
+                        {g}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="flex gap-2">
                   <button 
                     type="submit" 
@@ -270,6 +299,13 @@ export default function SeriesStudioPage() {
                     <div className="relative z-10">
                       <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 mb-8">
                         <div className="flex-1">
+                          {s.genre && (
+                            <div className="flex items-center gap-4 mb-4">
+                              <span className="text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-400 border border-zinc-100 dark:border-zinc-800">
+                                {s.genre}
+                              </span>
+                            </div>
+                          )}
                           <h3 className="text-xl font-bold text-zinc-900 dark:text-white group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors mb-3 uppercase tracking-tight">
                             {s.name}
                           </h3>

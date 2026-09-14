@@ -75,7 +75,7 @@ export async function PATCH(
     }
 
     const body = await req.json();
-    const { name, description, coverUrl } = body;
+    const { name, description, coverUrl, genre } = body;
 
     const updated = await prisma.series.update({
       where: { id: seriesId },
@@ -83,6 +83,7 @@ export async function PATCH(
         name: name?.trim() || series.name,
         description: description !== undefined ? (description?.trim() || null) : series.description,
         coverUrl: coverUrl !== undefined ? (coverUrl?.trim() || null) : series.coverUrl,
+        genre: genre !== undefined ? genre : series.genre,
       },
     });
 

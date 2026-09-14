@@ -79,7 +79,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { name, description, coverUrl } = body;
+    const { name, description, coverUrl, genre } = body;
 
     if (!name || !name.trim()) {
       return NextResponse.json({ error: 'Series name is required' }, { status: 400 });
@@ -90,6 +90,7 @@ export async function POST(req: Request) {
         name: name.trim(),
         description: description?.trim() || null,
         coverUrl: coverUrl?.trim() || null,
+        genre: genre || 'Fantasy',
         userId: user.id,
       },
       include: {

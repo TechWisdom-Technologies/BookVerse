@@ -766,6 +766,7 @@ model Series {
   name        String
   description String?
   coverUrl    String?  @map("cover_url")
+  genre       String?
   userId      String   @map("user_id")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
