@@ -2,11 +2,16 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BookOpen, Sparkles, Play, ArrowRight, Star } from "lucide-react";
+import { BookOpen, Play, ArrowRight, Star } from "lucide-react";
 import { Suspense } from "react";
 import { HomeSearchBar } from "./HomeSearchBar";
 
-export function HeroSection() {
+interface HeroSectionProps {
+  topUsers?: { id: string; avatarUrl: string | null }[];
+  totalUsers?: number;
+}
+
+export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionProps) {
   return (
     <section className="relative w-full h-screen min-h-[800px] flex items-start pt-6 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
       {/* Background Layer */}
@@ -43,15 +48,7 @@ export function HeroSection() {
           <HomeSearchBar />
         </Suspense>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em] mb-12 shadow-sm"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>The Modern Reading Experience</span>
-        </motion.div>
+
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
@@ -106,11 +103,19 @@ export function HeroSection() {
         >
           <div className="flex items-center gap-4">
             <div className="flex -space-x-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
-                  <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover" />
-                </div>
-              ))}
+              {topUsers.length > 0 ? (
+                topUsers.map((user, i) => (
+                  <div key={user.id} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                    <img src={user.avatarUrl || `https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover" />
+                  </div>
+                ))
+              ) : (
+                [1, 2, 3, 4].map((i) => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                    <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover" />
+                  </div>
+                ))
+              )}
             </div>
             <div className="flex flex-col items-start gap-1">
               <div className="flex items-center gap-1 text-zinc-900 dark:text-white">
@@ -120,7 +125,9 @@ export function HeroSection() {
                 <Star className="w-3 h-3 fill-current" />
                 <Star className="w-3 h-3 fill-current" />
               </div>
-              <span className="italic">Trusted by 50K+ readers</span>
+              <span className="italic">
+                Trusted by {totalUsers >= 1000 ? `${(totalUsers / 1000).toFixed(1).replace('.0', '')}K+` : `${totalUsers}+`} readers
+              </span>
             </div>
           </div>
         </motion.div>

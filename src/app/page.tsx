@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { StoryGrid } from "@/components/stories/StoryGrid";
+import { AnimatedStats } from "@/components/home/AnimatedStats";
 
 export const dynamic = "force-dynamic";
 
@@ -146,6 +147,27 @@ export default async function HomePage() {
       })
     ]);
 
+    const [topUsers, totalUsers, totalBooks, totalAuthors, totalDownloadsAggr] = await Promise.all([
+      prisma.user.findMany({
+        take: 4,
+        orderBy: {
+          followers: {
+            _count: "desc"
+          }
+        },
+        select: {
+          id: true,
+          avatarUrl: true
+        }
+      }),
+      prisma.user.count(),
+      prisma.book.count(),
+      prisma.user.count({ where: { role: 'AUTHOR' } }),
+      prisma.book.aggregate({ _sum: { downloadCount: true } })
+    ]);
+
+    const totalDownloads = totalDownloadsAggr._sum.downloadCount || 0;
+
     const addRatings = async <T extends Pick<Book, "id">>(books: T[]) => {
       return Promise.all(books.map(async (book) => {
         const reviews = await prisma.bookReview.findMany({ where: { bookId: book.id }, select: { rating: true } });
@@ -235,24 +257,17 @@ export default async function HomePage() {
 
     return (
       <main className="relative overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
-        <HeroSection />
+        <HeroSection topUsers={topUsers} totalUsers={totalUsers} />
 
         {/* Library Stats */}
         <section className="px-6 -mt-8 relative z-20">
           <div className="max-w-4xl mx-auto">
-            <div className="grid grid-cols-4 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900 rounded py-6 shadow-sm">
-              {[
-                { label: 'Books', val: '10K+' },
-                { label: 'Authors', val: '500+' },
-                { label: 'Readers', val: '50K+' },
-                { label: 'Downloads', val: '1M+' }
-              ].map((s, i) => (
-                <div key={i} className="text-center border-r last:border-0 border-zinc-50 dark:border-zinc-900">
-                  <div className="text-xl font-bold tracking-tighter">{s.val}</div>
-                  <div className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{s.label}</div>
-                </div>
-              ))}
-            </div>
+            <AnimatedStats stats={[
+              { label: 'Books', value: totalBooks },
+              { label: 'Authors', value: totalAuthors },
+              { label: 'Readers', value: totalUsers },
+              { label: 'Downloads', value: totalDownloads }
+            ]} />
           </div>
         </section>
 
