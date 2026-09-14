@@ -48,10 +48,15 @@ export async function GET(req: NextRequest) {
         content: {
           title: story.title,
           id: story.id,
+          summary: story.summary || '',
+          description: story.description || '',
+          genre: story.genre || '',
+          coverUrl: story.coverUrl || '',
         },
         description: `published a new story: "${story.title}"`,
       }))
     );
+
 
     // Recent achievements of followed users
     const recentAchievements = await prisma.userAchievement.findMany({

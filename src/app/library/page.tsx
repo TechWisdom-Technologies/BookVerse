@@ -5,7 +5,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { FileType, type Prisma } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
 import Link from "next/link";
-import { Upload, Search, Library as LibraryIcon, Loader2 } from "lucide-react";
+import { Upload, Search, Library as LibraryIcon, Loader2, ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -87,10 +87,10 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
           {/* Simple Header */}
           <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-4">
-              <div className="flex items-center gap-2 text-zinc-300 dark:text-zinc-600">
-                <LibraryIcon className="w-3.5 h-3.5" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Browse All Books</span>
-              </div>
+              <Link href="/" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <ArrowLeft className="w-3 h-3" />
+                Back Home
+              </Link>
               <div>
                 <h1 className="text-xl font-bold tracking-tight mb-1 uppercase">Digital Library.</h1>
                 <p className="text-sm text-zinc-500 max-w-xl font-medium">Explore thousands of stories and books shared by our community.</p>
