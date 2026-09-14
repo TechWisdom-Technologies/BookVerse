@@ -288,6 +288,9 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
               My Stories
             </Link>
             <div className="flex items-center gap-6 border-l border-zinc-50 dark:border-zinc-900 pl-8">
+              {story.coverUrl && (
+                <img src={story.coverUrl} alt="" className="w-8 h-12 object-cover rounded shadow-sm border border-zinc-100 dark:border-zinc-800" />
+              )}
               <h1 className="text-sm font-bold tracking-tight truncate max-w-sm uppercase">{story.title}</h1>
               <div className="flex items-center gap-2">
                 <span className={`text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded flex items-center gap-2 ${
