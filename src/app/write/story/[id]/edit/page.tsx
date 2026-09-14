@@ -305,8 +305,8 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
                 <Eye className="w-4 h-4 text-zinc-300" /> View
               </Link>
             )}
-            <button onClick={handleTogglePublish} disabled={publishLoading} className={`px-5 py-2 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center gap-2 shadow-sm ${
-              story.published ? "bg-rose-500 text-white border border-rose-500 hover:opacity-90" : "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border border-zinc-900 dark:border-white"
+            <button onClick={handleTogglePublish} disabled={publishLoading} className={`px-8 py-3 text-xs font-bold uppercase tracking-[0.2em] rounded transition-all flex items-center gap-2.5 shadow-sm ${
+              story.published ? "bg-rose-600 text-white border border-rose-600 hover:bg-rose-700" : "bg-emerald-600 text-white border border-emerald-600 hover:bg-emerald-700"
             }`}>
               {publishLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : story.published ? "Unpublish" : "Publish"}
             </button>

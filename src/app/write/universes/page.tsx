@@ -38,7 +38,11 @@ export default function UniverseStudioPage() {
   const [coverUrl, setCoverUrl] = useState('');
 
   const GENRES = [
-    'Fantasy', 'Science Fiction', 'Romance', 'Mystery', 'Thriller', 'Horror', 'Historical Fiction', 'Literary Fiction',
+    'Action', 'Adventure', 'Comedy', 'Contemporary', 'Crime', 'Dystopian', 
+    'Epic Fantasy', 'Fairy Tale', 'Fantasy', 'Graphic Novel', 'Historical Fiction', 
+    'Horror', 'Literary Fiction', 'Magical Realism', 'Mystery', 'Non-Fiction', 
+    'Paranormal', 'Poetry', 'Romance', 'Science Fiction', 'Short Story', 
+    'Thriller', 'Urban Fantasy', 'Young Adult'
   ];
 
   useEffect(() => {
@@ -213,17 +217,19 @@ export default function UniverseStudioPage() {
                   <input type="text" value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} placeholder="https://..." className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Genre</label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <select
+                    value={genre}
+                    onChange={(e) => setGenre(e.target.value)}
+                    className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm appearance-none"
+                  >
                     {GENRES.map((g) => (
-                      <button key={g} type="button" onClick={() => setGenre(g)} className={`px-2 py-2 text-[9px] font-bold uppercase tracking-widest rounded border transition-all ${
-                        genre === g ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-sm' : 'bg-transparent text-zinc-400 border-zinc-50 dark:border-zinc-900 hover:border-zinc-200 dark:hover:border-zinc-700'
-                      }`}>
+                      <option key={g} value={g}>
                         {g}
-                      </button>
+                      </option>
                     ))}
-                  </div>
+                  </select>
                 </div>
 
                 <div className="flex gap-2">
@@ -262,10 +268,10 @@ export default function UniverseStudioPage() {
           <section>
             <div className="flex items-center justify-between mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-zinc-200" />
-                <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">My Universes</h2>
+                <Layers className="w-5 h-5 text-zinc-400" />
+                <h2 className="text-lg font-bold uppercase tracking-tight text-zinc-900 dark:text-white">My Universes</h2>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 font-mono">{universes.length.toString().padStart(2, '0')} detected</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 font-mono">{universes.length.toString().padStart(2, '0')} detected</span>
             </div>
 
             {universes.length === 0 ? (

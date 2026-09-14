@@ -163,7 +163,7 @@ export default function WriteDashboardPage() {
                           <Link href={`/write/story/${story.id}/edit`} className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title="Edit">
                             <PenLine className="w-4 h-4" />
                           </Link>
-                          <button onClick={() => handleTogglePublish(story.id, story.published)} className="p-1.5 text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors" title={story.published ? "Unpublish" : "Publish"}>
+                          <button onClick={() => handleTogglePublish(story.id, story.published)} className={`p-1.5 transition-colors ${story.published ? "text-rose-400 hover:text-rose-600" : "text-emerald-400 hover:text-emerald-600"}`} title={story.published ? "Unpublish" : "Publish"}>
                             <Globe className="w-4 h-4" />
                           </button>
                           <button onClick={() => handleDelete(story.id)} className="p-1.5 text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="Delete">
@@ -191,7 +191,7 @@ export default function WriteDashboardPage() {
                         <span className="flex items-center gap-1"><Heart className="w-3.5 h-3.5 text-zinc-300" /> {story._count.reactions}</span>
                       </div>
                       <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-widest font-mono">
-                        {formatDate(story.updatedAt)}
+                        {story.published ? `Published • ${formatDate(story.createdAt)}` : `Edited • ${formatDate(story.updatedAt)}`}
                       </div>
                     </div>
                   </div>
