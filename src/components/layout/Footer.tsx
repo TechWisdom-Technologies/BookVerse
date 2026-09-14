@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BookOpen,
   Mail,
@@ -67,20 +67,41 @@ function SocialLink({ href, icon: Icon, label }: { href: string; icon: React.Com
 function NewsletterForm() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email) {
-      setSubmitted(true);
-      setTimeout(() => {
-        setSubmitted(false);
-        setEmail("");
-      }, 3000);
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/newsletter/platform/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || "Failed to subscribe");
+        }
+        
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setEmail("");
+        }, 5000);
+      } catch (err: any) {
+        setError(err.message || "An error occurred");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   return (
-    <div className="border border-zinc-100 dark:border-zinc-900 rounded p-8 bg-white dark:bg-zinc-950 shadow-sm">
+    <div id="newsletter" className="border border-zinc-100 dark:border-zinc-900 rounded p-8 bg-white dark:bg-zinc-950 shadow-sm">
       <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-4 italic">Newsletter</h3>
       <p className="text-[11px] text-zinc-500 mb-6 font-medium leading-relaxed italic">
         Weekly book recommendations and author updates, straight to your inbox.
@@ -95,21 +116,26 @@ function NewsletterForm() {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex gap-3">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email"
-            className="flex-1 px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white transition-all shadow-sm"
-            required
-          />
-          <button
-            type="submit"
-            className="px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded transition-all hover:opacity-90 border border-zinc-900 dark:border-white shadow-sm"
-          >
-            <Send size={14} />
-          </button>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+          <div className="flex gap-3">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email"
+              className="flex-1 px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white transition-all shadow-sm disabled:opacity-50"
+              required
+              disabled={loading}
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="px-6 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded transition-all hover:opacity-90 border border-zinc-900 dark:border-white shadow-sm disabled:opacity-50 flex items-center justify-center min-w-[64px]"
+            >
+              {loading ? <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" /> : <Send size={14} />}
+            </button>
+          </div>
+          {error && <p className="text-[10px] text-red-500 font-medium text-center">{error}</p>}
         </form>
       )}
     </div>
@@ -117,6 +143,36 @@ function NewsletterForm() {
 }
 
 export function Footer() {
+  const [stats, setStats] = useState({
+    books: "10K+",
+    authors: "500+",
+    readers: "50K+"
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch('/api/stats');
+        if (res.ok) {
+          const data = await res.json();
+          const formatNum = (num: number) => {
+            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M+";
+            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, "") + "K+";
+            return num.toString() + (num > 0 ? "+" : "");
+          };
+          setStats({
+            books: formatNum(data.totalBooks),
+            authors: formatNum(data.totalAuthors),
+            readers: formatNum(data.totalUsers)
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch public stats", err);
+      }
+    };
+    fetchStats();
+  }, []);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -148,9 +204,9 @@ export function Footer() {
             {/* Stats */}
             <div className="flex gap-12 pt-4">
               {[
-                { val: '10K+', label: 'Books' },
-                { val: '500+', label: 'Authors' },
-                { val: '50K+', label: 'Readers' },
+                { val: stats.books, label: 'Books' },
+                { val: stats.authors, label: 'Authors' },
+                { val: stats.readers, label: 'Readers' },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col">
                   <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tighter">{s.val}</span>

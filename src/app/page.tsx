@@ -77,6 +77,7 @@ const getUniverseGraphic = (name: string) => {
 
 export default async function HomePage() {
   try {
+    const currentUserId = await getCurrentUserId();
     const [featured, recent, universes, stories, promotedStories, activePromotions] = await Promise.all([
       prisma.book.findMany({ take: 8, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
       prisma.book.findMany({ take: 8, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
@@ -178,19 +179,41 @@ export default async function HomePage() {
 
     const [featuredWithRatings, recentWithRatings] = await Promise.all([addRatings(featured), addRatings(recent)]);
 
-    const categoriesWithCounts = await Promise.all(
-      categoriesBase.map(async (cat) => {
-        const [bookCount, storyCount] = await Promise.all([
-          prisma.book.count({ where: { genre: { contains: cat.name, mode: 'insensitive' } } }),
-          prisma.story.count({ where: { genre: { contains: cat.name, mode: 'insensitive' } } })
-        ]);
-        const total = bookCount + storyCount;
-        return {
-          ...cat,
-          count: total > 1000 ? (total / 1000).toFixed(1) + 'K' : total.toString(),
-        };
-      })
-    );
+    const [bookGenres, storyGenres] = await Promise.all([
+      prisma.book.groupBy({ by: ['genre'], _count: { genre: true } }),
+      prisma.story.groupBy({ by: ['genre'], _count: { genre: true } })
+    ]);
+
+    const genreMap = new Map<string, number>();
+    
+    const addGenres = (genres: { genre: string | null, _count: { genre: number } }[]) => {
+      genres.forEach(g => {
+        if (!g.genre) return;
+        const parts = g.genre.split(',').map((p: string) => p.trim()).filter(Boolean);
+        parts.forEach((p: string) => {
+          // Capitalize first letter for consistency
+          const normalized = p.charAt(0).toUpperCase() + p.slice(1).toLowerCase();
+          genreMap.set(normalized, (genreMap.get(normalized) || 0) + g._count.genre);
+        });
+      });
+    };
+
+    addGenres(bookGenres);
+    addGenres(storyGenres);
+
+    const topGenres = Array.from(genreMap.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 6);
+
+    const iconsList = [BookOpen, Search, Heart, Sparkles, Star, Users];
+
+    const categoriesWithCounts = topGenres.map(([name, count], index) => {
+      return {
+        name,
+        count: count >= 1000 ? (count / 1000).toFixed(1).replace(/\.0$/, "") + 'K+' : count.toString(),
+        icon: iconsList[index % iconsList.length]
+      };
+    });
 
     const formattedStories = stories.map(story => {
       const storyPromos = activePromotions.filter((ap: { storyId: string; tier: string }) => ap.storyId === story.id);
@@ -336,9 +359,9 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 shadow-sm">
               {categoriesWithCounts.map((cat) => (
-                <Link key={cat.name} href={`/library?genre=${cat.name}`} className="p-10 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all text-center group">
+                <Link key={cat.name} href={`/search?q=${encodeURIComponent(cat.name)}&type=all`} className="p-10 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all text-center group">
                   <cat.icon className={`w-5 h-5 mx-auto mb-6 opacity-20 group-hover:opacity-100 transition-all duration-500`} />
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">{cat.name}</h3>
+                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors truncate px-2">{cat.name}</h3>
                   <p className="text-[9px] font-bold text-zinc-200 dark:text-zinc-800 font-mono italic">{cat.count}</p>
                 </Link>
               ))}
@@ -448,21 +471,34 @@ export default async function HomePage() {
             {features.map((f) => (
               <div key={f.title} className="space-y-6">
                 <f.icon className="w-5 h-5 text-zinc-700" />
-                <h3 className="text-[10px] font-bold uppercase tracking-[0.2em]">{f.title}</h3>
-                <p className="text-[11px] text-zinc-500 font-medium leading-relaxed italic">{f.desc}</p>
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em]">{f.title}</h3>
+                <p className="text-sm text-zinc-400 font-medium leading-relaxed italic">{f.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Join Us */}
+        {/* Join Us or Newsletter */}
         <section className="py-48 px-6 text-center border-t border-zinc-50 dark:border-zinc-900 bg-white dark:bg-zinc-950">
           <div className="max-w-2xl mx-auto space-y-12">
             <h2 className="text-3xl font-bold tracking-tight uppercase">Start Your Journey.</h2>
-            <p className="text-[11px] text-zinc-400 max-w-sm mx-auto font-medium italic leading-relaxed">Join our global community and discover stories that move you.</p>
+            <p className="text-[11px] text-zinc-400 max-w-sm mx-auto font-medium italic leading-relaxed">
+              {currentUserId 
+                ? "Stay updated with our latest stories, authors, and news. Subscribe to our newsletter."
+                : "Join our global community and discover stories that move you."}
+            </p>
             <div className="flex items-center justify-center gap-6">
-              <Link href="/signup" className="px-12 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all hover:opacity-90 shadow-md border border-zinc-900 dark:border-white">Join Now</Link>
-              <Link href="/library" className="px-12 py-3.5 border border-zinc-100 dark:border-zinc-900 text-zinc-900 dark:text-zinc-100 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900">Browse Library</Link>
+              {currentUserId ? (
+                <>
+                  <a href="#newsletter" className="px-12 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all hover:opacity-90 shadow-md border border-zinc-900 dark:border-white">Subscribe Now</a>
+                  <Link href="/library" className="px-12 py-3.5 border border-zinc-100 dark:border-zinc-900 text-zinc-900 dark:text-zinc-100 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900">Browse Library</Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/login" className="px-12 py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all hover:opacity-90 shadow-md border border-zinc-900 dark:border-white">Join Now</Link>
+                  <Link href="/library" className="px-12 py-3.5 border border-zinc-100 dark:border-zinc-900 text-zinc-900 dark:text-zinc-100 text-[10px] font-bold uppercase tracking-[0.2em] rounded transition-all hover:bg-zinc-50 dark:hover:bg-zinc-900">Browse Library</Link>
+                </>
+              )}
             </div>
           </div>
         </section>

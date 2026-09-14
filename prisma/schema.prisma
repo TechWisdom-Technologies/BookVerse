@@ -937,3 +937,11 @@ model AuthorPayout {
   @@map("author_payouts")
 }
 
+model PlatformNewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("platform_newsletter_subscribers")
+}

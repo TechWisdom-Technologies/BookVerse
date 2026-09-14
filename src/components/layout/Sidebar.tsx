@@ -16,6 +16,7 @@ import {
   Library,
   Headphones,
   Wallet,
+  Mail,
 } from "lucide-react";
 
 interface SidebarItem {
@@ -38,6 +39,7 @@ const sidebarItems: SidebarItem[] = [
   { href: "/admin/series", label: "Series", icon: Library },
   { href: "/admin/clubs", label: "Clubs", icon: Users },
   { href: "/admin/support", label: "Support Tickets", icon: Headphones },
+  { href: "/admin/newsletters", label: "Newsletters", icon: Mail },
 ];
 
 interface SidebarProps {

@@ -6,6 +6,7 @@ import { FollowNotification } from "@/emails/FollowNotification";
 import { ResetPasswordEmail } from "@/emails/ResetPasswordEmail";
 import { SupportRequestNotification } from "@/emails/SupportRequestNotification";
 import { LoginAlertEmail } from "@/emails/LoginAlertEmail";
+import { NewsletterEmail } from "@/emails/NewsletterEmail";
 
 const apiKey = process.env.RESEND_API_KEY;
 const from = process.env.RESEND_FROM_EMAIL || "BookVerse <onboarding@resend.dev>";
@@ -124,4 +125,41 @@ export function sendFollowNotification(
       profileUrl={profileUrl}
     />
   );
+}
+
+// Bulk Newsletter - sent to all active subscribers
+export async function sendBulkNewsletter(emails: string[], subject: string, content: string) {
+  if (!resend || !from || emails.length === 0) return { success: 0, failed: 0 };
+
+  // Resend batch API has a limit of 100 emails per batch request
+  const BATCH_SIZE = 100;
+  let successCount = 0;
+  let failedCount = 0;
+
+  for (let i = 0; i < emails.length; i += BATCH_SIZE) {
+    const batch = emails.slice(i, i + BATCH_SIZE);
+    
+    try {
+      const { data, error } = await resend.batch.send(
+        batch.map((email) => ({
+          from,
+          to: email,
+          subject,
+          react: <NewsletterEmail subject={subject} content={content} />,
+        }))
+      );
+
+      if (error) {
+        console.error("Error sending newsletter batch:", error);
+        failedCount += batch.length;
+      } else {
+        successCount += batch.length; // Approximate, as batch data might not have detailed per-email success
+      }
+    } catch (err) {
+      console.error("Failed to send newsletter batch:", err);
+      failedCount += batch.length;
+    }
+  }
+
+  return { success: successCount, failed: failedCount };
 }
