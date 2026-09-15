@@ -7,7 +7,13 @@ export { useAuth };
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider 
+      attribute="class" 
+      defaultTheme="system" 
+      enableSystem
+      themes={['light', 'dark', 'custom', 'rose', 'amoled', 'cyberpunk', 'mint', 'eink', 'neon']}
+      value={{ light: 'light', dark: 'dark', custom: 'custom', rose: 'rose', amoled: 'amoled', cyberpunk: 'cyberpunk', mint: 'mint', eink: 'eink', neon: 'neon' }}
+    >
       <AuthProvider>{children}</AuthProvider>
       <Toaster
         position="top-right"

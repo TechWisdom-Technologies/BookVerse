@@ -29,7 +29,9 @@ import {
   Link2,
   Download,
   Laptop,
-  LogOut
+  LogOut,
+  Book,
+  Zap
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { EditProfileForm } from '@/components/profile/EditProfileForm';
@@ -700,10 +702,17 @@ export default function SettingsPage() {
                   <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Toggle between light and dark themes.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
                   {[
                     { id: 'light', label: 'Light', icon: Sun, desc: 'Clean White' },
                     { id: 'dark', label: 'Dark', icon: Moon, desc: 'Deep Night' },
+                    { id: 'custom', label: 'Midnight', icon: Sparkles, desc: 'Deep Blue' },
+                    { id: 'rose', label: 'Blush', icon: Palette, desc: 'Warm Pink' },
+                    { id: 'amoled', label: 'AMOLED', icon: Smartphone, desc: 'True Black' },
+                    { id: 'cyberpunk', label: 'Cyber', icon: Laptop, desc: 'Yellow Dark' },
+                    { id: 'neon', label: 'Neon', icon: Zap, desc: 'Blue & Black' },
+                    { id: 'mint', label: 'Mint', icon: Type, desc: 'Fresh Green' },
+                    { id: 'eink', label: 'E-Ink', icon: Book, desc: 'Pure B&W' },
                     { id: 'system', label: 'Automatic', icon: Monitor, desc: 'Device Sync' }
                   ].map((t) => (
                     <button
