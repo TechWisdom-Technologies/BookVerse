@@ -4,6 +4,9 @@ import { useState, useEffect, useCallback, use } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import { FileUpload } from "@/components/shared/FileUpload";
 import { AuthorStoryTools } from "@/components/stories/AuthorStoryTools";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
@@ -165,6 +168,8 @@ interface StoryData {
 export default function EditStoryPage({ params }: { params: Promise<{ id: string }>; }) {
   const { id: storyId } = use(params);
   const router = useRouter();
+  const { dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "AUTHOR", `/write/story/${storyId}/edit`);
 
   const [story, setStory] = useState<StoryData | null>(null);
   const [chapters, setChapters] = useState<ChapterItem[]>([]);
@@ -193,6 +198,9 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   const [publishLoading, setPublishLoading] = useState(false);
 
   useEffect(() => {
+    if (authLoading || !access.allowed) return;
+    
+
     const fetchStory = async () => {
       try {
         const res = await fetch(`/api/stories/${storyId}`);
@@ -245,7 +253,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
     fetchStory();
     fetchAvailableUniverses();
     fetchAvailableSeries();
-  }, [storyId, router]);
+  }, [storyId, router, access.allowed]);
 
   useEffect(() => {
     if (!activeChapterId) return;
@@ -356,7 +364,7 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
     } catch { console.error("Failed to delete story"); }
   };
 
-  if (loadingStory) return (
+  if (authLoading || (loadingStory && access.allowed)) return (
     <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
     </main>
@@ -370,6 +378,10 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
   );
 
   const activeChapter = chapters.find((c) => c.id === activeChapterId);
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">

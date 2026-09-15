@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import { 
   Gift, 
   ArrowLeft, 
@@ -33,6 +37,9 @@ interface GiftCard {
 }
 
 export default function GiftsPage() {
+  const router = useRouter();
+  const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "CREATOR", "/gifts");
   const [gifts, setGifts] = useState<GiftCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -59,6 +66,11 @@ export default function GiftsPage() {
   const [cardName, setCardName] = useState('');
   const [paymentStep, setPaymentStep] = useState<'idle' | 'processing' | 'success'>('idle');
   const [paymentProgressText, setPaymentProgressText] = useState('');
+
+  // Auth + tier guard
+  useEffect(() => {
+    if (authLoading || !access.allowed) return;
+  }, [dbUser, authLoading, router, access.allowed]);
 
   useEffect(() => {
     fetchGifts();
@@ -197,6 +209,18 @@ export default function GiftsPage() {
     return tier === 'PRO' ? 499 : 999;
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#070708]">
+        <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
+      </div>
+    );
+  }
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
+
   return (
     <main className="min-h-screen bg-[#070708] text-zinc-100 pb-36 relative overflow-hidden">
       
@@ -236,8 +260,8 @@ export default function GiftsPage() {
             <div className="border border-zinc-900 rounded-2xl p-8 bg-[#0c0c0e] shadow-xl relative overflow-hidden transition-all duration-300">
               <div className="absolute top-0 left-0 w-full h-[4px] bg-white" />
               
-              <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-450 mb-8 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-zinc-450" />
+              <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 mb-8 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-zinc-400" />
                 Select Subscription Tier & Card details
               </h2>
 
@@ -245,7 +269,7 @@ export default function GiftsPage() {
                 
                 {/* Plan Tier Selection */}
                 <div className="space-y-3">
-                  <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-450 ml-1">Subscription Plan Level</label>
+                  <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Subscription Plan Level</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
                     {/* PRO Tier Card */}
@@ -255,7 +279,7 @@ export default function GiftsPage() {
                       className={`group relative flex items-start gap-4 p-5 border rounded-xl text-left transition-all duration-300 outline-none ${
                         purchaseTier === 'PRO'
                           ? 'border-white bg-zinc-900/40 shadow-sm' 
-                          : 'border-zinc-850 hover:border-zinc-650 bg-transparent'
+                          : 'border-zinc-800 hover:border-zinc-600 bg-transparent'
                       }`}
                     >
                       <div className={`p-2.5 rounded-lg transition-all duration-350 ${
@@ -268,9 +292,9 @@ export default function GiftsPage() {
                       <div className="space-y-1">
                         <div className="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
                           BookVerse PRO
-                          <span className="text-[9px] font-mono font-normal text-zinc-400 bg-zinc-850 px-1.5 py-0.5 rounded font-medium">৳499/mo</span>
+                          <span className="text-[9px] font-mono font-normal text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded font-medium">৳499/mo</span>
                         </div>
-                        <p className="text-[10px] text-zinc-455 leading-normal font-medium italic">Unlimited reading logs, customizable spoiler tags, and direct author feedback tools.</p>
+                        <p className="text-[10px] text-zinc-400 leading-normal font-medium italic">Unlimited reading logs, customizable spoiler tags, and direct author feedback tools.</p>
                       </div>
                     </button>
 
@@ -281,7 +305,7 @@ export default function GiftsPage() {
                       className={`group relative flex items-start gap-4 p-5 border rounded-xl text-left transition-all duration-300 outline-none ${
                         purchaseTier === 'CREATOR'
                           ? 'border-white bg-zinc-900/40 shadow-sm' 
-                          : 'border-zinc-850 hover:border-zinc-650 bg-transparent'
+                          : 'border-zinc-800 hover:border-zinc-600 bg-transparent'
                       }`}
                     >
                       <div className={`p-2.5 rounded-lg transition-all duration-350 ${
@@ -294,9 +318,9 @@ export default function GiftsPage() {
                       <div className="space-y-1">
                         <div className="text-[10px] font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
                           BookVerse CREATOR
-                          <span className="text-[9px] font-mono font-normal text-zinc-400 bg-zinc-850 px-1.5 py-0.5 rounded font-medium">৳999/mo</span>
+                          <span className="text-[9px] font-mono font-normal text-zinc-400 bg-zinc-800 px-1.5 py-0.5 rounded font-medium">৳999/mo</span>
                         </div>
-                        <p className="text-[10px] text-zinc-455 leading-normal font-medium italic">Creative analytics dashboard panels, exclusive newsletters, and author distribution feeds.</p>
+                        <p className="text-[10px] text-zinc-400 leading-normal font-medium italic">Creative analytics dashboard panels, exclusive newsletters, and author distribution feeds.</p>
                       </div>
                     </button>
 
@@ -306,7 +330,7 @@ export default function GiftsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Duration Selection Dropdown */}
                   <div className="space-y-2">
-                    <label htmlFor="duration" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-450 ml-1">
+                    <label htmlFor="duration" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">
                       Gift Code Duration
                     </label>
                     <div className="relative">
@@ -327,7 +351,7 @@ export default function GiftsPage() {
 
                   {/* Recipient Email Input Field */}
                   <div className="space-y-2">
-                    <label htmlFor="recipientEmail" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-450 ml-1">
+                    <label htmlFor="recipientEmail" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">
                       Recipient Email Address
                     </label>
                     <input 
@@ -370,7 +394,7 @@ export default function GiftsPage() {
             <div className="border border-zinc-900 rounded-2xl p-8 bg-[#0c0c0e] text-white shadow-xl relative overflow-hidden transition-all duration-300">
               <div className="absolute top-0 left-0 w-full h-[4px] bg-zinc-800" />
               
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-zinc-450 mb-4 flex items-center gap-2">
+              <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-zinc-400 mb-4 flex items-center gap-2">
                 <Ticket className="w-4 h-4 text-zinc-500" />
                 Redeem a Code
               </h2>
@@ -414,7 +438,7 @@ export default function GiftsPage() {
         <section className="border border-zinc-900 rounded-2xl p-8 bg-[#0c0c0e] shadow-xl relative overflow-hidden transition-all duration-300">
           <div className="absolute top-0 left-0 w-full h-[4px] bg-white" />
           
-          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-450 mb-8 flex items-center gap-2">
+          <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 mb-8 flex items-center gap-2">
             <Clock className="w-4 h-4 text-zinc-400" />
             Your Purchased Gift Registry ({gifts.length})
           </h2>
@@ -425,7 +449,7 @@ export default function GiftsPage() {
                 <Loader2 className="w-6 h-6 animate-spin text-zinc-500" />
               </div>
             ) : gifts.length === 0 ? (
-              <div className="py-20 text-center border border-dashed border-zinc-850 rounded-2xl bg-zinc-950/20 animate-fade-in">
+              <div className="py-20 text-center border border-dashed border-zinc-800 rounded-2xl bg-zinc-950/20 animate-fade-in">
                 <Gift className="w-8 h-8 text-zinc-700 mx-auto mb-3 animate-pulse" />
                 <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 italic">No purchased gift keys have been registered yet.</p>
               </div>
@@ -434,14 +458,14 @@ export default function GiftsPage() {
                 {gifts.map(gift => (
                   <div 
                     key={gift.id} 
-                    className="relative group overflow-hidden rounded-2xl border border-zinc-850 bg-zinc-950 p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
+                    className="relative group overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
                   >
                     {/* Glassmorphism glow */}
                     <div className="absolute -inset-px bg-gradient-to-r from-white/5 to-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
                     
                     {/* Card notches matching dark background */}
-                    <div className="absolute top-1/2 -left-3.5 w-7 h-7 rounded-full bg-[#070708] border border-zinc-850 -translate-y-1/2 hidden md:block" />
-                    <div className="absolute top-1/2 -right-3.5 w-7 h-7 rounded-full bg-[#070708] border border-zinc-850 -translate-y-1/2 hidden md:block" />
+                    <div className="absolute top-1/2 -left-3.5 w-7 h-7 rounded-full bg-[#070708] border border-zinc-800 -translate-y-1/2 hidden md:block" />
+                    <div className="absolute top-1/2 -right-3.5 w-7 h-7 rounded-full bg-[#070708] border border-zinc-800 -translate-y-1/2 hidden md:block" />
 
                     <div className="space-y-4 mb-6">
                       <div className="flex justify-between items-start">
@@ -504,12 +528,12 @@ export default function GiftsPage() {
       {/* Payment Overlay Modal Popup */}
       {showPaymentModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-          <div className="border border-zinc-850 rounded-2xl p-8 bg-[#0c0c0e] shadow-2xl relative max-w-md w-full overflow-hidden text-white animate-scale-up">
+          <div className="border border-zinc-800 rounded-2xl p-8 bg-[#0c0c0e] shadow-2xl relative max-w-md w-full overflow-hidden text-white animate-scale-up">
             <div className="absolute top-0 left-0 w-full h-[4px] bg-white" />
             
             {paymentStep === 'idle' && (
               <>
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-450 mb-6 flex items-center gap-2">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6 flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-zinc-400" />
                   Select Payment Option
                 </h3>
@@ -544,7 +568,7 @@ export default function GiftsPage() {
                       <div className="p-2 bg-white text-zinc-900 rounded-lg font-bold text-[10px] w-7 h-7 flex items-center justify-center shrink-0">1</div>
                       <div className="flex-1">
                         <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Direct Manual bkash / Nagad</h4>
-                        <p className="text-[9px] text-zinc-450 font-medium italic">Instant clearance via manual mobile wallet send money</p>
+                        <p className="text-[9px] text-zinc-400 font-medium italic">Instant clearance via manual mobile wallet send money</p>
                       </div>
                     </button>
 
@@ -557,7 +581,7 @@ export default function GiftsPage() {
                       <div className="p-2 bg-white text-zinc-900 rounded-lg font-bold text-[10px] w-7 h-7 flex items-center justify-center shrink-0">2</div>
                       <div className="flex-1">
                         <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Autopay with Credit Card</h4>
-                        <p className="text-[9px] text-zinc-450 font-medium italic">Recurring UddoktaPay subscription gateway</p>
+                        <p className="text-[9px] text-zinc-400 font-medium italic">Recurring UddoktaPay subscription gateway</p>
                       </div>
                     </button>
 
@@ -570,14 +594,14 @@ export default function GiftsPage() {
                       <div className="p-2 bg-white text-zinc-900 rounded-lg font-bold text-[10px] w-7 h-7 flex items-center justify-center shrink-0">3</div>
                       <div className="flex-1">
                         <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Merchant Online Checkout</h4>
-                        <p className="text-[9px] text-zinc-455 font-medium italic">Redirect to online SSLCommerz secure merchant portal</p>
+                        <p className="text-[9px] text-zinc-400 font-medium italic">Redirect to online SSLCommerz secure merchant portal</p>
                       </div>
                     </button>
 
                     <button 
                       type="button"
                       onClick={() => setShowPaymentModal(false)}
-                      className="w-full py-3.5 bg-zinc-900 hover:bg-zinc-850 text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl border border-zinc-800 transition-all text-center"
+                      className="w-full py-3.5 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] rounded-xl border border-zinc-800 transition-all text-center"
                     >
                       Cancel Purchase
                     </button>
@@ -591,7 +615,7 @@ export default function GiftsPage() {
                       <p className="text-[10px] text-zinc-350 leading-relaxed font-medium">
                         Please send money (Personal) of **৳{(getTierPricing(purchaseTier) * duration).toLocaleString()} BDT** to:
                       </p>
-                      <div className="p-3 bg-zinc-950 text-white rounded-xl font-mono text-xs text-center font-bold tracking-widest select-all border border-zinc-850">
+                      <div className="p-3 bg-zinc-950 text-white rounded-xl font-mono text-xs text-center font-bold tracking-widest select-all border border-zinc-800">
                         01799269699
                       </div>
                       <p className="text-[9px] text-zinc-500 font-medium italic">
@@ -601,7 +625,7 @@ export default function GiftsPage() {
                       <div className="space-y-4">
                         {/* Input 1: Sender Mobile Number */}
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1 font-mono">Your bkash/Nagad Sender Number</label>
+                          <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 ml-1 font-mono">Your bkash/Nagad Sender Number</label>
                           <input 
                             type="text" 
                             value={senderNumber}
@@ -614,7 +638,7 @@ export default function GiftsPage() {
 
                         {/* Input 2: Transaction ID */}
                         <div className="space-y-2">
-                          <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1 font-mono">Payment Transaction ID (TxnID)</label>
+                          <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 ml-1 font-mono">Payment Transaction ID (TxnID)</label>
                           <input 
                             type="text" 
                             value={transactionId}
@@ -631,7 +655,7 @@ export default function GiftsPage() {
                       <button 
                         type="button"
                         onClick={() => setPaymentMethod('none')}
-                        className="flex-1 py-3.5 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-850"
+                        className="flex-1 py-3.5 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-800"
                       >
                         Back
                       </button>

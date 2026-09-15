@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import { Mail, Users, Loader2, Search, ArrowLeft, Lightbulb, Send, Radio } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
@@ -22,7 +24,8 @@ interface Subscriber {
 
 export default function NewsletterManagementPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "CREATOR", "/author/newsletter");
   
   // Dashboard & Subscribers state
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
@@ -38,8 +41,8 @@ export default function NewsletterManagementPage() {
   const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) { router.push('/login?redirect=/author/newsletter'); return; }
+    if (authLoading || !access.allowed) return;
+    
     const fetchSubscribers = async () => {
       try {
         setLoading(true);
@@ -61,7 +64,7 @@ export default function NewsletterManagementPage() {
       }
     };
     fetchSubscribers();
-  }, [user, authLoading, router]);
+  }, [user, dbUser, authLoading, router, access.allowed]);
 
   useEffect(() => {
     const filtered = subscribers.filter(
@@ -111,22 +114,15 @@ export default function NewsletterManagementPage() {
     }
   };
 
-  if (authLoading || loading) return (
+  if (authLoading || (loading && access.allowed)) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
     </div>
   );
 
-  if (upgradeUrl) return (
-    <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
-      <div className="text-center space-y-6">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Creator plan required for subscriber & newsletter broadcast management.</p>
-        <Link href={upgradeUrl} className="inline-flex px-8 py-3 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest">
-          Upgrade to Creator
-        </Link>
-      </div>
-    </main>
-  );
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">

@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import { MessageSquare, ArrowLeft, Loader2, Compass, Layers, Clock, Users, User, ArrowRight } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
@@ -25,13 +29,17 @@ interface BookRequest {
 }
 
 export default function BookRequestsDashboardPage() {
+  const router = useRouter();
+  const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "PRO", "/write/requests");
   const [requests, setRequests] = useState<BookRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading || !access.allowed) return;
     fetchBookRequests();
-  }, []);
+  }, [user, dbUser, authLoading, router, access.allowed]);
 
   const fetchBookRequests = async () => {
     try {
@@ -54,22 +62,17 @@ export default function BookRequestsDashboardPage() {
   const universeRequests = requests.filter(r => !!r.universe).length;
   const seriesRequests = requests.filter(r => !!r.series).length;
 
-  if (loading) return (
+  if (authLoading || (loading && access.allowed)) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
     </div>
   );
 
-  if (upgradeUrl) return (
-    <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
-      <div className="text-center space-y-6">
-        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 italic">Pro plan required to view book requests.</p>
-        <Link href={upgradeUrl} className="inline-flex px-8 py-3 rounded bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest">
-          Upgrade to Pro
-        </Link>
-      </div>
-    </main>
-  );
+
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">

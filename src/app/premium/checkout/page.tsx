@@ -164,7 +164,7 @@ function CheckoutContent() {
           <Loader2 className="w-10 h-10 animate-spin text-white mx-auto" />
           <div className="space-y-2">
             <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-200">Processing...</h2>
-            <p className="text-[10px] text-zinc-450 font-medium italic animate-pulse">{paymentProgressText}</p>
+            <p className="text-[10px] text-zinc-400 font-medium italic animate-pulse">{paymentProgressText}</p>
           </div>
         </div>
       )}
@@ -196,12 +196,12 @@ function CheckoutContent() {
               
               <div className="space-y-4 mb-8">
                 <div className="flex items-center gap-3">
-                  <div className="p-2.5 bg-white text-zinc-955 rounded-lg">
+                  <div className="p-2.5 bg-white text-zinc-950 rounded-lg">
                     {isCreator ? <Zap className="w-4 h-4" /> : <Heart className="w-4 h-4" />}
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-white uppercase tracking-wider">BookVerse {planName}</h3>
-                    <p className="text-[10px] text-zinc-450 font-medium italic">Membership tier upgrade</p>
+                    <p className="text-[10px] text-zinc-400 font-medium italic">Membership tier upgrade</p>
                   </div>
                 </div>
 
@@ -215,7 +215,7 @@ function CheckoutContent() {
                       id="checkout-duration"
                       value={duration}
                       onChange={e => setDuration(parseInt(e.target.value))}
-                      className="w-full px-3 py-2.5 bg-zinc-955 border border-zinc-800 rounded-xl outline-none focus:border-white transition-all text-xs font-bold uppercase tracking-wider text-zinc-300 cursor-pointer appearance-none"
+                      className="w-full px-3 py-2.5 bg-zinc-950 border border-zinc-800 rounded-xl outline-none focus:border-white transition-all text-xs font-bold uppercase tracking-wider text-zinc-300 cursor-pointer appearance-none"
                     >
                       <option value="1">1 Month</option>
                       <option value="3">3 Months</option>
@@ -230,7 +230,7 @@ function CheckoutContent() {
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Total Value</span>
                   <span className="text-xl font-bold tracking-tight text-white">৳{totalAmount.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between items-center text-[10px] text-zinc-455 font-medium pt-1">
+                <div className="flex justify-between items-center text-[10px] text-zinc-400 font-medium pt-1">
                   <span>Billing Cycle</span>
                   <span>{duration} Month{duration > 1 ? 's' : ''} Prepaid</span>
                 </div>
@@ -272,10 +272,10 @@ function CheckoutContent() {
                     }}
                     className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4 group"
                   >
-                    <div className="p-2.5 bg-white text-zinc-955 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">1</div>
+                    <div className="p-2.5 bg-white text-zinc-950 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">1</div>
                     <div className="flex-1">
                       <h4 className="text-[10px] font-bold uppercase tracking-wider text-white font-mono">Direct Manual bkash / Nagad</h4>
-                      <p className="text-[9px] text-zinc-450 font-medium italic">Submit transaction credentials for manual wallet transfer</p>
+                      <p className="text-[9px] text-zinc-400 font-medium italic">Submit transaction credentials for manual wallet transfer</p>
                     </div>
                   </button>
 
@@ -293,7 +293,7 @@ function CheckoutContent() {
                     </div>
                     <div className="flex-1">
                       <h4 className="text-[10px] font-bold uppercase tracking-wider text-white">Pay with UddoktaPay</h4>
-                      <p className="text-[9px] text-zinc-450 font-medium italic">bKash, Nagad, Rocket, Cards — Instant auto-verified gateway</p>
+                      <p className="text-[9px] text-zinc-400 font-medium italic">bKash, Nagad, Rocket, Cards — Instant auto-verified gateway</p>
                     </div>
                     <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[8px] font-bold uppercase tracking-wider rounded-full shrink-0">
                       Instant
@@ -324,7 +324,7 @@ function CheckoutContent() {
                     <button 
                       type="button"
                       onClick={() => setPaymentMethod('none')}
-                      className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-850"
+                      className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-800"
                     >
                       Back
                     </button>
@@ -345,11 +345,11 @@ function CheckoutContent() {
               {paymentMethod === 'contact' && (
                 <form onSubmit={handleManualCheckout} className="space-y-6 animate-fade-in">
                   <div className="bg-zinc-900/80 p-5 rounded-xl border border-zinc-800 space-y-3">
-                    <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-455">Payment Instructions</h4>
+                    <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">Payment Instructions</h4>
                     <p className="text-[10px] text-zinc-350 leading-relaxed font-medium">
                       Please Send Money (Personal bKash or Nagad) of **৳{totalAmount.toLocaleString()} BDT** to:
                     </p>
-                    <div className="p-3 bg-zinc-950 text-white rounded-xl font-mono text-xs text-center font-bold tracking-widest select-all border border-zinc-850">
+                    <div className="p-3 bg-zinc-950 text-white rounded-xl font-mono text-xs text-center font-bold tracking-widest select-all border border-zinc-800">
                       01799269699
                     </div>
                     <p className="text-[9px] text-zinc-500 font-medium italic">
@@ -360,7 +360,7 @@ function CheckoutContent() {
                   <div className="space-y-4">
                     {/* Input 1: Sender Mobile Number */}
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1">Your bkash/Nagad Sender Mobile Number</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Your bkash/Nagad Sender Mobile Number</label>
                       <input 
                         type="text" 
                         value={senderNumber}
@@ -373,7 +373,7 @@ function CheckoutContent() {
 
                     {/* Input 2: Transaction ID */}
                     <div className="space-y-2">
-                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-450 ml-1">Payment Transaction ID (TxnID)</label>
+                      <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Payment Transaction ID (TxnID)</label>
                       <input 
                         type="text" 
                         value={transactionId}
@@ -389,14 +389,14 @@ function CheckoutContent() {
                     <button 
                       type="button"
                       onClick={() => setPaymentMethod('none')}
-                      className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-850"
+                      className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-800"
                     >
                       Back
                     </button>
                     <button 
                       type="submit"
                       disabled={processing}
-                      className="flex-1 py-3 bg-white text-zinc-955 hover:bg-zinc-100 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all text-center flex items-center justify-center gap-1.5"
+                      className="flex-1 py-3 bg-white text-zinc-950 hover:bg-zinc-100 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all text-center flex items-center justify-center gap-1.5"
                     >
                       <ShieldCheck className="w-3.5 h-3.5" />
                       Complete Payment

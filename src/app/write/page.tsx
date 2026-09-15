@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import { formatDate } from "@/lib/utils";
 import {
   PenLine,
@@ -38,10 +42,16 @@ interface StoryItem {
 }
 
 export default function WriteDashboardPage() {
+  const router = useRouter();
+  const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "AUTHOR", "/write");
   const [stories, setStories] = useState<StoryItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading || !access.allowed) return;
+    
+
     const fetchMyStories = async () => {
       try {
         const res = await fetch("/api/users/me/stories");
@@ -54,7 +64,7 @@ export default function WriteDashboardPage() {
       }
     };
     fetchMyStories();
-  }, []);
+  }, [user, dbUser, authLoading, router, access.allowed]);
 
   const handleDelete = async (storyId: string) => {
     if (!confirm("Are you sure you want to delete this story? This cannot be undone.")) return;
@@ -86,6 +96,18 @@ export default function WriteDashboardPage() {
       console.error("Failed to toggle publish");
     }
   };
+
+  if (authLoading || (loading && access.allowed)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+        <Loader2 className="w-6 h-6 animate-spin text-zinc-300 dark:text-zinc-700" />
+      </div>
+    );
+  }
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">

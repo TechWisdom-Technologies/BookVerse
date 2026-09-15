@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
   Bell,
@@ -226,6 +227,7 @@ function resolveFallbackLink(notification: Notification): string {
 
 // ── Main Page ──
 export default function NotificationsPage() {
+  const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
@@ -239,9 +241,9 @@ export default function NotificationsPage() {
     if (!authLoading && user) {
       fetchNotifications();
     } else if (!authLoading && !user) {
-      setLoading(false);
+      router.push('/login?redirect=/notifications');
     }
-  }, [user, authLoading, typeFilter, priorityFilter, dateFilter]);
+  }, [user, authLoading, typeFilter, priorityFilter, dateFilter, router]);
 
   const fetchNotifications = async () => {
     setLoading(true);

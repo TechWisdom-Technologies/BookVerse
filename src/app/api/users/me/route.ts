@@ -191,6 +191,8 @@ export async function DELETE() {
     response.cookies.set("firebase-token", "", { maxAge: 0, path: "/" });
     response.cookies.set("user-role", "", { maxAge: 0, path: "/" });
     response.cookies.set("user-role-sig", "", { maxAge: 0, path: "/" });
+    response.cookies.set("user-tier", "", { maxAge: 0, path: "/" });
+    response.cookies.set("user-tier-sig", "", { maxAge: 0, path: "/" });
 
     return response;
   } catch (error) {

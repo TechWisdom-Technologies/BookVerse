@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Library, Plus, Loader2, Trash2, Sparkles, Rocket, Globe, ChevronRight, BookOpen, Eye, ArrowLeft, Layers, Globe2, Pencil, X, Users, UserMinus, UserPlus, AlertTriangle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 
 interface Universe {
   id: string;
@@ -24,7 +27,9 @@ interface Universe {
 }
 
 export default function UniverseStudioPage() {
-  const { dbUser } = useAuth();
+  const router = useRouter();
+  const { dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "AUTHOR", "/write/universes");
   const [universes, setUniverses] = useState<Universe[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -46,8 +51,10 @@ export default function UniverseStudioPage() {
   ];
 
   useEffect(() => {
-    if (dbUser?.id) { fetchMyUniverses(); }
-  }, [dbUser?.id]);
+    if (authLoading || !access.allowed) return;
+    
+    fetchMyUniverses();
+  }, [dbUser, authLoading, router, access.allowed]);
 
   const fetchMyUniverses = async () => {
     try {
@@ -143,11 +150,15 @@ export default function UniverseStudioPage() {
     } catch (error) { toast.error('Failed to delete universe.'); }
   };
 
-  if (loading) return (
+  if (authLoading || (loading && access.allowed)) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
     </div>
   );
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">

@@ -136,7 +136,7 @@ export default function ActivityFeedPage() {
 
   useEffect(() => {
     if (authLoading) return;
-    if (!user) { router.push('/login'); return; }
+    if (!user) { router.push('/login?redirect=/activity-feed'); return; }
     const fetchFeed = async () => {
       try {
         setLoading(true);

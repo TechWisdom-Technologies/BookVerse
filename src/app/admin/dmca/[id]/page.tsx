@@ -209,7 +209,7 @@ export default function DMCADetail({ params }: { params: Promise<{ id: string }>
           {/* Legal Affidavit Block */}
           <div className="lg:col-span-2 space-y-6">
             <div className="border border-zinc-200 dark:border-zinc-900 rounded-lg bg-white dark:bg-zinc-950 shadow-sm overflow-hidden">
-              <div className="bg-zinc-50 dark:bg-zinc-900/60 px-6 py-4 border-b border-zinc-150 dark:border-zinc-900 flex items-center justify-between">
+              <div className="bg-zinc-50 dark:bg-zinc-900/60 px-6 py-4 border-b border-zinc-200 dark:border-zinc-900 flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-1.5 font-mono">
                   <FileText className="w-3.5 h-3.5" />
                   Docket #{notice.id.slice(-8).toUpperCase()}

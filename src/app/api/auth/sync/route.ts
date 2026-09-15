@@ -4,7 +4,7 @@ import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { generateUsername } from "@/lib/utils";
 import { sendWelcomeEmail, sendLoginAlertEmail } from "@/lib/resend";
-import { signRole } from "@/lib/cookie-crypto";
+import { signRole, signTier } from "@/lib/cookie-crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { Role } from "@prisma/client";
 
@@ -138,6 +138,7 @@ export async function POST() {
           select: { completed: true }
         },
         membershipTier: true,
+        membershipExpiry: true,
         socialLinks: true,
       },
     });
@@ -217,6 +218,37 @@ export async function POST() {
 
     const roleSig = await signRole(user.role);
     res.cookies.set("user-role-sig", roleSig, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    // Set signed tier cookies so middleware can enforce tier without a DB lookup.
+    // Compute the EFFECTIVE tier accounting for expiry, banned, and suspended states.
+    let effectiveTier = user.membershipTier || "FREE";
+
+    // If tier is BANNED or SUSPENDED, keep it as-is (rank 0 in middleware → blocked)
+    // If membership has expired, downgrade to FREE
+    const isBannedOrSuspended = effectiveTier === "BANNED" || effectiveTier === "SUSPENDED";
+    if (!isBannedOrSuspended && effectiveTier !== "FREE" && user.membershipExpiry) {
+      const expiryTime = new Date(user.membershipExpiry).getTime();
+      if (expiryTime <= Date.now()) {
+        effectiveTier = "FREE"; // Membership expired
+      }
+    }
+
+    res.cookies.set("user-tier", effectiveTier, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: "strict",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    const tierSig = await signTier(effectiveTier);
+    res.cookies.set("user-tier-sig", tierSig, {
       httpOnly: true,
       secure: isProd,
       sameSite: "strict",

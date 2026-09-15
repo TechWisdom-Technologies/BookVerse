@@ -4,6 +4,8 @@ import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import {
   Eye,
   Heart,
@@ -143,7 +145,8 @@ type SortDirection = 'asc' | 'desc';
 
 export default function AuthorAnalyticsPage() {
   const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
+  const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "CREATOR", "/author/analytics");
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
@@ -157,8 +160,8 @@ export default function AuthorAnalyticsPage() {
   const [selectedPromotion, setSelectedPromotion] = useState<string>('');
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) { router.push('/login?redirect=/author/analytics'); return; }
+    if (authLoading || !access.allowed) return;
+    
     const fetchAnalytics = async () => {
       try {
         setLoading(true);
@@ -176,7 +179,7 @@ export default function AuthorAnalyticsPage() {
       } finally { setLoading(false); }
     };
     fetchAnalytics();
-  }, [user, authLoading, router]);
+  }, [user, dbUser, authLoading, router, access.allowed]);
 
   // Handle Sort triggers
   const handleSort = (key: SortKey) => {
@@ -238,37 +241,15 @@ export default function AuthorAnalyticsPage() {
     return list;
   }, [analytics, searchQuery, statusFilter, sortKey, sortDirection]);
 
-  if (authLoading || loading) return (
+  if (authLoading || (loading && access.allowed)) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
       <Loader2 className="w-5 h-5 animate-spin text-zinc-300" />
     </div>
   );
 
-  if (upgradeUrl) return (
-    <main className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 p-6">
-      <div className="max-w-md w-full bg-zinc-50 dark:bg-zinc-900/40 border border-zinc-100 dark:border-zinc-900 rounded-3xl p-8 shadow-xl text-center space-y-6 relative overflow-hidden backdrop-blur-xl animate-in fade-in duration-300">
-        <div className="absolute -top-12 -left-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
-        <div className="absolute -bottom-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
-        
-        <div className="w-16 h-16 rounded-2xl bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 flex items-center justify-center mx-auto shadow">
-          <Award className="w-7 h-7" />
-        </div>
-        
-        <div className="space-y-2">
-          <h2 className="text-xl font-black uppercase tracking-wider">Creator Plan Required</h2>
-          <p className="text-xs text-zinc-400 font-medium leading-relaxed">
-            Unlock fully sortable manuscript registers, dynamic analytics queries, computed engagement indices, and detailed monetization ledger reviews.
-          </p>
-        </div>
-
-        <div className="pt-4 border-t border-zinc-100 dark:border-zinc-800/80">
-          <Link href={upgradeUrl} className="w-full py-3 inline-flex items-center justify-center rounded-xl bg-zinc-950 dark:bg-white text-white dark:text-zinc-950 text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-all shadow">
-            Upgrade to Creator
-          </Link>
-        </div>
-      </div>
-    </main>
-  );
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   if (!analytics) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950 text-center p-6">
@@ -301,6 +282,7 @@ export default function AuthorAnalyticsPage() {
     WOW: sentimentDistribution?.find(s => s.reactionType === 'WOW')?._count.id || 0,
   };
   const totalSentimentVotes = Object.values(sentimentStats).reduce((sum, v) => sum + v, 0);
+
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-24">
@@ -777,7 +759,7 @@ export default function AuthorAnalyticsPage() {
                   {(selectedRetentionStory === 'all' ? cohortRetention : analytics.retentionByStory[selectedRetentionStory] || []).map((ch, idx) => (
                     <div key={idx} className="flex items-center gap-4">
                       <span className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider w-28 truncate shrink-0 font-sans">{ch.chapter}</span>
-                      <div className="flex-1 h-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded-lg overflow-hidden relative">
+                      <div className="flex-1 h-3 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg overflow-hidden relative">
                         <div className="h-full bg-indigo-500 rounded-lg transition-all duration-500" style={{ width: `${ch.rate}%` }} />
                       </div>
                       <span className="text-[9px] font-black uppercase font-mono tracking-wider w-10 text-right text-zinc-900 dark:text-white shrink-0">{ch.rate}%</span>
@@ -1050,7 +1032,7 @@ export default function AuthorAnalyticsPage() {
                     onClick={() => setStatusFilter(option)}
                     className={`px-3 py-1 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all ${
                       statusFilter === option
-                        ? 'bg-white dark:bg-zinc-850 text-black dark:text-white shadow-sm'
+                        ? 'bg-white dark:bg-zinc-800 text-black dark:text-white shadow-sm'
                         : 'text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200'
                     }`}
                   >

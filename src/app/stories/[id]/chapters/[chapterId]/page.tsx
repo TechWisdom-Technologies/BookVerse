@@ -131,7 +131,7 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
             <div>
               <h1 className="text-2xl font-bold tracking-tight mb-2">{chapter.title}</h1>
               <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
-                <Clock className="w-3 h-3 text-zinc-450" />
+                <Clock className="w-3 h-3 text-zinc-400" />
                 Updated {formatDate(chapter.updatedAt)}
                 <span className="text-zinc-600 dark:text-zinc-800">•</span>
                 <Clock className="w-3 h-3 text-blue-500" />

@@ -28,7 +28,7 @@ export function StoryRecommendations() {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="flex items-center gap-2 border-b border-zinc-150 dark:border-zinc-900 pb-4">
+        <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-900 pb-4">
           <div className="h-5 w-5 bg-zinc-200 dark:bg-zinc-800 rounded-full" />
           <div className="h-4 w-48 bg-zinc-200 dark:bg-zinc-800 rounded" />
         </div>

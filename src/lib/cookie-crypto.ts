@@ -52,3 +52,14 @@ export async function verifyRole(role: string, signature: string): Promise<boole
   }
   return result === 0;
 }
+
+/**
+ * Sign the user's membership tier using HMAC-SHA256 (same mechanism as role signing).
+ */
+export const signTier = signRole;
+
+/**
+ * Verify that the user's membership tier matches the given HMAC-SHA256 signature.
+ */
+export const verifyTier = verifyRole;
+

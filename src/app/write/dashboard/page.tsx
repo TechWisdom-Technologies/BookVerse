@@ -3,7 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/auth/AuthProvider';
+import { formatDistanceToNow, format } from "date-fns";
+import { toast } from "react-hot-toast";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import {
   Eye,
   Heart,
@@ -33,7 +37,6 @@ import {
   UserPlus
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
-import toast from 'react-hot-toast';
 
 interface Collaborator {
   id: string;
@@ -209,6 +212,7 @@ interface DashboardData {
 export default function AuthorDashboardPage() {
   const router = useRouter();
   const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "AUTHOR", "/write/dashboard");
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
@@ -247,13 +251,10 @@ export default function AuthorDashboardPage() {
   };
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) {
-      router.push('/login?redirect=/write/dashboard');
-      return;
-    }
+    if (authLoading || !access.allowed) return;
+    
     fetchDashboardData();
-  }, [user, authLoading, router]);
+  }, [dbUser, authLoading, router, access.allowed]);
 
   const handleRespondInvite = async (universeId: string, accept: boolean, targetUserId?: string) => {
     if (!dbUser) return;
@@ -360,12 +361,16 @@ export default function AuthorDashboardPage() {
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading || (loading && access.allowed)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
         <Loader2 className="w-6 h-6 animate-spin text-zinc-300 dark:text-zinc-700" />
       </div>
     );
+  }
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
   }
 
   // Upgrade Gate View
@@ -1309,9 +1314,9 @@ export default function AuthorDashboardPage() {
                         <div key={warn} className="space-y-1">
                           <div className="flex justify-between text-[9px] font-bold uppercase tracking-wider">
                             <span className="text-zinc-500">{warn}</span>
-                            <span className="text-zinc-955 dark:text-white font-mono">{count} stories</span>
+                            <span className="text-zinc-950 dark:text-white font-mono">{count} stories</span>
                           </div>
-                          <div className="w-full h-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded-full overflow-hidden">
+                          <div className="w-full h-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-full overflow-hidden">
                             <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.min(100, count * 20)}%` }} />
                           </div>
                         </div>

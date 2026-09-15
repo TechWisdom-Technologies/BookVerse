@@ -1,20 +1,21 @@
 import { BookUploadForm } from "@/components/books/BookUploadForm";
 import { verifyToken } from "@/lib/auth";
+import { hasFeatureAccess } from "@/lib/entitlements";
 import { redirect } from "next/navigation";
 import { Upload, ArrowLeft, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 
 export default async function UploadPage() {
-  let role: string;
+  let hasAccess = false;
 
   try {
     const { dbUser } = await verifyToken();
-    role = dbUser.role;
+    hasAccess = await hasFeatureAccess(dbUser, "AUTHOR");
   } catch {
     redirect("/login?redirect=/upload");
   }
 
-  if (role !== "AUTHOR" && role !== "ADMIN") {
+  if (!hasAccess) {
     return (
       <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
         <div className="max-w-3xl mx-auto px-6 py-12">
@@ -33,8 +34,11 @@ export default async function UploadPage() {
             <div>
               <h3 className="text-sm font-bold uppercase tracking-widest text-zinc-900 dark:text-white mb-2">Access Restricted</h3>
               <p className="text-xs text-zinc-500 font-medium leading-relaxed">
-                Your account requires Author-level authorization before original manuscripts can be registered in the BookVerse collective.
+                Your account requires an Author-level membership before original manuscripts can be registered in the BookVerse collective.
               </p>
+              <Link href="/premium/checkout?plan=author" className="inline-block mt-4 text-xs font-bold uppercase tracking-widest text-zinc-900 dark:text-white underline underline-offset-4 hover:text-zinc-500 transition-colors">
+                Upgrade to Author →
+              </Link>
             </div>
           </div>
         </div>

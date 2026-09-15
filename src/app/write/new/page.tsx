@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { FileUpload } from "@/components/shared/FileUpload";
 import { ArrowLeft, BookOpen, PenTool, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 
 export default function NewStoryPage() {
   const router = useRouter();
+  const { user, dbUser, loading: authLoading } = useAuth();
+  const access = checkTierAccess(dbUser, "AUTHOR", "/write/new");
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [genre, setGenre] = useState("");
@@ -15,6 +20,10 @@ export default function NewStoryPage() {
   const [coverUrl, setCoverUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (authLoading || !access.allowed) return;
+  }, [dbUser, authLoading, router, access.allowed]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +55,18 @@ export default function NewStoryPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+        <Loader2 className="w-6 h-6 animate-spin text-zinc-300 dark:text-zinc-700" />
+      </div>
+    );
+  }
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20 flex flex-col items-center justify-center p-6">

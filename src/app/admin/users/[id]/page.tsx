@@ -472,42 +472,42 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                 </h2>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Internal User ID</span>
+                    <span className="text-zinc-400 font-medium">Internal User ID</span>
                     <span className="font-mono text-xs">{user.id}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Joined Date</span>
+                    <span className="text-zinc-400 font-medium">Joined Date</span>
                     <span>{new Date(user.createdAt).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Account Role</span>
+                    <span className="text-zinc-400 font-medium">Account Role</span>
                     <span className="font-bold">{user.role}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Phone Number</span>
+                    <span className="text-zinc-400 font-medium">Phone Number</span>
                     <span className="font-mono text-xs">{user.phoneNumber || "—"}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Date of Birth</span>
+                    <span className="text-zinc-400 font-medium">Date of Birth</span>
                     <span>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "—"}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Nationality</span>
+                    <span className="text-zinc-400 font-medium">Nationality</span>
                     <span>{user.nationality || "—"}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Location / Address</span>
+                    <span className="text-zinc-400 font-medium">Location / Address</span>
                     <span className="text-right max-w-[200px] truncate" title={user.address}>{user.address || "—"}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Current Mood Status</span>
+                    <span className="text-zinc-400 font-medium">Current Mood Status</span>
                     <span className="font-semibold text-zinc-700 dark:text-zinc-300 flex items-center gap-1.5">
                       <Smile className="w-3.5 h-3.5 text-amber-500" />
                       {user.mood || "—"}
                     </span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-zinc-100 dark:border-zinc-800/40">
-                    <span className="text-zinc-450 font-medium">Global Age Rating Constraint</span>
+                    <span className="text-zinc-400 font-medium">Global Age Rating Constraint</span>
                     <span>{user.ageRating}+ years old</span>
                   </div>
                 </div>
@@ -656,7 +656,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                         <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${
                           story.published 
                             ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/20 dark:text-emerald-400 border border-emerald-500/10"
-                            : "bg-zinc-100 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-450 border border-zinc-200 dark:border-zinc-800"
+                            : "bg-zinc-100 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800"
                         }`}>
                           {story.published ? "Published" : "Draft"}
                         </span>
@@ -707,7 +707,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                             <p className="text-xs font-bold">{uni.name}</p>
                             <p className="text-[9px] text-zinc-400">Genre: {uni.genre}</p>
                           </div>
-                          <span className="text-[9px] font-semibold text-zinc-450">{new Date(uni.createdAt).toLocaleDateString()}</span>
+                          <span className="text-[9px] font-semibold text-zinc-400">{new Date(uni.createdAt).toLocaleDateString()}</span>
                         </div>
                       ))}
                     </div>
@@ -726,7 +726,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                       {user.series.map((ser: any) => (
                         <div key={ser.id} className="p-3 bg-zinc-50 dark:bg-zinc-950 rounded-xl border border-zinc-100 dark:border-zinc-900 flex justify-between items-center">
                           <p className="text-xs font-bold">{ser.name}</p>
-                          <span className="text-[9px] font-semibold text-zinc-450">{new Date(ser.createdAt).toLocaleDateString()}</span>
+                          <span className="text-[9px] font-semibold text-zinc-400">{new Date(ser.createdAt).toLocaleDateString()}</span>
                         </div>
                       ))}
                     </div>
@@ -809,19 +809,19 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                                 )}
 
                                 {tx.details?.type === "TIP" && (
-                                  <span className="block text-[10px] text-zinc-450 dark:text-zinc-500 font-medium">
+                                  <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-medium">
                                     To: <span className="font-bold text-amber-600 dark:text-amber-500 uppercase">@{tx.details.receiverUsername}</span>
                                   </span>
                                 )}
 
                                 {tx.details?.type === "GIFT" && (
-                                  <span className="block text-[10px] text-zinc-450 dark:text-zinc-500 font-medium select-all">
+                                  <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-medium select-all">
                                     To: {tx.details.recipientEmail}
                                   </span>
                                 )}
 
                                 {tx.details?.type === "PROMOTION" && (
-                                  <span className="block text-[10px] text-zinc-450 dark:text-zinc-500 font-medium italic max-w-[150px] truncate">
+                                  <span className="block text-[10px] text-zinc-400 dark:text-zinc-500 font-medium italic max-w-[150px] truncate">
                                     "{tx.details.storyTitle}"
                                   </span>
                                 )}
@@ -844,7 +844,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                                 {tx.status}
                               </span>
                             </td>
-                            <td className="py-3 text-right text-zinc-450">{new Date(tx.createdAt).toLocaleDateString()}</td>
+                            <td className="py-3 text-right text-zinc-400">{new Date(tx.createdAt).toLocaleDateString()}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -872,7 +872,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                               {gift.tier} ({gift.duration}m)
                             </span>
                           </div>
-                          <p className="text-zinc-450 text-[10px]">Recipient: {gift.recipientEmail}</p>
+                          <p className="text-zinc-400 text-[10px]">Recipient: {gift.recipientEmail}</p>
                           <div className="flex justify-between items-center pt-1 text-[9px] uppercase tracking-wider text-zinc-400 font-bold">
                             <span>Status: {gift.status}</span>
                             <span>{new Date(gift.createdAt).toLocaleDateString()}</span>
@@ -900,7 +900,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                               {gift.tier}
                             </span>
                           </div>
-                          <p className="text-zinc-450 text-[10px]">Sponsor: @{gift.sentByUser.username}</p>
+                          <p className="text-zinc-400 text-[10px]">Sponsor: @{gift.sentByUser.username}</p>
                           <div className="flex justify-between items-center pt-1 text-[9px] uppercase tracking-wider text-zinc-400 font-bold">
                             <span>Status: {gift.status}</span>
                             {gift.redeemedAt && <span>Redeemed {new Date(gift.redeemedAt).toLocaleDateString()}</span>}
@@ -999,7 +999,7 @@ export default function UserDetail({ params }: { params: Promise<{ id: string }>
                       <div key={d.id} className="p-3.5 bg-zinc-50 dark:bg-zinc-950 rounded-2xl border border-zinc-100 dark:border-zinc-900 flex justify-between items-center text-xs">
                         <div>
                           <p className="font-bold text-zinc-800 dark:text-zinc-200">Notice Ref: {d.id}</p>
-                          <p className="text-[9px] text-zinc-450 font-semibold uppercase">Target Story ID: {d.storyId}</p>
+                          <p className="text-[9px] text-zinc-400 font-semibold uppercase">Target Story ID: {d.storyId}</p>
                         </div>
                         <div className="text-right space-y-1">
                           <span className={`px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest ${

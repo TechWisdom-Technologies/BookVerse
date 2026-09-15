@@ -158,7 +158,7 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         
         {/* Modern Header Section */}
-        <div className="flex items-center justify-between pb-5 border-b border-zinc-150/80 dark:border-zinc-900/80">
+        <div className="flex items-center justify-between pb-5 border-b border-zinc-200/80 dark:border-zinc-900/80">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-blue-500/10 dark:bg-blue-400/10 border border-blue-500/20 dark:border-blue-400/20">
               <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-pulse" />
@@ -207,7 +207,7 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
                       className={`group relative rounded-2xl border ${
                         isConfirming 
                           ? 'border-red-500/50 dark:border-red-500/40 shadow-[0_0_20px_rgba(239,68,68,0.1)]' 
-                          : 'border-zinc-150/60 dark:border-zinc-900/80 hover:border-indigo-400/50 dark:hover:border-indigo-500/40 hover:shadow-indigo-500/[0.04] dark:hover:shadow-indigo-500/[0.06]'
+                          : 'border-zinc-200/60 dark:border-zinc-900/80 hover:border-indigo-400/50 dark:hover:border-indigo-500/40 hover:shadow-indigo-500/[0.04] dark:hover:shadow-indigo-500/[0.06]'
                       } bg-white/50 dark:bg-zinc-950/20 backdrop-blur-xl p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 overflow-hidden`}
                     >
                       {/* Ambient background light for cards */}
@@ -356,7 +356,7 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
                       className={`group relative rounded-2xl border ${
                         isConfirming 
                           ? 'border-red-500/50 dark:border-red-500/40 shadow-[0_0_20px_rgba(239,68,68,0.1)]' 
-                          : 'border-zinc-150/60 dark:border-zinc-900/80 hover:border-emerald-400/50 dark:hover:border-emerald-500/40 hover:shadow-emerald-500/[0.04] dark:hover:shadow-emerald-500/[0.06]'
+                          : 'border-zinc-200/60 dark:border-zinc-900/80 hover:border-emerald-400/50 dark:hover:border-emerald-500/40 hover:shadow-emerald-500/[0.04] dark:hover:shadow-emerald-500/[0.06]'
                       } bg-white/50 dark:bg-zinc-950/20 backdrop-blur-xl p-5 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 overflow-hidden`}
                     >
                       {/* Ambient background light for cards */}
@@ -405,7 +405,7 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
                                 Page {bookmark.pageNumber}
                               </span>
                               <span className="text-[10px] font-bold text-zinc-300 dark:text-zinc-800">•</span>
-                              <span className="text-[9px] font-bold tracking-widest text-zinc-450 dark:text-zinc-500 uppercase flex items-center gap-1">
+                              <span className="text-[9px] font-bold tracking-widest text-zinc-400 dark:text-zinc-500 uppercase flex items-center gap-1">
                                 <Bookmark className="w-3 h-3 text-emerald-500/80" /> Bookmarked
                               </span>
                             </div>

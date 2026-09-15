@@ -229,7 +229,7 @@ export default function AdminPromotionsPage() {
                             <p className="text-xs font-bold text-zinc-900 dark:text-white truncate max-w-[180px]">
                               {promo.story.title}
                             </p>
-                            <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest mt-0.5">
+                            <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-0.5">
                               @{promo.story.author.username}
                             </p>
                           </div>
@@ -261,7 +261,7 @@ export default function AdminPromotionsPage() {
                         )}
                       </td>
 
-                      <td className="py-4 px-6 text-[10px] font-mono font-bold text-zinc-450">
+                      <td className="py-4 px-6 text-[10px] font-mono font-bold text-zinc-400">
                         {formatDate(promo.createdAt)}
                       </td>
 
@@ -295,7 +295,7 @@ export default function AdminPromotionsPage() {
                               onClick={() => handleAction(promo.id, "APPROVE")}
                               disabled={processingId !== null}
                               title="Approve & Activate Promotion"
-                              className="p-1.5 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/5 transition-all border border-zinc-100 dark:border-zinc-850 hover:border-emerald-500/30 rounded"
+                              className="p-1.5 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/5 transition-all border border-zinc-100 dark:border-zinc-800 hover:border-emerald-500/30 rounded"
                             >
                               {processingId === promo.id ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -307,7 +307,7 @@ export default function AdminPromotionsPage() {
                               onClick={() => handleAction(promo.id, "DECLINE")}
                               disabled={processingId !== null}
                               title="Decline Promotion"
-                              className="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 transition-all border border-zinc-100 dark:border-zinc-850 hover:border-rose-500/30 rounded"
+                              className="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 transition-all border border-zinc-100 dark:border-zinc-800 hover:border-rose-500/30 rounded"
                             >
                               {processingId === promo.id ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />

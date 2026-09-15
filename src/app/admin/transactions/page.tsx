@@ -282,7 +282,7 @@ export default function AdminTransactionsPage() {
                             )}
                             
                             {!txn.plan.startsWith("PROMOTION_") && txn.plan !== "TIP" && (
-                              <span className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest font-mono">
+                              <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest font-mono">
                                 ({txn.duration}M)
                               </span>
                             )}
@@ -327,7 +327,7 @@ export default function AdminTransactionsPage() {
                         </span>
                       </td>
 
-                      <td className="py-4 px-6 text-[10px] font-mono font-bold text-zinc-450">
+                      <td className="py-4 px-6 text-[10px] font-mono font-bold text-zinc-400">
                         {formatDate(txn.createdAt)}
                       </td>
 
@@ -357,7 +357,7 @@ export default function AdminTransactionsPage() {
                               onClick={() => handleAction(txn.id, "APPROVE")}
                               disabled={processingId !== null}
                               title="Approve Transaction"
-                              className="p-1.5 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/5 transition-all border border-zinc-100 dark:border-zinc-850 hover:border-emerald-500/30 rounded"
+                              className="p-1.5 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-500/5 transition-all border border-zinc-100 dark:border-zinc-800 hover:border-emerald-500/30 rounded"
                             >
                               {processingId === txn.id ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -369,7 +369,7 @@ export default function AdminTransactionsPage() {
                               onClick={() => handleAction(txn.id, "DECLINE")}
                               disabled={processingId !== null}
                               title="Decline Transaction"
-                              className="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 transition-all border border-zinc-100 dark:border-zinc-850 hover:border-rose-500/30 rounded"
+                              className="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 transition-all border border-zinc-100 dark:border-zinc-800 hover:border-rose-500/30 rounded"
                             >
                               {processingId === txn.id ? (
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />

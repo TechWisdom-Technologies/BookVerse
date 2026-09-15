@@ -1,7 +1,10 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { checkTierAccess } from "@/lib/tier-check";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import { 
   ArrowLeft, 
   Smartphone,
@@ -30,7 +33,9 @@ interface WalletTransaction {
 }
 
 export default function WalletPage() {
-  const { dbUser, loading: authLoading, refreshUser } = useAuth();
+  const router = useRouter();
+  const { user, dbUser, loading: authLoading, refreshUser } = useAuth();
+  const access = checkTierAccess(dbUser, "PRO", "/wallet");
   
   const [mounted, setMounted] = useState(false);
   const [bkashNumber, setBkashNumber] = useState('');
@@ -48,6 +53,11 @@ export default function WalletPage() {
   useEffect(() => { 
     setMounted(true); 
   }, []);
+
+  // Auth + tier guard
+  useEffect(() => {
+    if (authLoading || !mounted || !access.allowed) return;
+  }, [authLoading, mounted, access.allowed]);
 
   // Sync DB user data to component state once loaded
   useEffect(() => {
@@ -94,6 +104,10 @@ export default function WalletPage() {
         <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
       </div>
     );
+  }
+
+  if (!access.allowed) {
+    return <AccessDeniedModal requiredTier={access.requiredTier} redirectTo={access.redirectTo} />;
   }
 
   if (!dbUser) {
@@ -288,7 +302,7 @@ export default function WalletPage() {
                       value={bkashNumber}
                       onChange={(e) => setBkashNumber(e.target.value)}
                       placeholder="e.g. 017XXXXXXXX"
-                      className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                      className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
                     />
                   </div>
                 </div>
@@ -306,7 +320,7 @@ export default function WalletPage() {
                       value={nagadNumber}
                       onChange={(e) => setNagadNumber(e.target.value)}
                       placeholder="e.g. 019XXXXXXXX"
-                      className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                      className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
                     />
                   </div>
                 </div>
@@ -333,7 +347,7 @@ export default function WalletPage() {
                   {dbUser?.membershipTier || 'FREE ACCOUNT'}
                   {dbUser?.membershipTier && <Sparkles className="w-4 h-4 text-purple-500 animate-pulse" />}
                 </h3>
-                <p className="text-[10px] font-medium text-zinc-450 uppercase tracking-widest leading-relaxed mt-2">
+                <p className="text-[10px] font-medium text-zinc-400 uppercase tracking-widest leading-relaxed mt-2">
                   {dbUser?.membershipTier ? 'Unlocked complete publishing controls' : 'Upgrade to premium tier to monetize your novels.'}
                 </p>
               </div>
@@ -349,7 +363,7 @@ export default function WalletPage() {
 
           {/* Right panel: Ledger transactions list */}
           <div className="space-y-6">
-            <div className="pb-4 border-b border-zinc-150 dark:border-zinc-900">
+            <div className="pb-4 border-b border-zinc-200 dark:border-zinc-900">
               <h3 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Unified Ledger History</h3>
               <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">A transparent tracking sheet detailing support tips and subscriptions in BDT.</p>
             </div>

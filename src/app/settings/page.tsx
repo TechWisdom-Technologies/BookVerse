@@ -35,6 +35,7 @@ import { useTheme } from 'next-themes';
 import { EditProfileForm } from '@/components/profile/EditProfileForm';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
+import { AccessDeniedModal } from '@/components/auth/AccessDeniedModal';
 import { EmailAuthProvider, reauthenticateWithCredential, updateEmail } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 
@@ -50,7 +51,7 @@ interface WalletTransaction {
 }
 
 export default function SettingsPage() {
-  const { dbUser, loading: authLoading, refreshUser, resetPassword } = useAuth();
+  const { user, dbUser, loading: authLoading, refreshUser, resetPassword } = useAuth();
   const { theme, setTheme } = useTheme();
 
   const [activeTab, setActiveTab] = useState('profile');
@@ -524,6 +525,18 @@ export default function SettingsPage() {
     }
   };
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
+        <Loader2 className="w-6 h-6 animate-spin text-zinc-300 dark:text-zinc-700" />
+      </div>
+    );
+  }
+
+  if (!user || !dbUser) {
+    return <AccessDeniedModal requiredTier="USER" redirectTo="/login?redirect=/settings" />;
+  }
+
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
       <div className="max-w-7xl mx-auto px-6 py-12">
@@ -575,7 +588,7 @@ export default function SettingsPage() {
             {/* PROFILE TAB */}
             {activeTab === 'profile' && (
               <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="pb-6 border-b border-zinc-150 dark:border-zinc-900">
+                <div className="pb-6 border-b border-zinc-200 dark:border-zinc-900">
                   <h2 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Profile Settings</h2>
                   <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Update your name, bio, and public identity.</p>
                 </div>
@@ -588,7 +601,7 @@ export default function SettingsPage() {
             {/* READING PREFERENCES TAB */}
             {activeTab === 'reading' && (
               <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="pb-6 border-b border-zinc-150 dark:border-zinc-900">
+                <div className="pb-6 border-b border-zinc-200 dark:border-zinc-900">
                   <h2 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Reading Preferences</h2>
                   <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Customize how you read chapters and stories across BookVerse.</p>
                 </div>
@@ -682,7 +695,7 @@ export default function SettingsPage() {
             {/* APPEARANCE TAB */}
             {activeTab === 'appearance' && (
               <div className="space-y-8 animate-in fade-in duration-500">
-                <div className="pb-6 border-b border-zinc-150 dark:border-zinc-900">
+                <div className="pb-6 border-b border-zinc-200 dark:border-zinc-900">
                   <h2 className="text-[11px] font-bold uppercase tracking-wider text-zinc-900 dark:text-white">Appearance</h2>
                   <p className="text-[10px] text-zinc-500 font-medium mt-1 uppercase">Toggle between light and dark themes.</p>
                 </div>
@@ -778,7 +791,7 @@ export default function SettingsPage() {
                       {dbUser?.membershipTier || 'FREE ACCOUNT'}
                       {dbUser?.membershipTier && <Sparkles className="w-4.5 h-4.5 text-purple-500 animate-pulse" />}
                     </h3>
-                    <p className="text-[10px] font-bold text-zinc-450 uppercase tracking-widest mt-1">
+                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mt-1">
                       {dbUser?.membershipTier ? `Authorized access to premium resources` : 'Upgrade your account to unlock publishing capabilities.'}
                     </p>
                   </div>
@@ -814,7 +827,7 @@ export default function SettingsPage() {
                           value={bkashNumber}
                           onChange={(e) => setBkashNumber(e.target.value)}
                           placeholder="e.g. 017XXXXXXXX"
-                          className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                          className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
                         />
                       </div>
                     </div>
@@ -835,7 +848,7 @@ export default function SettingsPage() {
                           value={nagadNumber}
                           onChange={(e) => setNagadNumber(e.target.value)}
                           placeholder="e.g. 019XXXXXXXX"
-                          className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                          className="w-full pl-9 pr-4 py-2.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
                         />
                       </div>
                     </div>
@@ -1303,7 +1316,7 @@ export default function SettingsPage() {
                       value={newBlockedUser}
                       onChange={(e) => setNewBlockedUser(e.target.value)}
                       placeholder="Enter exact username to block..."
-                      className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+                      className="flex-1 px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded text-xs font-mono font-bold text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
                     />
                     <button
                       type="submit"
@@ -1334,7 +1347,7 @@ export default function SettingsPage() {
                         <div key={userObj.id} className="p-4 flex items-center justify-between gap-4 group hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all">
                           <div className="space-y-0.5">
                             <span className="text-[10px] font-mono font-black text-zinc-900 dark:text-white block">@{userObj.username}</span>
-                            <span className="text-[8px] text-zinc-450 uppercase font-semibold tracking-wider block">Reason: {userObj.reason}</span>
+                            <span className="text-[8px] text-zinc-400 uppercase font-semibold tracking-wider block">Reason: {userObj.reason}</span>
                           </div>
                           <button
                             onClick={() => handleUnblockUser(userObj.id, userObj.username)}
@@ -1365,7 +1378,7 @@ export default function SettingsPage() {
                       <Download className="w-3.5 h-3.5 text-zinc-400" />
                       Export Profile Data (GDPR Compliant)
                     </span>
-                    <span className="text-[9px] text-zinc-450 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
                       Downloads a comprehensive JSON archive containing your complete profile, stories, books, tips, subscriptions, reading progress, achievements, and block list directly from the database.
                     </span>
                   </div>
@@ -1390,7 +1403,7 @@ export default function SettingsPage() {
                       <LogOut className="w-3.5 h-3.5 text-zinc-400" />
                       Sign Out All Devices
                     </span>
-                    <span className="text-[9px] text-zinc-450 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
+                    <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
                       Revokes all Firebase authentication tokens across every device and browser where you are currently signed in. You will be signed out everywhere, including this device, and will need to log in again.
                     </span>
                   </div>

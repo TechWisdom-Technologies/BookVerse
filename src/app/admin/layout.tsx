@@ -6,6 +6,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Menu, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const { user, dbUser, loading } = useAuth();
@@ -20,22 +21,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   }
 
   if (!user || dbUser?.role !== "ADMIN") {
-    return (
-      <div className="flex h-screen flex-col items-center justify-center gap-4">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          Access Denied
-        </h1>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          You don&apos;t have permission to access the admin panel.
-        </p>
-        <Link
-          href="/"
-          className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
-        >
-          Go Home
-        </Link>
-      </div>
-    );
+    return <AccessDeniedModal requiredTier="ADMIN" redirectTo="/" />;
   }
 
   return (

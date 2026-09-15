@@ -17,6 +17,7 @@ function isActiveMembership(user: EntitledUser) {
 }
 
 function tierRank(tier?: string | null) {
+  if (tier === "BANNED" || tier === "SUSPENDED") return -1;
   if (tier === "CREATOR") return 3;
   if (tier === "PRO") return 2;
   if (tier === "AUTHOR") return 1;
@@ -41,7 +42,8 @@ export async function isFoundingUser(user: EntitledUser) {
 
 export async function hasFeatureAccess(user: EntitledUser, requiredTier: PaidTier) {
   if (user.role === "ADMIN") return true;
-  if (await isFoundingUser(user)) return true;
+  // Founding users get their tier (CREATOR) assigned at sign-up.
+  // They go through normal tier checks — if admin changes their tier, it is respected.
   if (!isActiveMembership(user)) return false;
   return tierRank(user.membershipTier) >= tierRank(requiredTier);
 }

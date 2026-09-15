@@ -349,7 +349,7 @@ export function TipAuthorDialog({ authorId, authorName, storyId }: TipAuthorDial
                   )}
                   {isProcessing ? "Processing..." : `Send Manual Tip`}
                 </button>
-                <p className="text-center text-[9px] text-zinc-450 dark:text-zinc-500 font-medium">Verify direct mobile payments (bkash/Nagad), confirm txnID, and authorize tip.</p>
+                <p className="text-center text-[9px] text-zinc-400 dark:text-zinc-500 font-medium">Verify direct mobile payments (bkash/Nagad), confirm txnID, and authorize tip.</p>
               </div>
             )}
 

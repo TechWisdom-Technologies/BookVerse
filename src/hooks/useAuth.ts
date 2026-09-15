@@ -81,6 +81,13 @@ export function useAuth() {
           "/profile/edit",
           "/settings",
           "/wallet",
+          "/author",
+          "/notifications",
+          "/activity-feed",
+          "/reading-challenges",
+          "/reading-stats",
+          "/achievements",
+          "/gifts",
         ];
         const pathname = window.location.pathname;
         const isProtectedPage = protectedPages.some((p) => pathname.startsWith(p));

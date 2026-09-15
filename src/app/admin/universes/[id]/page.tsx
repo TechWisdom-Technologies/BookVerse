@@ -189,7 +189,7 @@ export default function UniverseDetail({ params }: { params: { id: string } }) {
           </Link>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-8 border-b border-zinc-150 dark:border-zinc-900">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-8 border-b border-zinc-200 dark:border-zinc-900">
           <div>
             <div className="flex items-center gap-3 mb-2">
               <span className="p-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded">
@@ -288,7 +288,7 @@ export default function UniverseDetail({ params }: { params: { id: string } }) {
                 className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2 ${
                   activeTab === "stories"
                     ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm"
-                    : "text-zinc-450 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                    : "text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
@@ -299,7 +299,7 @@ export default function UniverseDetail({ params }: { params: { id: string } }) {
                 className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2 ${
                   activeTab === "collaborators"
                     ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm"
-                    : "text-zinc-450 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                    : "text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
                 }`}
               >
                 <Users className="w-3.5 h-3.5" />
@@ -310,7 +310,7 @@ export default function UniverseDetail({ params }: { params: { id: string } }) {
                 className={`flex-1 py-3 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center justify-center gap-2 ${
                   activeTab === "series"
                     ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-sm"
-                    : "text-zinc-450 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
+                    : "text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900/50"
                 }`}
               >
                 <Layers className="w-3.5 h-3.5" />
@@ -349,7 +349,7 @@ export default function UniverseDetail({ params }: { params: { id: string } }) {
                                 Author: @{story.author.username}
                               </p>
                               <div className="flex flex-wrap gap-2 mt-2">
-                                <span className="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-zinc-500 bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-800 rounded font-mono">
+                                <span className="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider text-zinc-500 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded font-mono">
                                   {story.viewCount.toLocaleString()} Views
                                 </span>
                                 {story.published ? (
@@ -445,7 +445,7 @@ export default function UniverseDetail({ params }: { params: { id: string } }) {
                             <button
                               onClick={() => handleRemoveCollaborator(collab.user.id)}
                               disabled={actionLoading}
-                              className="p-1.5 text-zinc-450 hover:text-rose-500 hover:bg-rose-500/5 border border-zinc-200 dark:border-zinc-800 hover:border-rose-550/20 rounded transition-all"
+                              className="p-1.5 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 border border-zinc-200 dark:border-zinc-800 hover:border-rose-550/20 rounded transition-all"
                               title="Delete/Remove Collaborator"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
