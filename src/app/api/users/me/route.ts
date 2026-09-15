@@ -35,6 +35,9 @@ export async function GET() {
         readingFontSize: true,
         readingLineHeight: true,
         readingMaxWidth: true,
+        readingTextAlign: true,
+        readingParagraphSpacing: true,
+        readingFirstLineIndent: true,
         readingProgressSync: true,
         bkashNumber: true,
         nagadNumber: true,
@@ -105,6 +108,9 @@ export async function PATCH(request: Request) {
     if (parsed.readingFontSize !== undefined) updateData.readingFontSize = parsed.readingFontSize;
     if (parsed.readingLineHeight !== undefined) updateData.readingLineHeight = parsed.readingLineHeight;
     if (parsed.readingMaxWidth !== undefined) updateData.readingMaxWidth = parsed.readingMaxWidth;
+    if (parsed.readingTextAlign !== undefined) updateData.readingTextAlign = parsed.readingTextAlign;
+    if (parsed.readingParagraphSpacing !== undefined) updateData.readingParagraphSpacing = parsed.readingParagraphSpacing;
+    if (parsed.readingFirstLineIndent !== undefined) updateData.readingFirstLineIndent = parsed.readingFirstLineIndent;
     if (parsed.readingProgressSync !== undefined) updateData.readingProgressSync = parsed.readingProgressSync;
     if (parsed.bkashNumber !== undefined) updateData.bkashNumber = parsed.bkashNumber;
     if (parsed.nagadNumber !== undefined) updateData.nagadNumber = parsed.nagadNumber;
@@ -142,6 +148,9 @@ export async function PATCH(request: Request) {
         readingFontSize: true,
         readingLineHeight: true,
         readingMaxWidth: true,
+        readingTextAlign: true,
+        readingParagraphSpacing: true,
+        readingFirstLineIndent: true,
         readingProgressSync: true,
         bkashNumber: true,
         nagadNumber: true,

@@ -33,6 +33,9 @@ type SyncedUser = {
   readingFontSize?: string;
   readingLineHeight?: string;
   readingMaxWidth?: string;
+  readingTextAlign?: string;
+  readingParagraphSpacing?: string;
+  readingFirstLineIndent?: string;
   readingProgressSync?: boolean;
   phoneNumber?: string | null;
   address?: string | null;

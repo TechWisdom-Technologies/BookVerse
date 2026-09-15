@@ -64,6 +64,9 @@ export const profileSchema = z.object({
   readingLineHeight: z.enum(["tight", "normal", "relaxed"]).optional(),
   readingMaxWidth: z.enum(["narrow", "normal", "wide"]).optional(),
   readingProgressSync: z.boolean().optional(),
+  readingTextAlign: z.enum(["left", "justify"]).optional(),
+  readingParagraphSpacing: z.enum(["tight", "normal", "relaxed"]).optional(),
+  readingFirstLineIndent: z.enum(["none", "small", "large"]).optional(),
   bkashNumber: z.string()
     .refine((val) => val === "" || /^01[3-9]\d{8}$/.test(val), {
       message: "Invalid bKash number. Must be a valid 11-digit Bangladeshi mobile number or empty."

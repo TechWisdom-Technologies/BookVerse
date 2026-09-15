@@ -65,6 +65,9 @@ export default function SettingsPage() {
   const [readingFontSize, setReadingFontSize] = useState('medium');
   const [readingLineHeight, setReadingLineHeight] = useState('normal');
   const [readingMaxWidth, setReadingMaxWidth] = useState('normal');
+  const [readingTextAlign, setReadingTextAlign] = useState('left');
+  const [readingParagraphSpacing, setReadingParagraphSpacing] = useState('normal');
+  const [readingFirstLineIndent, setReadingFirstLineIndent] = useState('none');
   const [readingProgressSync, setReadingProgressSync] = useState(true);
   const [savingReading, setSavingReading] = useState(false);
 
@@ -228,6 +231,9 @@ export default function SettingsPage() {
       setReadingFontSize(dbUser.readingFontSize || 'medium');
       setReadingLineHeight(dbUser.readingLineHeight || 'normal');
       setReadingMaxWidth(dbUser.readingMaxWidth || 'normal');
+      setReadingTextAlign(dbUser.readingTextAlign || 'left');
+      setReadingParagraphSpacing(dbUser.readingParagraphSpacing || 'normal');
+      setReadingFirstLineIndent(dbUser.readingFirstLineIndent || 'none');
       setReadingProgressSync(dbUser.readingProgressSync ?? true);
       setBkashNumber(dbUser.bkashNumber || '');
       setNagadNumber(dbUser.nagadNumber || '');
@@ -408,6 +414,9 @@ export default function SettingsPage() {
           readingFontSize,
           readingLineHeight,
           readingMaxWidth,
+          readingTextAlign,
+          readingParagraphSpacing,
+          readingFirstLineIndent,
           readingProgressSync,
         }),
       });
@@ -745,6 +754,80 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
+                  {/* Text Alignment */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Text Alignment</label>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { id: 'left', label: 'Left Aligned', desc: 'Standard Reading' },
+                        { id: 'justify', label: 'Justified', desc: 'Book-Style Edges' }
+                      ].map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => setReadingTextAlign(a.id)}
+                          className={`flex flex-col text-left p-5 border rounded transition-all ${readingTextAlign === a.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest block">{a.label}</span>
+                          <span className="text-[9px] text-zinc-400 font-bold block mt-1 uppercase">{a.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Paragraph Spacing */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Paragraph Spacing</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { id: 'tight', label: 'Tight', desc: 'Minimal Gap' },
+                        { id: 'normal', label: 'Normal', desc: 'Standard Gap' },
+                        { id: 'relaxed', label: 'Relaxed', desc: 'Large Gap' }
+                      ].map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setReadingParagraphSpacing(p.id)}
+                          className={`flex flex-col text-left p-5 border rounded transition-all ${readingParagraphSpacing === p.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest block">{p.label}</span>
+                          <span className="text-[9px] text-zinc-400 font-bold block mt-1 uppercase">{p.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* First Line Indent */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">First Line Indent</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { id: 'none', label: 'None', desc: 'Modern Style' },
+                        { id: 'small', label: 'Small', desc: 'Classic Print' },
+                        { id: 'large', label: 'Large', desc: 'Pronounced Indent' }
+                      ].map((i) => (
+                        <button
+                          key={i.id}
+                          type="button"
+                          onClick={() => setReadingFirstLineIndent(i.id)}
+                          className={`flex flex-col text-left p-5 border rounded transition-all ${readingFirstLineIndent === i.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest block">{i.label}</span>
+                          <span className="text-[9px] text-zinc-400 font-bold block mt-1 uppercase">{i.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Progress Sync */}
                   <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-2xl flex items-center justify-between gap-6 bg-white dark:bg-zinc-950 shadow-sm">
                     <div className="space-y-1">
@@ -773,6 +856,9 @@ export default function SettingsPage() {
                         setReadingFontSize('medium');
                         setReadingLineHeight('normal');
                         setReadingMaxWidth('normal');
+                        setReadingTextAlign('left');
+                        setReadingParagraphSpacing('normal');
+                        setReadingFirstLineIndent('none');
                         setReadingProgressSync(true);
                         toast.success('Reset to defaults. Click Save to apply.');
                       }}

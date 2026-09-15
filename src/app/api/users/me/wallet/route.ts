@@ -55,7 +55,11 @@ export async function GET() {
     };
 
     const successfulTipsReceived = tipsReceived.filter(t => t.status === "COMPLETED");
-    const totalEarnedTips = successfulTipsReceived.reduce((acc, t) => acc + calculateBDT(t.amount, t.currency || 'USD'), 0); 
+    const totalEarnedTips = successfulTipsReceived.reduce((acc, t) => {
+      const gross = calculateBDT(t.amount, t.currency || 'USD');
+      const net = Math.max(0, gross - (t.gatewayFee || 0) - Math.round(gross * 0.025));
+      return acc + net;
+    }, 0);
     
     const approvedSubs = subscriptions.filter(s => s.status === "APPROVED");
     const totalSpentSubs = approvedSubs.reduce((acc, s) => acc + s.amount, 0); 
@@ -80,10 +84,12 @@ export async function GET() {
     const isCreator = await hasFeatureAccess(dbUser, 'CREATOR');
     if (isCreator) {
       tipsReceived.forEach(t => {
+        const grossAmount = calculateBDT(t.amount, t.currency || 'USD');
+        const netAmount = Math.max(0, grossAmount - (t.gatewayFee || 0) - Math.round(grossAmount * 0.025));
         history.push({
           id: t.id,
           type: "TIP_RECEIVED",
-          amount: calculateBDT(t.amount, t.currency || 'USD'),
+          amount: netAmount,
           currency: "BDT",
           status: t.status,
           createdAt: t.createdAt,

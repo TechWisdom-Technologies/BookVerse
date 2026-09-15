@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
 
     if (paymentType === "PREMIUM") {
       const plan = meta.plan?.toUpperCase() || "PRO";
-      const duration = parseInt(meta.duration || "1", 10);
+      const duration = Math.max(1, parseInt(meta.duration || "1", 10));
 
       let expectedPremiumAmount = 0;
       if (plan === "CREATOR") expectedPremiumAmount = 599 * duration;
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
     } else if (paymentType === "PROMOTION") {
       const storyId = meta.storyId;
       const tier = meta.tier || "FEATURED";
-      const duration = parseInt(meta.duration || "7", 10);
+      const duration = Math.max(1, parseInt(meta.duration || "7", 10));
 
       if (!storyId) return NextResponse.json({ error: "Missing storyId" }, { status: 400 });
 

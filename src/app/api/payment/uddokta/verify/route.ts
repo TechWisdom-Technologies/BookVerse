@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
 
     if (paymentType === "PREMIUM") {
       const plan = meta.plan?.toUpperCase() || "PRO";
-      const duration = parseInt(meta.duration || "1", 10);
+      const duration = Math.max(1, parseInt(meta.duration || "1", 10));
 
       // Fraud Prevention: Ensure they paid the correct amount for the plan
       let expectedPremiumAmount = 0;
@@ -139,7 +139,7 @@ export async function GET(req: NextRequest) {
     } else if (paymentType === "PROMOTION") {
       const storyId = meta.storyId;
       const tier = meta.tier || "FEATURED";
-      const duration = parseInt(meta.duration || "7", 10);
+      const duration = Math.max(1, parseInt(meta.duration || "7", 10));
 
       if (!storyId) {
         console.error("[UddoktaPay Verify] Missing storyId for PROMOTION");

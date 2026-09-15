@@ -75,6 +75,9 @@ async function getCurrentUser() {
         readingFontSize: true,
         readingLineHeight: true,
         readingMaxWidth: true,
+        readingTextAlign: true,
+        readingParagraphSpacing: true,
+        readingFirstLineIndent: true,
       }
     });
     return user;
@@ -124,6 +127,15 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
   const widthMap: Record<string, string> = { narrow: 'max-w-xl', normal: 'max-w-3xl', wide: 'max-w-5xl' };
   const maxWidthClass = widthMap[user?.readingMaxWidth || 'normal'];
 
+  const alignMap: Record<string, string> = { left: 'text-left', justify: 'text-justify' };
+  const alignClass = alignMap[user?.readingTextAlign || 'left'];
+
+  const spacingMap: Record<string, string> = { tight: '[&>p]:!mb-2 [&>p]:!mt-0', normal: '[&>p]:!mb-6 [&>p]:!mt-0', relaxed: '[&>p]:!mb-12 [&>p]:!mt-0' };
+  const spacingClass = spacingMap[user?.readingParagraphSpacing || 'normal'];
+
+  const indentMap: Record<string, string> = { none: '[&>p]:!indent-0', small: '[&>p]:!indent-6', large: '[&>p]:!indent-12' };
+  const indentClass = indentMap[user?.readingFirstLineIndent || 'none'];
+
   return (
     <main className={`min-h-screen pb-40 ${themeClass}`}>
       <div className={`mx-auto px-6 py-12 transition-all duration-300 ${maxWidthClass}`}>
@@ -169,7 +181,7 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
         </header>
 
         {/* Narrative Article */}
-        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${isReaderThemeActive ? '' : 'prose-zinc dark:prose-invert text-zinc-700 dark:text-zinc-300'}`}>
+        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${alignClass} ${spacingClass} ${indentClass} ${isReaderThemeActive ? '' : 'prose-zinc dark:prose-invert text-zinc-700 dark:text-zinc-300'}`}>
           {html ? (
             <div dangerouslySetInnerHTML={{ __html: html }} className={fontSizeClass} />
           ) : (

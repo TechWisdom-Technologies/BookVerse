@@ -45,11 +45,20 @@ export async function POST(req: Request) {
 
     // Redeem gift safely with an interactive transaction to prevent race conditions
     const result = await prisma.$transaction(async (tx) => {
-      const currentGift = await tx.giftMembership.findUnique({ where: { code } });
-      
-      if (!currentGift || currentGift.status !== 'PENDING') {
+      const updateResult = await tx.giftMembership.updateMany({
+        where: { code, status: 'PENDING' },
+        data: {
+          redeemById: user.id,
+          status: 'REDEEMED',
+          redeemedAt: new Date(),
+        },
+      });
+
+      if (updateResult.count === 0) {
         throw new Error('Gift code already used or expired');
       }
+
+      const currentGift = gift;
 
       const dbUser = await tx.user.findUnique({ where: { id: user.id } });
       let membershipEndDate = new Date();
@@ -70,15 +79,6 @@ export async function POST(req: Request) {
           Date.now() + currentGift.duration * 30 * 24 * 60 * 60 * 1000
         );
       }
-
-      await tx.giftMembership.update({
-        where: { code },
-        data: {
-          redeemById: user.id,
-          status: 'REDEEMED',
-          redeemedAt: new Date(),
-        },
-      });
 
       // Update user membership
       await tx.user.update({
