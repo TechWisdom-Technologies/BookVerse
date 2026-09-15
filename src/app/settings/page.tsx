@@ -174,7 +174,10 @@ export default function SettingsPage() {
     setIsExporting(true);
     try {
       const res = await fetch('/api/users/me/export');
-      if (!res.ok) throw new Error('Export failed');
+      if (!res.ok) {
+        const errData = await res.json().catch(() => null);
+        throw new Error(errData?.error || 'Export failed');
+      }
       const exportPayload = await res.json();
 
       const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
@@ -188,9 +191,9 @@ export default function SettingsPage() {
       URL.revokeObjectURL(url);
 
       toast.success('Your complete profile data archive has been downloaded!');
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      toast.error('Failed to export profile data. Please try again.');
+      toast.error(err.message || 'Failed to export profile data. Please try again.');
     } finally {
       setIsExporting(false);
     }
