@@ -38,6 +38,9 @@ export async function GET() {
         tags: true,
         readingFont: true,
         readerTheme: true,
+        readingFontSize: true,
+        readingLineHeight: true,
+        readingMaxWidth: true,
         readingProgressSync: true,
         bkashNumber: true,
         nagadNumber: true,
@@ -216,6 +219,9 @@ export async function GET() {
       preferences: {
         readingFont: user.readingFont,
         readerTheme: user.readerTheme,
+        readingFontSize: user.readingFontSize,
+        readingLineHeight: user.readingLineHeight,
+        readingMaxWidth: user.readingMaxWidth,
         readingProgressSync: user.readingProgressSync,
       },
       wallets: {

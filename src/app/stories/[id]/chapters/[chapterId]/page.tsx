@@ -60,20 +60,31 @@ function estimateReadingTime(content: unknown): number {
   return Math.max(1, Math.ceil(words / 200));
 }
 
-async function getCurrentUserId() {
+async function getCurrentUser() {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("firebase-token")?.value;
     if (!token) return null;
     const decoded = await adminAuth.verifyIdToken(token);
-    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
-    return user?.id ?? null;
+    const user = await prisma.user.findUnique({
+      where: { firebaseUid: decoded.uid },
+      select: {
+        id: true,
+        readingFont: true,
+        readerTheme: true,
+        readingFontSize: true,
+        readingLineHeight: true,
+        readingMaxWidth: true,
+      }
+    });
+    return user;
   } catch { return null; }
 }
 
 export default async function ChapterReaderPage({ params }: ChapterReaderPageProps) {
   const { id: storyId, chapterId } = await params;
-  const currentUserId = await getCurrentUserId();
+  const user = await getCurrentUser();
+  const currentUserId = user?.id ?? null;
 
   const chapter = await prisma.storyChapter.findUnique({
     where: { id: chapterId },
@@ -98,13 +109,28 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
   const nextChapter = currentIndex >= 0 && currentIndex < siblings.length - 1 ? siblings[currentIndex + 1] : null;
   const html = renderChapterContent(chapter.content);
 
+  // Apply reading preferences
+  const isReaderThemeActive = user?.readerTheme && user.readerTheme !== 'white';
+  const themeClass = isReaderThemeActive ? `reader-theme-${user.readerTheme}` : 'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100';
+  
+  const fontClass = user?.readingFont === 'dyslexic' ? 'font-dyslexic' : user?.readingFont === 'serif' ? 'font-serif' : 'font-sans';
+  
+  const sizeMap: Record<string, string> = { small: 'text-sm', medium: 'text-base md:text-lg', large: 'text-lg md:text-xl', xlarge: 'text-xl md:text-2xl' };
+  const fontSizeClass = sizeMap[user?.readingFontSize || 'medium'];
+
+  const leadingMap: Record<string, string> = { tight: 'leading-tight', normal: 'leading-relaxed', relaxed: 'leading-loose' };
+  const lineHeightClass = leadingMap[user?.readingLineHeight || 'normal'];
+
+  const widthMap: Record<string, string> = { narrow: 'max-w-xl', normal: 'max-w-3xl', wide: 'max-w-5xl' };
+  const maxWidthClass = widthMap[user?.readingMaxWidth || 'normal'];
+
   return (
-    <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-40">
-      <div className="max-w-3xl mx-auto px-6 py-12">
+    <main className={`min-h-screen pb-40 ${themeClass}`}>
+      <div className={`mx-auto px-6 py-12 transition-all duration-300 ${maxWidthClass}`}>
         
         {/* Minimal Navigation */}
         <div className="mb-12">
-          <Link href={`/stories/${storyId}`} className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+          <Link href={`/stories/${storyId}`} className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:opacity-80 transition-colors">
             <ArrowLeft className="w-3 h-3" />
             {chapter.story.title}
           </Link>
@@ -112,7 +138,7 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
 
         {/* Chapter Illustration (Hero) */}
         {chapter.illustrationUrl && (
-          <div className="mb-12 relative aspect-[21/9] w-full rounded overflow-hidden shadow-lg border border-zinc-100 dark:border-zinc-800">
+          <div className="mb-12 relative aspect-[21/9] w-full rounded overflow-hidden shadow-lg border border-zinc-100/10">
             <img 
               src={chapter.illustrationUrl} 
               alt={`Illustration for ${chapter.title}`}
@@ -122,20 +148,20 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
         )}
 
         {/* Chapter Header Dossier */}
-        <header className="mb-16 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <header className="mb-16 pb-8 border-b border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+            <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest opacity-50">
               <BookOpen className="w-3.5 h-3.5" />
               Transmission {chapter.chapterOrder.toString().padStart(2, '0')}
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight mb-2">{chapter.title}</h1>
-              <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
-                <Clock className="w-3 h-3 text-zinc-400" />
+              <div className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-widest opacity-50 font-mono">
+                <Clock className="w-3 h-3" />
                 Updated {formatDate(chapter.updatedAt)}
-                <span className="text-zinc-600 dark:text-zinc-800">•</span>
-                <Clock className="w-3 h-3 text-blue-500" />
-                <span className="text-blue-500">{readTime} min read</span>
+                <span>•</span>
+                <Clock className="w-3 h-3" />
+                <span>{readTime} min read</span>
               </div>
             </div>
           </div>
@@ -143,11 +169,11 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
         </header>
 
         {/* Narrative Article */}
-        <article className="prose prose-zinc max-w-none font-serif leading-relaxed dark:prose-invert text-zinc-700 dark:text-zinc-300">
+        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${isReaderThemeActive ? '' : 'prose-zinc dark:prose-invert text-zinc-700 dark:text-zinc-300'}`}>
           {html ? (
-            <div dangerouslySetInnerHTML={{ __html: html }} className="text-lg" />
+            <div dangerouslySetInnerHTML={{ __html: html }} className={fontSizeClass} />
           ) : (
-            <p className="text-xs font-medium text-zinc-400 italic">No narrative data transmitted for this record.</p>
+            <p className="text-xs font-medium opacity-50 italic">No narrative data transmitted for this record.</p>
           )}
         </article>
 

@@ -117,7 +117,7 @@ function NewsletterForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <input
               type="email"
               value={email}

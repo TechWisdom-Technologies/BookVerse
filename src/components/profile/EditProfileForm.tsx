@@ -211,6 +211,7 @@ export function EditProfileForm({ user }: EditProfileFormProps) {
               src={avatarUrl}
               alt="Avatar"
               fill
+              sizes="112px"
               className="object-cover"
             />
           ) : (

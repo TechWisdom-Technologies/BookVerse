@@ -60,6 +60,9 @@ export const profileSchema = z.object({
   instructionSeen: z.boolean().optional(),
   readingFont: z.enum(["sans", "serif", "dyslexic"]).optional(),
   readerTheme: z.enum(["white", "sepia", "cream", "charcoal", "black"]).optional(),
+  readingFontSize: z.enum(["small", "medium", "large", "xlarge"]).optional(),
+  readingLineHeight: z.enum(["tight", "normal", "relaxed"]).optional(),
+  readingMaxWidth: z.enum(["narrow", "normal", "wide"]).optional(),
   readingProgressSync: z.boolean().optional(),
   bkashNumber: z.string()
     .refine((val) => val === "" || /^01[3-9]\d{8}$/.test(val), {

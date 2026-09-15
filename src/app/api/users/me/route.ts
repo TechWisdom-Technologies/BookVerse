@@ -32,6 +32,9 @@ export async function GET() {
         instructionSeen: true,
         readingFont: true,
         readerTheme: true,
+        readingFontSize: true,
+        readingLineHeight: true,
+        readingMaxWidth: true,
         readingProgressSync: true,
         bkashNumber: true,
         nagadNumber: true,
@@ -99,6 +102,9 @@ export async function PATCH(request: Request) {
     if (parsed.instructionSeen !== undefined) updateData.instructionSeen = parsed.instructionSeen;
     if (parsed.readingFont !== undefined) updateData.readingFont = parsed.readingFont;
     if (parsed.readerTheme !== undefined) updateData.readerTheme = parsed.readerTheme;
+    if (parsed.readingFontSize !== undefined) updateData.readingFontSize = parsed.readingFontSize;
+    if (parsed.readingLineHeight !== undefined) updateData.readingLineHeight = parsed.readingLineHeight;
+    if (parsed.readingMaxWidth !== undefined) updateData.readingMaxWidth = parsed.readingMaxWidth;
     if (parsed.readingProgressSync !== undefined) updateData.readingProgressSync = parsed.readingProgressSync;
     if (parsed.bkashNumber !== undefined) updateData.bkashNumber = parsed.bkashNumber;
     if (parsed.nagadNumber !== undefined) updateData.nagadNumber = parsed.nagadNumber;
@@ -133,6 +139,9 @@ export async function PATCH(request: Request) {
         instructionSeen: true,
         readingFont: true,
         readerTheme: true,
+        readingFontSize: true,
+        readingLineHeight: true,
+        readingMaxWidth: true,
         readingProgressSync: true,
         bkashNumber: true,
         nagadNumber: true,

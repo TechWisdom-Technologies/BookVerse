@@ -62,6 +62,9 @@ export default function SettingsPage() {
   // Reading preferences states
   const [readingFont, setReadingFont] = useState('sans');
   const [readerTheme, setReaderTheme] = useState('white');
+  const [readingFontSize, setReadingFontSize] = useState('medium');
+  const [readingLineHeight, setReadingLineHeight] = useState('normal');
+  const [readingMaxWidth, setReadingMaxWidth] = useState('normal');
   const [readingProgressSync, setReadingProgressSync] = useState(true);
   const [savingReading, setSavingReading] = useState(false);
 
@@ -222,6 +225,9 @@ export default function SettingsPage() {
     if (dbUser) {
       setReadingFont(dbUser.readingFont || 'sans');
       setReaderTheme(dbUser.readerTheme || 'white');
+      setReadingFontSize(dbUser.readingFontSize || 'medium');
+      setReadingLineHeight(dbUser.readingLineHeight || 'normal');
+      setReadingMaxWidth(dbUser.readingMaxWidth || 'normal');
       setReadingProgressSync(dbUser.readingProgressSync ?? true);
       setBkashNumber(dbUser.bkashNumber || '');
       setNagadNumber(dbUser.nagadNumber || '');
@@ -399,6 +405,9 @@ export default function SettingsPage() {
         body: JSON.stringify({
           readingFont,
           readerTheme,
+          readingFontSize,
+          readingLineHeight,
+          readingMaxWidth,
           readingProgressSync,
         }),
       });
@@ -660,6 +669,82 @@ export default function SettingsPage() {
                     </div>
                   </div>
 
+                  {/* Font Size */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Font Size</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { id: 'small', label: 'Small', icon: 'text-sm' },
+                        { id: 'medium', label: 'Medium', icon: 'text-base' },
+                        { id: 'large', label: 'Large', icon: 'text-lg' },
+                        { id: 'xlarge', label: 'X-Large', icon: 'text-xl' }
+                      ].map((f) => (
+                        <button
+                          key={f.id}
+                          type="button"
+                          onClick={() => setReadingFontSize(f.id)}
+                          className={`flex flex-col items-center justify-center py-4 border rounded transition-all ${readingFontSize === f.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900 ring-1 ring-zinc-900 dark:ring-white'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                        >
+                          <span className={`${f.icon} font-bold mb-2`}>Aa</span>
+                          <span className="text-[9px] font-bold uppercase tracking-widest">{f.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Line Spacing */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Line Spacing</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { id: 'tight', label: 'Tight', desc: 'Compact Reading' },
+                        { id: 'normal', label: 'Normal', desc: 'Standard Spacing' },
+                        { id: 'relaxed', label: 'Relaxed', desc: 'Breathable Layout' }
+                      ].map((l) => (
+                        <button
+                          key={l.id}
+                          type="button"
+                          onClick={() => setReadingLineHeight(l.id)}
+                          className={`flex flex-col text-left p-5 border rounded transition-all ${readingLineHeight === l.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest block">{l.label}</span>
+                          <span className="text-[9px] text-zinc-400 font-bold block mt-1 uppercase">{l.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Reading Width */}
+                  <div className="space-y-4">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 block">Reading Width</label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {[
+                        { id: 'narrow', label: 'Narrow', desc: 'Focused Column' },
+                        { id: 'normal', label: 'Normal', desc: 'Balanced Width' },
+                        { id: 'wide', label: 'Wide', desc: 'Maximum Content' }
+                      ].map((w) => (
+                        <button
+                          key={w.id}
+                          type="button"
+                          onClick={() => setReadingMaxWidth(w.id)}
+                          className={`flex flex-col text-left p-5 border rounded transition-all ${readingMaxWidth === w.id
+                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            }`}
+                        >
+                          <span className="text-[10px] font-bold uppercase tracking-widest block">{w.label}</span>
+                          <span className="text-[9px] text-zinc-400 font-bold block mt-1 uppercase">{w.desc}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Progress Sync */}
                   <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-2xl flex items-center justify-between gap-6 bg-white dark:bg-zinc-950 shadow-sm">
                     <div className="space-y-1">
@@ -679,17 +764,34 @@ export default function SettingsPage() {
                     </button>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={savingReading}
-                    className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 transition-all flex items-center justify-center gap-2"
-                  >
-                    {savingReading ? (
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    ) : (
-                      'Save Preferences'
-                    )}
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReadingFont('sans');
+                        setReaderTheme('white');
+                        setReadingFontSize('medium');
+                        setReadingLineHeight('normal');
+                        setReadingMaxWidth('normal');
+                        setReadingProgressSync(true);
+                        toast.success('Reset to defaults. Click Save to apply.');
+                      }}
+                      className="w-full sm:w-1/3 py-4 bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all flex items-center justify-center border border-zinc-200 dark:border-zinc-800"
+                    >
+                      Reset Defaults
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={savingReading}
+                      className="w-full sm:w-2/3 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      {savingReading ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        'Save Preferences'
+                      )}
+                    </button>
+                  </div>
                 </form>
               </div>
             )}

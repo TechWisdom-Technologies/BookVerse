@@ -68,6 +68,7 @@ export function BookReviews({
                           src={review.user.avatarUrl}
                           alt={review.user.username}
                           fill
+                          sizes="48px"
                           className="object-cover"
                         />
                       ) : (

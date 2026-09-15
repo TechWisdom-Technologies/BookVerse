@@ -104,6 +104,9 @@ model User {
   // Reading Preferences & Mobile Wallets
   readingFont              String                   @default("sans") @map("reading_font")
   readerTheme              String                   @default("white") @map("reader_theme")
+  readingFontSize          String                   @default("medium") @map("reading_font_size")
+  readingLineHeight        String                   @default("normal") @map("reading_line_height")
+  readingMaxWidth          String                   @default("normal") @map("reading_max_width")
   readingProgressSync      Boolean                  @default(true) @map("reading_progress_sync")
   bkashNumber              String?                  @map("bkash_number")
   nagadNumber              String?                  @map("nagad_number")

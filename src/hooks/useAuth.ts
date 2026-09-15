@@ -30,6 +30,9 @@ type SyncedUser = {
   instructionSeen?: boolean;
   readingFont?: string;
   readerTheme?: string;
+  readingFontSize?: string;
+  readingLineHeight?: string;
+  readingMaxWidth?: string;
   readingProgressSync?: boolean;
   phoneNumber?: string | null;
   address?: string | null;

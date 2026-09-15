@@ -61,6 +61,7 @@ export function StoryCard({ story }: StoryCardProps) {
               src={story.coverUrl}
               alt={story.title}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover transition group-hover:scale-105"
               priority={false}
             />

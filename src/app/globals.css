@@ -152,6 +152,32 @@
   --color-zinc-950: #000000;
 }
 
+/* Reader Themes */
+.reader-theme-white {
+  background-color: #ffffff !important;
+  color: #1e1e1e !important;
+}
+.reader-theme-sepia {
+  background-color: #f4ecd8 !important;
+  color: #5f4b32 !important;
+}
+.reader-theme-cream {
+  background-color: #faf6ee !important;
+  color: #1e1e1e !important;
+}
+.reader-theme-charcoal {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+.reader-theme-black {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.font-dyslexic {
+  font-family: 'OpenDyslexic', 'Comic Sans MS', sans-serif !important;
+}
+
 body {
   background: rgb(var(--background));
   color: rgb(var(--foreground));

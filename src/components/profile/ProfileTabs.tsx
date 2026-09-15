@@ -90,6 +90,7 @@ export function ProfileTabs({ books, stories }: ProfileTabsProps) {
                           src={story.coverUrl}
                           alt={story.title}
                           fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                           className="object-cover transition-all duration-700"
                         />
                       ) : (
@@ -149,6 +150,7 @@ export function ProfileTabs({ books, stories }: ProfileTabsProps) {
                           src={book.coverUrl}
                           alt={book.title}
                           fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                           className="object-cover transition-all duration-700"
                         />
                       ) : (

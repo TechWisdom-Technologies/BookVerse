@@ -1,4 +1,4 @@
-const CACHE_NAME = "bookverse-cache-v5";
+const CACHE_NAME = "bookverse-cache-v6";
 const OFFLINE_PAGE = "/offline.html";
 
 const ASSETS_TO_CACHE = [
