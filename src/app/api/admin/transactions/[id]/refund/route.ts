@@ -62,10 +62,10 @@ export async function POST(
             where: { id: tip.id },
             data: { status: "FAILED" }
           });
-          // Deduct the refunded tip amount from the author's pending wallet balance
+          // Deduct the refunded net tip amount from the author's pending wallet balance
           await tx.user.update({
             where: { id: tip.receiverId },
-            data: { walletBalance: { decrement: tip.amount } }
+            data: { walletBalance: { decrement: Math.max(0, tip.amount - (tip.gatewayFee || 0) - Math.round(tip.amount * 0.025)) } }
           });
         }
       } else if (txn.plan.startsWith("GIFT_")) {

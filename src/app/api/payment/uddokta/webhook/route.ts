@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
         }),
         prisma.user.update({
           where: { id: receiverId },
-          data: { walletBalance: { increment: amount } }
+          data: { walletBalance: { increment: Math.max(0, amount - gatewayFee - Math.round(amount * 0.025)) } }
         })
       ]);
 

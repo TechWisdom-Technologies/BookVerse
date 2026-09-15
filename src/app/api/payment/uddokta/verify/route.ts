@@ -272,7 +272,7 @@ export async function GET(req: NextRequest) {
         }),
         prisma.user.update({
           where: { id: receiverId },
-          data: { walletBalance: { increment: Math.max(0, amount - gatewayFee) } }
+          data: { walletBalance: { increment: Math.max(0, amount - gatewayFee - Math.round(amount * 0.025)) } }
         })
       ]);
 

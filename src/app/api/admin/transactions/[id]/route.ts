@@ -264,7 +264,7 @@ export async function POST(
           await tx.user.update({
             where: { id: tip.receiverId },
             data: {
-              walletBalance: { increment: tip.amount }
+              walletBalance: { increment: Math.max(0, tip.amount - (tip.gatewayFee || 0) - Math.round(tip.amount * 0.025)) }
             }
           });
 
