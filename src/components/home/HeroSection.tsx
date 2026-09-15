@@ -19,7 +19,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] dark:opacity-20" />
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent" />
 
-        {/* Animated Orbs - Subtle in Light Mode */}
+        {/* Animated Orbs - Hidden on mobile to prevent GPU flickering/blinking, Subtle in Light Mode */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -28,7 +28,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
             y: [0, -50, 0]
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-1/4 -left-32 w-96 h-96 bg-zinc-200 dark:bg-zinc-800 rounded-full blur-[128px]"
+          className="hidden md:block absolute top-1/4 -left-32 w-96 h-96 bg-zinc-200 dark:bg-zinc-800 rounded-full blur-[128px] will-change-transform transform-gpu"
         />
         <motion.div
           animate={{
@@ -38,7 +38,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
             y: [0, 50, 0]
           }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-          className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-zinc-100 dark:bg-zinc-900 rounded-full blur-[128px]"
+          className="hidden md:block absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-zinc-100 dark:bg-zinc-900 rounded-full blur-[128px] will-change-transform transform-gpu"
         />
       </div>
 
@@ -144,7 +144,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
         <motion.div
           animate={{ y: [0, 12, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-px h-12 bg-zinc-200 dark:bg-zinc-800"
+          className="w-px h-12 bg-zinc-200 dark:bg-zinc-800 will-change-transform transform-gpu"
         />
       </motion.div>
     </section>

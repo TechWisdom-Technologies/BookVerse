@@ -14,9 +14,11 @@ import {
   Globe, 
   Lock, 
   Users, 
-  AlertTriangle 
+  AlertTriangle,
+  Image as ImageIcon
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { FileUpload } from "@/components/shared/FileUpload";
 
 interface ClubSettingsModalProps {
   isOpen: boolean;
@@ -38,6 +40,7 @@ export default function ClubSettingsModal({ isOpen, onClose, club, setClub }: Cl
   const [rules, setRules] = useState(club?.rules || '');
   const [isPrivate, setIsPrivate] = useState(club?.isPrivate || false);
   const [maxMembers, setMaxMembers] = useState(club?.maxMembers || 50);
+  const [coverUrl, setCoverUrl] = useState(club?.coverUrl || '');
 
   useEffect(() => {
     if (isOpen && club) {
@@ -46,6 +49,7 @@ export default function ClubSettingsModal({ isOpen, onClose, club, setClub }: Cl
       setRules(club.rules || '');
       setIsPrivate(club.isPrivate);
       setMaxMembers(club.maxMembers || 50);
+      setCoverUrl(club.coverUrl || '');
       fetchBans();
     }
   }, [isOpen, club]);
@@ -73,11 +77,11 @@ export default function ClubSettingsModal({ isOpen, onClose, club, setClub }: Cl
       const res = await fetch(`/api/clubs/${club.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, description, rules, isPrivate, maxMembers }),
+        body: JSON.stringify({ name, description, rules, isPrivate, maxMembers, coverUrl: coverUrl || null }),
       });
       if (res.ok) {
         toast.success('Club settings saved successfully! ✨');
-        setClub({ ...club, name, description, rules, isPrivate, maxMembers });
+        setClub({ ...club, name, description, rules, isPrivate, maxMembers, coverUrl: coverUrl || null });
         onClose();
       } else {
         toast.error('Failed to update club');
@@ -266,6 +270,24 @@ export default function ClubSettingsModal({ isOpen, onClose, club, setClub }: Cl
                       rows={5}
                       className="w-full px-5 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all text-xs leading-relaxed resize-none font-medium"
                     />
+                  </div>
+
+                  {/* Cover Image Upload */}
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Club Cover Image</label>
+                    <div className="p-4 border border-dashed border-zinc-100 dark:border-zinc-800 rounded bg-zinc-50/20 dark:bg-zinc-900/10">
+                      <FileUpload
+                        accept="image/*"
+                        maxSize={5 * 1024 * 1024}
+                        onUpload={(url) => setCoverUrl(url)}
+                        label="Upload Cover Image"
+                      />
+                      {coverUrl && (
+                        <div className="mt-4 relative h-32 w-full rounded overflow-hidden border border-zinc-100 dark:border-zinc-800">
+                          <img src={coverUrl} alt="Club Cover" className="w-full h-full object-cover" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
                   {/* Rules & Terms */}

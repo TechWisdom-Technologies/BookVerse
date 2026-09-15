@@ -11,6 +11,7 @@ interface Club {
   name: string;
   description?: string;
   genre?: string;
+  coverUrl?: string;
   isPrivate: boolean;
   owner: {
     username: string;
@@ -138,43 +139,60 @@ export default function ClubsPage() {
         {dbUser && filteredClubs.filter(c => c.members.some(m => m.userId === dbUser.id)).length > 0 && (
           <div className="mb-16">
             <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">My Clubs</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredClubs.filter(c => c.members.some(m => m.userId === dbUser.id)).map(club => (
                 <Link
                   key={club.id}
                   href={`/clubs/${club.id}`}
-                  className="relative group flex flex-col p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
+                  className="relative group flex flex-col justify-end p-6 min-h-[280px] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-2xl dark:hover:shadow-black/50"
                 >
-                  <div className="flex justify-between items-start mb-6">
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 px-2 py-0.5 border border-zinc-100 dark:border-zinc-800 rounded">
-                      {club.genre || 'General'}
-                    </span>
-                    {club.isPrivate && <Shield className="w-3.5 h-3.5 text-emerald-500" />}
-                  </div>
-
-                  <h3 className="text-sm font-bold mb-2 uppercase tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
-                    {club.name}
-                  </h3>
-                  <p className="text-[11px] text-zinc-500 font-medium leading-relaxed mb-10 line-clamp-2 italic">
-                    {club.description || 'A community gathering for readers.'}
-                  </p>
-
-                  {unreadCounts[club.id] > 0 && (
-                    <div className="absolute top-8 right-8 flex items-center justify-center w-5 h-5 bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-md animate-in zoom-in">
-                      {unreadCounts[club.id]}
-                    </div>
+                  {/* Background */}
+                  {club.coverUrl ? (
+                    <>
+                      <img src={club.coverUrl} alt={club.name} className="absolute inset-0 w-full h-full object-cover z-0 blur-sm scale-105 transition-transform duration-700 group-hover:scale-110" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 z-0" />
+                    </>
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0 transition-transform duration-700 group-hover:scale-105" />
                   )}
 
-                  <div className="mt-auto pt-6 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[9px] font-bold border border-zinc-100 dark:border-zinc-800">
-                        {club.owner.username[0].toUpperCase()}
-                      </div>
-                      <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{club.owner.displayName || club.owner.username}</span>
+                  {/* Top Badges */}
+                  <div className="absolute top-6 left-6 right-6 z-10 flex justify-between items-start">
+                    <span className="backdrop-blur-md bg-white/10 text-white/90 text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20">
+                      {club.genre || 'General'}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {unreadCounts[club.id] > 0 && (
+                        <div className="flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-sm animate-in zoom-in">
+                          {unreadCounts[club.id]}
+                        </div>
+                      )}
+                      {club.isPrivate && <Shield className="w-4 h-4 text-emerald-400 drop-shadow-md" />}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300 uppercase tracking-widest">
-                      <Users className="w-3.5 h-3.5" />
-                      {club.members.length}
+                  </div>
+
+                  {/* Content (Bottom) */}
+                  <div className="relative z-10 mt-auto pt-10">
+                    <h3 className="text-xl font-bold mb-2 text-white group-hover:text-white/90 transition-colors drop-shadow-sm">
+                      {club.name}
+                    </h3>
+                    <p className="text-xs text-white/70 font-medium leading-relaxed mb-6 line-clamp-2">
+                      {club.description || 'A community gathering for readers.'}
+                    </p>
+
+                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20">
+                          {club.owner.username[0].toUpperCase()}
+                        </div>
+                        <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">
+                          {club.owner.displayName || club.owner.username}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/60 uppercase tracking-widest bg-white/5 backdrop-blur-sm px-2.5 py-1.5 rounded-full border border-white/10">
+                        <Users className="w-3.5 h-3.5" />
+                        {club.members.length}
+                      </div>
                     </div>
                   </div>
                 </Link>
@@ -185,37 +203,60 @@ export default function ClubsPage() {
 
         {/* Discover Clubs Section */}
         <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">Discover Clubs</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredClubs.filter(c => !dbUser || !c.members.some(m => m.userId === dbUser.id)).map(club => (
             <Link
               key={club.id}
               href={`/clubs/${club.id}`}
-              className="group flex flex-col p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
+              className="relative group flex flex-col justify-end p-6 min-h-[280px] rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 transition-all duration-500 hover:-translate-y-1 hover:shadow-xl dark:hover:shadow-2xl dark:hover:shadow-black/50"
             >
-              <div className="flex justify-between items-start mb-6">
-                <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 px-2 py-0.5 border border-zinc-100 dark:border-zinc-800 rounded">
+              {/* Background */}
+              {club.coverUrl ? (
+                <>
+                  <img src={club.coverUrl} alt={club.name} className="absolute inset-0 w-full h-full object-cover z-0 blur-sm scale-105 transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 z-0" />
+                </>
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0 transition-transform duration-700 group-hover:scale-105" />
+              )}
+
+              {/* Top Badges */}
+              <div className="absolute top-6 left-6 right-6 z-10 flex justify-between items-start">
+                <span className="backdrop-blur-md bg-white/10 text-white/90 text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20">
                   {club.genre || 'General'}
                 </span>
-                {club.isPrivate && <Shield className="w-3.5 h-3.5 text-emerald-500" />}
+                <div className="flex items-center gap-2">
+                  {unreadCounts[club.id] > 0 && (
+                    <div className="flex items-center justify-center min-w-[20px] h-5 px-1.5 bg-rose-500 text-white text-[10px] font-bold rounded-full shadow-sm animate-in zoom-in">
+                      {unreadCounts[club.id]}
+                    </div>
+                  )}
+                  {club.isPrivate && <Shield className="w-4 h-4 text-emerald-400 drop-shadow-md" />}
+                </div>
               </div>
 
-              <h3 className="text-sm font-bold mb-2 uppercase tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors">
-                {club.name}
-              </h3>
-              <p className="text-[11px] text-zinc-500 font-medium leading-relaxed mb-10 line-clamp-2 italic">
-                {club.description || 'A community gathering for readers.'}
-              </p>
+              {/* Content (Bottom) */}
+              <div className="relative z-10 mt-auto pt-10">
+                <h3 className="text-xl font-bold mb-2 text-white group-hover:text-white/90 transition-colors drop-shadow-sm">
+                  {club.name}
+                </h3>
+                <p className="text-xs text-white/70 font-medium leading-relaxed mb-6 line-clamp-2">
+                  {club.description || 'A community gathering for readers.'}
+                </p>
 
-              <div className="mt-auto pt-6 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[9px] font-bold border border-zinc-100 dark:border-zinc-800">
-                    {club.owner.username[0].toUpperCase()}
+                <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20">
+                      {club.owner.username[0].toUpperCase()}
+                    </div>
+                    <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">
+                      {club.owner.displayName || club.owner.username}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">{club.owner.displayName || club.owner.username}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-[10px] font-bold text-zinc-300 uppercase tracking-widest">
-                  <Users className="w-3.5 h-3.5" />
-                  {club.members.length}
+                  <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/60 uppercase tracking-widest bg-white/5 backdrop-blur-sm px-2.5 py-1.5 rounded-full border border-white/10">
+                    <Users className="w-3.5 h-3.5" />
+                    {club.members.length}
+                  </div>
                 </div>
               </div>
             </Link>

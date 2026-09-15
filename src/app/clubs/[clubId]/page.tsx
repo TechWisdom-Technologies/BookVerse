@@ -56,6 +56,7 @@ interface Club {
   genre?: string;
   isPrivate: boolean;
   joinCode?: string;
+  coverUrl?: string;
   maxMembers: number;
   owner: {
     id: string;
@@ -209,13 +210,33 @@ export default function ClubDetailPage() {
         toast.success('Message posted!');
         setNewDiscussionContent('');
         setShowNewDiscussion(false);
-        setReplyingTo(null);
         
-        // Refetch logic
-        const discussionsRes = await fetch(`/api/clubs/${clubId}/discussions`);
-        if (discussionsRes.ok) {
-          const discussionsData = await discussionsRes.json();
-          setClub(prev => prev ? { ...prev, discussions: discussionsData } : null);
+        if (replyingTo) {
+          // It's a reply, so we fetch replies for this discussion
+          const repliesRes = await fetch(`/api/clubs/${clubId}/discussions/${replyingTo}/replies`);
+          if (repliesRes.ok) {
+             const newReplies = await repliesRes.json();
+             setRepliesData(prev => ({ ...prev, [replyingTo]: newReplies }));
+             // Expand the replies so the user can see it
+             setShowReplies(prev => new Set(prev).add(replyingTo));
+             
+             // Optimistically update the reply count so the UI immediately shows the replies section
+             setClub(prev => prev ? { 
+               ...prev, 
+               discussions: prev.discussions.map(d => 
+                 d.id === replyingTo ? { ...d, _count: { ...d._count, replies: (d._count?.replies || 0) + 1 } } : d
+               ) 
+             } : null);
+          }
+          setReplyingTo(null);
+        } else {
+          // Refetch logic for main discussions
+          const discussionsRes = await fetch(`/api/clubs/${clubId}/discussions`);
+          if (discussionsRes.ok) {
+            const discussionsData = await discussionsRes.json();
+            setClub(prev => prev ? { ...prev, discussions: discussionsData } : null);
+          }
+          setReplyingTo(null);
         }
       } else {
         const data = await res.json();
@@ -637,14 +658,14 @@ export default function ClubDetailPage() {
                             )}
 
                             {/* Replies List */}
-                            {discussion._count && discussion._count.replies > 0 && (
+                            {( (discussion._count && discussion._count.replies > 0) || (repliesData[discussion.id] && repliesData[discussion.id].length > 0) ) && (
                               <div className="mt-4 pt-4 border-t border-zinc-50 dark:border-zinc-800/50">
                                 <button 
                                   onClick={() => handleToggleReplies(discussion.id)}
                                   className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-indigo-500 hover:text-indigo-600 transition-colors"
                                 >
                                   {showReplies.has(discussion.id) ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
-                                  {showReplies.has(discussion.id) ? 'Hide Replies' : `See Replies (${discussion._count.replies})`}
+                                  {showReplies.has(discussion.id) ? 'Hide Replies' : `See Replies (${Math.max(discussion._count?.replies || 0, repliesData[discussion.id]?.length || 0)})`}
                                 </button>
                                 
                                 {showReplies.has(discussion.id) && (
@@ -742,6 +763,11 @@ export default function ClubDetailPage() {
 
           {/* Members Sidebar */}
           <aside className="space-y-12">
+            {club.coverUrl && (
+              <div className="w-full h-48 rounded-xl overflow-hidden border border-zinc-100 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-900 shadow-sm relative">
+                <img src={club.coverUrl} alt={club.name} className="w-full h-full object-cover" />
+              </div>
+            )}
             <div>
               <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 mb-8 pb-2 border-b border-zinc-100 dark:border-zinc-900">Members ({club.members.length})</h2>
               <div className="space-y-6">
