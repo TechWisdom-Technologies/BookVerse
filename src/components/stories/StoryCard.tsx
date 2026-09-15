@@ -114,19 +114,19 @@ export function StoryCard({ story }: StoryCardProps) {
 
           <div className="flex items-center gap-4 pt-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
             <span className="flex items-center gap-1.5" title="Chapters">
-              <BookOpen className="h-3.5 w-3.5 text-indigo-400" />
+              <BookOpen className="h-3.5 w-3.5" />
               {story._count.chapters}
             </span>
             <span className="flex items-center gap-1.5" title="Views">
-              <Eye className="h-3.5 w-3.5 text-blue-400" />
+              <Eye className="h-3.5 w-3.5" />
               {story.viewCount}
             </span>
             <span className="flex items-center gap-1.5" title="Likes">
-              <Heart className="h-3.5 w-3.5 text-rose-400" />
+              <Heart className="h-3.5 w-3.5" />
               {story._count.reactions}
             </span>
             <span className="flex items-center gap-1.5" title="Comments">
-              <MessageSquare className="h-3.5 w-3.5 text-emerald-400" />
+              <MessageSquare className="h-3.5 w-3.5" />
               {story._count.comments}
             </span>
           </div>
