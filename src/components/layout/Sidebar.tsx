@@ -99,7 +99,7 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 space-y-2 p-4 overflow-y-auto">
+          <nav className="flex-1 space-y-2 p-4 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {sidebarItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.href);

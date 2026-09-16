@@ -79,8 +79,8 @@ export default async function HomePage() {
   try {
     const currentUserId = await getCurrentUserId();
     const [featured, recent, universes, stories, promotedStories, activePromotions] = await Promise.all([
-      prisma.book.findMany({ take: 8, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
-      prisma.book.findMany({ take: 8, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
+      prisma.book.findMany({ take: 8, where: { isFeatured: true }, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
+      prisma.book.findMany({ take: 8, where: { isNewArrival: true }, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
       prisma.universe.findMany({
         take: 4,
         orderBy: { createdAt: "desc" },
@@ -148,7 +148,7 @@ export default async function HomePage() {
       })
     ]);
 
-    const [topUsers, totalUsers, totalBooks, totalAuthors, totalDownloadsAggr] = await Promise.all([
+    const [topUsers, totalUsers, totalBooks, totalStories, totalReadTimeAggr] = await Promise.all([
       prisma.user.findMany({
         take: 4,
         orderBy: {
@@ -163,11 +163,11 @@ export default async function HomePage() {
       }),
       prisma.user.count(),
       prisma.book.count(),
-      prisma.user.count({ where: { role: 'AUTHOR' } }),
-      prisma.book.aggregate({ _sum: { downloadCount: true } })
+      prisma.story.count(),
+      prisma.readingLog.aggregate({ _sum: { minutes: true } })
     ]);
 
-    const totalDownloads = totalDownloadsAggr._sum.downloadCount || 0;
+    const totalReadTime = totalReadTimeAggr._sum.minutes || 0;
 
     const addRatings = async <T extends Pick<Book, "id">>(books: T[]) => {
       return Promise.all(books.map(async (book) => {
@@ -287,30 +287,32 @@ export default async function HomePage() {
           <div className="max-w-4xl mx-auto">
             <AnimatedStats stats={[
               { label: 'Books', value: totalBooks },
-              { label: 'Authors', value: totalAuthors },
+              { label: 'Stories', value: totalStories },
               { label: 'Readers', value: totalUsers },
-              { label: 'Downloads', value: totalDownloads }
+              { label: 'Minutes Read', value: totalReadTime }
             ]} />
           </div>
         </section>
 
         {/* Featured Books */}
-        <section className="py-24 px-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-end justify-between mb-12 pb-6 border-b border-zinc-50 dark:border-zinc-900">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
-                  <Award className="w-4 h-4" /> Recommended
+        {featuredWithRatings.length > 0 && (
+          <section className="py-24 px-6">
+            <div className="max-w-7xl mx-auto">
+              <div className="flex items-end justify-between mb-12 pb-6 border-b border-zinc-50 dark:border-zinc-900">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
+                    <Award className="w-4 h-4" /> Recommended
+                  </div>
+                  <h2 className="text-xl font-bold tracking-tight uppercase">Editor&apos;s Choice.</h2>
                 </div>
-                <h2 className="text-xl font-bold tracking-tight uppercase">Editor&apos;s Choice.</h2>
+                <Link href="/library" className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-900 dark:text-white hover:underline underline-offset-8 transition-all flex items-center gap-2">
+                  Browse All <ArrowRight className="w-4 h-4 text-zinc-300" />
+                </Link>
               </div>
-              <Link href="/library" className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-900 dark:text-white hover:underline underline-offset-8 transition-all flex items-center gap-2">
-                Browse All <ArrowRight className="w-4 h-4 text-zinc-300" />
-              </Link>
+              <BookGrid books={featuredWithRatings} />
             </div>
-            <BookGrid books={featuredWithRatings} />
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Latest Stories */}
         {formattedPromotedStories.length > 0 && (
@@ -455,13 +457,15 @@ export default async function HomePage() {
                 })}
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-2 mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900 italic">
-                <Clock className="w-4 h-4 text-zinc-200" />
-                <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">New Arrivals</h2>
+            {recentWithRatings.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900 italic">
+                  <Clock className="w-4 h-4 text-zinc-200" />
+                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">New Arrivals</h2>
+                </div>
+                <BookGrid books={recentWithRatings} />
               </div>
-              <BookGrid books={recentWithRatings} />
-            </div>
+            )}
           </div>
         </section>
 

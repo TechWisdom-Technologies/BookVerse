@@ -64,6 +64,8 @@ export async function GET(request: Request) {
           coverUrl: true,
           downloadCount: true,
           createdAt: true,
+          isNewArrival: true,
+          isFeatured: true,
           uploadedBy: {
             select: { username: true, displayName: true },
           },
@@ -159,7 +161,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { id, title, authorName, genre, description, language } = body;
+    const { id, title, authorName, genre, description, language, isNewArrival, isFeatured } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Book ID is required" }, { status: 400 });
@@ -173,6 +175,8 @@ export async function PATCH(request: Request) {
         genre,
         description,
         language,
+        ...(isNewArrival !== undefined && { isNewArrival }),
+        ...(isFeatured !== undefined && { isFeatured }),
       },
     });
 

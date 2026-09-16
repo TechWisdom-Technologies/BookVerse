@@ -133,20 +133,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
         </motion.div>
       </div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-zinc-200 dark:text-zinc-800"
-      >
-        <span className="text-[9px] font-bold uppercase tracking-[0.3em]">Scroll</span>
-        <motion.div
-          animate={{ y: [0, 12, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="w-px h-12 bg-zinc-200 dark:bg-zinc-800 will-change-transform transform-gpu"
-        />
-      </motion.div>
+
     </section>
   );
 }

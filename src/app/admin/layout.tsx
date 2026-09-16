@@ -44,8 +44,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           </span>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {children}
         </main>
       </div>
