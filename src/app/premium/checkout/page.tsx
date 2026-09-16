@@ -2,13 +2,13 @@
 
 import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { 
-  ArrowLeft, 
-  CreditCard, 
-  ShieldCheck, 
-  Loader2, 
-  Check, 
-  Zap, 
+import {
+  ArrowLeft,
+  CreditCard,
+  ShieldCheck,
+  Loader2,
+  Check,
+  Zap,
   Heart,
   Lock,
   Globe
@@ -19,20 +19,20 @@ import { toast } from 'react-hot-toast';
 function CheckoutContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
+
   const planParam = searchParams.get('plan') || 'pro';
   const isCreator = planParam.toLowerCase() === 'creator';
   const isPro = planParam.toLowerCase() === 'pro';
-  
+
   let planName = 'AUTHOR';
   let planPrice = 99;
-  
+
   if (isCreator) {
     planName = 'CREATOR';
-    planPrice = 599;
+    planPrice = 349;
   } else if (isPro) {
     planName = 'PRO';
-    planPrice = 299;
+    planPrice = 199;
   }
 
   // Form & Method Selection States
@@ -79,8 +79,8 @@ function CheckoutContent() {
       const res = await fetch('/api/premium/upgrade', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          plan: planName, 
+        body: JSON.stringify({
+          plan: planName,
           duration: duration,
           senderNumber: senderNumber.trim(),
           transactionId: transactionId.trim()
@@ -144,7 +144,7 @@ function CheckoutContent() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12">
-      
+
       {/* Simple Header */}
       <header className="mb-12 pb-8 border-b border-zinc-900">
         <Link href="/premium" className="flex items-center gap-2 text-xs font-bold text-zinc-500 hover:text-white transition-colors mb-4">
@@ -186,14 +186,14 @@ function CheckoutContent() {
 
       {paymentStep === 'idle' && (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
-          
+
           {/* Order Summary */}
           <div className="md:col-span-2 space-y-6">
             <div className="border border-zinc-900 rounded-2xl p-6 bg-zinc-900/40 shadow-sm relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-[3px] bg-white" />
-              
+
               <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 mb-6">Order Summary</h2>
-              
+
               <div className="space-y-4 mb-8">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 bg-white text-zinc-950 rounded-lg">
@@ -225,7 +225,7 @@ function CheckoutContent() {
                     <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-500 text-[9px]">▼</div>
                   </div>
                 </div>
-                
+
                 <div className="pt-4 border-t border-zinc-900 flex justify-between items-baseline">
                   <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Total Value</span>
                   <span className="text-xl font-bold tracking-tight text-white">৳{totalAmount.toLocaleString()}</span>
@@ -249,7 +249,7 @@ function CheckoutContent() {
           <div className="md:col-span-3">
             <div className="border border-zinc-900 rounded-2xl p-8 bg-[#0c0c0e] shadow-xl relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-[3px] bg-white" />
-              
+
               <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-zinc-400 mb-8 flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-zinc-400" />
                 Select Payment Option
@@ -311,7 +311,7 @@ function CheckoutContent() {
                       <h4 className="text-[10px] font-bold uppercase tracking-widest text-emerald-400">UddoktaPay Checkout</h4>
                     </div>
                     <p className="text-[10px] text-zinc-400 leading-relaxed">
-                      You will be redirected to UddoktaPay&apos;s secure checkout page where you can pay using <span className="font-bold text-zinc-300">bKash, Nagad, Rocket, Upay, or Credit/Debit Card</span>. 
+                      You will be redirected to UddoktaPay&apos;s secure checkout page where you can pay using <span className="font-bold text-zinc-300">bKash, Nagad, Rocket, Upay, or Credit/Debit Card</span>.
                       Your <span className="font-bold text-white">{planName}</span> membership will be activated instantly after payment.
                     </p>
                     <div className="flex justify-between items-baseline pt-3 border-t border-emerald-500/10">
@@ -321,14 +321,14 @@ function CheckoutContent() {
                   </div>
 
                   <div className="flex items-center gap-4 pt-2">
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setPaymentMethod('none')}
                       className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-800"
                     >
                       Back
                     </button>
-                    <button 
+                    <button
                       type="button"
                       onClick={handleUddoktaCheckout}
                       disabled={processing}
@@ -361,8 +361,8 @@ function CheckoutContent() {
                     {/* Input 1: Sender Mobile Number */}
                     <div className="space-y-2">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Your bkash/Nagad Sender Mobile Number</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={senderNumber}
                         onChange={e => setSenderNumber(e.target.value)}
                         placeholder="e.g. 017XXXXXXXX"
@@ -374,8 +374,8 @@ function CheckoutContent() {
                     {/* Input 2: Transaction ID */}
                     <div className="space-y-2">
                       <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Payment Transaction ID (TxnID)</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         value={transactionId}
                         onChange={e => setTransactionId(e.target.value)}
                         placeholder="e.g. A1B2C3D4E5"
@@ -386,14 +386,14 @@ function CheckoutContent() {
                   </div>
 
                   <div className="flex items-center gap-4 pt-2">
-                    <button 
+                    <button
                       type="button"
                       onClick={() => setPaymentMethod('none')}
                       className="flex-1 py-3 bg-zinc-900 text-zinc-400 text-[10px] font-bold uppercase tracking-widest rounded-xl border border-zinc-800 transition-all text-center hover:bg-zinc-800"
                     >
                       Back
                     </button>
-                    <button 
+                    <button
                       type="submit"
                       disabled={processing}
                       className="flex-1 py-3 bg-white text-zinc-950 hover:bg-zinc-100 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all text-center flex items-center justify-center gap-1.5"

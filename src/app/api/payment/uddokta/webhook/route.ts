@@ -64,8 +64,8 @@ export async function POST(req: NextRequest) {
       const duration = Math.max(1, parseInt(meta.duration || "1", 10));
 
       let expectedPremiumAmount = 0;
-      if (plan === "CREATOR") expectedPremiumAmount = 599 * duration;
-      else if (plan === "PRO") expectedPremiumAmount = 299 * duration;
+      if (plan === "CREATOR") expectedPremiumAmount = 349 * duration;
+      else if (plan === "PRO") expectedPremiumAmount = 199 * duration;
       else expectedPremiumAmount = 99 * duration;
 
       if (isNaN(expectedPremiumAmount) || amount < expectedPremiumAmount) {

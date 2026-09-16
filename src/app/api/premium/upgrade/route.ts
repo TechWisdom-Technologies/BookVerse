@@ -26,8 +26,8 @@ export async function POST(req: Request) {
       if (isActive) {
         const tierRank = (t: string) => t === 'CREATOR' ? 3 : t === 'PRO' ? 2 : t === 'AUTHOR' ? 1 : 0;
         if (tierRank(dbUser.membershipTier) >= tierRank(upperPlan)) {
-          return NextResponse.json({ 
-            error: `You already have an active ${dbUser.membershipTier} plan or higher. You cannot purchase a lower tier.` 
+          return NextResponse.json({
+            error: `You already have an active ${dbUser.membershipTier} plan or higher. You cannot purchase a lower tier.`
           }, { status: 400 });
         }
       }
@@ -64,8 +64,8 @@ export async function POST(req: Request) {
     const ipAddress = req.headers.get("x-forwarded-for")?.split(",")[0] || req.headers.get("x-real-ip") || "Unknown";
     const country = req.headers.get("x-vercel-ip-country") || req.headers.get("cf-ipcountry") || "Unknown";
 
-    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 299 BDT, CREATOR = 599 BDT per month)
-    const pricePerMonth = upperPlan === 'CREATOR' ? 599 : upperPlan === 'PRO' ? 299 : 99;
+    // Calculate billing amount based on plan prices (AUTHOR = 99 BDT, PRO = 199 BDT, CREATOR = 349 BDT per month)
+    const pricePerMonth = upperPlan === 'CREATOR' ? 349 : upperPlan === 'PRO' ? 199 : 99;
     const amount = pricePerMonth * months;
 
     // Log the pending manual payment transaction

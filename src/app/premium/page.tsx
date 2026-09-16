@@ -39,7 +39,7 @@ const TIERS = [
   },
   {
     name: 'Pro',
-    price: 299,
+    price: 199,
     period: 'month',
     description: 'Perfect for active readers and authors',
     features: [
@@ -56,7 +56,7 @@ const TIERS = [
   },
   {
     name: 'Creator',
-    price: 599,
+    price: 349,
     period: 'month',
     description: 'For serious authors and creators',
     features: [
