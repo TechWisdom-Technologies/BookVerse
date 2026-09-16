@@ -39,20 +39,20 @@ interface StoryCardProps {
 export function StoryCard({ story }: StoryCardProps) {
   return (
     <Link href={`/stories/${story.id}`}>
-      <div className="group cursor-pointer space-y-3 transition">
-        <div className="relative aspect-[2/3] overflow-hidden rounded-lg bg-zinc-200 shadow-md transition group-hover:shadow-lg dark:bg-zinc-800">
+      <div className="group h-full flex flex-col cursor-pointer">
+        <div className="relative aspect-[2/3] overflow-hidden rounded-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 mb-4 transition-all duration-500 group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] group-hover:-translate-y-1.5">
           {story.isFeaturedPromo && (
-            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow shadow-amber-500/30">
+            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest rounded-sm flex items-center gap-1 shadow shadow-amber-500/30">
               <Award className="w-2.5 h-2.5" /> Featured
             </div>
           )}
           {story.isTrendingPromo && !story.isFeaturedPromo && (
-            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow shadow-rose-500/30">
+            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-rose-500 text-white text-[8px] font-black uppercase tracking-widest rounded-sm flex items-center gap-1 shadow shadow-rose-500/30">
               <TrendingUp className="w-2.5 h-2.5" /> Trending
             </div>
           )}
           {story.isPromotedPromo && !story.isFeaturedPromo && !story.isTrendingPromo && (
-            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-indigo-500 text-white text-[8px] font-black uppercase tracking-widest rounded-lg flex items-center gap-1 shadow shadow-indigo-500/30">
+            <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-indigo-500 text-white text-[8px] font-black uppercase tracking-widest rounded-sm flex items-center gap-1 shadow shadow-indigo-500/30">
               <Sparkles className="w-2.5 h-2.5" /> Promoted
             </div>
           )}
@@ -62,71 +62,78 @@ export function StoryCard({ story }: StoryCardProps) {
               alt={story.title}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition group-hover:scale-105"
+              className="object-cover transition-transform duration-700 group-hover:scale-105"
               priority={false}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-400 to-purple-500 dark:from-indigo-600 dark:to-purple-700">
+            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-900/30">
               <div className="px-4 text-center">
-                <FilePenLine className="mx-auto h-8 w-8 text-white/40" />
-                <p className="mt-2 line-clamp-2 text-xs font-medium text-white/70">
+                <FilePenLine className="mx-auto h-8 w-8 text-indigo-200 dark:text-indigo-800" />
+                <p className="mt-3 line-clamp-2 text-xs font-bold text-indigo-400 dark:text-indigo-600/50 uppercase tracking-widest">
                   {story.title}
                 </p>
               </div>
             </div>
           )}
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         </div>
 
-        <div className="space-y-1">
-          <h3 className="line-clamp-2 text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {story.title}
-          </h3>
+        <div className="flex flex-col flex-grow">
+          <div className="mb-2">
+            <h3 className="line-clamp-2 text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-tight group-hover:text-brand transition-colors">
+              {story.title}
+            </h3>
+          </div>
+          
+          <div className="mb-3">
           {story.series ? (
-            <p className="text-[10px] font-bold uppercase tracking-wider text-emerald-500">
+            <span className="px-1.5 py-0.5 rounded-sm bg-emerald-50 dark:bg-emerald-950/30 text-[9px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
               {story.series.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}
-            </p>
+            </span>
           ) : story.universe ? (
-            <p className="text-[10px] font-bold uppercase tracking-wider text-purple-500">
+            <span className="px-1.5 py-0.5 rounded-sm bg-purple-50 dark:bg-purple-950/30 text-[9px] font-bold uppercase tracking-widest text-purple-600 dark:text-purple-400">
               {story.universe.name} {story.sequenceNumber ? `• Vol ${story.sequenceNumber}` : ''}
-            </p>
+            </span>
           ) : (
-            <p className="text-[10px] font-bold uppercase tracking-wider text-zinc-500">
-              Non sequel
-            </p>
+            <span className="px-1.5 py-0.5 rounded-sm bg-zinc-100 dark:bg-zinc-800 text-[9px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
+              Standalone
+            </span>
           )}
+          </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mt-auto mb-3">
             {story.author.avatarUrl ? (
               <Image
                 src={story.author.avatarUrl}
                 alt={story.author.displayName || story.author.username}
-                width={16}
-                height={16}
-                className="rounded-full"
+                width={18}
+                height={18}
+                className="rounded-full ring-1 ring-zinc-200 dark:ring-zinc-800"
               />
             ) : (
-              <div className="h-4 w-4 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+              <div className="h-[18px] w-[18px] rounded-full bg-zinc-200 dark:bg-zinc-700 ring-1 ring-zinc-200 dark:ring-zinc-800" />
             )}
-            <p className="line-clamp-1 text-xs text-zinc-600 dark:text-zinc-400">
+            <p className="line-clamp-1 text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
               {story.author.displayName || story.author.username}
             </p>
           </div>
 
-          <div className="flex items-center gap-4 pt-3 text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-            <span className="flex items-center gap-1.5" title="Chapters">
-              <BookOpen className="h-3.5 w-3.5" />
+          <div className="flex items-center gap-3 pt-3 border-t border-zinc-100 dark:border-zinc-800/50 text-[10px] font-semibold text-zinc-400 dark:text-zinc-500">
+            <span className="flex items-center gap-1" title="Chapters">
+              <BookOpen className="h-3 w-3" />
               {story._count.chapters}
             </span>
-            <span className="flex items-center gap-1.5" title="Views">
-              <Eye className="h-3.5 w-3.5" />
+            <span className="flex items-center gap-1" title="Views">
+              <Eye className="h-3 w-3" />
               {story.viewCount}
             </span>
-            <span className="flex items-center gap-1.5" title="Likes">
-              <Heart className="h-3.5 w-3.5" />
+            <span className="flex items-center gap-1" title="Likes">
+              <Heart className="h-3 w-3" />
               {story._count.reactions}
             </span>
-            <span className="flex items-center gap-1.5" title="Comments">
-              <MessageSquare className="h-3.5 w-3.5" />
+            <span className="flex items-center gap-1" title="Comments">
+              <MessageSquare className="h-3 w-3" />
               {story._count.comments}
             </span>
           </div>

@@ -14,8 +14,10 @@ export async function getSortedStoryIds(
 
   if (genre) {
     where.OR = [
+      { genre: { contains: genre, mode: "insensitive" } },
+      { subGenres: { has: genre } },
       { title: { contains: genre, mode: "insensitive" } },
-      { summary: { contains: genre, mode: "insensitive" } },
+      { tags: { has: genre } }
     ];
   }
 

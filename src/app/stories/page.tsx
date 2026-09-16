@@ -25,7 +25,8 @@ async function getCurrentUserId() {
 }
 
 const storyGenres = [
-  "Adventure", "Fantasy", "Fiction", "Horror", "Mystery", "Romance", "Science Fiction", "Thriller",
+  "Action", "Adventure", "Comedy", "Contemporary", "Drama", "Dystopian", "Fantasy", "Fiction", 
+  "Historical", "Horror", "Mystery", "Paranormal", "Poetry", "Romance", "Science Fiction", "Slice of Life", "Supernatural", "Thriller"
 ];
 
 interface StoriesPageProps {

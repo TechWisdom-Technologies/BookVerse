@@ -38,6 +38,7 @@ import {
 } from "lucide-react";
 import { HeroSection } from "@/components/home/HeroSection";
 import { StoryGrid } from "@/components/stories/StoryGrid";
+import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { AnimatedStats } from "@/components/home/AnimatedStats";
 
 export const dynamic = "force-dynamic";
@@ -105,7 +106,7 @@ export default async function HomePage() {
           },
         },
       }),
-      prisma.story.findMany({ take: 8, where: { published: true }, orderBy: { viewCount: "desc" }, select: { id: true, title: true, coverUrl: true, summary: true, viewCount: true, createdAt: true, author: { select: { id: true, username: true, displayName: true, avatarUrl: true } }, _count: { select: { chapters: true, reactions: true, comments: true } } } }),
+      prisma.story.findMany({ take: 8, where: { published: true }, orderBy: { viewCount: "desc" }, select: { id: true, title: true, coverUrl: true, summary: true, viewCount: true, createdAt: true, series: { select: { name: true } }, universe: { select: { name: true } }, sequenceNumber: true, author: { select: { id: true, username: true, displayName: true, avatarUrl: true } }, _count: { select: { chapters: true, reactions: true, comments: true } } } }),
       prisma.storyPromotion.findMany({
         where: {
           tier: "PROMOTED",
@@ -122,6 +123,9 @@ export default async function HomePage() {
               summary: true,
               viewCount: true,
               createdAt: true,
+              series: { select: { name: true } },
+              universe: { select: { name: true } },
+              sequenceNumber: true,
               author: { select: { id: true, username: true, displayName: true, avatarUrl: true } },
               _count: {
                 select: {
@@ -201,17 +205,19 @@ export default async function HomePage() {
     addGenres(bookGenres);
     addGenres(storyGenres);
 
-    const topGenres = Array.from(genreMap.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 6);
+    const storyGenresList = [
+      "Action", "Adventure", "Comedy", "Contemporary", "Drama", "Dystopian", "Fantasy", "Fiction", 
+      "Historical", "Horror", "Mystery", "Paranormal", "Poetry", "Romance", "Science Fiction", "Slice of Life", "Supernatural", "Thriller"
+    ];
 
-    const iconsList = [BookOpen, Search, Heart, Sparkles, Star, Users];
+    const topGenres = storyGenresList.map(genre => {
+      return [genre, genreMap.get(genre) || 0] as [string, number];
+    });
 
     const categoriesWithCounts = topGenres.map(([name, count], index) => {
       return {
         name,
         count: count >= 1000 ? (count / 1000).toFixed(1).replace(/\.0$/, "") + 'K+' : count.toString(),
-        icon: iconsList[index % iconsList.length]
       };
     });
 
@@ -294,19 +300,49 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* Quick Genre Filter */}
+        <section className="px-6 mt-12 mb-8 w-full max-w-7xl mx-auto relative z-20">
+          <div className="flex items-center gap-3 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] mask-edges">
+            <Link 
+              href="/stories"
+              className="whitespace-nowrap px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md"
+            >
+              All
+            </Link>
+            {topGenres.map(([name]) => (
+              <Link 
+                key={name}
+                href={`/stories?genre=${encodeURIComponent(name)}`}
+                className="whitespace-nowrap px-5 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 rounded-sm text-[10px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm hover:shadow"
+              >
+                {name}
+              </Link>
+            ))}
+            <Link 
+              href="/search"
+              className="whitespace-nowrap px-5 py-2.5 bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 rounded-sm text-[10px] font-bold uppercase tracking-widest text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-700 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm hover:shadow flex items-center gap-1.5"
+            >
+              <Search className="w-3 h-3" /> More
+            </Link>
+          </div>
+        </section>
+
         {/* Featured Books */}
         {featuredWithRatings.length > 0 && (
           <section className="py-24 px-6">
             <div className="max-w-7xl mx-auto">
-              <div className="flex items-end justify-between mb-12 pb-6 border-b border-zinc-50 dark:border-zinc-900">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
-                    <Award className="w-4 h-4" /> Recommended
+              <div className="flex items-end justify-between mb-12 pb-6">
+                <div className="space-y-3">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
+                    <Award className="w-3 h-3" /> Recommended
                   </div>
-                  <h2 className="text-xl font-bold tracking-tight uppercase">Editor&apos;s Choice.</h2>
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
+                    Editor&apos;s Choice
+                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
+                  </h2>
                 </div>
-                <Link href="/library" className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-900 dark:text-white hover:underline underline-offset-8 transition-all flex items-center gap-2">
-                  Browse All <ArrowRight className="w-4 h-4 text-zinc-300" />
+                <Link href="/library" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
+                  Browse All <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
               <BookGrid books={featuredWithRatings} />
@@ -318,15 +354,18 @@ export default async function HomePage() {
         {formattedPromotedStories.length > 0 && (
           <section className="py-32 px-6 border-y border-zinc-50 dark:border-zinc-900 bg-zinc-50/10">
             <div className="max-w-7xl mx-auto">
-              <div className="flex items-end justify-between mb-16">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
-                    <Zap className="w-4 h-4" /> Promoted Stories
+              <div className="flex items-end justify-between mb-12 pb-6">
+                <div className="space-y-3">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
+                    <Zap className="w-3 h-3" /> Promoted Stories
                   </div>
-                  <h2 className="text-xl font-bold tracking-tight uppercase">Spotlight Reads.</h2>
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
+                    Spotlight Reads
+                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
+                  </h2>
                 </div>
-                <Link href="/stories/promoted" className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all underline-offset-8 hover:underline">
-                  Explore More
+                <Link href="/stories/promoted" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
+                  Explore <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
               <StoryGrid stories={formattedPromotedStories} />
@@ -337,51 +376,45 @@ export default async function HomePage() {
         {/* Latest Stories */}
         <section className="py-32 px-6 border-y border-zinc-50 dark:border-zinc-900 bg-zinc-50/10">
           <div className="max-w-7xl mx-auto">
-            <div className="flex items-end justify-between mb-16">
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-300">
-                  <Activity className="w-4 h-4" /> Latest Stories
+              <div className="flex items-end justify-between mb-12 pb-6">
+                <div className="space-y-3">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
+                    <Activity className="w-3 h-3" /> Latest Stories
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
+                    Community Feed
+                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
+                  </h2>
                 </div>
-                <h2 className="text-xl font-bold tracking-tight uppercase">Community Feed.</h2>
+                <Link href="/stories" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
+                  View All <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </div>
-              <Link href="/stories" className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all underline-offset-8 hover:underline">
-                View Stories
-              </Link>
-            </div>
             <StoryGrid stories={formattedStories} />
           </div>
         </section>
 
         {/* Categories */}
         <section className="py-32 px-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex items-center gap-2 mb-16 justify-center">
-              <Compass className="w-4 h-4 text-zinc-200" />
-              <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300">Browse by Category</h2>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 shadow-sm">
-              {categoriesWithCounts.map((cat) => (
-                <Link key={cat.name} href={`/search?q=${encodeURIComponent(cat.name)}&type=all`} className="p-10 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all text-center group">
-                  <cat.icon className={`w-5 h-5 mx-auto mb-6 opacity-20 group-hover:opacity-100 transition-all duration-500`} />
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors truncate px-2">{cat.name}</h3>
-                  <p className="text-[9px] font-bold text-zinc-200 dark:text-zinc-800 font-mono italic">{cat.count}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
+          <CategoryGrid categories={categoriesWithCounts} />
         </section>
 
         {/* Trending & New */}
         <section className="py-32 px-6 border-t border-zinc-50 dark:border-zinc-900">
           <div className="max-w-7xl mx-auto space-y-32">
             <div>
-              <div className="flex items-end justify-between mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900">
-                <div className="flex items-center gap-2 italic">
-                  <Globe className="w-4 h-4 text-zinc-300" />
-                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">Explore Worlds</h2>
+              <div className="flex items-end justify-between mb-12 pb-6">
+                <div className="space-y-3">
+                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
+                    <Globe className="w-3 h-3" /> Explore Universes
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
+                    Explore Worlds
+                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
+                  </h2>
                 </div>
-                <Link href="/universes" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-900 dark:text-white hover:underline underline-offset-8 transition-all flex items-center gap-2">
-                  Browse Universes <ArrowRight className="w-4 h-4 text-zinc-300" />
+                <Link href="/universes" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
+                  Browse All <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
