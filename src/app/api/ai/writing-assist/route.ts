@@ -1,7 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
+  // Rate limit: Max 10 AI writing requests per minute per IP
+  const limitRes = await checkRateLimit(10, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const user = await getAuth();
     if (!user) {

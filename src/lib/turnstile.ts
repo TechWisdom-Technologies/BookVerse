@@ -14,8 +14,12 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
   const secret = process.env.TURNSTILE_SECRET_KEY;
 
   if (!secret) {
-    // If Turnstile is not configured, allow the request (dev mode)
-    console.warn("[Turnstile] TURNSTILE_SECRET_KEY not set — skipping verification.");
+    if (process.env.NODE_ENV === "production") {
+      console.error("[Turnstile] TURNSTILE_SECRET_KEY not set in production — blocking request.");
+      return { success: false, error: "CAPTCHA service misconfigured. Please contact support." };
+    }
+    // Allow in development when Turnstile is not configured
+    console.warn("[Turnstile] TURNSTILE_SECRET_KEY not set — skipping verification (dev only).");
     return { success: true };
   }
 

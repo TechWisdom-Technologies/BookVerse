@@ -111,6 +111,10 @@ export async function PATCH(request: Request, { params }: RouteParams) {
       const limitRes = await checkRateLimit(30, 60000);
       if (limitRes.limited) return limitRes.response;
 
+      // Require authentication to increment views to prevent inflation
+      const { verifyToken } = await import("@/lib/auth");
+      await verifyToken();
+
       const story = await prisma.story.findUnique({
         where: { id },
         select: { id: true, published: true },

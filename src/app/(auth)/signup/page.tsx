@@ -8,7 +8,10 @@ export default async function SignupPage({
   searchParams: Promise<{ redirect?: string }>;
 }) {
   const { redirect } = await searchParams;
-  const redirectUrl = redirect ?? "/";
+  let redirectUrl = redirect ?? "/";
+  if (!redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) {
+    redirectUrl = "/";
+  }
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-6 relative">

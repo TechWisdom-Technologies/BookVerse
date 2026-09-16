@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export async function POST(req: Request) {
+  // Rate limit: Max 5 attempts per minute per IP to prevent brute-forcing
+  const limitRes = await checkRateLimit(5, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const user = await getAuth();
     if (!user) {

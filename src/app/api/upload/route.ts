@@ -107,10 +107,6 @@ export async function POST(request: Request) {
     }
 
     console.error("POST /api/upload error:", error);
-    const message =
-      process.env.NODE_ENV === "development" && error instanceof Error
-        ? error.message
-        : "Failed to upload file";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
   }
 }

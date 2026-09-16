@@ -85,6 +85,10 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const user = await getAuth();
     if (!user) {

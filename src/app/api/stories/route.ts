@@ -70,6 +70,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  const { checkRateLimit } = await import("@/lib/rate-limit");
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { dbUser } = await verifyToken();
 

@@ -119,9 +119,13 @@ export async function POST(request: Request, { params }: RouteParams) {
       }
     }
 
+    const sanitizedContent = parsed.content
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
     const comment = await prisma.comment.create({
       data: {
-        content: parsed.content,
+        content: sanitizedContent,
         authorId: dbUser.id,
         storyId,
         parentId: parsed.parentId ?? null,

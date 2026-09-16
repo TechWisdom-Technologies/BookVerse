@@ -3,6 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
 export async function POST(request: Request) {
+  const { checkRateLimit } = await import("@/lib/rate-limit");
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { dbUser } = await verifyToken();
     const { ids } = await request.json();

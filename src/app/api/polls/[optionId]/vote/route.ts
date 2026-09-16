@@ -6,6 +6,10 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ optionId: string }> }
 ) {
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { optionId } = await params;
     const user = await getAuth();

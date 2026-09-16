@@ -53,6 +53,10 @@ export async function GET(req: NextRequest) {
  * Create a new club
  */
 export async function POST(req: NextRequest) {
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const user = await getAuth();
     if (!user) {

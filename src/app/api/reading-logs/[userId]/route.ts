@@ -102,6 +102,10 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
 ) {
+  const { checkRateLimit } = await import('@/lib/rate-limit');
+  const limitRes = await checkRateLimit(15, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
     const { userId } = await params;
     const user = await getAuth();

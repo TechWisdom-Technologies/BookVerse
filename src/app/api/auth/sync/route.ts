@@ -208,7 +208,7 @@ export async function POST() {
       secure: isProd,
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24, // 24 hours — shorter TTL to reduce stale tier access window
     });
 
     res.cookies.set("user-role", user.role, {
@@ -216,7 +216,7 @@ export async function POST() {
       secure: isProd,
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24, // 24 hours — shorter TTL to reduce stale tier access window
     });
 
     const roleSig = await signRole(user.role);
@@ -225,7 +225,7 @@ export async function POST() {
       secure: isProd,
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24, // 24 hours — shorter TTL to reduce stale tier access window
     });
 
     // Set signed tier cookies so middleware can enforce tier without a DB lookup.
@@ -247,7 +247,7 @@ export async function POST() {
       secure: isProd,
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24, // 24 hours — shorter TTL to reduce stale tier access window
     });
 
     const tierSig = await signTier(effectiveTier);
@@ -256,7 +256,7 @@ export async function POST() {
       secure: isProd,
       sameSite: "strict",
       path: "/",
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24, // 24 hours — shorter TTL to reduce stale tier access window
     });
 
     // Send welcome email for new users (fire-and-forget)

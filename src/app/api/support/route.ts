@@ -1,10 +1,25 @@
 import { NextResponse } from "next/server";
 import { sendSupportRequestEmail } from "@/lib/resend";
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 export async function POST(request: Request) {
+  // Rate limit: Max 5 support requests per minute per IP
+  const limitRes = await checkRateLimit(5, 60000);
+  if (limitRes.limited) return limitRes.response;
+
   try {
-    const { name, email, category, subject, message } = await request.json();
+    const { name, email, category, subject, message, captchaToken } = await request.json();
+
+    // Verify CAPTCHA
+    const captchaResult = await verifyTurnstileToken(captchaToken);
+    if (!captchaResult.success) {
+      return NextResponse.json(
+        { error: captchaResult.error || "CAPTCHA verification failed." },
+        { status: 400 }
+      );
+    }
 
     if (!name || !email || !category || !subject || !message) {
       return NextResponse.json(
