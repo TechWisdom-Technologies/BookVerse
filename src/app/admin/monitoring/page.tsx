@@ -27,6 +27,11 @@ export default function MonitoringDashboard() {
   const [data, setData] = useState<MonitoringData | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // States for 'Load More' functionality
+  const [visibleCron, setVisibleCron] = useState(5);
+  const [visibleSlowApi, setVisibleSlowApi] = useState(5);
+  const [visibleRateLimit, setVisibleRateLimit] = useState(5);
+
   useEffect(() => {
     fetch("/api/admin/monitoring")
       .then(res => res.json())
@@ -251,7 +256,7 @@ export default function MonitoringDashboard() {
             <div className="space-y-3 flex-1">
               {data.recentCronLogs.length === 0 ? (
                 <p className="text-xs text-zinc-500">No cron jobs logged yet.</p>
-              ) : data.recentCronLogs.map(log => (
+              ) : data.recentCronLogs.slice(0, visibleCron).map(log => (
                 <div key={log.id} className="flex flex-col gap-2 p-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -276,6 +281,15 @@ export default function MonitoringDashboard() {
                 </div>
               ))}
             </div>
+            
+            {data.recentCronLogs.length > visibleCron && (
+              <button 
+                onClick={() => setVisibleCron(prev => prev + 10)}
+                className="mt-4 w-full py-2 text-xs font-bold text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors"
+              >
+                Load More
+              </button>
+            )}
           </div>
 
           {/* Slow API Logs */}
@@ -288,7 +302,7 @@ export default function MonitoringDashboard() {
             <div className="space-y-3 flex-1">
               {data.recentSlowApis.length === 0 ? (
                 <p className="text-xs text-zinc-500">No slow API requests logged.</p>
-              ) : data.recentSlowApis.map(log => (
+              ) : data.recentSlowApis.slice(0, visibleSlowApi).map(log => (
                 <div key={log.id} className="flex items-center justify-between p-3 bg-white dark:bg-zinc-950 border border-amber-100 dark:border-amber-900/30 rounded">
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
@@ -301,6 +315,15 @@ export default function MonitoringDashboard() {
                 </div>
               ))}
             </div>
+
+            {data.recentSlowApis.length > visibleSlowApi && (
+              <button 
+                onClick={() => setVisibleSlowApi(prev => prev + 10)}
+                className="mt-4 w-full py-2 text-xs font-bold text-amber-600 dark:text-amber-500 bg-white dark:bg-zinc-950 border border-amber-200 dark:border-amber-900/30 rounded hover:bg-amber-50 dark:hover:bg-amber-900/10 transition-colors"
+              >
+                Load More
+              </button>
+            )}
           </div>
 
           {/* Rate Limits */}
@@ -313,7 +336,7 @@ export default function MonitoringDashboard() {
             <div className="space-y-3 flex-1">
               {data.recentRateLimits.length === 0 ? (
                 <p className="text-xs text-zinc-500">No violations logged.</p>
-              ) : data.recentRateLimits.map(violation => (
+              ) : data.recentRateLimits.slice(0, visibleRateLimit).map(violation => (
                 <div key={violation.id} className="flex items-center justify-between p-3 bg-white dark:bg-zinc-950 border border-red-100 dark:border-red-900/30 rounded">
                   <div className="flex items-center gap-3">
                     <AlertCircle className="w-3.5 h-3.5 text-red-500" />
@@ -326,6 +349,15 @@ export default function MonitoringDashboard() {
                 </div>
               ))}
             </div>
+
+            {data.recentRateLimits.length > visibleRateLimit && (
+              <button 
+                onClick={() => setVisibleRateLimit(prev => prev + 10)}
+                className="mt-4 w-full py-2 text-xs font-bold text-red-600 dark:text-red-500 bg-white dark:bg-zinc-950 border border-red-200 dark:border-red-900/30 rounded hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors"
+              >
+                Load More
+              </button>
+            )}
           </div>
 
         </div>

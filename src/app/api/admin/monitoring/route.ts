@@ -45,23 +45,23 @@ export async function GET() {
       prisma.onboardingQuiz.count(),
       prisma.onboardingQuiz.count({ where: { completed: true } }),
 
-      // Rate Limit Violations (last 20)
+      // Rate Limit Violations (last 50)
       prisma.rateLimitViolation.findMany({
         orderBy: { createdAt: 'desc' },
-        take: 20,
+        take: 50,
       }),
 
-      // Cron Logs (last 15)
+      // Cron Logs (last 50)
       prisma.cronJobLog.findMany({
         orderBy: { createdAt: 'desc' },
-        take: 15,
+        take: 50,
       }),
 
       // Failed Webhooks
       prisma.failedWebhookLog.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }),
 
       // Slow APIs
-      prisma.slowApiLog.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }),
+      prisma.slowApiLog.findMany({ orderBy: { createdAt: 'desc' }, take: 50 }),
 
       // Crash Reports
       prisma.crashReport.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }),
