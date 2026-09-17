@@ -115,15 +115,29 @@ export async function GET(req: NextRequest) {
       stats.reactivatedUsers = 0;
     }
 
+    // Helper function for batched deletion to prevent connection timeouts
+    async function batchDelete(modelDelegate: any, whereClause: any) {
+      let totalDeleted = 0;
+      while (true) {
+        const records = await modelDelegate.findMany({
+          where: whereClause,
+          select: { id: true },
+          take: 1000
+        });
+        if (records.length === 0) break;
+        
+        const res = await modelDelegate.deleteMany({
+          where: { id: { in: records.map((r: any) => r.id) } }
+        });
+        totalDeleted += res.count;
+        if (records.length < 1000) break;
+      }
+      return totalDeleted;
+    }
+
     // 3. Clean Up Old Device Sessions
-    const deletedDeviceSessions = await prisma.deviceSession.deleteMany({
-      where: { lastActive: { lte: thirtyDaysAgo } }
-    });
-    const deletedLoginHistory = await prisma.loginHistory.deleteMany({
-      where: { createdAt: { lte: sixtyDaysAgo } }
-    });
-    stats.deletedDeviceSessions = deletedDeviceSessions.count;
-    stats.deletedLoginHistory = deletedLoginHistory.count;
+    stats.deletedDeviceSessions = await batchDelete(prisma.deviceSession, { lastActive: { lte: thirtyDaysAgo } });
+    stats.deletedLoginHistory = await batchDelete(prisma.loginHistory, { createdAt: { lte: sixtyDaysAgo } });
 
     // 4. Expire Unredeemed Gift Memberships
     const expiredGifts = await prisma.giftMembership.updateMany({
@@ -136,13 +150,10 @@ export async function GET(req: NextRequest) {
     stats.expiredGifts = expiredGifts.count;
 
     // 5. Clean Up Stale Notifications (Increased to 60 days)
-    const deletedNotifications = await prisma.notification.deleteMany({
-      where: {
-        isRead: true,
-        createdAt: { lte: sixtyDaysAgo }
-      }
+    stats.deletedNotifications = await batchDelete(prisma.notification, { 
+      isRead: true, 
+      createdAt: { lte: sixtyDaysAgo } 
     });
-    stats.deletedNotifications = deletedNotifications.count;
 
     // 6. Publish Scheduled Chapters
     const publishedChapters = await publishScheduledChapters();
