@@ -143,15 +143,15 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
       }
 
-      // If tier cookie is missing/invalid or tier is insufficient → redirect to upgrade page
-      if (!isTierValid || tierRank(tier) < tierRank(tierRoute.requiredTier)) {
-        const tierSlug = tierRoute.requiredTier.toLowerCase();
-        const url = req.nextUrl.clone();
-        url.pathname = `/premium/checkout`;
-        url.searchParams.set("plan", tierSlug);
-        url.searchParams.set("redirect", `${pathname}${search}`);
-        return NextResponse.redirect(url);
-      }
+      // If tier cookie is missing/invalid or tier is insufficient → let the page handle it to show AccessDeniedModal
+      // if (!isTierValid || tierRank(tier) < tierRank(tierRoute.requiredTier)) {
+      //   const tierSlug = tierRoute.requiredTier.toLowerCase();
+      //   const url = req.nextUrl.clone();
+      //   url.pathname = `/premium/checkout`;
+      //   url.searchParams.set("plan", tierSlug);
+      //   url.searchParams.set("redirect", `${pathname}${search}`);
+      //   return NextResponse.redirect(url);
+      // }
     }
   }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Sparkles, ArrowRight, KeyRound } from "lucide-react";
 import Link from "next/link";
 import { PaidTier } from "@/lib/tier-check";
@@ -41,6 +42,15 @@ export function AccessDeniedModal({ requiredTier, redirectTo }: AccessDeniedModa
   const content = TIER_MESSAGES[requiredTier] || TIER_MESSAGES.USER;
 
   const isTier = requiredTier === "AUTHOR" || requiredTier === "PRO" || requiredTier === "CREATOR";
+
+  useEffect(() => {
+    const originalStyle = window.getComputedStyle(document.body).overflow;
+    document.body.style.overflow = "hidden";
+    
+    return () => {
+      document.body.style.overflow = originalStyle;
+    };
+  }, []);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-[#070708]/90 backdrop-blur-xl">

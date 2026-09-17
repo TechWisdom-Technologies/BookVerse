@@ -11,7 +11,8 @@ import {
   Zap,
   Heart,
   Lock,
-  Globe
+  Globe,
+  Smartphone
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -272,7 +273,9 @@ function CheckoutContent() {
                     }}
                     className="w-full p-5 border border-zinc-800 hover:border-white rounded-xl text-left transition-all bg-zinc-900/40 hover:bg-zinc-905 flex items-center gap-4 group"
                   >
-                    <div className="p-2.5 bg-white text-zinc-950 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">1</div>
+                    <div className="p-2.5 bg-white text-zinc-950 rounded-lg font-bold text-[11px] h-8 w-8 flex items-center justify-center shrink-0">
+                      <Smartphone className="w-4 h-4" />
+                    </div>
                     <div className="flex-1">
                       <h4 className="text-[10px] font-bold uppercase tracking-wider text-white font-mono">Direct Manual bkash / Nagad</h4>
                       <p className="text-[9px] text-zinc-400 font-medium italic">Submit transaction credentials for manual wallet transfer</p>
