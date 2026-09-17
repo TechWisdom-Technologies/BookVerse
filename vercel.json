@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/api/cron/publish-chapters",
+      "path": "/api/cron/daily-maintenance",
       "schedule": "0 0 * * *"
     },
     {
