@@ -435,24 +435,24 @@ export default function AuthorDashboardPage() {
  } = data;
 
  return (
- <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
- <div className="max-w-7xl mx-auto px-6 py-12">
+ <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-12 md:pb-16">
+ <div className="max-w-[95rem] mx-auto px-4 sm:px-6 md:px-12 lg:px-16 py-8 md:py-16">
 
  {/* Dashboard Header */}
- <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
- <div className="space-y-4">
+ <header className="mb-8 md:mb-12 pb-8 md:pb-10 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-8">
+ <div className="space-y-4 md:space-y-5">
  <Link href="/write" className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
  <ArrowLeft className="w-3.5 h-3.5" />
  Back to Studio
  </Link>
  <div>
- <h1 className="text-2xl font-bold tracking-tight mb-2 flex items-center gap-2">
- Author Dashboard <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
+ <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-2 md:mb-3 flex items-center gap-2 md:gap-3">
+ Author Dashboard <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-indigo-500 animate-pulse" />
  </h1>
- <p className="text-sm text-zinc-500 font-medium">Sleek analytical telemetry, fan book requests, and collaborative universe frameworks.</p>
+ <p className="text-xs md:text-sm text-zinc-500 font-medium max-w-2xl leading-relaxed">Sleek analytical telemetry, fan book requests, and collaborative universe frameworks.</p>
  </div>
  </div>
- <div className="flex items-center gap-2 text-sm font-bold text-indigo-500 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/20 px-4 py-2 border border-indigo-500/10 rounded-xl animate-fade-in shadow">
+ <div className="flex items-center gap-2 text-xs md:text-sm font-bold text-indigo-500 dark:text-indigo-400 bg-indigo-50/50 dark:bg-indigo-950/20 px-4 md:px-5 py-2.5 md:py-3 border border-indigo-500/10 rounded-xl animate-fade-in shadow-sm w-fit">
  <TrendingUp className="w-3.5 h-3.5 animate-bounce" />
  Creator Protocol Enabled
  </div>
@@ -460,10 +460,10 @@ export default function AuthorDashboardPage() {
 
  {/* 1. Pending Collaboration Invitations Section */}
  {pendingInvites.length > 0 && (
- <section className="mb-12 p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow">
- <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+ <section className="mb-10 md:mb-12 p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <Sparkles className="w-4 h-4 text-zinc-400 animate-pulse" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">
  Pending Collaboration Invitations ({pendingInvites.length})
  </h2>
  </div>
@@ -531,15 +531,12 @@ export default function AuthorDashboardPage() {
  </section>
  )}
 
- 
- <div className="my-16 border-b border-zinc-200 dark:border-zinc-800" />
-
  {/* 1.5 Pending Co-Author Requests Section */}
  {pendingRequests.length > 0 && (
- <section className="mb-12 p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow">
- <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+ <section className="mb-10 md:mb-12 p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <Sparkles className="w-4 h-4 text-zinc-400 animate-pulse" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">
  Pending Co-Author Requests ({pendingRequests.length})
  </h2>
  </div>
@@ -607,14 +604,11 @@ export default function AuthorDashboardPage() {
  </section>
  )}
 
- 
- <div className="my-16 border-b border-zinc-200 dark:border-zinc-800" />
-
  {/* 2. Analytical Telemetry Snapshot */}
- <section className="mb-12">
- <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
- <TrendingUp className="w-3.5 h-3.5 text-zinc-400" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Performance Telemetry</h2>
+ <section className="mb-10 md:mb-12">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+ <TrendingUp className="w-4 h-4 text-zinc-400" />
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Performance Telemetry</h2>
  </div>
  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 rounded-xl overflow-hidden">
  {[
@@ -637,16 +631,16 @@ export default function AuthorDashboardPage() {
  </section>
 
  
- <div className="my-16 border-b border-zinc-200 dark:border-zinc-800" />
+ <div className="my-12 md:my-16 border-b border-zinc-200 dark:border-zinc-800/60" />
 
  {/* NEW FEATURE 1 & 2: Trajectory Timeline & Chapter Polls Section */}
- <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+ <section className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mb-10 md:mb-12">
  {/* Calendar Release Timeline */}
- <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
+ <div className="p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
  <div>
  <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <Calendar className="w-4 h-4 text-zinc-400" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Scheduled Release Trajectory</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Scheduled Release Trajectory</h3>
  </div>
  {scheduledTimeline.length === 0 ? (
  <div className="py-12 text-center text-xs text-zinc-400 italic">No manuscript releases scheduled. Set scheduling options in edit chapter menus.</div>
@@ -673,11 +667,11 @@ export default function AuthorDashboardPage() {
  </div>
 
  {/* Active Polls telemetry */}
- <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
+ <div className="p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
  <div>
  <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <Vote className="w-4 h-4 text-zinc-400" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Audience Polls & Votes Telemetry</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Audience Polls & Votes Telemetry</h3>
  </div>
  {activePolls.length === 0 ? (
  <div className="py-12 text-center text-xs text-zinc-400 italic">No active story polls. Engage fans by adding interactive questions in chapter setups.</div>
@@ -708,7 +702,7 @@ export default function AuthorDashboardPage() {
  <span className="text-zinc-900 dark:text-white">{pct}% ({opt.votes})</span>
  </div>
  <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-900 rounded-full overflow-hidden">
- <div className="h-full bg-indigo-500 rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
+ <div className="h-full bg-zinc-900 dark:bg-white rounded-full transition-all duration-300" style={{ width: `${pct}%` }} />
  </div>
  </div>
  );
@@ -726,13 +720,13 @@ export default function AuthorDashboardPage() {
  </section>
 
  
- <div className="my-16 border-b border-zinc-200 dark:border-zinc-800" />
+ <div className="my-12 md:my-16 border-b border-zinc-200 dark:border-zinc-800/60" />
 
  {/* 3. NEW FEATURE 3: Beta Reader Squad */}
- <section className="mb-12 p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow">
+ <section className="mb-10 md:mb-12 p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow">
  <div className="flex items-center gap-2 mb-6 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <Radio className="w-4 h-4 text-zinc-400 animate-pulse" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Beta Reader Squad</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Beta Reader Squad</h3>
  </div>
  {betaReaders.length === 0 ? (
  <div className="py-8 text-center text-xs text-zinc-400 italic">No beta readers registered. Connect with the community to recruit beta readers for draft feedback.</div>
@@ -761,16 +755,16 @@ export default function AuthorDashboardPage() {
  </section>
 
  
- <div className="my-16 border-b border-zinc-200 dark:border-zinc-800" />
+ <div className="my-12 md:my-16 border-b border-zinc-200 dark:border-zinc-800/60" />
 
  {/* Two Column Registry Grid */}
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
  {/* Column 1 & 2: Universe Co-Authors & Works Registry */}
- <div className="lg:col-span-2 space-y-6">
- <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+ <div className="lg:col-span-2 space-y-6 md:space-y-8">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <GitBranch className="w-4 h-4 text-zinc-400" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Universes Collaborators Log</h2>
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Universes Collaborators Log</h2>
  </div>
 
  {myUniverses.length === 0 ? (
@@ -900,9 +894,9 @@ export default function AuthorDashboardPage() {
  {/* Co-Authored Universes Section */}
  {data.collabUniverses && data.collabUniverses.length > 0 && (
  <>
- <div className="flex items-center gap-2 mb-2 pb-2 border-b border-zinc-100 dark:border-zinc-900 mt-12">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 pb-2 border-b border-zinc-100 dark:border-zinc-900 mt-10 md:mt-12">
  <GitBranch className="w-4 h-4 text-zinc-400" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Co-Authored Universes</h2>
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Co-Authored Universes</h2>
  </div>
 
  <div className="space-y-6">
@@ -1000,9 +994,9 @@ export default function AuthorDashboardPage() {
  )}
 
  {/* Series Block */}
- <div className="flex items-center gap-2 mb-2 mt-12 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 mt-10 md:mt-12 pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <Layers className="w-4 h-4 text-zinc-400" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Series & Works Registry</h2>
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Series & Works Registry</h2>
  </div>
 
  {mySeries?.length === 0 ? (
@@ -1075,7 +1069,7 @@ export default function AuthorDashboardPage() {
  <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-900">
  <div className="flex items-center gap-2">
  <MessageSquare className="w-4 h-4 text-zinc-400" />
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Fan Demands</h2>
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Fan Demands</h2>
  </div>
  <Link href="/write/requests" className="text-xs font-bold text-indigo-500 dark:text-indigo-400 hover:underline">
  View All
@@ -1132,13 +1126,13 @@ export default function AuthorDashboardPage() {
  {/* ========================================== */}
  {/* NEW FEATURE: Advertising & Promotions Registry */}
  {/* ========================================== */}
- <section className="mt-16 pt-12 border-t border-zinc-100 dark:border-zinc-900">
+ <section className="mt-12 md:mt-16 pt-12 md:pt-16 border-t border-zinc-100 dark:border-zinc-900">
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
- <div className="flex items-center gap-3">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-3">
  <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
  <div>
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Advertising & Promotions Registry</h2>
- <p className="text-xs text-zinc-400 font-medium mt-1">Track active campaigns, expenditures, and remaining days for your promoted stories.</p>
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Advertising & Promotions Registry</h2>
+ <p className="text-xs md:text-sm text-zinc-400 font-medium mt-1">Track active campaigns, expenditures, and remaining days for your promoted stories.</p>
  </div>
  </div>
  
@@ -1297,25 +1291,25 @@ export default function AuthorDashboardPage() {
  {/* ========================================== */}
  {/* 5 NEW ADVANCED CREATOR TOOL CARDS SECTION */}
  {/* ========================================== */}
- <section className="mt-16 pt-12 border-t border-zinc-100 dark:border-zinc-900 space-y-12">
+ <section className="mt-12 md:mt-16 pt-12 md:pt-16 border-t border-zinc-100 dark:border-zinc-900 space-y-12">
 
- <div className="flex items-center gap-3">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-3">
  <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse" />
  <div>
- <h2 className="text-2xl font-bold text-zinc-900 dark:text-white font-bold">Creator Intelligence Registry</h2>
- <p className="text-sm text-zinc-400 font-bold mt-0.5">Advanced monetization trackers, content audits, and promotion campaigns.</p>
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Creator Intelligence Registry</h2>
+ <p className="text-xs md:text-sm text-zinc-400 font-bold mt-0.5">Advanced monetization trackers, content audits, and promotion campaigns.</p>
  </div>
  </div>
 
  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
  {/* Card 1: Target Audience & Warnings Audit */}
- <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
+ <div className="p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
  <div>
  <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/40">
  <div className="flex items-center gap-2">
  <Target className="w-4 h-4 text-zinc-400" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Content Warning & Age Audit</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Content Warning & Age Audit</h3>
  </div>
  <span className="text-xs font-bold text-indigo-500">YA-13 Avg</span>
  </div>
@@ -1331,8 +1325,8 @@ export default function AuthorDashboardPage() {
  <span className="text-zinc-500">{warn}</span>
  <span className="text-zinc-950 dark:text-white">{count} stories</span>
  </div>
- <div className="w-full h-1 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-full overflow-hidden">
- <div className="h-full bg-indigo-500 rounded-full" style={{ width: `${Math.min(100, count * 20)}%` }} />
+ <div className="w-full h-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-full overflow-hidden">
+ <div className="h-full bg-zinc-900 dark:bg-white rounded-full transition-all duration-300" style={{ width: `${Math.min(100, count * 20)}%` }} />
  </div>
  </div>
  ))}
@@ -1350,12 +1344,12 @@ export default function AuthorDashboardPage() {
  </div>
 
  {/* Card 2: Onboarding Niche Preference Matchmaker */}
- <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
+ <div className="p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
  <div>
  <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/40">
  <div className="flex items-center gap-2">
  <TrendingUp className="w-4 h-4 text-zinc-400" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Audience Genre Matchmaker</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Audience Genre Matchmaker</h3>
  </div>
  <span className="text-xs font-bold text-emerald-500">Live Niche Index</span>
  </div>
@@ -1386,12 +1380,12 @@ export default function AuthorDashboardPage() {
  </div>
 
  {/* Card 3: Recent Content Integrity & Warnings alerts */}
- <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
+ <div className="p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow flex flex-col justify-between space-y-6">
  <div>
  <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/40">
  <div className="flex items-center gap-2">
  <ShieldAlert className="w-4 h-4 text-zinc-400 animate-pulse" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Content Integrity & Flags</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Content Integrity & Flags</h3>
  </div>
  <span className="text-xs font-bold text-emerald-500">Catalog Safe</span>
  </div>
@@ -1427,11 +1421,11 @@ export default function AuthorDashboardPage() {
  <div className="grid grid-cols-1 gap-8">
 
  {/* Card 5: Gift Memberships registry with interactive Copy button */}
- <div className="p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow space-y-6">
+ <div className="p-6 md:p-8 border border-zinc-100 dark:border-zinc-900 bg-white dark:bg-zinc-950 rounded-xl shadow space-y-6">
  <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800/40">
  <div className="flex items-center gap-2">
  <Gift className="w-4 h-4 text-zinc-400" />
- <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold">Gift Memberships Console</h3>
+ <h3 className="text-base md:text-lg font-semibold text-zinc-800 dark:text-zinc-100">Gift Memberships Console</h3>
  </div>
  <span className="text-xs font-bold text-indigo-500">Gift Registry</span>
  </div>
@@ -1634,6 +1628,62 @@ export default function AuthorDashboardPage() {
  </div>
  </div>
  )}
+
+ <div className="my-12 md:my-16 border-b border-zinc-200 dark:border-zinc-800/60" />
+
+ {/* Dashboard Guide & Legend */}
+ <section className="mb-10 md:mb-12 animate-fade-in">
+ <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-6 md:mb-8 pb-2 border-b border-zinc-100 dark:border-zinc-900">
+ <BookOpen className="w-4 h-4 text-zinc-400" />
+ <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">Dashboard Guide & Legend</h2>
+ </div>
+ 
+ <div className="p-6 md:p-8 bg-zinc-50/50 dark:bg-zinc-900/20 border border-zinc-100 dark:border-zinc-900 rounded-xl shadow-sm">
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+ <div className="space-y-6">
+ <div className="flex items-start gap-3">
+ <Vote className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+ <div>
+ <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-1">Interactive Telemetry & Polling</h3>
+ <p className="text-sm text-zinc-500 leading-relaxed">
+ Track your fan engagement in real-time. Use the <strong>Audience Polls</strong> to see how readers vote on chapter decisions, and the <strong>Beta Reader Squad</strong> to manage early-access feedback.
+ </p>
+ </div>
+ </div>
+ <div className="flex items-start gap-3">
+ <GitBranch className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+ <div>
+ <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-1">Collaborative Universes</h3>
+ <p className="text-sm text-zinc-500 leading-relaxed">
+ The core of co-authoring. Establish <strong>Universes</strong> to link multiple stories across different authors into the same canon, and manage invites directly from this registry.
+ </p>
+ </div>
+ </div>
+ </div>
+ 
+ <div className="space-y-6">
+ <div className="flex items-start gap-3">
+ <ShieldAlert className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+ <div>
+ <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-1">Creator Intelligence & Integrity</h3>
+ <p className="text-sm text-zinc-500 leading-relaxed">
+ Keep your catalog safe. The <strong>Content Warning Audit</strong> calculates your average demographic rating, while <strong>Content Integrity</strong> alerts you to any reported chapters that need review.
+ </p>
+ </div>
+ </div>
+ <div className="flex items-start gap-3">
+ <Sparkles className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+ <div>
+ <h3 className="text-base font-bold text-zinc-900 dark:text-zinc-100 mb-1">Promotions & Growth</h3>
+ <p className="text-sm text-zinc-500 leading-relaxed">
+ Accelerate your reach. Use the <strong>Advertising Registry</strong> to track live featured placements, and the <strong>Matchmaker</strong> to identify hungry audiences in unserved niches.
+ </p>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </section>
  </main>
  );
 }
