@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { prisma } from "@/lib/prisma";
 import { FileType, Role, type Prisma } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
@@ -10,7 +11,7 @@ function canUploadBooks(role: Role) {
   return role === Role.AUTHOR || role === Role.ADMIN;
 }
 
-export async function GET(request: Request) {
+const getHandler = async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q") || "";
@@ -96,9 +97,11 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+};
 
-export async function POST(request: Request) {
+export const GET = withPerformanceLogger(getHandler as any, "/api/books");
+
+const postHandler = async (request: NextRequest) => {
   try {
     const { dbUser } = await verifyToken();
 
@@ -162,4 +165,6 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+};
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/books");

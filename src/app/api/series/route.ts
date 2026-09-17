@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
 
-export async function GET(req: Request) {
+const getHandler = async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
@@ -67,7 +68,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
+const postHandler = async (req: NextRequest) => {
   const { checkRateLimit } = await import('@/lib/rate-limit');
   const limitRes = await checkRateLimit(15, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -114,3 +115,7 @@ export async function POST(req: Request) {
     }, { status: 500 });
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/series");
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/series");

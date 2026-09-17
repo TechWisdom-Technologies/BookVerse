@@ -1,8 +1,9 @@
-import { NextResponse } from 'next/server';
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
 
-export async function POST(req: Request) {
+const postHandler = async (req: NextRequest) => {
   try {
     const user = await getAuth();
     if (!user) {
@@ -94,3 +95,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to process subscription upgrade' }, { status: 500 });
   }
 }
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/premium/upgrade");

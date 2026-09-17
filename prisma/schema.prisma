@@ -1004,3 +1004,34 @@ model CronJobLog {
   @@index([createdAt])
   @@map("cron_job_logs")
 }
+
+model FailedWebhookLog {
+  id            String   @id @default(cuid())
+  provider      String   @default("UDDOKTAPAY")
+  transactionId String?  @map("transaction_id")
+  payload       Json?
+  errorMessage  String   @map("error_message")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("failed_webhook_logs")
+}
+
+model SlowApiLog {
+  id         String   @id @default(cuid())
+  method     String
+  url        String
+  durationMs Int      @map("duration_ms")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("slow_api_logs")
+}
+
+model CrashReport {
+  id           String   @id @default(cuid())
+  url          String?
+  errorMessage String   @map("error_message")
+  stackTrace   String?  @map("stack_trace")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("crash_reports")
+}

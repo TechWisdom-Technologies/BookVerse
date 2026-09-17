@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ArrowLeft, Activity, ShieldAlert, Database, Users, Server, Clock, AlertCircle, CheckCircle2, XCircle } from "lucide-react";
+import { ArrowLeft, Activity, ShieldAlert, Database, Users, Server, Clock, AlertCircle, CheckCircle2, XCircle, Wallet, Flame, TrendingUp, AlertTriangle, Bug } from "lucide-react";
 import Link from "next/link";
 
 interface MonitoringData {
@@ -10,6 +10,17 @@ interface MonitoringData {
   activeDbConnections: number;
   recentRateLimits: any[];
   recentCronLogs: any[];
+  recentFailedWebhooks: any[];
+  recentSlowApis: any[];
+  recentCrashes: any[];
+  engagement: {
+    dau: number;
+    mau: number;
+    readingMinutesToday: number;
+  };
+  financials: {
+    authorPayoutQueue: number;
+  };
 }
 
 export default function MonitoringDashboard() {
@@ -75,7 +86,37 @@ export default function MonitoringDashboard() {
         </header>
 
         {/* Top KPI row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-3 mb-4 text-zinc-500 dark:text-zinc-400">
+              <TrendingUp className="w-5 h-5 text-blue-500" />
+              <h3 className="text-xs font-bold uppercase tracking-widest">Active Users</h3>
+            </div>
+            <div className="flex items-end gap-2">
+              <p className="text-3xl font-bold">{data.engagement.dau.toLocaleString()}</p>
+              <p className="text-xs text-zinc-500 mb-1">DAU</p>
+            </div>
+            <p className="text-xs text-zinc-500 mt-2">{data.engagement.mau.toLocaleString()} MAU (30d)</p>
+          </div>
+          
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-3 mb-4 text-zinc-500 dark:text-zinc-400">
+              <Flame className="w-5 h-5 text-orange-500" />
+              <h3 className="text-xs font-bold uppercase tracking-widest">Global Reading</h3>
+            </div>
+            <p className="text-3xl font-bold">{data.engagement.readingMinutesToday.toLocaleString()}</p>
+            <p className="text-xs text-zinc-500 mt-2">Total minutes read today</p>
+          </div>
+          
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-3 mb-4 text-zinc-500 dark:text-zinc-400">
+              <Wallet className="w-5 h-5 text-emerald-500" />
+              <h3 className="text-xs font-bold uppercase tracking-widest">Payout Queue</h3>
+            </div>
+            <p className="text-3xl font-bold">৳{data.financials.authorPayoutQueue.toLocaleString()}</p>
+            <p className="text-xs text-zinc-500 mt-2">Total owed to Authors</p>
+          </div>
+
           <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
             <div className="flex items-center gap-3 mb-4 text-zinc-500 dark:text-zinc-400">
               <Database className="w-5 h-5" />
@@ -83,22 +124,6 @@ export default function MonitoringDashboard() {
             </div>
             <p className="text-3xl font-bold">{data.activeDbConnections}</p>
             <p className="text-xs text-zinc-500 mt-2">Active Postgres Backend Connections</p>
-          </div>
-          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3 mb-4 text-zinc-500 dark:text-zinc-400">
-              <Users className="w-5 h-5" />
-              <h3 className="text-xs font-bold uppercase tracking-widest">Total Users</h3>
-            </div>
-            <p className="text-3xl font-bold">{data.onboarding.totalUsers.toLocaleString()}</p>
-            <p className="text-xs text-zinc-500 mt-2">Total registered accounts across all tiers</p>
-          </div>
-          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center gap-3 mb-4 text-zinc-500 dark:text-zinc-400">
-              <ShieldAlert className="w-5 h-5" />
-              <h3 className="text-xs font-bold uppercase tracking-widest">Rate Limit Blocks</h3>
-            </div>
-            <p className="text-3xl font-bold">{data.recentRateLimits.length}</p>
-            <p className="text-xs text-zinc-500 mt-2">Recent IP blocks by Upstash Redis</p>
           </div>
         </div>
 
@@ -162,17 +187,68 @@ export default function MonitoringDashboard() {
           </div>
         </div>
 
-        {/* Logs Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Logs Row 1 */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           
-          {/* Cron Logs */}
-          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
+          {/* Failed Webhooks */}
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800 flex flex-col">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-800">
-              <Server className="w-4 h-4 text-zinc-400" />
-              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Cron Job Executions</h3>
+              <AlertTriangle className="w-4 h-4 text-orange-500" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Failed Webhooks</h3>
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1">
+              {data.recentFailedWebhooks.length === 0 ? (
+                <p className="text-xs text-zinc-500">No failed webhooks logged.</p>
+              ) : data.recentFailedWebhooks.map(log => (
+                <div key={log.id} className="flex flex-col gap-2 p-3 bg-white dark:bg-zinc-950 border border-orange-100 dark:border-orange-900/30 rounded">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-orange-600 dark:text-orange-400">{log.provider}</span>
+                    <span className="text-[10px] text-zinc-400">{new Date(log.createdAt).toLocaleString()}</span>
+                  </div>
+                  <span className="text-xs text-zinc-600 dark:text-zinc-300 break-all">{log.errorMessage}</span>
+                  {log.transactionId && (
+                    <span className="text-[10px] font-mono text-zinc-500">TxID: {log.transactionId}</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Crash Reports */}
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800 flex flex-col">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+              <Bug className="w-4 h-4 text-red-500" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Global Crash Reports</h3>
+            </div>
+            
+            <div className="space-y-3 flex-1 overflow-auto">
+              {data.recentCrashes.length === 0 ? (
+                <p className="text-xs text-zinc-500">No crashes logged.</p>
+              ) : data.recentCrashes.map(log => (
+                <div key={log.id} className="flex flex-col gap-2 p-3 bg-white dark:bg-zinc-950 border border-red-100 dark:border-red-900/30 rounded">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-red-600 dark:text-red-400">{log.url || 'Unknown Route'}</span>
+                    <span className="text-[10px] text-zinc-400">{new Date(log.createdAt).toLocaleString()}</span>
+                  </div>
+                  <span className="text-xs font-mono text-zinc-600 dark:text-zinc-300 break-all">{log.errorMessage}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Logs Row 2 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Cron Logs */}
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800 flex flex-col">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+              <Server className="w-4 h-4 text-zinc-400" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Cron Jobs</h3>
+            </div>
+            
+            <div className="space-y-3 flex-1">
               {data.recentCronLogs.length === 0 ? (
                 <p className="text-xs text-zinc-500">No cron jobs logged yet.</p>
               ) : data.recentCronLogs.map(log => (
@@ -202,16 +278,41 @@ export default function MonitoringDashboard() {
             </div>
           </div>
 
+          {/* Slow API Logs */}
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800 flex flex-col">
+            <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+              <Clock className="w-4 h-4 text-amber-500" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Slow API Routes ({'>'}3s)</h3>
+            </div>
+            
+            <div className="space-y-3 flex-1">
+              {data.recentSlowApis.length === 0 ? (
+                <p className="text-xs text-zinc-500">No slow API requests logged.</p>
+              ) : data.recentSlowApis.map(log => (
+                <div key={log.id} className="flex items-center justify-between p-3 bg-white dark:bg-zinc-950 border border-amber-100 dark:border-amber-900/30 rounded">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 rounded">{log.method}</span>
+                      <span className="text-xs font-mono font-medium">{log.url}</span>
+                    </div>
+                    <span className="text-[10px] text-zinc-400">{new Date(log.createdAt).toLocaleString()}</span>
+                  </div>
+                  <span className="text-sm font-bold text-amber-500">{log.durationMs}ms</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Rate Limits */}
-          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800">
+          <div className="p-6 bg-zinc-50 dark:bg-zinc-900 rounded-lg border border-zinc-100 dark:border-zinc-800 flex flex-col">
             <div className="flex items-center gap-3 mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-800">
               <ShieldAlert className="w-4 h-4 text-zinc-400" />
               <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500">Rate Limit Violations</h3>
             </div>
             
-            <div className="space-y-3">
+            <div className="space-y-3 flex-1">
               {data.recentRateLimits.length === 0 ? (
-                <p className="text-xs text-zinc-500">No violations logged yet.</p>
+                <p className="text-xs text-zinc-500">No violations logged.</p>
               ) : data.recentRateLimits.map(violation => (
                 <div key={violation.id} className="flex items-center justify-between p-3 bg-white dark:bg-zinc-950 border border-red-100 dark:border-red-900/30 rounded">
                   <div className="flex items-center gap-3">

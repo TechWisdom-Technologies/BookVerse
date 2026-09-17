@@ -1,3 +1,5 @@
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from "next/server";
 import { createGroq } from '@ai-sdk/groq';
 import { generateText } from 'ai';
 import { prisma } from "@/lib/prisma";
@@ -11,7 +13,7 @@ const groq = createGroq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
-export async function POST(req: Request) {
+const postHandler = async (req: NextRequest) => {
   // Rate limit: 10 AI chat messages per minute per IP
   const limitRes = await checkRateLimit(10, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -116,3 +118,5 @@ export async function POST(req: Request) {
     });
   }
 }
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/chat");

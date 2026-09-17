@@ -1,5 +1,6 @@
+import { withPerformanceLogger } from "@/lib/api-logger";
 // Updated to fix syntax error in prisma queries
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
@@ -26,7 +27,7 @@ async function getCurrentUserId() {
   }
 }
 
-export async function GET(_request: Request, { params }: RouteParams) {
+const getHandler = async (_request: Request, { params }: RouteParams) => {
   try {
     const { username } = await params;
     const currentUserId = await getCurrentUserId();
@@ -128,3 +129,5 @@ export async function GET(_request: Request, { params }: RouteParams) {
     );
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/users/[username]");

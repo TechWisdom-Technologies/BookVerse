@@ -25,7 +25,14 @@ export async function GET() {
       totalQuizzesCompleted,
       recentRateLimits,
       recentCronLogs,
-      dbConnectionsRaw
+      recentFailedWebhooks,
+      recentSlowApis,
+      recentCrashes,
+      activeDbConnectionsRaw,
+      dauSessions,
+      mauSessions,
+      readingLogsToday,
+      authorWallets
     ] = await Promise.all([
       // Tier Distribution
       prisma.user.groupBy({
@@ -50,12 +57,47 @@ export async function GET() {
         take: 15,
       }),
 
+      // Failed Webhooks
+      prisma.failedWebhookLog.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }),
+
+      // Slow APIs
+      prisma.slowApiLog.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }),
+
+      // Crash Reports
+      prisma.crashReport.findMany({ orderBy: { createdAt: 'desc' }, take: 10 }),
+
       // DB Connections
       prisma.$queryRaw<{ numbackends: number }[]>`
         SELECT numbackends 
         FROM pg_stat_database 
         WHERE datname = current_database();
-      `.catch(() => [{ numbackends: 0 }]) // Fallback if pg_stat_database is restricted
+      `.catch(() => [{ numbackends: 0 }]), // Fallback if pg_stat_database is restricted
+
+      // DAU (last 24h)
+      prisma.deviceSession.findMany({
+        where: { lastActive: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+        distinct: ['userId'],
+        select: { userId: true },
+      }),
+
+      // MAU (last 30d)
+      prisma.deviceSession.findMany({
+        where: { lastActive: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } },
+        distinct: ['userId'],
+        select: { userId: true },
+      }),
+
+      // Reading Time Today
+      prisma.readingLog.aggregate({
+        _sum: { minutes: true },
+        where: { date: { gte: new Date(new Date().setHours(0,0,0,0)) } },
+      }),
+
+      // Total Author Payout Queue (sum wallet balances)
+      prisma.user.aggregate({
+        _sum: { walletBalance: true },
+        where: { role: 'AUTHOR' },
+      })
     ]);
 
     // 3. Format Data
@@ -76,7 +118,12 @@ export async function GET() {
       return acc;
     }, [] as { tier: string, count: number }[]);
 
-    const activeDbConnections = Number(dbConnectionsRaw?.[0]?.numbackends || 0);
+    const activeDbConnections = Number(activeDbConnectionsRaw?.[0]?.numbackends || 0);
+
+    const dau = dauSessions.length;
+    const mau = mauSessions.length;
+    const readingMinutesToday = readingLogsToday._sum.minutes || 0;
+    const authorPayoutQueue = authorWallets._sum.walletBalance || 0;
 
     return NextResponse.json({
       success: true,
@@ -89,7 +136,18 @@ export async function GET() {
         },
         activeDbConnections,
         recentRateLimits,
-        recentCronLogs
+        recentCronLogs,
+        recentFailedWebhooks,
+        recentSlowApis,
+        recentCrashes,
+        engagement: {
+          dau,
+          mau,
+          readingMinutesToday
+        },
+        financials: {
+          authorPayoutQueue
+        }
       }
     });
 

@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies, headers } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
@@ -21,7 +22,7 @@ async function readToken() {
   return tokenFromHeader || tokenFromCookie;
 }
 
-export async function POST() {
+const postHandler = async (req: NextRequest) => {
   const limitRes = await checkRateLimit(60, 60000);
   if (limitRes.limited) return limitRes.response;
 
@@ -270,3 +271,5 @@ export async function POST() {
   }
 }
 
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/auth/sync");

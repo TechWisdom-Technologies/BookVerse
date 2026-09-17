@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { storySchema } from "@/lib/validators";
@@ -7,7 +8,7 @@ import { publishScheduledChapters } from "@/lib/publish-chapters";
 import { hasFeatureAccess } from "@/lib/entitlements";
 import { getSortedStoryIds } from "@/lib/story-ranking";
 
-export async function GET(request: Request) {
+const getHandler = async (request: NextRequest) => {
   try {
     // Dynamically publish any chapters scheduled for release
     void publishScheduledChapters();
@@ -67,9 +68,11 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
-}
+};
 
-export async function POST(request: Request) {
+export const GET = withPerformanceLogger(getHandler as any, "/api/stories");
+
+const postHandler = async (request: NextRequest) => {
   const { checkRateLimit } = await import("@/lib/rate-limit");
   const limitRes = await checkRateLimit(15, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -118,4 +121,6 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+};
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/stories");

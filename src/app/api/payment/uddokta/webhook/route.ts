@@ -10,6 +10,11 @@ export async function POST(req: NextRequest) {
     // Optional but recommended: Check webhook authorization header
     if (apiKey && configuredKey && apiKey !== configuredKey) {
       console.warn("[UddoktaPay Webhook] Invalid API Key provided");
+      try {
+        await prisma.failedWebhookLog.create({
+          data: { errorMessage: "Invalid API Key provided", payload: { note: "Body not parsed due to unauthorized request" } }
+        });
+      } catch (e) {}
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -45,6 +50,11 @@ export async function POST(req: NextRequest) {
 
     if (!userId || !paymentType) {
       console.error("[UddoktaPay Webhook] Missing metadata:", meta);
+      try {
+        await prisma.failedWebhookLog.create({
+          data: { transactionId, errorMessage: "Missing metadata (userId or paymentType)", payload: body as any }
+        });
+      } catch (e) {}
       return NextResponse.json({ error: "Invalid metadata" }, { status: 400 });
     }
 
@@ -70,6 +80,11 @@ export async function POST(req: NextRequest) {
 
       if (isNaN(expectedPremiumAmount) || amount < expectedPremiumAmount) {
         console.warn(`[UddoktaPay Webhook] Fraud detected for PREMIUM. Paid ${amount}, Expected ${expectedPremiumAmount}`);
+        try {
+          await prisma.failedWebhookLog.create({
+            data: { transactionId, errorMessage: `Fraud detected for PREMIUM. Paid ${amount}, Expected ${expectedPremiumAmount}`, payload: body as any }
+          });
+        } catch (e) {}
         return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
       }
 
@@ -135,6 +150,11 @@ export async function POST(req: NextRequest) {
       }
 
       if (isNaN(expectedPromoAmount) || amount < expectedPromoAmount) {
+        try {
+          await prisma.failedWebhookLog.create({
+            data: { transactionId, errorMessage: `Fraud detected for PROMOTION. Paid ${amount}, Expected ${expectedPromoAmount}`, payload: body as any }
+          });
+        } catch (e) {}
         return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
       }
 
@@ -272,6 +292,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error("[UddoktaPay Webhook] Error:", error);
+    try {
+      await prisma.failedWebhookLog.create({
+        data: { errorMessage: error?.message || "Internal Server Error", payload: { rawError: error?.message } }
+      });
+    } catch (e) {}
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

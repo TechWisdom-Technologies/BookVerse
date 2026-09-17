@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyToken } from '@/lib/auth';
 // Promotions are available to all users; no paid plan gate required
 
-export async function GET() {
+const getHandler = async (req: NextRequest) => {
   try {
     const promotions = await prisma.storyPromotion.findMany({
       where: { status: 'ACTIVE' },
@@ -28,7 +29,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+const postHandler = async (req: NextRequest) => {
   const { checkRateLimit } = await import('@/lib/rate-limit');
   const limitRes = await checkRateLimit(15, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -160,3 +161,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to create' }, { status: 500 });
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/story-promotions");
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/story-promotions");

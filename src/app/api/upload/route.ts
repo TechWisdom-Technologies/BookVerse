@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { randomUUID } from "crypto";
 import { Role } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
@@ -63,7 +64,7 @@ function validateFile(file: File, kind: UploadKind) {
   return null;
 }
 
-export async function POST(request: Request) {
+const postHandler = async (request: NextRequest) => {
   // Rate limit: 10 uploads per minute per IP
   const limitRes = await checkRateLimit(10, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -109,4 +110,6 @@ export async function POST(request: Request) {
     console.error("POST /api/upload error:", error);
     return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
   }
-}
+};
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/upload");

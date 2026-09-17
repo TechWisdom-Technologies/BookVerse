@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from "next/server";
 import { getAuth } from "@/lib/auth";
 import { initiatePayment } from "@/lib/uddoktapay";
 import { prisma } from "@/lib/prisma";
@@ -16,7 +17,7 @@ import { prisma } from "@/lib/prisma";
  *                 For PROMOTION: { storyId, tier, duration, customBudget? }
  *                 For TIP:       { receiverId, storyId?, message? }
  */
-export async function POST(req: Request) {
+const postHandler = async (req: NextRequest) => {
   try {
     const user = await getAuth();
     if (!user) {
@@ -115,3 +116,5 @@ export async function POST(req: Request) {
     );
   }
 }
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/payment/uddokta/initiate");

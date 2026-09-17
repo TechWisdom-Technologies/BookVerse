@@ -1,3 +1,4 @@
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyPayment } from "@/lib/uddoktapay";
 import { prisma } from "@/lib/prisma";
@@ -9,7 +10,7 @@ import { prisma } from "@/lib/prisma";
  * Verifies the payment, stores the transaction in the DB,
  * and redirects to a client-side success/failure page.
  */
-export async function GET(req: NextRequest) {
+const getHandler = async (req: NextRequest) => {
   const invoiceId = req.nextUrl.searchParams.get("invoice_id");
 
   if (!invoiceId) {
@@ -317,3 +318,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/payment/uddokta/verify");

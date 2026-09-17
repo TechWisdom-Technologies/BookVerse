@@ -1,3 +1,4 @@
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -7,10 +8,10 @@ import { checkRateLimit } from "@/lib/rate-limit";
  * GET /api/tips/[userId]
  * Fetch tips received by a user
  */
-export async function GET(
+const getHandler = async (
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
-) {
+) => {
   const limitRes = await checkRateLimit(10, 60000);
   if (limitRes.limited) return limitRes.response;
 
@@ -60,10 +61,10 @@ export async function GET(
  * POST /api/tips/[userId]
  * Create a pending tip via manual mobile payment for admin review
  */
-export async function POST(
+const postHandler = async (
   req: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
-) {
+) => {
   const limitRes = await checkRateLimit(10, 60000);
   if (limitRes.limited) return limitRes.response;
 
@@ -180,3 +181,7 @@ export async function POST(
     );
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/tips/[userId]");
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/tips/[userId]");

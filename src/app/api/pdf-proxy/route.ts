@@ -1,3 +1,4 @@
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -18,7 +19,7 @@ function isAllowedUrl(urlString: string): boolean {
   }
 }
 
-export async function GET(req: NextRequest) {
+const getHandler = async (req: NextRequest) => {
   // Rate limit: 30 proxy requests per minute per IP
   const limitRes = await checkRateLimit(30, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -53,3 +54,5 @@ export async function GET(req: NextRequest) {
     return new NextResponse("Internal Server Error fetching PDF", { status: 500 });
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/pdf-proxy");

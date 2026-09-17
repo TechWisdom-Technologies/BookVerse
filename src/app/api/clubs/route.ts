@@ -1,3 +1,4 @@
+import { withPerformanceLogger } from "@/lib/api-logger";
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth, getCurrentUser } from '@/lib/auth';
 import { hasFeatureAccess, paidFeatureError } from '@/lib/entitlements';
@@ -8,7 +9,7 @@ import crypto from 'crypto';
  * GET /api/clubs
  * Fetch all clubs with optional filters
  */
-export async function GET(req: NextRequest) {
+const getHandler = async (req: NextRequest) => {
   try {
     const { searchParams } = new URL(req.url);
     const genre = searchParams.get('genre');
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
  * POST /api/clubs
  * Create a new club
  */
-export async function POST(req: NextRequest) {
+const postHandler = async (req: NextRequest) => {
   const { checkRateLimit } = await import('@/lib/rate-limit');
   const limitRes = await checkRateLimit(15, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -124,3 +125,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/clubs");
+
+export const POST = withPerformanceLogger(postHandler as any, "/api/clubs");

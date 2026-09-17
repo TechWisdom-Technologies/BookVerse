@@ -1,11 +1,12 @@
-import { NextResponse } from "next/server";
+import { withPerformanceLogger } from "@/lib/api-logger";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { profileSchema } from "@/lib/validators";
 import { Prisma } from "@prisma/client";
 import { adminAuth } from "@/lib/firebase-admin";
 
-export async function GET() {
+const getHandler = async (req: NextRequest) => {
   try {
     const { dbUser } = await verifyToken();
 
@@ -70,7 +71,7 @@ export async function GET() {
   }
 }
 
-export async function PATCH(request: Request) {
+const patchHandler = async (request: NextRequest) => {
   const { checkRateLimit } = await import("@/lib/rate-limit");
   const limitRes = await checkRateLimit(15, 60000);
   if (limitRes.limited) return limitRes.response;
@@ -191,7 +192,7 @@ export async function PATCH(request: Request) {
   }
 }
 
-export async function DELETE() {
+const deleteHandler = async (req: NextRequest) => {
   try {
     const { dbUser } = await verifyToken();
 
@@ -228,3 +229,9 @@ export async function DELETE() {
     );
   }
 }
+
+export const GET = withPerformanceLogger(getHandler as any, "/api/users/me");
+
+export const DELETE = withPerformanceLogger(deleteHandler as any, "/api/users/me");
+
+export const PATCH = withPerformanceLogger(patchHandler as any, "/api/users/me");
