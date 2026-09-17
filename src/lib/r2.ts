@@ -120,3 +120,75 @@ export async function listAllR2Objects(): Promise<string[]> {
 
   return keys;
 }
+
+export type R2ObjectMeta = {
+  key: string;
+  size: number;
+  lastModified?: Date;
+};
+
+export async function listAllR2ObjectsWithMetadata(): Promise<R2ObjectMeta[]> {
+  if (!r2Client) throw new Error("R2 client not configured (missing env vars).");
+  const Bucket = requireEnv("CLOUDFLARE_R2_BUCKET_NAME", bucket);
+
+  const objects: R2ObjectMeta[] = [];
+  let isTruncated = true;
+  let continuationToken: string | undefined = undefined;
+
+  while (isTruncated) {
+    const response: any = await r2Client.send(
+      new ListObjectsV2Command({
+        Bucket,
+        ContinuationToken: continuationToken,
+      })
+    );
+
+    if (response.Contents) {
+      for (const item of response.Contents) {
+        if (item.Key) {
+          objects.push({
+            key: item.Key,
+            size: item.Size || 0,
+            lastModified: item.LastModified,
+          });
+        }
+      }
+    }
+
+    isTruncated = response.IsTruncated ?? false;
+    continuationToken = response.NextContinuationToken;
+  }
+
+  return objects;
+}
+
+export async function calculateTotalR2Size(): Promise<number> {
+  if (!r2Client) throw new Error("R2 client not configured (missing env vars).");
+  const Bucket = requireEnv("CLOUDFLARE_R2_BUCKET_NAME", bucket);
+
+  let totalSizeBytes = 0;
+  let isTruncated = true;
+  let continuationToken: string | undefined = undefined;
+
+  while (isTruncated) {
+    const response: any = await r2Client.send(
+      new ListObjectsV2Command({
+        Bucket,
+        ContinuationToken: continuationToken,
+      })
+    );
+
+    if (response.Contents) {
+      for (const item of response.Contents) {
+        if (item.Size) {
+          totalSizeBytes += item.Size;
+        }
+      }
+    }
+
+    isTruncated = response.IsTruncated ?? false;
+    continuationToken = response.NextContinuationToken;
+  }
+
+  return totalSizeBytes;
+}
