@@ -504,7 +504,7 @@ export default async function HomePage() {
 
         {/* Features */}
         <section className="py-32 px-6 bg-zinc-950 text-white">
-          <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-16">
+          <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
             {features.map((f) => (
               <div key={f.title} className="space-y-6">
                 <f.icon className="w-5 h-5 text-zinc-700" />
