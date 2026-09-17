@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 // ---------------------------------------------------------------------------
 // Upstash Redis-backed rate limiter (works across serverless invocations)
@@ -99,7 +100,7 @@ function rateLimitInMemory(ip: string, limit: number, windowMs: number): { succe
  * Helper to check rate limits for incoming Next.js App Router requests.
  * Uses Upstash Redis in production, in-memory Map in development.
  */
-export async function checkRateLimit(limit = 60, windowMs = 60000) {
+export async function checkRateLimit(limit = 60, windowMs = 60000, route = "unknown") {
   const h = await headers();
   const ip = h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "127.0.0.1";
 
@@ -109,6 +110,11 @@ export async function checkRateLimit(limit = 60, windowMs = 60000) {
     if (rl) {
       const result = await rl.limit(ip);
       if (!result.success) {
+        // Log to database asynchronously
+        prisma.rateLimitViolation.create({
+          data: { ipAddress: ip, route }
+        }).catch(e => console.error("Failed to log rate limit violation:", e));
+
         return {
           limited: true,
           response: NextResponse.json(
@@ -134,6 +140,11 @@ export async function checkRateLimit(limit = 60, windowMs = 60000) {
   // In-memory fallback (local dev / Upstash unavailable)
   const result = rateLimitInMemory(ip, limit, windowMs);
   if (!result.success) {
+    // Log to database asynchronously
+    prisma.rateLimitViolation.create({
+      data: { ipAddress: ip, route }
+    }).catch(e => console.error("Failed to log rate limit violation:", e));
+
     return {
       limited: true,
       response: NextResponse.json(

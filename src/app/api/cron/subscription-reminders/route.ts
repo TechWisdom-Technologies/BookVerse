@@ -16,6 +16,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const startTime = Date.now();
     const now = new Date();
 
     // Calculate our exact date windows
@@ -131,6 +132,11 @@ export async function GET(req: Request) {
       downgradesProcessed += result.count;
     }
 
+    const durationMs = Date.now() - startTime;
+    await prisma.cronJobLog.create({
+      data: { jobName: 'subscription-reminders', status: 'SUCCESS', durationMs }
+    }).catch(e => console.error("Failed to log cron:", e));
+
     return NextResponse.json({
       success: true,
       message: `Sent ${notificationsSent} expiry reminders. Downgraded ${downgradesProcessed} expired subscriptions.`,
@@ -138,6 +144,14 @@ export async function GET(req: Request) {
 
   } catch (error: any) {
     console.error('[CRON Subscription Reminders]', error);
+    
+    // Attempt to log failure
+    try {
+      await prisma.cronJobLog.create({
+        data: { jobName: 'subscription-reminders', status: 'FAILED', durationMs: 0, errorMessage: error?.message?.substring(0, 500) }
+      });
+    } catch(e) {}
+
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -168,6 +168,7 @@ export default function AdminPage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
+              { href: "/admin/monitoring", label: "System Monitoring", desc: "Live health, rate limits, onboarding funnel, and cron execution telemetry." },
               { href: "/admin/users", label: "User Registry", desc: "Access authorization and role management." },
               { href: "/admin/transactions", label: "Subscription Payments", desc: "Audit and verify manual premium upgrade transactions." },
               { href: "/admin/promotions", label: "Promotion Payments", desc: "Audit and verify story promotion payment receipts." },

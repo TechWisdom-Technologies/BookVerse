@@ -793,14 +793,16 @@ model Universe {
 }
 
 model Series {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  coverUrl    String?  @map("cover_url")
-  genre       String?
-  userId      String   @map("user_id")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  coverUrl     String?  @map("cover_url")
+  genre        String?
+  sequenceType String   @default("SEQUENTIAL") @map("sequence_type") // SEQUENTIAL or ANTHOLOGY
+  status       String   @default("ONGOING") // ONGOING, COMPLETED, HIATUS
+  userId       String   @map("user_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   stories      Story[]       @relation("story_series")
@@ -977,4 +979,28 @@ model PlatformNewsletterSubscriber {
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("platform_newsletter_subscribers")
+}
+
+model RateLimitViolation {
+  id        String   @id @default(cuid())
+  ipAddress String   @map("ip_address")
+  route     String   @default("unknown")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([ipAddress])
+  @@index([createdAt])
+  @@map("rate_limit_violations")
+}
+
+model CronJobLog {
+  id           String   @id @default(cuid())
+  jobName      String   @map("job_name")
+  status       String   // "SUCCESS", "FAILED"
+  durationMs   Int      @map("duration_ms")
+  errorMessage String?  @map("error_message")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([jobName])
+  @@index([createdAt])
+  @@map("cron_job_logs")
 }
