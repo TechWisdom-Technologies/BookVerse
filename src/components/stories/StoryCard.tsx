@@ -34,13 +34,15 @@ interface StoryCardData {
 
 interface StoryCardProps {
   story: StoryCardData;
+  view?: "grid" | "list";
 }
 
-export function StoryCard({ story }: StoryCardProps) {
+export function StoryCard({ story, view = "grid" }: StoryCardProps) {
+  const isList = view === "list";
   return (
     <Link href={`/stories/${story.id}`}>
-      <div className="group h-full flex flex-col cursor-pointer">
-        <div className="relative aspect-[2/3] overflow-hidden rounded-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 mb-4 transition-all duration-500 group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] group-hover:-translate-y-1.5">
+      <div className={`group flex cursor-pointer h-full ${isList ? 'flex-row items-stretch gap-4 p-3 bg-zinc-50/50 dark:bg-zinc-900/50 hover:bg-zinc-50 dark:hover:bg-zinc-900 rounded-lg border border-transparent hover:border-zinc-200 dark:hover:border-zinc-800 transition-all' : 'flex-col'}`}>
+        <div className={`relative overflow-hidden rounded-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800 transition-all duration-500 group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:group-hover:shadow-[0_8px_30px_rgb(0,0,0,0.1)] ${isList ? 'w-24 shrink-0 aspect-[2/3]' : 'aspect-[2/3] mb-4 group-hover:-translate-y-1.5'}`}>
           {story.isFeaturedPromo && (
             <div className="absolute top-2 left-2 z-10 px-2 py-0.5 bg-amber-500 text-white text-[8px] font-black uppercase tracking-widest rounded-sm flex items-center gap-1 shadow shadow-amber-500/30">
               <Award className="w-2.5 h-2.5" /> Featured
@@ -79,13 +81,17 @@ export function StoryCard({ story }: StoryCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
         </div>
 
-        <div className="flex flex-col flex-grow">
+        <div className={`flex flex-col flex-grow ${isList ? 'py-1 justify-between min-w-0' : ''}`}>
           <div className="mb-2">
             <h3 className="line-clamp-2 text-sm font-bold text-zinc-900 dark:text-zinc-100 leading-tight group-hover:text-brand transition-colors">
               {story.title}
             </h3>
           </div>
           
+          {isList && story.summary && (
+            <p className="line-clamp-2 text-[11px] text-zinc-500 mb-2">{story.summary}</p>
+          )}
+
           <div className="mb-3">
           {story.series ? (
             <span className="px-1.5 py-0.5 rounded-sm bg-emerald-50 dark:bg-emerald-950/30 text-[9px] font-bold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">

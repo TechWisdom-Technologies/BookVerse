@@ -149,11 +149,8 @@ export function ContinueReadingDashboard({ initialStories, initialBooks }: Conti
   if (stories.length === 0 && books.length === 0) return null;
 
   return (
-    <section className="py-20 px-6 border-b border-zinc-100 dark:border-zinc-900 bg-gradient-to-b from-zinc-50/70 to-white dark:from-zinc-950/40 dark:to-zinc-950 relative overflow-hidden">
-      {/* Dynamic Ambient Background Elements */}
-      <div className="absolute top-1/4 left-10 w-96 h-96 bg-blue-400/5 dark:bg-blue-600/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-purple-400/5 dark:bg-purple-600/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-emerald-400/5 dark:bg-emerald-600/5 rounded-full blur-3xl pointer-events-none" />
+    <section className="py-20 px-6 border-b border-zinc-100 dark:border-zinc-900 relative overflow-hidden">
+
 
       <div className="max-w-7xl mx-auto space-y-12 relative z-10">
         

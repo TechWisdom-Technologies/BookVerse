@@ -34,16 +34,17 @@ interface StoryData {
 interface StoryGridProps {
   stories: StoryData[];
   loading?: boolean;
+  view?: "grid" | "list";
 }
 
-export function StoryGrid({ stories, loading }: StoryGridProps) {
+export function StoryGrid({ stories, loading, view = "grid" }: StoryGridProps) {
   if (loading) {
     return (
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className={view === "list" ? "grid gap-6 grid-cols-1 md:grid-cols-2" : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}>
         {Array.from({ length: 8 }).map((_, index) => (
-          <div key={index} className="animate-pulse space-y-3">
-            <div className="aspect-[2/3] rounded-lg bg-zinc-200 dark:bg-zinc-800" />
-            <div className="space-y-2">
+          <div key={index} className={`animate-pulse ${view === "list" ? "flex flex-row gap-4 h-36" : "space-y-3"}`}>
+            <div className={`${view === "list" ? "w-24 shrink-0" : "aspect-[2/3]"} rounded-lg bg-zinc-200 dark:bg-zinc-800`} />
+            <div className={`space-y-2 flex-grow ${view === "list" ? "py-2" : ""}`}>
               <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
               <div className="h-3 w-1/2 rounded bg-zinc-200 dark:bg-zinc-800" />
               <div className="h-3 w-2/3 rounded bg-zinc-200 dark:bg-zinc-800" />
@@ -69,9 +70,9 @@ export function StoryGrid({ stories, loading }: StoryGridProps) {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div className={view === "list" ? "grid gap-6 grid-cols-1 md:grid-cols-2" : "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"}>
       {stories.map((story) => (
-        <StoryCard key={story.id} story={story} />
+        <StoryCard key={story.id} story={story} view={view} />
       ))}
     </div>
   );

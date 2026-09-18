@@ -114,7 +114,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
 
           <div className="flex flex-col lg:flex-row gap-16">
             {/* Simple Sidebar */}
-            <aside className="w-full lg:w-72 shrink-0">
+            <aside className="w-full lg:w-52 shrink-0">
               <div className="sticky top-5">
                 <BookFilters genres={genreList} languages={languageList} />
               </div>
