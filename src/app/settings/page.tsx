@@ -18,7 +18,6 @@ import {
   Smartphone,
   KeyRound,
   Trash2,
-  Sparkles,
   Info,
   Wallet,
   ArrowUpRight,
@@ -30,8 +29,15 @@ import {
   Download,
   Laptop,
   LogOut,
-  Book,
-  Zap
+  Zap,
+  Leaf,
+  Paintbrush,
+  Coffee,
+  PenTool,
+  Flame,
+  Cloud,
+  Crown,
+  Sparkles
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { EditProfileForm } from '@/components/profile/EditProfileForm';
@@ -477,8 +483,8 @@ export default function SettingsPage() {
     }
 
     if (!confirm(`Are you sure you want to deactivate your account? ${days
-        ? `Your profile will be hidden for ${days} days, or until you log in again.`
-        : 'Your profile will be hidden until you log back in.'
+      ? `Your profile will be hidden for ${days} days, or until you log in again.`
+      : 'Your profile will be hidden until you log back in.'
       }`)) {
       return;
     }
@@ -591,8 +597,8 @@ export default function SettingsPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center justify-between px-5 py-4 rounded transition-all group ${activeTab === tab.id
-                      ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md'
-                      : 'text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white'
+                    ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 shadow-md'
+                    : 'text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white'
                     }`}
                 >
                   <div className="flex items-center gap-4">
@@ -644,8 +650,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingFont(f.id)}
                           className={`flex flex-col text-left p-6 border rounded transition-all ${readingFont === f.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className={`text-base font-bold mb-1 ${f.fontClass}`}>Aa</span>
@@ -696,8 +702,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingFontSize(f.id)}
                           className={`flex flex-col items-center justify-center py-4 border rounded transition-all ${readingFontSize === f.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900 ring-1 ring-zinc-900 dark:ring-white'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900 ring-1 ring-zinc-900 dark:ring-white'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className={`${f.icon} font-bold mb-2`}>Aa</span>
@@ -721,8 +727,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingLineHeight(l.id)}
                           className={`flex flex-col text-left p-5 border rounded transition-all ${readingLineHeight === l.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className="text-[10px] font-bold uppercase tracking-widest block">{l.label}</span>
@@ -746,8 +752,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingMaxWidth(w.id)}
                           className={`flex flex-col text-left p-5 border rounded transition-all ${readingMaxWidth === w.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className="text-[10px] font-bold uppercase tracking-widest block">{w.label}</span>
@@ -770,8 +776,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingTextAlign(a.id)}
                           className={`flex flex-col text-left p-5 border rounded transition-all ${readingTextAlign === a.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className="text-[10px] font-bold uppercase tracking-widest block">{a.label}</span>
@@ -795,8 +801,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingParagraphSpacing(p.id)}
                           className={`flex flex-col text-left p-5 border rounded transition-all ${readingParagraphSpacing === p.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className="text-[10px] font-bold uppercase tracking-widest block">{p.label}</span>
@@ -820,8 +826,8 @@ export default function SettingsPage() {
                           type="button"
                           onClick={() => setReadingFirstLineIndent(i.id)}
                           className={`flex flex-col text-left p-5 border rounded transition-all ${readingFirstLineIndent === i.id
-                              ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
-                              : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                            ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900'
+                            : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                             }`}
                         >
                           <span className="text-[10px] font-bold uppercase tracking-widest block">{i.label}</span>
@@ -897,21 +903,24 @@ export default function SettingsPage() {
                   {[
                     { id: 'light', label: 'Light', icon: Sun, desc: 'Clean White' },
                     { id: 'dark', label: 'Dark', icon: Moon, desc: 'Deep Night' },
-                    { id: 'custom', label: 'Midnight', icon: Sparkles, desc: 'Deep Blue' },
                     { id: 'rose', label: 'Blush', icon: Palette, desc: 'Warm Pink' },
                     { id: 'amoled', label: 'AMOLED', icon: Smartphone, desc: 'True Black' },
                     { id: 'cyberpunk', label: 'Cyber', icon: Laptop, desc: 'Yellow Dark' },
                     { id: 'neon', label: 'Neon', icon: Zap, desc: 'Blue & Black' },
                     { id: 'mint', label: 'Mint', icon: Type, desc: 'Fresh Green' },
-                    { id: 'eink', label: 'E-Ink', icon: Book, desc: 'Pure B&W' },
+                    { id: 'earth', label: 'Earth', icon: Leaf, desc: 'Warm Nature' },
+                    { id: 'canvas', label: 'Canvas', icon: Paintbrush, desc: 'Stone & Rust' },
+                    { id: 'vintage', label: 'Vintage', icon: Coffee, desc: 'Ivory & Oak' },
+                    { id: 'oceanic', label: 'Oceanic', icon: Cloud, desc: 'Ice & Sky' },
+                    { id: 'royal', label: 'Royal', icon: Crown, desc: 'High Contrast' },
                     { id: 'system', label: 'Automatic', icon: Monitor, desc: 'Device Sync' }
                   ].map((t) => (
                     <button
                       key={t.id}
                       onClick={() => setTheme(t.id)}
                       className={`flex flex-col items-center gap-8 p-10 border rounded transition-all group ${theme === t.id
-                          ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900/50 shadow-sm'
-                          : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
+                        ? 'border-zinc-900 dark:border-white bg-zinc-50 dark:bg-zinc-900/50 shadow-sm'
+                        : 'border-zinc-100 dark:border-zinc-900 hover:border-zinc-300 dark:hover:border-zinc-700'
                         }`}
                     >
                       <div className={`p-5 rounded transition-all ${theme === t.id ? 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900' : 'bg-zinc-50 dark:bg-zinc-900 text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white'}`}>
@@ -1093,10 +1102,10 @@ export default function SettingsPage() {
                           <div key={item.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 group hover:bg-zinc-50/30 dark:hover:bg-zinc-900/30 transition-all">
                             <div className="flex items-start gap-4">
                               <div className={`p-2.5 rounded shrink-0 ${isReceived
-                                  ? 'bg-emerald-500/10 text-emerald-500'
-                                  : isSub
-                                    ? 'bg-blue-500/10 text-blue-500'
-                                    : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
+                                ? 'bg-emerald-500/10 text-emerald-500'
+                                : isSub
+                                  ? 'bg-blue-500/10 text-blue-500'
+                                  : 'bg-zinc-100 dark:bg-zinc-900 text-zinc-400'
                                 }`}>
                                 {isReceived ? (
                                   <ArrowDownLeft className="w-4 h-4" />
@@ -1122,18 +1131,18 @@ export default function SettingsPage() {
                             <div className="flex items-center sm:justify-end gap-4 shrink-0 justify-between">
                               {/* Status Badge */}
                               <span className={`px-2 py-0.5 text-[8px] font-black uppercase tracking-widest rounded ${item.status === 'COMPLETED' || item.status === 'APPROVED'
-                                  ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                                  : item.status === 'DECLINED' || item.status === 'FAILED'
-                                    ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
-                                    : 'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse'
+                                ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                : item.status === 'DECLINED' || item.status === 'FAILED'
+                                  ? 'bg-rose-500/10 text-rose-500 border border-rose-500/20'
+                                  : 'bg-amber-500/10 text-amber-500 border border-amber-500/20 animate-pulse'
                                 }`}>
                                 {item.status}
                               </span>
 
                               {/* Amount in BDT */}
                               <span className={`text-xs font-mono font-black ${isReceived
-                                  ? 'text-emerald-500'
-                                  : 'text-zinc-950 dark:text-zinc-50'
+                                ? 'text-emerald-500'
+                                : 'text-zinc-950 dark:text-zinc-50'
                                 }`}>
                                 {isReceived ? '+' : '-'}৳{item.amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                               </span>
@@ -1182,11 +1191,11 @@ export default function SettingsPage() {
                     </span>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input 
-                      type="checkbox" 
-                      className="sr-only peer" 
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
                       checked={loginAlertsEnabled}
-                      onChange={toggleLoginAlerts} 
+                      onChange={toggleLoginAlerts}
                     />
                     <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer dark:bg-zinc-800 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-500"></div>
                   </label>

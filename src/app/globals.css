@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .custom, .amoled, .cyberpunk, .neon, .dark *, .custom *, .amoled *, .cyberpunk *, .neon *));
+@custom-variant dark (&:where(.dark, .amoled, .cyberpunk, .neon, .earth, .canvas, .vintage, .mint, .dark *, .amoled *, .cyberpunk *, .neon *, .earth *, .canvas *, .vintage *, .mint *));
 
 :root {
   --background: 255 255 255;
@@ -15,25 +15,6 @@
 .dark {
   --background: 9 9 11;
   --foreground: 250 250 250;
-}
-
-/* Custom Theme: Midnight Blue */
-.custom {
-  --background: 2 6 23;
-  --foreground: 248 250 252;
-  --brand: 139 92 246;
-  
-  --color-zinc-50: #f8fafc;
-  --color-zinc-100: #f1f5f9;
-  --color-zinc-200: #e2e8f0;
-  --color-zinc-300: #cbd5e1;
-  --color-zinc-400: #94a3b8;
-  --color-zinc-500: #64748b;
-  --color-zinc-600: #475569;
-  --color-zinc-700: #334155;
-  --color-zinc-800: #1e293b;
-  --color-zinc-900: #0f172a;
-  --color-zinc-950: #020617;
 }
 
 /* Custom Theme: Rose / Blush (Light) */
@@ -95,8 +76,8 @@
 
 /* Custom Theme: Mint (Greenish/Whitish) */
 .mint {
-  --background: 240 253 244; /* green-50 #f0fdf4 */
-  --foreground: 2 44 34; /* emerald-950, much darker blackish-green */
+  --background: 1 21 16; /* #011510 very dark green */
+  --foreground: 236 253 245; /* #ecfdf5 light mint */
   --brand: 16 185 129; /* emerald-500 */
   --color-white: #f8fafc;
   
@@ -111,26 +92,6 @@
   --color-zinc-800: #064e3b;
   --color-zinc-900: #022c22; /* Blackish green */
   --color-zinc-950: #011510; /* Almost pure black tinted with green */
-}
-
-/* Custom Theme: E-Ink (High Contrast B&W) */
-.eink {
-  --background: 255 255 255;
-  --foreground: 0 0 0;
-  --brand: 0 0 0; /* Pure black brand color */
-  --color-white: #ffffff;
-  
-  --color-zinc-50: #ffffff;
-  --color-zinc-100: #f4f4f5;
-  --color-zinc-200: #e4e4e7;
-  --color-zinc-300: #d4d4d8;
-  --color-zinc-400: #a1a1aa;
-  --color-zinc-500: #71717a;
-  --color-zinc-600: #52525b;
-  --color-zinc-700: #3f3f46;
-  --color-zinc-800: #27272a;
-  --color-zinc-900: #000000;
-  --color-zinc-950: #000000;
 }
 
 /* Custom Theme: Neon (Blue & Black) */
@@ -150,6 +111,101 @@
   --color-zinc-800: #111111;
   --color-zinc-900: #050505;
   --color-zinc-950: #000000;
+}
+
+/* Custom Theme: Earth (Warm & Natural) */
+.earth {
+  --background: 24 41 34; /* #182922 dark forest green */
+  --foreground: 252 251 249; /* #fcfbf9 soft oatmeal */
+  --brand: 212 175 55; /* #d4af37 warm mustard yellow */
+  
+  --color-zinc-50: #fcfbf9;
+  --color-zinc-100: #f5f0e6;
+  --color-zinc-200: #e3d8c3;
+  --color-zinc-300: #cfbda0;
+  --color-zinc-400: #b89f7a;
+  --color-zinc-500: #9e845c;
+  --color-zinc-600: #7d6849;
+  --color-zinc-700: #594a34;
+  --color-zinc-800: #3b3123;
+  --color-zinc-900: #2d4a3e;
+  --color-zinc-950: #182922;
+}
+
+/* Custom Theme: Canvas (Stone & Terracotta) */
+.canvas {
+  --background: 13 18 28; /* #0d121c deep slate */
+  --foreground: 255 255 255; /* #ffffff crisp white */
+  --brand: 217 93 57; /* #d95d39 terracotta / rust orange */
+  
+  --color-zinc-50: #ffffff;
+  --color-zinc-100: #f7f7f8;
+  --color-zinc-200: #e2e4e9;
+  --color-zinc-300: #cbd0d9;
+  --color-zinc-400: #9ba3af;
+  --color-zinc-500: #717b8a;
+  --color-zinc-600: #525c6a;
+  --color-zinc-700: #3f4753;
+  --color-zinc-800: #2b323b;
+  --color-zinc-900: #1a2436;
+  --color-zinc-950: #0d121c;
+}
+
+/* Custom Theme: Vintage (Ivory & Burgundy) */
+.vintage {
+  --background: 36 28 22; /* #241c16 dark oak brown */
+  --foreground: 255 255 255; /* #ffffff warm ivory */
+  --brand: 139 50 60; /* #8b323c deep burgundy */
+  
+  --color-zinc-50: #ffffff;
+  --color-zinc-100: #fdfbf7;
+  --color-zinc-200: #eee8db;
+  --color-zinc-300: #dacbb5;
+  --color-zinc-400: #c2a988;
+  --color-zinc-500: #a78864;
+  --color-zinc-600: #8c6a49;
+  --color-zinc-700: #715236;
+  --color-zinc-800: #58412b;
+  --color-zinc-900: #3a2f28;
+  --color-zinc-950: #241c16;
+}
+
+/* Custom Theme: Oceanic (Ice White & Sky Blue) */
+.oceanic {
+  --background: 248 250 252; /* #f8fafc cool ice white */
+  --foreground: 15 23 42; /* #0f172a deep oceanic slate */
+  --brand: 14 165 233; /* #0ea5e9 vibrant sky blue */
+  
+  --color-zinc-50: #f8fafc;
+  --color-zinc-100: #f1f5f9;
+  --color-zinc-200: #e2e8f0;
+  --color-zinc-300: #cbd5e1;
+  --color-zinc-400: #94a3b8;
+  --color-zinc-500: #64748b;
+  --color-zinc-600: #475569;
+  --color-zinc-700: #334155;
+  --color-zinc-800: #1e293b;
+  --color-zinc-900: #0f172a;
+  --color-zinc-950: #020617;
+}
+
+/* Custom Theme: Royal (Cool Gray & Royal Blue) */
+.royal {
+  --background: 241 245 249; /* #f1f5f9 cool light gray */
+  --foreground: 9 13 22; /* #090d16 deep ink black */
+  --brand: 37 99 235; /* #2563eb royal blue */
+  
+  --color-zinc-50: #ffffff;
+  --color-zinc-100: #f8fafc;
+  --color-zinc-200: #e2e8f0;
+  --color-zinc-300: #cbd5e1;
+  --color-zinc-400: #94a3b8;
+  --color-zinc-500: #64748b;
+  --color-zinc-600: #475569;
+  --color-zinc-700: #334155;
+  --color-zinc-800: #1e293b;
+  --color-zinc-900: #0f172a;
+  --color-zinc-950: #090d16;
 }
 
 /* Reader Themes */

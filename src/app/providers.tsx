@@ -11,8 +11,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       attribute="class" 
       defaultTheme="system" 
       enableSystem
-      themes={['light', 'dark', 'custom', 'rose', 'amoled', 'cyberpunk', 'mint', 'eink', 'neon']}
-      value={{ light: 'light', dark: 'dark', custom: 'custom', rose: 'rose', amoled: 'amoled', cyberpunk: 'cyberpunk', mint: 'mint', eink: 'eink', neon: 'neon' }}
+      themes={['light', 'dark', 'rose', 'amoled', 'cyberpunk', 'mint', 'neon', 'earth', 'canvas', 'vintage', 'oceanic', 'royal']}
+      value={{ light: 'light', dark: 'dark', rose: 'rose', amoled: 'amoled', cyberpunk: 'cyberpunk', mint: 'mint', neon: 'neon', earth: 'earth', canvas: 'canvas', vintage: 'vintage', oceanic: 'oceanic', royal: 'royal' }}
     >
       <AuthProvider>{children}</AuthProvider>
       <Toaster
