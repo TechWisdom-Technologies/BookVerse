@@ -34,7 +34,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   try {
     const { dbUser } = await verifyToken();
     canUpload = dbUser.role === "AUTHOR" || dbUser.role === "ADMIN";
-  } catch {}
+  } catch { }
 
   try {
     const skip = (page - 1) * limit;
@@ -91,7 +91,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     return (
       <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
         <div className="max-w-7xl mx-auto px-6 py-12">
-          
+
           {/* Simple Header */}
           <header className="mb-12 pb-8 border-b border-zinc-100 dark:border-zinc-900 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div className="space-y-4">
@@ -115,13 +115,8 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
           <div className="flex flex-col lg:flex-row gap-16">
             {/* Simple Sidebar */}
             <aside className="w-full lg:w-72 shrink-0">
-              <div className="sticky top-24 space-y-12">
-                <div>
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 mb-8 flex items-center gap-2">
-                    <Search className="w-3.5 h-3.5" /> Search
-                  </h3>
-                  <BookFilters genres={genreList} languages={languageList} />
-                </div>
+              <div className="sticky top-5">
+                <BookFilters genres={genreList} languages={languageList} />
               </div>
             </aside>
 
@@ -135,7 +130,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
                   {total} Books Found
                 </span>
               </div>
-              
+
               <BookGrid books={booksWithRatings} />
 
               {totalPages > 1 && (
