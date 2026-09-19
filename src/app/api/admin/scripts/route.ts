@@ -12,6 +12,8 @@ const ALLOWED_SCRIPTS = {
   "expire-promotions": "scripts/expire-promotions.ts",
   "recalculate-stats": "scripts/recalculate-stats.ts",
   "upgrade-founding-users": "scripts/upgrade-founding-users.ts",
+  "backup-db": "scripts/backup-db.ts",
+  "backup-media": "scripts/backup-media.ts",
 };
 
 export async function POST(request: Request) {
