@@ -85,9 +85,8 @@ const postHandler = async (req: NextRequest) => {
       .map((s) => `- "${s.title}" by ${s.author.displayName || s.author.username} (Genre: ${s.genre || 'General'}) - ${truncate(s.summary || s.description)}`)
       .join("\n");
 
-    const { text } = await generateText({
-      model: groq('llama-3.3-70b-versatile'),
-      system: `You are the BookVerse AI Librarian, a helpful, enthusiastic, and knowledgeable assistant for a digital library platform. 
+    let responseText = '';
+    const systemPrompt = `You are the BookVerse AI Librarian, a helpful, enthusiastic, and knowledgeable assistant for a digital library platform. 
 
       CRITICAL RULE: You must ONLY recommend books and community stories that exist in our database. Do NOT recommend any books or stories that are not on the lists below. If there are no books or stories matching the user's specific request, politely tell them that and suggest the closest matches from our available lists instead.
 
@@ -97,11 +96,47 @@ const postHandler = async (req: NextRequest) => {
       Here is the list of available Community Stories in the BookVerse library:
       ${storiesList || 'No community stories available in the database.'}
 
-      Keep your answers concise, engaging, and friendly. When recommending a book or story, state its title and author, and explain in one exciting sentence why it fits their interest based on its description/summary. Always encourage users to read more!`,
-      messages,
-    });
+      Format your response professionally and cleanly. When recommending books or stories:
+      - Use bullet points (start the line with a dash) for each recommendation.
+      - Make sure there is a blank line between each recommendation for readability.
+      - State the title and author clearly.
+      - Provide a concise, engaging explanation of why it fits their interest.
+      
+      Do NOT use Markdown syntax like **asterisks** for bolding. Structure your answer clearly with plain text spacing and always encourage users to read more!`;
 
-    return new Response(JSON.stringify({ text }), {
+    const sanitizedMessages = messages.map((m: any) => ({
+      role: m.role,
+      content: m.content,
+    }));
+
+    try {
+      // 1. Try Gemini First
+      const { fetchGeminiWithFallback } = require('@/lib/gemini-fallback');
+      const data = await fetchGeminiWithFallback({
+        messages: [{ role: 'system', content: systemPrompt }, ...sanitizedMessages],
+        temperature: 0.7,
+      });
+      responseText = data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+    } catch (geminiErr: any) {
+      console.warn('Gemini Chat failed, falling back to Groq...', geminiErr);
+      
+      // 2. Fallback to Groq
+      try {
+        const { fetchGroqWithFallback } = require('@/lib/groq-fallback');
+        const data = await fetchGroqWithFallback({
+          model: 'openai/gpt-oss-20b',
+          messages: [{ role: 'system', content: systemPrompt }, ...sanitizedMessages],
+          max_tokens: 1024,
+          temperature: 0.7,
+        });
+        responseText = data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
+      } catch (groqErr: any) {
+        console.error('All AI keys (Gemini, Groq) failed:', groqErr);
+        return NextResponse.json({ error: 'Failed to process with AI' }, { status: 500 });
+      }
+    }
+
+    return new Response(JSON.stringify({ text: responseText }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {

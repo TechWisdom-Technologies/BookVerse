@@ -7,6 +7,8 @@ import Image from "@tiptap/extension-image";
 import Placeholder from "@tiptap/extension-placeholder";
 import Underline from "@tiptap/extension-underline";
 import { ExtractTextFeature } from "./ExtractTextFeature";
+import { WritingAssistFeature } from "./WritingAssistFeature";
+import { ContentModerationFeature } from "./ContentModerationFeature";
 import {
   Bold,
   Italic,
@@ -184,13 +186,18 @@ export default function StoryEditor({
         </div>
 
         <div className="flex items-center gap-1 px-2 border-r border-zinc-100 dark:border-zinc-800">
-          <ToolbarButton onClick={addImage} title="Add Image">
-            <ImageIcon className="w-3.5 h-3.5" />
-          </ToolbarButton>
           <ToolbarButton onClick={() => editor.chain().focus().setHorizontalRule().run()} title="Line Break">
             <Minus className="w-3.5 h-3.5" />
           </ToolbarButton>
+        </div>
+
+        <div className="flex items-center gap-1 px-2 border-r border-zinc-100 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-800/30 rounded mx-1">
+          <ToolbarButton onClick={addImage} title="Add Image">
+            <ImageIcon className="w-3.5 h-3.5" />
+          </ToolbarButton>
           <ExtractTextFeature onExtracted={(text) => editor.chain().focus().insertContent(text).run()} />
+          <WritingAssistFeature editor={editor} />
+          <ContentModerationFeature editor={editor} storyId={storyId} />
         </div>
 
         <div className="flex items-center gap-1 px-2">

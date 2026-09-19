@@ -29,15 +29,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    // Get API key from environment
-    const groqApiKey = process.env.GROQ_API_KEY;
-    if (!groqApiKey) {
-      return NextResponse.json(
-        { error: 'AI service not configured' },
-        { status: 500 }
-      );
-    }
-
     // Define prompts for each action
     const prompts: Record<string, string> = {
       rewrite: `Rewrite the following text to be more engaging and clear, maintaining the original meaning:\n\n${text}`,
@@ -47,35 +38,34 @@ export async function POST(req: Request) {
       tone: `Rewrite the following text in a more professional and formal tone:\n\n${text}`,
     };
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${groqApiKey}`,
-      },
-      body: JSON.stringify({
-        model: 'mixtral-8x7b-32768',
-        messages: [
-          {
-            role: 'user',
-            content: prompts[action],
-          },
-        ],
-        max_tokens: 1024,
+    let suggestions = '';
+
+    try {
+      // 1. Try Gemini First
+      const { fetchGeminiWithFallback } = require('@/lib/gemini-fallback');
+      const data = await fetchGeminiWithFallback({
+        messages: [{ role: 'user', content: prompts[action] }],
         temperature: 0.7,
-      }),
-    });
-
-    if (!response.ok) {
-      console.error('Groq API error:', await response.text());
-      return NextResponse.json(
-        { error: 'Failed to process with AI' },
-        { status: 500 }
-      );
+      });
+      suggestions = data.choices[0]?.message?.content || '';
+    } catch (geminiErr: any) {
+      console.warn('Gemini failed, falling back to Groq...', geminiErr);
+      
+      // 2. Fallback to Groq
+      try {
+        const { fetchGroqWithFallback } = require('@/lib/groq-fallback');
+        const data = await fetchGroqWithFallback({
+          model: 'openai/gpt-oss-20b',
+          messages: [{ role: 'user', content: prompts[action] }],
+          max_tokens: 1024,
+          temperature: 0.7,
+        });
+        suggestions = data.choices[0]?.message?.content || '';
+      } catch (groqErr: any) {
+        console.error('All AI keys (Gemini, Groq) failed:', groqErr);
+        return NextResponse.json({ error: 'Failed to process with AI' }, { status: 500 });
+      }
     }
-
-    const data = await response.json();
-    const suggestions = data.choices[0]?.message?.content || '';
 
     return NextResponse.json({
       original: text,

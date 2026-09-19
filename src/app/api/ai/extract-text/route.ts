@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { hasFeatureAccess } from "@/lib/entitlements";
-import { GoogleGenAI } from "@google/genai";
 import AdmZip from "adm-zip";
 import PDFParser from "pdf2json";
 
@@ -34,7 +33,7 @@ export async function POST(request: Request) {
     else if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
       extractedText = await extractTextFromPdf(buffer);
     }
-    // Handle Images (Using Gemini 1.5 Flash)
+    // Handle Images (Using Gemini 2.5 Flash)
     else if (file.type.startsWith("image/")) {
       extractedText = await extractTextFromImage(buffer, file.type);
     } 
@@ -70,63 +69,59 @@ export async function POST(request: Request) {
 async function extractTextFromImage(buffer: Buffer, mimeType: string): Promise<string> {
   const prompt = `Extract all handwritten or printed text from this image exactly as written. Preserve formatting, paragraphs, and punctuation as closely as possible. Do not include any other commentary. Just return the text.`;
   
-  // Try Gemini First
-  try {
-    if (!process.env.GEMINI_API_KEY) throw new Error("Missing Gemini key");
-    console.log("[ExtractText] Trying Gemini 1.5 Flash...");
-    
-    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: [
-        prompt,
-        { inlineData: { data: buffer.toString("base64"), mimeType } }
-      ]
-    });
-    
-    if (response.text) return response.text;
-  } catch (error) {
-    console.warn("[ExtractText] Gemini failed, falling back to OpenAI", error);
-  }
+  const keys = [
+    process.env.GEMINI_API_KEY_1,
+    process.env.GEMINI_API_KEY_2,
+    process.env.GEMINI_API_KEY_3,
+    process.env.GEMINI_API_KEY
+  ].filter(Boolean) as string[];
 
-// Fallback to OpenAI (Only works for images)
-  try {
-    if (!process.env.OPENAI_API_KEY) throw new Error("Missing OpenAI key");
-    if (mimeType === "application/pdf") {
-      throw new Error("OpenAI fallback does not support raw PDF inline. Please use Gemini.");
+  if (keys.length === 0) throw new Error("Missing Gemini keys");
+  
+  const base64Image = buffer.toString("base64");
+  let lastError = null;
+
+  for (const key of keys) {
+    try {
+      console.log(`[ExtractText] Trying Gemini 2.5 Flash with key ${key.substring(0, 8)}...`);
+      
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            role: "user",
+            parts: [
+              { text: prompt },
+              {
+                inlineData: {
+                  mimeType: mimeType,
+                  data: base64Image
+                }
+              }
+            ]
+          }]
+        })
+      });
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new Error(`Gemini API error: ${response.status} - ${err}`);
+      }
+
+      const data = await response.json();
+      const extractedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      if (extractedText) return extractedText;
+      
+    } catch (error: any) {
+      console.warn(`[ExtractText] Gemini key failed:`, error.message);
+      lastError = error;
+      continue;
     }
-    console.log("[ExtractText] Trying OpenAI gpt-4o...");
-
-    // ... (dynamic import or just use require for openai to save bundle size since it's fallback)
-    const OpenAI = require("openai");
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const base64Image = buffer.toString("base64");
-    
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: prompt },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:${mimeType};base64,${base64Image}`,
-                detail: "high"
-              },
-            },
-          ],
-        },
-      ],
-      max_tokens: 1500,
-    });
-
-    return response.choices[0]?.message?.content || "";
-  } catch (error) {
-    console.error("[ExtractText] OpenAI fallback also failed", error);
-    throw new Error("All vision AI providers failed. " + (error instanceof Error ? error.message : ""));
   }
+
+  throw lastError || new Error("All vision AI providers failed.");
 }
 
 function extractTextFromDocx(buffer: Buffer): string {

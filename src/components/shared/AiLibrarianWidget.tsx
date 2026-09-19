@@ -141,7 +141,7 @@ export function AiLibrarianWidget() {
                       className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm ${
                         m.role === "user"
                           ? "bg-indigo-600 text-white"
-                          : "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
+                          : "bg-zinc-100 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200 whitespace-pre-wrap"
                       }`}
                     >
                       {m.content}
