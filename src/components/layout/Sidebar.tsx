@@ -116,9 +116,8 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-50 h-full w-64 transform border-r border-zinc-200/50 bg-white/80 backdrop-blur-md transition-transform duration-300 ease-in-out dark:border-zinc-800/50 dark:bg-zinc-950/80 md:translate-x-0 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed left-0 top-0 z-50 h-full w-64 transform border-r border-zinc-200/50 bg-white/80 backdrop-blur-md transition-transform duration-300 ease-in-out dark:border-zinc-800/50 dark:bg-zinc-950/80 md:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
@@ -158,20 +157,18 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
                   <div key={item.label} className="space-y-1">
                     <button
                       onClick={() => toggleDropdown(item.label)}
-                      className={`group flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300 ${
-                        active
+                      className={`group flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300 ${active
                           ? "bg-brand/10 text-brand dark:bg-brand/10 dark:text-brand shadow-sm"
                           : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-white"
-                      }`}
+                        }`}
                     >
                       <div className="flex items-center gap-4">
                         <Icon className={`h-5 w-5 transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`} />
                         {item.label}
                       </div>
                       <ChevronDown
-                        className={`h-4 w-4 transition-transform duration-300 ${
-                          isOpenDropdown ? "rotate-180" : ""
-                        }`}
+                        className={`h-4 w-4 transition-transform duration-300 ${isOpenDropdown ? "rotate-180" : ""
+                          }`}
                       />
                     </button>
                     {isOpenDropdown && (
@@ -183,11 +180,10 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
                               key={subItem.href}
                               href={subItem.href}
                               onClick={() => onCloseAction()}
-                              className={`rounded-xl px-4 py-2 text-sm font-bold transition-all duration-300 ${
-                                subActive
+                              className={`rounded-xl px-4 py-2 text-sm font-bold transition-all duration-300 ${subActive
                                   ? "text-brand"
                                   : "text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-white"
-                              }`}
+                                }`}
                             >
                               {subItem.label}
                             </Link>
@@ -204,11 +200,10 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
                   key={item.href || item.label}
                   href={item.href!}
                   onClick={() => onCloseAction()}
-                  className={`group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300 ${
-                    active
+                  className={`group flex items-center gap-4 rounded-2xl px-4 py-3.5 text-sm font-bold transition-all duration-300 ${active
                       ? "bg-brand/10 text-brand dark:bg-brand/10 dark:text-brand shadow-sm"
                       : "text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/50 dark:hover:text-white"
-                  }`}
+                    }`}
                 >
                   <Icon className={`h-5 w-5 transition-transform duration-300 ${active ? "scale-110" : "group-hover:scale-110"}`} />
                   {item.label}
