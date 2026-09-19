@@ -49,6 +49,7 @@ enum TipStatus {
 }
 
 model User {
+  aiTokenUsages     AITokenUsage[]
   id          String   @id @default(cuid())
   firebaseUid String   @unique @map("firebase_uid")
   email       String   @unique
@@ -1034,4 +1035,25 @@ model CrashReport {
   createdAt    DateTime @default(now()) @map("created_at")
 
   @@map("crash_reports")
+}
+
+
+
+model AITokenUsage {
+  id               String   @id @default(cuid())
+  provider         String   // GEMINI, GROQ, CLOUDFLARE_AI, POLLINATIONS, OPENAI, HUGGINGFACE
+  model            String
+  type             String   // TEXT, IMAGE
+  tokens           Int      // total token count, or 1 for images
+  promptTokens     Int?     @map("prompt_tokens")
+  completionTokens Int?     @map("completion_tokens")
+  durationMs       Int?     @map("duration_ms")
+  userId           String?  @map("user_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user             User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([provider])
+  @@index([createdAt])
+  @@map("ai_token_usage")
 }

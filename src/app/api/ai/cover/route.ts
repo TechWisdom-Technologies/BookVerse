@@ -101,10 +101,16 @@ export async function POST(req: Request) {
     const enhancedPrompt = `A professional, high-quality book cover design without any text. Style: ${prompt}. Cinematic lighting, highly detailed, centered composition, suitable for a novel cover.`;
 
     // Strategy: Try Cloudflare first, fallback to Pollinations
+    let usedProvider: "CLOUDFLARE_AI" | "POLLINATIONS" = "CLOUDFLARE_AI";
+    let usedModel = "@cf/bytedance/stable-diffusion-xl-lightning";
+
+    const startTime = performance.now();
     let imageBuffer = await generateWithCloudflare(enhancedPrompt);
 
     if (!imageBuffer) {
       console.log("[AI Cover] Cloudflare unavailable, falling back to Pollinations...");
+      usedProvider = "POLLINATIONS";
+      usedModel = "pollinations-flux";
       imageBuffer = await generateWithPollinations(enhancedPrompt);
     }
 
@@ -114,10 +120,18 @@ export async function POST(req: Request) {
         { status: 502 }
       );
     }
+    const durationMs = Math.round(performance.now() - startTime);
 
     // Upload to R2 storage
     const fileKey = `covers/ai-${randomUUID()}.jpg`;
     const persistentUrl = await uploadToR2(fileKey, imageBuffer, "image/jpeg");
+
+    // Track AI Image Generation
+    import("@/lib/ai-metrics").then(m => {
+      // In this route we don't have dbUser easily extracted without verifyToken
+      // If you need userId, you'd add verifyToken here, but for now we log system usage
+      m.logTokenUsage(usedProvider, usedModel, "IMAGE", 1, undefined, { durationMs });
+    }).catch(console.error);
 
     return NextResponse.json({ url: persistentUrl });
   } catch (error: any) {

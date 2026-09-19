@@ -125,10 +125,16 @@ export async function POST(request: Request) {
     const enhancedPrompt = `${englishPrompt}, set in Bangladesh, realistic photography, black and white, monochrome, high contrast, highly detailed, photorealistic, cinematic lighting, masterpiece`;
 
     // Strategy: Try Cloudflare first, fallback to Pollinations
+    let usedProvider: "CLOUDFLARE_AI" | "POLLINATIONS" = "CLOUDFLARE_AI";
+    let usedModel = "@cf/bytedance/stable-diffusion-xl-lightning";
+
+    const startTime = performance.now();
     let imageBuffer = await generateWithCloudflare(enhancedPrompt);
 
     if (!imageBuffer) {
       console.log("[AI Illustration] Cloudflare unavailable, falling back to Pollinations...");
+      usedProvider = "POLLINATIONS";
+      usedModel = "pollinations-flux";
       imageBuffer = await generateWithPollinations(enhancedPrompt);
     }
 
@@ -138,10 +144,16 @@ export async function POST(request: Request) {
         { status: 502 }
       );
     }
+    const durationMs = Math.round(performance.now() - startTime);
 
     // Upload directly to Cloudflare R2
     const fileKey = `illustrations/ai-${randomUUID()}.jpg`;
     const secureUrl = await uploadToR2(fileKey, imageBuffer, "image/jpeg");
+
+    // Track AI Image Generation
+    import("@/lib/ai-metrics").then(m => {
+      m.logTokenUsage(usedProvider, usedModel, "IMAGE", 1, dbUser.id, { durationMs });
+    }).catch(console.error);
 
     return NextResponse.json({ url: secureUrl }, { status: 201 });
   } catch (error) {

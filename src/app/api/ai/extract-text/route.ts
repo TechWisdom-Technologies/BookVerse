@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     }
     // Handle Images (Using Gemini 2.5 Flash)
     else if (file.type.startsWith("image/")) {
-      extractedText = await extractTextFromImage(buffer, file.type);
+      extractedText = await extractTextFromImage(buffer, file.type, dbUser.id);
     } 
     else {
       return NextResponse.json({ error: "Unsupported file type" }, { status: 400 });
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
   }
 }
 
-async function extractTextFromImage(buffer: Buffer, mimeType: string): Promise<string> {
+async function extractTextFromImage(buffer: Buffer, mimeType: string, userId?: string): Promise<string> {
   const prompt = `Extract all handwritten or printed text from this image exactly as written. Preserve formatting, paragraphs, and punctuation as closely as possible. Do not include any other commentary. Just return the text.`;
   
   const keys = [
@@ -82,6 +82,7 @@ async function extractTextFromImage(buffer: Buffer, mimeType: string): Promise<s
   let lastError = null;
 
   for (const key of keys) {
+    const startTime = performance.now();
     try {
       console.log(`[ExtractText] Trying Gemini 2.5 Flash with key ${key.substring(0, 8)}...`);
       
@@ -111,6 +112,21 @@ async function extractTextFromImage(buffer: Buffer, mimeType: string): Promise<s
 
       const data = await response.json();
       const extractedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      
+      const tokens = data.usageMetadata?.totalTokenCount || 0;
+      const promptTokens = data.usageMetadata?.promptTokenCount || 0;
+      const completionTokens = data.usageMetadata?.candidatesTokenCount || 0;
+      const durationMs = Math.round(performance.now() - startTime);
+
+      if (tokens > 0) {
+        import("@/lib/ai-metrics").then(m => {
+          m.logTokenUsage('GEMINI', 'gemini-2.5-flash', 'TEXT', tokens, userId, {
+            durationMs,
+            promptTokens,
+            completionTokens
+          });
+        }).catch(console.error);
+      }
       
       if (extractedText) return extractedText;
       

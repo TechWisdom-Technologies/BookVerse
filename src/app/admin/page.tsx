@@ -181,6 +181,7 @@ export default function AdminPage() {
               { href: "/admin/series", label: "Series", icon: "Library", desc: "Manage narrative series directories, sequences, and collections." },
               { href: "/admin/clubs", label: "Clubs", desc: "Community clubs and membership oversight." },
               { href: "/admin/support", label: "Support Tickets", desc: "View, update, and manage user support inquiries and reports." },
+              { href: "/admin/ai-metrics", label: "AI Telemetry", desc: "Track token consumption and API usage across all integrated AI models." },
             ].map((link) => (
               <Link
                 key={link.href}

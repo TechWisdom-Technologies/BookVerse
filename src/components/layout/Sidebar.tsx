@@ -30,6 +30,7 @@ interface SidebarItem {
 const sidebarItems: SidebarItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/monitoring", label: "Monitoring", icon: Activity },
+  { href: "/admin/ai-metrics", label: "AI Monitoring", icon: Activity },
   { href: "/admin/storage", label: "Storage", icon: Database },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/transactions", label: "Payments", icon: CreditCard },

@@ -5,6 +5,8 @@ import { generateText } from 'ai';
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { fetchGeminiWithFallback } from "@/lib/gemini-fallback";
+import { fetchGroqWithFallback } from "@/lib/groq-fallback";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -111,7 +113,6 @@ const postHandler = async (req: NextRequest) => {
 
     try {
       // 1. Try Gemini First
-      const { fetchGeminiWithFallback } = require('@/lib/gemini-fallback');
       const data = await fetchGeminiWithFallback({
         messages: [{ role: 'system', content: systemPrompt }, ...sanitizedMessages],
         temperature: 0.7,
@@ -122,7 +123,6 @@ const postHandler = async (req: NextRequest) => {
       
       // 2. Fallback to Groq
       try {
-        const { fetchGroqWithFallback } = require('@/lib/groq-fallback');
         const data = await fetchGroqWithFallback({
           model: 'openai/gpt-oss-20b',
           messages: [{ role: 'system', content: systemPrompt }, ...sanitizedMessages],

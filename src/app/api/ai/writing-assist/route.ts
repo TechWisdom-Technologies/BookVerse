@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getAuth } from '@/lib/auth';
-import { checkRateLimit } from '@/lib/rate-limit';
+import { checkRateLimit } from "@/lib/rate-limit";
+import { fetchGeminiWithFallback } from "@/lib/gemini-fallback";
+import { fetchGroqWithFallback } from "@/lib/groq-fallback";
 
 export async function POST(req: Request) {
   // Rate limit: Max 10 AI writing requests per minute per IP
@@ -42,7 +44,6 @@ export async function POST(req: Request) {
 
     try {
       // 1. Try Gemini First
-      const { fetchGeminiWithFallback } = require('@/lib/gemini-fallback');
       const data = await fetchGeminiWithFallback({
         messages: [{ role: 'user', content: prompts[action] }],
         temperature: 0.7,
@@ -53,7 +54,6 @@ export async function POST(req: Request) {
       
       // 2. Fallback to Groq
       try {
-        const { fetchGroqWithFallback } = require('@/lib/groq-fallback');
         const data = await fetchGroqWithFallback({
           model: 'openai/gpt-oss-20b',
           messages: [{ role: 'user', content: prompts[action] }],

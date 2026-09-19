@@ -1,3 +1,5 @@
+import { logTokenUsage } from './ai-metrics';
+
 export async function fetchGeminiWithFallback(options: any) {
   const keys = [
     process.env.GEMINI_API_KEY_1,
@@ -44,6 +46,7 @@ export async function fetchGeminiWithFallback(options: any) {
   }
 
   for (const key of keys) {
+    const startTime = performance.now();
     try {
       // Using gemini-2.5-flash as it is fully supported by your specific API keys
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
@@ -62,6 +65,20 @@ export async function fetchGeminiWithFallback(options: any) {
       const data = await response.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
       
+      // Log token usage asynchronously
+      const tokens = data.usageMetadata?.totalTokenCount || 0;
+      const promptTokens = data.usageMetadata?.promptTokenCount || 0;
+      const completionTokens = data.usageMetadata?.candidatesTokenCount || 0;
+      const durationMs = Math.round(performance.now() - startTime);
+
+      if (tokens > 0) {
+        logTokenUsage('GEMINI', 'gemini-2.5-flash', 'TEXT', tokens, undefined, {
+          durationMs,
+          promptTokens,
+          completionTokens
+        });
+      }
+
       // Return in OpenAI-like shape so the caller doesn't have to change their parsing logic
       return {
         choices: [

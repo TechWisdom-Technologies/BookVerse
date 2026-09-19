@@ -1,3 +1,5 @@
+import { logTokenUsage } from './ai-metrics';
+
 export async function fetchGroqWithFallback(body: any) {
   // Collect all Groq API keys available in the environment
   const keys = [
@@ -17,6 +19,7 @@ export async function fetchGroqWithFallback(body: any) {
 
   // Try each key sequentially
   for (const key of keys) {
+    const startTime = performance.now();
     try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -34,7 +37,22 @@ export async function fetchGroqWithFallback(body: any) {
         continue; // Try next key
       }
 
-      return await response.json();
+      const data = await response.json();
+      
+      const tokens = data.usage?.total_tokens || 0;
+      const promptTokens = data.usage?.prompt_tokens || 0;
+      const completionTokens = data.usage?.completion_tokens || 0;
+      const durationMs = Math.round(performance.now() - startTime);
+
+      if (tokens > 0) {
+        logTokenUsage('GROQ', body.model || 'unknown', 'TEXT', tokens, undefined, {
+          durationMs,
+          promptTokens,
+          completionTokens
+        });
+      }
+      
+      return data;
     } catch (err: any) {
       console.warn(`Groq key ${key.substring(0, 8)}... network error:`, err.message);
       lastError = err;
