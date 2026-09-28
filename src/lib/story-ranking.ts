@@ -3,7 +3,8 @@ import type { Prisma } from "@prisma/client";
 
 export async function getSortedStoryIds(
   genre?: string,
-  sort: string = "popular"
+  sort: string = "popular",
+  authorName?: string
 ): Promise<{ ids: string[], total: number }> {
   const where: Prisma.StoryWhereInput = {
     published: true,
@@ -19,6 +20,16 @@ export async function getSortedStoryIds(
       { title: { contains: genre, mode: "insensitive" } },
       { tags: { has: genre } }
     ];
+  }
+
+  if (authorName) {
+    where.author = {
+      ...(where.author as Prisma.UserWhereInput),
+      OR: [
+        { displayName: { equals: authorName, mode: "insensitive" } },
+        { username: { equals: authorName, mode: "insensitive" } }
+      ]
+    };
   }
 
   // If sort is purely by "recent", we can skip the complex calculation and let the database do it.

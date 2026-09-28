@@ -6,6 +6,7 @@ import { useTransition } from "react";
 
 interface StoryFiltersProps {
   genres: string[];
+  authors: string[];
 }
 
 const sortOptions = [
@@ -15,14 +16,15 @@ const sortOptions = [
   { value: "reactions", label: "Most Reactions" },
 ];
 
-export function StoryFilters({ genres }: StoryFiltersProps) {
+export function StoryFilters({ genres, authors }: StoryFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const currentSort = searchParams.get("sort") || "popular";
   const currentGenre = searchParams.get("genre") || "";
+  const currentAuthor = searchParams.get("authorName") || "";
   const currentView = searchParams.get("view") || "grid";
-  const hasFilters = currentGenre || currentSort !== "popular";
+  const hasFilters = currentGenre || currentAuthor || currentSort !== "popular";
 
   function handleReset() {
     startTransition(() => {
@@ -64,18 +66,37 @@ export function StoryFilters({ genres }: StoryFiltersProps) {
         ))}
       </div>
 
-      <select
-        value={currentGenre}
-        onChange={(event) => updateParam("genre", event.target.value)}
-        className="h-10 rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50"
-      >
-        <option value="">All Genres</option>
-        {genres.map((genre) => (
-          <option key={genre} value={genre}>
-            {genre}
-          </option>
-        ))}
-      </select>
+      <div className="relative flex items-center">
+        <input
+          type="text"
+          list="story-genre-list"
+          placeholder="All Genres"
+          value={currentGenre}
+          onChange={(event) => updateParam("genre", event.target.value)}
+          className="h-10 w-40 rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none"
+        />
+        <datalist id="story-genre-list">
+          {genres.map((genre) => (
+            <option key={genre} value={genre} />
+          ))}
+        </datalist>
+      </div>
+
+      <div className="relative flex items-center">
+        <input
+          type="text"
+          list="story-author-list"
+          placeholder="All Authors"
+          value={currentAuthor}
+          onChange={(event) => updateParam("authorName", event.target.value)}
+          className="h-10 w-40 rounded-lg border border-zinc-200 bg-white px-3 text-sm text-zinc-900 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none"
+        />
+        <datalist id="story-author-list">
+          {authors.map((author) => (
+            <option key={author} value={author} />
+          ))}
+        </datalist>
+      </div>
 
       {hasFilters && (
         <button

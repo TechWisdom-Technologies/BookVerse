@@ -33,8 +33,9 @@ interface StoriesPageProps {
   searchParams: Promise<{
     genre?: string;
     sort?: string;
-    page?: string;
     view?: string;
+    authorName?: string;
+    page?: string;
   }>;
 }
 
@@ -43,11 +44,12 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
   const page = Math.max(1, Number.parseInt(params.page || "1", 10));
   const sort = params.sort || "popular";
   const genre = params.genre || "";
+  const authorName = params.authorName || "";
   const view = params.view || "grid";
   const limit = 12;
   const skip = (page - 1) * limit;
 
-  const { ids: rankedStoryIds, total } = await getSortedStoryIds(genre, sort);
+  const { ids: rankedStoryIds, total } = await getSortedStoryIds(genre, sort, authorName);
   const paginatedIds = rankedStoryIds.slice(skip, skip + limit);
 
   const currentUserId = await getCurrentUserId();
@@ -139,6 +141,13 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
     .map(id => storiesUnsorted.find(s => s.id === id))
     .filter((s): s is NonNullable<typeof s> => s !== undefined);
 
+  const authorsQuery = await prisma.user.findMany({
+    where: { stories: { some: { published: true } } },
+    select: { displayName: true, username: true }
+  });
+  const authors = authorsQuery.map(a => a.displayName || a.username).filter(Boolean) as string[];
+  const authorList = Array.from(new Set(authors)).sort();
+
   const totalPages = Math.ceil(total / limit);
 
   const serializedStories = stories.map(story => {
@@ -191,7 +200,7 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
 
         {/* Simple Filters */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mt-16 pt-12 border-t border-zinc-100 dark:border-zinc-900 mb-12">
-          <StoryFilters genres={storyGenres} />
+          <StoryFilters genres={storyGenres} authors={authorList} />
           <div className="flex items-center gap-2 px-3 py-1.5 text-[9px] font-bold uppercase tracking-widest text-zinc-400 bg-zinc-50 dark:bg-zinc-900 rounded border border-zinc-100 dark:border-zinc-800">
             <Activity className="w-3 h-3 text-zinc-300" />
             {total} Stories Found
