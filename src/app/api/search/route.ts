@@ -40,8 +40,8 @@ export async function GET(request: Request) {
     const tsQueryString = formatTsQuery(searchQuery);
 
 
-    const englishSearchExp = tsQueryString 
-      ? Prisma.sql`to_tsquery('english', ${tsQueryString})` 
+    const englishSearchExp = tsQueryString
+      ? Prisma.sql`to_tsquery('english', ${tsQueryString})`
       : Prisma.sql`plainto_tsquery('english', ${searchQuery})`;
 
     const banglaSqlExtension = Prisma.join(
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
 
     const results: any[] = [];
     let total = 0;
-    
+
     // We will do parallel fetches depending on type.
     const promises = [];
 
@@ -358,7 +358,7 @@ export async function GET(request: Request) {
         const weightA = typeWeight[a._type] || 0;
         const weightB = typeWeight[b._type] || 0;
         if (weightA !== weightB) return weightB - weightA;
-        
+
         // 3. Finally, sort by recency
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
