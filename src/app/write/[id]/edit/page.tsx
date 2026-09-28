@@ -337,9 +337,9 @@ export default function EditStoryPage({ params }: { params: Promise<{ id: string
               <div className="space-y-4">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-1">Visual Registry</label>
                 <div className="p-4 border border-dashed border-zinc-100 dark:border-zinc-800 rounded bg-white/50 dark:bg-zinc-950/50">
-                  <FileUpload accept="image/*" maxSize={5 * 1024 * 1024} onUpload={handleAutoSaveCover} label="Upload Record Cover" />
+                  <FileUpload accept="image/*" maxSize={5 * 1024 * 1024} uploadKind="book-cover" onUpload={handleAutoSaveCover} label="Upload Record Cover" />
                   <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-900">
-                    <AiCoverGenerator onCoverGenerated={handleAutoSaveCover} />
+                    <AiCoverGenerator onCoverGenerated={handleAutoSaveCover} target="book" />
                   </div>
                 </div>
               </div>

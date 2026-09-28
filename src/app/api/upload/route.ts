@@ -4,12 +4,13 @@ import { randomUUID } from "crypto";
 import { Role } from "@prisma/client";
 import { verifyToken } from "@/lib/auth";
 import { uploadToR2 } from "@/lib/r2";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const MAX_COVER_SIZE = 5 * 1024 * 1024;
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
 const MAX_BOOK_SIZE = 100 * 1024 * 1024;
-const VALID_KINDS = ["cover", "book", "avatar"] as const;
+const VALID_KINDS = ["cover", "book-cover", "book", "avatar"] as const;
 
 type UploadKind = (typeof VALID_KINDS)[number];
 
@@ -38,7 +39,7 @@ function getExtension(filename: string) {
 function validateFile(file: File, kind: UploadKind) {
   const extension = getExtension(file.name);
 
-  if (kind === "cover") {
+  if (kind === "cover" || kind === "book-cover") {
     if (file.size > MAX_COVER_SIZE) return "Cover image must be smaller than 5 MB.";
     if (!file.type.startsWith("image/")) return "Cover must be an image file.";
     return null;
@@ -78,7 +79,7 @@ const postHandler = async (request: NextRequest) => {
 
     // Avatar uploads allowed for all authenticated users
     // Book/cover uploads require AUTHOR or ADMIN role
-    if (kindValue !== "avatar" && !isAuthorOrAdmin(dbUser.role)) {
+    if (kindValue !== "avatar" && kindValue !== "cover" && !isAuthorOrAdmin(dbUser.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -96,10 +97,27 @@ const postHandler = async (request: NextRequest) => {
     }
 
     const fileName = sanitizeFilename(file.name);
-    const folder = kindValue === "avatar" ? "avatars" : kindValue === "cover" ? "covers" : "books";
-    const key = `${folder}/${dbUser.id}/${Date.now()}-${randomUUID()}-${fileName}`;
     const buffer = Buffer.from(await file.arrayBuffer());
-    const url = await uploadToR2(key, buffer, file.type || "application/octet-stream");
+
+    let url: string;
+    let key: string;
+
+    if (kindValue === "avatar") {
+      // Avatars go to Cloudinary for optimized image delivery
+      const publicId = `${dbUser.id}-${Date.now()}`;
+      url = await uploadToCloudinary(buffer, "bookverse/avatars", publicId);
+      key = `bookverse/avatars/${publicId}`;
+    } else if (kindValue === "cover") {
+      // Story/club/universe/series covers go to Cloudinary
+      const publicId = `cover-${dbUser.id}-${Date.now()}`;
+      url = await uploadToCloudinary(buffer, "bookverse/covers", publicId);
+      key = `bookverse/covers/${publicId}`;
+    } else {
+      // Books (PDF/EPUB) and book-covers go to Cloudflare R2
+      const folder = kindValue === "book-cover" ? "covers" : "books";
+      key = `${folder}/${dbUser.id}/${Date.now()}-${randomUUID()}-${fileName}`;
+      url = await uploadToR2(key, buffer, file.type || "application/octet-stream");
+    }
 
     return NextResponse.json({ url, key }, { status: 201 });
   } catch (error) {

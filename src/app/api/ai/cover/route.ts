@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { uploadToR2 } from "@/lib/r2";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { randomUUID } from "crypto";
 
@@ -89,7 +90,7 @@ export async function POST(req: Request) {
   if (limitRes.limited) return limitRes.response;
 
   try {
-    const { prompt } = await req.json();
+    const { prompt, target } = await req.json();
 
     if (!prompt) {
       return NextResponse.json(
@@ -122,9 +123,17 @@ export async function POST(req: Request) {
     }
     const durationMs = Math.round(performance.now() - startTime);
 
-    // Upload to R2 storage
-    const fileKey = `covers/ai-${randomUUID()}.jpg`;
-    const persistentUrl = await uploadToR2(fileKey, imageBuffer, "image/jpeg");
+    let persistentUrl: string;
+    
+    if (target === "book") {
+      // Books go to R2
+      const fileKey = `covers/ai-${randomUUID()}.jpg`;
+      persistentUrl = await uploadToR2(fileKey, imageBuffer, "image/jpeg");
+    } else {
+      // Stories and other covers go to Cloudinary
+      const publicId = `ai-cover-${randomUUID()}`;
+      persistentUrl = await uploadToCloudinary(imageBuffer, "bookverse/covers", publicId);
+    }
 
     // Track AI Image Generation
     import("@/lib/ai-metrics").then(m => {

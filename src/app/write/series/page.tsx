@@ -8,6 +8,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { checkTierAccess } from "@/lib/tier-check";
 import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
+import { FileUpload } from "@/components/shared/FileUpload";
 
 interface Series {
   id: string;
@@ -223,8 +224,21 @@ export default function SeriesStudioPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Cover Image URL</label>
-                  <input type="text" value={coverUrl} onChange={(e) => setCoverUrl(e.target.value)} placeholder="https://..." className="w-full px-5 py-3 bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 rounded text-xs font-bold outline-none focus:border-zinc-900 dark:focus:border-white shadow-sm" />
+                  <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">Cover Image</label>
+                  <div className="p-4 border border-dashed border-zinc-100 dark:border-zinc-800 rounded bg-white dark:bg-zinc-950/50">
+                    <FileUpload
+                      accept="image/*"
+                      maxSize={5 * 1024 * 1024}
+                      uploadKind="cover"
+                      onUpload={(url) => setCoverUrl(url)}
+                      label="Upload Series Cover"
+                    />
+                    {coverUrl && (
+                      <div className="mt-4 relative h-32 w-24 rounded overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm">
+                        <img src={coverUrl} alt="Series Cover" className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-2">

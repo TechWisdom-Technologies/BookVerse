@@ -53,24 +53,17 @@ export async function POST(_request: Request) {
       }
     };
 
-    users.forEach(u => extractKey(u.avatarUrl));
+    // Note: avatarUrl is no longer on R2 (now on Cloudinary), so we skip it
     books.forEach(b => { extractKey(b.coverUrl); extractKey(b.fileUrl); });
     stories.forEach(s => extractKey(s.coverUrl));
-    chapters.forEach(c => extractKey(c.illustrationUrl));
+    // Note: illustrationUrl is no longer on R2 (now on Cloudinary), so we skip it
     clubs.forEach(c => extractKey(c.coverUrl));
     universes.forEach(u => extractKey(u.coverUrl));
     series.forEach(s => extractKey(s.coverUrl));
 
-    // 3. Find Orphans
-    // Only target dynamic folders, ignore root or static assets
-    const targetPrefixes = ["covers/", "illustrations/", "avatars/", "books/", "universes/", "series/", "clubs/", "profiles/"];
-    
     const orphans: string[] = [];
     
     for (const key of allR2Keys) {
-      const isTargetedPrefix = targetPrefixes.some(prefix => key.startsWith(prefix));
-      if (!isTargetedPrefix) continue;
-
       if (!activeKeys.has(key)) {
         orphans.push(key);
       }

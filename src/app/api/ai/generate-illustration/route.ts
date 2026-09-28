@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/lib/auth";
 import { hasFeatureAccess } from "@/lib/entitlements";
-import { uploadToR2 } from "@/lib/r2";
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { randomUUID } from "crypto";
 
@@ -146,9 +146,9 @@ export async function POST(request: Request) {
     }
     const durationMs = Math.round(performance.now() - startTime);
 
-    // Upload directly to Cloudflare R2
-    const fileKey = `illustrations/ai-${randomUUID()}.jpg`;
-    const secureUrl = await uploadToR2(fileKey, imageBuffer, "image/jpeg");
+    // Upload to Cloudinary (illustrations are not book files, so they go to Cloudinary)
+    const publicId = `ai-${randomUUID()}`;
+    const secureUrl = await uploadToCloudinary(imageBuffer, "bookverse/illustrations", publicId);
 
     // Track AI Image Generation
     import("@/lib/ai-metrics").then(m => {

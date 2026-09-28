@@ -5,6 +5,7 @@ import { verifyToken } from "@/lib/auth";
 import { profileSchema } from "@/lib/validators";
 import { Prisma } from "@prisma/client";
 import { adminAuth } from "@/lib/firebase-admin";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 const getHandler = async (req: NextRequest) => {
   try {
@@ -196,14 +197,26 @@ const deleteHandler = async (req: NextRequest) => {
   try {
     const { dbUser } = await verifyToken();
 
-    // 1. Delete from Firebase Auth
+    // 1. Clean up avatar from Cloudinary if it exists
+    if (dbUser.avatarUrl && dbUser.avatarUrl.includes("cloudinary.com")) {
+      try {
+        const urlParts = dbUser.avatarUrl.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = "bookverse/avatars/" + filename.split(".")[0];
+        await deleteFromCloudinary(publicId);
+      } catch (cleanupErr) {
+        console.warn("Failed to delete avatar from Cloudinary:", cleanupErr);
+      }
+    }
+
+    // 2. Delete from Firebase Auth
     try {
       await adminAuth.deleteUser(dbUser.firebaseUid);
     } catch (firebaseErr) {
       console.warn("Failed to delete user from Firebase Auth, might not exist:", firebaseErr);
     }
 
-    // 2. Delete from database
+    // 3. Delete from database
     await prisma.user.delete({
       where: { id: dbUser.id }
     });

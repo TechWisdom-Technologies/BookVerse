@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+import { deleteFromCloudinary } from '@/lib/cloudinary';
 
 /**
  * GET /api/clubs/[clubId]
@@ -117,7 +118,7 @@ export async function PATCH(
     // Check ownership
     const club = await prisma.club.findUnique({
       where: { id: clubId },
-      select: { ownerId: true },
+      select: { ownerId: true, coverUrl: true },
     });
 
     if (!club) {
@@ -129,6 +130,16 @@ export async function PATCH(
     }
 
     const { name, description, genre, isPrivate, coverUrl, maxMembers, rules } = await req.json();
+
+    // Delete old cover from Cloudinary if it's being replaced or removed
+    if (coverUrl !== undefined && coverUrl !== club.coverUrl && club.coverUrl) {
+      if (club.coverUrl.includes("res.cloudinary.com")) {
+        const publicIdMatch = club.coverUrl.match(/\/v\d+\/(.+?)\.[a-zA-Z]+$/);
+        if (publicIdMatch && publicIdMatch[1]) {
+          void deleteFromCloudinary(publicIdMatch[1]);
+        }
+      }
+    }
 
     const updated = await prisma.club.update({
       where: { id: clubId },
@@ -180,7 +191,7 @@ export async function DELETE(
     // Check ownership
     const club = await prisma.club.findUnique({
       where: { id: clubId },
-      select: { ownerId: true },
+      select: { ownerId: true, coverUrl: true },
     });
 
     if (!club) {
@@ -189,6 +200,13 @@ export async function DELETE(
 
     if (club.ownerId !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (club.coverUrl && club.coverUrl.includes("res.cloudinary.com")) {
+      const publicIdMatch = club.coverUrl.match(/\/v\d+\/(.+?)\.[a-zA-Z]+$/);
+      if (publicIdMatch && publicIdMatch[1]) {
+        void deleteFromCloudinary(publicIdMatch[1]);
+      }
     }
 
     await prisma.club.delete({

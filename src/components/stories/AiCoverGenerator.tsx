@@ -7,9 +7,10 @@ import { toast } from "react-hot-toast";
 
 interface AiCoverGeneratorProps {
   onCoverGenerated: (url: string) => void;
+  target?: "book" | "story";
 }
 
-export function AiCoverGenerator({ onCoverGenerated }: AiCoverGeneratorProps) {
+export function AiCoverGenerator({ onCoverGenerated, target = "story" }: AiCoverGeneratorProps) {
   const [prompt, setPrompt] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export function AiCoverGenerator({ onCoverGenerated }: AiCoverGeneratorProps) {
       const res = await fetch("/api/ai/cover", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt, target }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Generation failed");

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 import { Role, Prisma } from "@prisma/client";
 import { adminAuth } from "@/lib/firebase-admin";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 export async function GET(request: Request) {
   try {
@@ -168,7 +169,7 @@ export async function DELETE(request: Request) {
     // 1. Look up the user's firebaseUid before deleting
     const targetUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: { firebaseUid: true },
+      select: { firebaseUid: true, avatarUrl: true },
     });
     if (!targetUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -183,7 +184,19 @@ export async function DELETE(request: Request) {
       }
     }
 
-    // 3. Delete from database
+    // 3. Clean up avatar from Cloudinary
+    if (targetUser.avatarUrl && targetUser.avatarUrl.includes("cloudinary.com")) {
+      try {
+        const urlParts = targetUser.avatarUrl.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = "bookverse/avatars/" + filename.split(".")[0];
+        void deleteFromCloudinary(publicId);
+      } catch (cleanupErr) {
+        console.warn("Failed to delete avatar from Cloudinary:", cleanupErr);
+      }
+    }
+
+    // 4. Delete from database
     await prisma.user.delete({ where: { id: userId } });
 
     return new NextResponse(null, { status: 204 });

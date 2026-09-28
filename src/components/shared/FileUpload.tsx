@@ -13,7 +13,7 @@ interface FileUploadProps {
   accept: string;
   maxSizeMB?: number;
   maxSize?: number;
-  uploadKind?: "cover" | "book";
+  uploadKind?: "cover" | "book-cover" | "book";
   helperText?: string;
   onUploaded?: (result: UploadResult) => void;
   onUpload?: (url: string) => void;

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getAuth } from '@/lib/auth';
+import { deleteFromCloudinary } from '@/lib/cloudinary';
 
 export async function GET(
   req: Request,
@@ -92,6 +93,16 @@ export async function PATCH(
     const body = await req.json();
     const { name, description, genre, coverUrl } = body;
 
+    // Delete old cover from Cloudinary if it's being replaced or removed
+    if (coverUrl !== undefined && coverUrl !== universe.coverUrl && universe.coverUrl) {
+      if (universe.coverUrl.includes("res.cloudinary.com")) {
+        const publicIdMatch = universe.coverUrl.match(/\/v\d+\/(.+?)\.[a-zA-Z]+$/);
+        if (publicIdMatch && publicIdMatch[1]) {
+          void deleteFromCloudinary(publicIdMatch[1]);
+        }
+      }
+    }
+
     const updated = await prisma.universe.update({
       where: { id: universeId },
       data: {
@@ -137,6 +148,13 @@ export async function DELETE(
       where: { universeId },
       data: { universeId: null },
     });
+
+    if (universe.coverUrl && universe.coverUrl.includes("res.cloudinary.com")) {
+      const publicIdMatch = universe.coverUrl.match(/\/v\d+\/(.+?)\.[a-zA-Z]+$/);
+      if (publicIdMatch && publicIdMatch[1]) {
+        void deleteFromCloudinary(publicIdMatch[1]);
+      }
+    }
 
     await prisma.universe.delete({
       where: { id: universeId },

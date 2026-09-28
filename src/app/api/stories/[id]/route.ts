@@ -6,6 +6,7 @@ import { storySchema } from "@/lib/validators";
 import { Role, type ReactionType } from "@prisma/client";
 import { createNotification, createNotificationsBatch } from "@/lib/notifications";
 import { publishScheduledChapters } from "@/lib/publish-chapters";
+import { deleteFromCloudinary } from "@/lib/cloudinary";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -197,6 +198,15 @@ export async function PATCH(request: Request, { params }: RouteParams) {
     }
 
     const parsed = storySchema.partial().parse(cleanBody);
+    // Delete old cover from Cloudinary if it's being replaced or removed
+    if (parsed.coverUrl !== undefined && parsed.coverUrl !== existing.coverUrl && existing.coverUrl) {
+      if (existing.coverUrl.includes("res.cloudinary.com")) {
+        const publicIdMatch = existing.coverUrl.match(/\/v\d+\/(.+?)\.[a-zA-Z]+$/);
+        if (publicIdMatch && publicIdMatch[1]) {
+          void deleteFromCloudinary(publicIdMatch[1]);
+        }
+      }
+    }
 
     const story = await prisma.story.update({
       where: { id },
@@ -311,7 +321,15 @@ export async function DELETE(_request: Request, { params }: RouteParams) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-
+    // Clean up chapter illustrations from Cloudinary
+    for (const chapter of existing.chapters) {
+      if (chapter.illustrationUrl && chapter.illustrationUrl.includes("cloudinary.com")) {
+        const urlParts = chapter.illustrationUrl.split("/");
+        const filename = urlParts[urlParts.length - 1];
+        const publicId = "bookverse/illustrations/" + filename.split(".")[0];
+        void deleteFromCloudinary(publicId);
+      }
+    }
 
     await prisma.story.delete({ where: { id } });
 
