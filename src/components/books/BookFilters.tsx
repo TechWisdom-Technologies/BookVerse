@@ -7,27 +7,34 @@ import { Search, X, Loader2 } from "lucide-react";
 interface BookFiltersProps {
   genres: string[];
   languages: string[];
+  authors: string[];
 }
 
-export function BookFilters({ genres, languages }: BookFiltersProps) {
+const DEFAULT_GENRES = [
+  "Fiction", "Non-Fiction", "Science Fiction", "Fantasy", "Mystery", 
+  "Thriller", "Romance", "Horror", "Historical Fiction", "Biography", 
+  "Autobiography", "Poetry", "Self-Help", "Business", "Philosophy"
+];
+
+export function BookFilters({ genres, languages, authors }: BookFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const currentGenre = searchParams.get("genre") || "";
   const currentLanguage = searchParams.get("language") || "";
+  const currentAuthor = searchParams.get("authorName") || "";
   const currentFileType = searchParams.get("fileType") || "";
   const currentSort = searchParams.get("sort") || "recent";
   const currentQuery = searchParams.get("q") || "";
-  const currentTags = searchParams.get("tags") || "";
 
   const [query, setQuery] = useState(currentQuery);
-  const hasFilters = currentGenre || currentLanguage || currentFileType || currentSort !== "recent" || currentQuery || currentTags;
+  const hasFilters = currentGenre || currentLanguage || currentAuthor || currentFileType || currentSort !== "recent" || currentQuery;
+  
+  const allGenres = Array.from(new Set([...DEFAULT_GENRES, ...genres])).sort();
 
   function handleReset() {
     setQuery("");
-    const form = document.querySelector('input[name="tags"]')?.closest('form');
-    if (form) form.reset();
     
     startTransition(() => {
       router.push(window.location.pathname, { scroll: false });
@@ -99,7 +106,7 @@ export function BookFilters({ genres, languages }: BookFiltersProps) {
           className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none"
         />
         <datalist id="genre-list">
-          {genres.map((g) => (
+          {allGenres.map((g) => (
             <option key={g} value={g} />
           ))}
         </datalist>
@@ -123,29 +130,17 @@ export function BookFilters({ genres, languages }: BookFiltersProps) {
       </div>
 
       <div>
-        <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Tags</label>
-        <form onSubmit={(e) => { e.preventDefault(); updateFilter("tags", e.currentTarget.tags.value.trim()); }} className="mt-2 relative">
-          <input
-            type="text"
-            name="tags"
-            defaultValue={searchParams.get("tags") || ""}
-            placeholder="e.g. magic, space..."
-            className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none pr-8"
-          />
-          {searchParams.get("tags") && (
-            <button
-              type="button"
-              onClick={() => {
-                const form = document.querySelector('input[name="tags"]')?.closest('form');
-                if (form) form.reset();
-                updateFilter("tags", "");
-              }}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-300 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </form>
+        <label className="text-sm font-medium text-zinc-900 dark:text-zinc-50">Author</label>
+        <select
+          value={currentAuthor}
+          onChange={(e) => updateFilter("authorName", e.target.value)}
+          className="mt-2 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-900 transition focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50 outline-none"
+        >
+          <option value="">All Authors</option>
+          {authors.map((a) => (
+            <option key={a} value={a}>{a}</option>
+          ))}
+        </select>
       </div>
 
       <div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent, useRef } from "react";
 import Link from "next/link";
+import { Turnstile, type BoundTurnstileObject } from "react-turnstile";
 import {
   Mail,
   Phone,
@@ -155,6 +156,9 @@ export default function SupportPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  
+  const [captchaToken, setCaptchaToken] = useState<string>("");
+  const boundTurnstileRef = useRef<BoundTurnstileObject | null>(null);
 
   // Auto-prefill logged-in user credentials
   useEffect(() => {
@@ -184,7 +188,7 @@ export default function SupportPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, category, subject, message }),
+        body: JSON.stringify({ name, email, category, subject, message, captchaToken }),
       });
 
       if (!response.ok) {
@@ -195,8 +199,12 @@ export default function SupportPage() {
       setSuccess(true);
       setSubject("");
       setMessage("");
+      setCaptchaToken("");
+      boundTurnstileRef.current?.reset();
     } catch (err: any) {
       setError(err?.message || "An unexpected error occurred. Please try again later.");
+      setCaptchaToken("");
+      boundTurnstileRef.current?.reset();
     } finally {
       setSubmitting(false);
     }
@@ -487,11 +495,25 @@ export default function SupportPage() {
                     />
                   </div>
 
+                  {process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY && (
+                    <div className="flex justify-center my-4">
+                      <Turnstile
+                        sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                        onSuccess={(token, _preClearance, boundTurnstile) => {
+                          setCaptchaToken(token);
+                          boundTurnstileRef.current = boundTurnstile;
+                        }}
+                        onExpire={() => setCaptchaToken("")}
+                        onError={() => setCaptchaToken("")}
+                      />
+                    </div>
+                  )}
+
                   {/* Submit Button */}
                   <div className="pt-2">
                     <button
                       type="submit"
-                      disabled={submitting}
+                      disabled={submitting || (!captchaToken && !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY)}
                       className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-[0.2em] hover:opacity-95 disabled:opacity-50 transition-all flex items-center justify-center gap-2 rounded shadow-sm"
                     >
                       {submitting ? (

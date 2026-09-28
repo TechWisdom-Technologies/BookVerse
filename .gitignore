@@ -47,3 +47,7 @@ next-env.d.ts
 /document
 /documents
 /docs
+
+# backups
+/backups
+backups/

@@ -13,7 +13,7 @@ interface SearchParams {
   q?: string;
   genre?: string;
   language?: string;
-  tags?: string;
+  authorName?: string;
   fileType?: string;
   page?: string;
   sort?: string;
@@ -24,8 +24,8 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
   const q = params.q || "";
   const genre = params.genre || "";
   const language = params.language || "";
+  const authorName = params.authorName || "";
   const fileType = params.fileType || "";
-  const tagsStr = params.tags || "";
   const page = Math.max(1, parseInt(params.page || "1"));
   const limit = 12;
   const sort = params.sort || "recent";
@@ -48,14 +48,9 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     }
     if (genre) where.genre = { equals: genre, mode: "insensitive" };
     if (language) where.language = { equals: language, mode: "insensitive" };
+    if (authorName) where.authorName = { equals: authorName, mode: "insensitive" };
     if (fileType === FileType.PDF || fileType === FileType.EPUB) {
       where.fileType = fileType;
-    }
-    if (tagsStr) {
-      const tagList = tagsStr.split(",").map(t => t.trim()).filter(Boolean);
-      if (tagList.length > 0) {
-        where.tags = { hasSome: tagList };
-      }
     }
 
     const orderBy: Prisma.BookOrderByWithRelationInput = {};
@@ -63,7 +58,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     else if (sort === "title") orderBy.title = "asc";
     else orderBy.createdAt = "desc";
 
-    const [books, total, genres, languages] = await Promise.all([
+    const [books, total, genres, languages, authors] = await Promise.all([
       prisma.book.findMany({
         where,
         select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } },
@@ -74,6 +69,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
       prisma.book.count({ where }),
       prisma.book.findMany({ distinct: ["genre"], select: { genre: true } }),
       prisma.book.findMany({ distinct: ["language"], select: { language: true } }),
+      prisma.book.findMany({ distinct: ["authorName"], select: { authorName: true } }),
     ]);
 
     const booksWithRatings = await Promise.all(
@@ -87,6 +83,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     const totalPages = Math.ceil(total / limit);
     const genreList = genres.map((g) => g.genre).filter(Boolean);
     const languageList = languages.map((l) => l.language).filter(Boolean);
+    const authorList = authors.map((a) => a.authorName).filter(Boolean);
 
     return (
       <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">
@@ -116,7 +113,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
             {/* Simple Sidebar */}
             <aside className="w-full lg:w-52 shrink-0">
               <div className="sticky top-5">
-                <BookFilters genres={genreList} languages={languageList} />
+                <BookFilters genres={genreList} languages={languageList} authors={authorList} />
               </div>
             </aside>
 
