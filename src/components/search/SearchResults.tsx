@@ -7,6 +7,8 @@ import { BookOpen, FileText, Globe, User, Compass } from "lucide-react";
 interface SearchResultsProps {
   results: any[];
   type: "all" | "books" | "stories" | "universes" | "authors";
+  counts?: { books: number; stories: number; universes: number; authors: number } | null;
+  query?: string;
 }
 
 const getUniverseGraphic = (name: string) => {
@@ -26,7 +28,7 @@ const getUniverseGraphic = (name: string) => {
   return colors[index];
 };
 
-export function SearchResults({ results, type }: SearchResultsProps) {
+export function SearchResults({ results, type, counts, query = "" }: SearchResultsProps) {
   if (results.length === 0) {
     return null;
   }
@@ -88,6 +90,16 @@ export function SearchResults({ results, type }: SearchResultsProps) {
               </Link>
             ))}
           </div>
+          {type === "all" && counts && counts.stories > stories.length && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&type=stories`}
+                className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
+              >
+                Show more stories ({counts.stories})
+              </Link>
+            </div>
+          )}
         </section>
       )}
 
@@ -136,6 +148,16 @@ export function SearchResults({ results, type }: SearchResultsProps) {
               </Link>
             ))}
           </div>
+          {type === "all" && counts && counts.books > books.length && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&type=books`}
+                className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
+              >
+                Show more books ({counts.books})
+              </Link>
+            </div>
+          )}
         </section>
       )}
 
@@ -195,6 +217,16 @@ export function SearchResults({ results, type }: SearchResultsProps) {
               </Link>
             ))}
           </div>
+          {type === "all" && counts && counts.universes > universes.length && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&type=universes`}
+                className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
+              >
+                Show more universes ({counts.universes})
+              </Link>
+            </div>
+          )}
         </section>
       )}
 
@@ -238,6 +270,16 @@ export function SearchResults({ results, type }: SearchResultsProps) {
               </Link>
             ))}
           </div>
+          {type === "all" && counts && counts.authors > authors.length && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&type=authors`}
+                className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
+              >
+                Show more authors ({counts.authors})
+              </Link>
+            </div>
+          )}
         </section>
       )}
     </div>

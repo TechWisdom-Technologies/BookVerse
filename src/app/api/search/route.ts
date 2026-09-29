@@ -69,6 +69,7 @@ export async function GET(request: Request) {
 
     const results: any[] = [];
     let total = 0;
+    const counts = { books: 0, stories: 0, universes: 0, authors: 0 };
 
     // We will do parallel fetches depending on type.
     const promises = [];
@@ -103,7 +104,7 @@ export async function GET(request: Request) {
               take: type === "all" ? Math.ceil(limit / 4) : limit,
               skip: type === "all" ? 0 : (page - 1) * limit,
             }),
-            type === "books" ? prisma.book.count({
+            type === "all" || type === "books" ? prisma.book.count({
               where: {
                 OR: allSearchTerms.flatMap(term => [
                   { title: { contains: term, mode: "insensitive" as const } },
@@ -119,6 +120,7 @@ export async function GET(request: Request) {
             _type: "book" as const,
             createdAt: book.createdAt.toISOString(),
           })));
+          counts.books = bookCount;
           if (type === "books") total = bookCount;
         })()
       );
@@ -193,7 +195,7 @@ export async function GET(request: Request) {
           const storiesRaw = await prisma.$queryRaw(storiesQuery) as any[];
 
           let storyCount = 0;
-          if (type === "stories") {
+          if (type === "all" || type === "stories") {
             const countQuery = Prisma.sql`
               SELECT COUNT(*)
               FROM stories s
@@ -227,6 +229,7 @@ export async function GET(request: Request) {
             createdAt: new Date(story.createdAt).toISOString(),
           })));
 
+          counts.stories = storyCount;
           if (type === "stories") total = storyCount;
         })()
       );
@@ -263,7 +266,7 @@ export async function GET(request: Request) {
               take: type === "all" ? Math.ceil(limit / 4) : limit,
               skip: type === "all" ? 0 : (page - 1) * limit,
             }),
-            type === "universes" ? prisma.universe.count({
+            type === "all" || type === "universes" ? prisma.universe.count({
               where: {
                 OR: allSearchTerms.flatMap(term => [
                   { name: { contains: term, mode: "insensitive" as const } },
@@ -280,6 +283,7 @@ export async function GET(request: Request) {
             storyCount: uni._count.stories,
             createdAt: uni.createdAt.toISOString(),
           })));
+          counts.universes = universeCount;
           if (type === "universes") total = universeCount;
         })()
       );
@@ -311,7 +315,7 @@ export async function GET(request: Request) {
               take: type === "all" ? Math.ceil(limit / 4) : limit,
               skip: type === "all" ? 0 : (page - 1) * limit,
             }),
-            type === "authors" ? prisma.user.count({
+            type === "all" || type === "authors" ? prisma.user.count({
               where: {
                 OR: allSearchTerms.flatMap(term => [
                   { username: { contains: term, mode: "insensitive" as const } },
@@ -326,6 +330,7 @@ export async function GET(request: Request) {
             _type: "author" as const,
             createdAt: author.createdAt.toISOString(),
           })));
+          counts.authors = authorCount;
           if (type === "authors") total = authorCount;
         })()
       );
@@ -370,6 +375,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       results,
       total,
+      counts,
       page,
       totalPages,
       source: "prisma-fts",

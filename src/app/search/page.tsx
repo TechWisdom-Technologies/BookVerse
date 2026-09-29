@@ -36,12 +36,14 @@ function SearchContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [counts, setCounts] = useState<{ books: number, stories: number, universes: number, authors: number } | null>(null);
 
   useEffect(() => {
     if (!query.trim()) {
       setResults([]);
       setTotal(0);
       setTotalPages(1);
+      setCounts(null);
       return;
     }
 
@@ -49,13 +51,14 @@ function SearchContent() {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/search?q=${encodeURIComponent(query)}&type=${typeParam}&page=${pageParam}&limit=12`
+          `/api/search?q=${encodeURIComponent(query)}&type=${typeParam}&page=${pageParam}&limit=16`
         );
         if (res.ok) {
           const data = await res.json();
           setResults(data.results);
           setTotal(data.total);
           setTotalPages(data.totalPages);
+          if (data.counts) setCounts(data.counts);
         }
       } finally {
         setIsLoading(false);
@@ -132,7 +135,7 @@ function SearchContent() {
               <Loader2 className="w-6 h-6 animate-spin text-zinc-200 dark:text-zinc-800" />
             </div>
           ) : hasResults ? (
-            <SearchResults results={results} type={typeParam} />
+            <SearchResults results={results} type={typeParam} counts={counts} query={query} />
           ) : isEmpty ? (
             <div className="py-40 text-center border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10">
               <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">No results found for &quot;{query}&quot;.</p>
