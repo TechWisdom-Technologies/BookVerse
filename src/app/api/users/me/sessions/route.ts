@@ -64,10 +64,6 @@ export async function DELETE(req: Request) {
       },
     });
 
-    // To ensure ultimate security, we revoke ALL Firebase refresh tokens for this user.
-    // They will be logged out globally, including their current session.
-    await adminAuth.revokeRefreshTokens(decoded.uid);
-
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Session revoke error:", error);

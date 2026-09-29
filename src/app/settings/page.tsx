@@ -268,7 +268,7 @@ export default function SettingsPage() {
   };
 
   const handleRevokeSession = async (deviceId: string) => {
-    if (!confirm('This will revoke ALL your active sessions including this one for security purposes. Continue?')) {
+    if (!confirm('Are you sure you want to revoke this session?')) {
       return;
     }
     setRevokingSessionId(deviceId);
@@ -279,8 +279,8 @@ export default function SettingsPage() {
         body: JSON.stringify({ deviceId })
       });
       if (res.ok) {
-        toast.success('Session revoked. You will be logged out securely.');
-        setTimeout(() => { window.location.href = '/login'; }, 1500);
+        toast.success('Session revoked successfully.');
+        fetchSessions(); // Refresh the list of active sessions
       } else {
         toast.error('Failed to revoke session');
       }
