@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, FileText, Globe, User, Compass } from "lucide-react";
+import { BookOpen, FileText, Globe, User, Compass, Library, Users } from "lucide-react";
 
 interface SearchResultsProps {
   results: any[];
-  type: "all" | "books" | "stories" | "universes" | "authors";
-  counts?: { books: number; stories: number; universes: number; authors: number } | null;
+  type: "all" | "books" | "stories" | "universes" | "authors" | "series" | "clubs";
+  counts?: { books: number; stories: number; universes: number; authors: number; series: number; clubs: number } | null;
   query?: string;
 }
 
@@ -37,6 +37,8 @@ export function SearchResults({ results, type, counts, query = "" }: SearchResul
   const stories = results.filter((r) => r._type === "story");
   const universes = results.filter((r) => r._type === "universe");
   const authors = results.filter((r) => r._type === "author");
+  const series = results.filter((r) => r._type === "series");
+  const clubs = results.filter((r) => r._type === "club");
 
   return (
     <div className="space-y-16">
@@ -277,6 +279,129 @@ export function SearchResults({ results, type, counts, query = "" }: SearchResul
                 className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
               >
                 Show more authors ({counts.authors})
+              </Link>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Series Section */}
+      {(type === "all" || type === "series") && series.length > 0 && (
+        <section>
+          {type === "all" && (
+            <h2 className="mb-10 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 border-b border-zinc-50 dark:border-zinc-900 pb-4 italic">
+              Series Found
+            </h2>
+          )}
+          <div className="grid gap-px bg-zinc-100 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-900 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {series.map((item) => (
+              <Link
+                key={item.id}
+                href={`/series/${item.id}`}
+                className="group flex flex-col p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all"
+              >
+                <div className="relative aspect-[2/3] w-full overflow-hidden rounded bg-zinc-50 dark:bg-zinc-900 mb-6 border border-zinc-100 dark:border-zinc-800">
+                  {item.coverUrl ? (
+                    <Image
+                      src={item.coverUrl}
+                      alt={item.name}
+                      fill
+                      className="object-cover transition-all duration-700"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-zinc-200 dark:text-zinc-800">
+                      <Library className="h-12 w-12" />
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-300">
+                      {item.genre || "Series"}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold tracking-tight text-zinc-900 dark:text-white line-clamp-1 group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors uppercase">
+                    {item.name}
+                  </h3>
+                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">
+                    {item.creatorName}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          {type === "all" && counts && counts.series > series.length && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&type=series`}
+                className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
+              >
+                Show more series ({counts.series})
+              </Link>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Clubs Section */}
+      {(type === "all" || type === "clubs") && clubs.length > 0 && (
+        <section>
+          {type === "all" && (
+            <h2 className="mb-10 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 dark:text-zinc-600 border-b border-zinc-50 dark:border-zinc-900 pb-4 italic">
+              Clubs Found
+            </h2>
+          )}
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {clubs.map((club) => (
+              <Link
+                key={club.id}
+                href={`/clubs/${club.id}`}
+                className="group flex flex-col border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all relative overflow-hidden shadow-sm"
+              >
+                <div className="h-32 w-full overflow-hidden relative bg-zinc-50 dark:bg-zinc-900">
+                  {club.coverUrl ? (
+                    <img
+                      src={club.coverUrl}
+                      alt=""
+                      className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-zinc-200 dark:text-zinc-800">
+                      <Users className="h-10 w-10" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent opacity-60" />
+                </div>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="px-2 py-0.5 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-400 text-[9px] font-bold uppercase tracking-widest border border-zinc-100 dark:border-zinc-800">
+                      {club.genre || "Club"}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold mb-2 tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors uppercase line-clamp-1">
+                    {club.name}
+                  </h3>
+                  <p className="text-[11px] text-zinc-500 font-medium line-clamp-2 leading-relaxed mb-4 flex-1">
+                    {club.description || "Join this club to discuss!"}
+                  </p>
+                  <div className="pt-4 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between text-[9px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-auto">
+                    <span>by {club.creatorName}</span>
+                    <span className="flex items-center gap-1">
+                      <Users className="w-3 h-3" />
+                      {club.memberCount}
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+          {type === "all" && counts && counts.clubs > clubs.length && (
+            <div className="mt-8 flex justify-center">
+              <Link
+                href={`/search?q=${encodeURIComponent(query)}&type=clubs`}
+                className="px-6 py-2 rounded text-[10px] font-bold uppercase tracking-[0.2em] transition-all border bg-transparent border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white"
+              >
+                Show more clubs ({counts.clubs})
               </Link>
             </div>
           )}

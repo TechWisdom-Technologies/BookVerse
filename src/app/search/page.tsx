@@ -29,14 +29,14 @@ function SearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("q") || "";
-  const typeParam = (searchParams.get("type") as "all" | "books" | "stories" | "universes" | "authors") || "all";
+  const typeParam = (searchParams.get("type") as "all" | "books" | "stories" | "universes" | "authors" | "series" | "clubs") || "all";
   const pageParam = parseInt(searchParams.get("page") || "1", 10);
 
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
-  const [counts, setCounts] = useState<{ books: number, stories: number, universes: number, authors: number } | null>(null);
+  const [counts, setCounts] = useState<{ books: number, stories: number, universes: number, authors: number, series: number, clubs: number } | null>(null);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -51,7 +51,7 @@ function SearchContent() {
       setIsLoading(true);
       try {
         const res = await fetch(
-          `/api/search?q=${encodeURIComponent(query)}&type=${typeParam}&page=${pageParam}&limit=16`
+          `/api/search?q=${encodeURIComponent(query)}&type=${typeParam}&page=${pageParam}&limit=24`
         );
         if (res.ok) {
           const data = await res.json();
@@ -67,7 +67,7 @@ function SearchContent() {
     fetchResults();
   }, [query, typeParam, pageParam]);
 
-  const handleTypeChange = (newType: "all" | "books" | "stories" | "universes" | "authors") => {
+  const handleTypeChange = (newType: "all" | "books" | "stories" | "universes" | "authors" | "series" | "clubs") => {
     router.push(`/search?q=${encodeURIComponent(query)}&type=${newType}`);
   };
 
@@ -102,7 +102,7 @@ function SearchContent() {
         {/* Filter Tabs */}
         {query.trim() && (
           <div className="flex items-center justify-center gap-4 mb-16 flex-wrap">
-            {(["all", "books", "stories", "universes", "authors"] as const).map((t) => (
+            {(["all", "books", "stories", "universes", "authors", "series", "clubs"] as const).map((t) => (
               <button
                 key={t}
                 onClick={() => handleTypeChange(t)}

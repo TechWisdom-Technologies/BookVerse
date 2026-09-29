@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q") || "";
-    const type = (searchParams.get("type") as "all" | "books" | "stories" | "universes" | "authors") || "all";
+    const type = (searchParams.get("type") as "all" | "books" | "stories" | "universes" | "authors" | "series" | "clubs") || "all";
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const limit = Math.min(24, Math.max(1, parseInt(searchParams.get("limit") || "12", 10)));
 
@@ -69,7 +69,7 @@ export async function GET(request: Request) {
 
     const results: any[] = [];
     let total = 0;
-    const counts = { books: 0, stories: 0, universes: 0, authors: 0 };
+    const counts = { books: 0, stories: 0, universes: 0, authors: 0, series: 0, clubs: 0 };
 
     // We will do parallel fetches depending on type.
     const promises = [];
@@ -101,7 +101,7 @@ export async function GET(request: Request) {
                 downloadCount: true,
               },
               orderBy: { downloadCount: "desc" },
-              take: type === "all" ? Math.ceil(limit / 4) : limit,
+              take: type === "all" ? Math.ceil(limit / 6) : limit,
               skip: type === "all" ? 0 : (page - 1) * limit,
             }),
             type === "all" || type === "books" ? prisma.book.count({
@@ -130,7 +130,7 @@ export async function GET(request: Request) {
     if (type === "all" || type === "stories") {
       promises.push(
         (async () => {
-          const take = type === "all" ? Math.ceil(limit / 4) : limit;
+          const take = type === "all" ? Math.ceil(limit / 6) : limit;
           const skip = type === "all" ? 0 : (page - 1) * limit;
 
           // PostgreSQL Raw Query for Full Text Search with Weights and Promotion Score
@@ -263,7 +263,7 @@ export async function GET(request: Request) {
                 }
               },
               orderBy: { createdAt: "desc" },
-              take: type === "all" ? Math.ceil(limit / 4) : limit,
+              take: type === "all" ? Math.ceil(limit / 6) : limit,
               skip: type === "all" ? 0 : (page - 1) * limit,
             }),
             type === "all" || type === "universes" ? prisma.universe.count({
@@ -312,7 +312,7 @@ export async function GET(request: Request) {
                 createdAt: true,
               },
               orderBy: { createdAt: "desc" },
-              take: type === "all" ? Math.ceil(limit / 4) : limit,
+              take: type === "all" ? Math.ceil(limit / 6) : limit,
               skip: type === "all" ? 0 : (page - 1) * limit,
             }),
             type === "all" || type === "authors" ? prisma.user.count({
@@ -336,15 +336,127 @@ export async function GET(request: Request) {
       );
     }
 
+    // --- SERIES ---
+    if (type === "all" || type === "series") {
+      promises.push(
+        (async () => {
+          const [seriesList, seriesCount] = await Promise.all([
+            prisma.series.findMany({
+              where: {
+                OR: allSearchTerms.flatMap(term => [
+                  { name: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                ]),
+              },
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                coverUrl: true,
+                genre: true,
+                sequenceType: true,
+                status: true,
+                createdAt: true,
+                user: {
+                  select: { displayName: true, username: true },
+                },
+                _count: {
+                  select: { stories: true }
+                }
+              },
+              orderBy: { createdAt: "desc" },
+              take: type === "all" ? Math.ceil(limit / 6) : limit,
+              skip: type === "all" ? 0 : (page - 1) * limit,
+            }),
+            type === "all" || type === "series" ? prisma.series.count({
+              where: {
+                OR: allSearchTerms.flatMap(term => [
+                  { name: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                ]),
+              },
+            }) : Promise.resolve(0),
+          ]);
+          results.push(...seriesList.map(series => ({
+            ...series,
+            _type: "series" as const,
+            creatorName: series.user.displayName || series.user.username,
+            storyCount: series._count.stories,
+            createdAt: series.createdAt.toISOString(),
+          })));
+          counts.series = seriesCount;
+          if (type === "series") total = seriesCount;
+        })()
+      );
+    }
+
+    // --- CLUBS ---
+    if (type === "all" || type === "clubs") {
+      promises.push(
+        (async () => {
+          const [clubsList, clubsCount] = await Promise.all([
+            prisma.club.findMany({
+              where: {
+                OR: allSearchTerms.flatMap(term => [
+                  { name: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                ]),
+              },
+              select: {
+                id: true,
+                name: true,
+                description: true,
+                coverUrl: true,
+                genre: true,
+                createdAt: true,
+                owner: {
+                  select: { displayName: true, username: true },
+                },
+                _count: {
+                  select: { members: true, discussions: true }
+                }
+              },
+              orderBy: { createdAt: "desc" },
+              take: type === "all" ? Math.ceil(limit / 6) : limit,
+              skip: type === "all" ? 0 : (page - 1) * limit,
+            }),
+            type === "all" || type === "clubs" ? prisma.club.count({
+              where: {
+                OR: allSearchTerms.flatMap(term => [
+                  { name: { contains: term, mode: "insensitive" as const } },
+                  { description: { contains: term, mode: "insensitive" as const } },
+                  { genre: { contains: term, mode: "insensitive" as const } },
+                ]),
+              },
+            }) : Promise.resolve(0),
+          ]);
+          results.push(...clubsList.map(club => ({
+            ...club,
+            _type: "club" as const,
+            creatorName: club.owner.displayName || club.owner.username,
+            memberCount: club._count.members,
+            createdAt: club.createdAt.toISOString(),
+          })));
+          counts.clubs = clubsCount;
+          if (type === "clubs") total = clubsCount;
+        })()
+      );
+    }
+
     // Wait for all queries to resolve
     await Promise.all(promises);
 
     if (type === "all") {
       // Re-sort results for 'all' to prioritize promoted stories, then order by type, then by creation date
       const typeWeight: Record<string, number> = {
-        story: 4,
-        book: 3,
-        universe: 2,
+        story: 6,
+        series: 5,
+        book: 4,
+        universe: 3,
+        club: 2,
         author: 1
       };
 
