@@ -17,6 +17,15 @@ vi.mock('@/lib/prisma', () => {
       count: vi.fn(),
       create: vi.fn(),
       update: vi.fn(),
+      delete: vi.fn(),
+      upsert: vi.fn(),
+    },
+    loginHistory: {
+      findFirst: vi.fn(),
+      create: vi.fn(),
+    },
+    deviceSession: {
+      upsert: vi.fn(),
     },
     story: {
       findUnique: vi.fn(),
@@ -174,18 +183,24 @@ vi.mock('@/lib/firebase', () => ({
 vi.mock('@/lib/firebase-admin', () => ({
   adminAuth: {
     verifyIdToken: vi.fn(),
+    deleteUser: vi.fn(),
   },
 }));
 
 // ─── Mock Next.js server APIs ────────────────────────────────────
+let mockCookiesObj = { get: vi.fn(), set: vi.fn() };
+let mockHeadersObj = {
+  get: vi.fn((key) => {
+    if (key === 'authorization') return 'Bearer valid-token';
+    return null;
+  }),
+};
+
 vi.mock('next/headers', () => ({
-  cookies: vi.fn(() => ({
-    get: vi.fn(),
-    set: vi.fn(),
-  })),
-  headers: vi.fn(() => ({
-    get: vi.fn(),
-  })),
+  cookies: vi.fn(async () => mockCookiesObj),
+  headers: vi.fn(async () => mockHeadersObj),
+  __setMockCookies: (c: any) => mockCookiesObj = c,
+  __setMockHeaders: (h: any) => mockHeadersObj = h,
 }));
 
 vi.mock('next/server', () => {
@@ -193,11 +208,24 @@ vi.mock('next/server', () => {
     body: any;
     status: number;
     headers: any;
+    cookies: any;
 
     constructor(body: any, init?: { status?: number; headers?: any }) {
       this.body = body;
       this.status = init?.status || 200;
-      this.headers = init?.headers || {};
+      this.headers = init?.headers || { getSetCookie: () => [] };
+      
+      const setCookiesList: string[] = [];
+      this.headers.getSetCookie = () => setCookiesList;
+      this.cookies = {
+        set: vi.fn((key, value, opts) => {
+          let str = `${key}=${value}`;
+          if (opts?.httpOnly) str += '; HttpOnly';
+          if (opts?.sameSite) str += `; SameSite=${opts.sameSite}`;
+          if (opts?.maxAge === 0) str += '; Max-Age=0';
+          setCookiesList.push(str);
+        }),
+      };
     }
 
     async json() {

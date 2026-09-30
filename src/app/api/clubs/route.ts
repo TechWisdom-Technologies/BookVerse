@@ -26,6 +26,10 @@ const getHandler = async (req: NextRequest) => {
       ];
     }
 
+    const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20", 10)));
+    const skip = (page - 1) * limit;
+
     const clubs = await prisma.club.findMany({
       where,
       include: {
@@ -37,9 +41,14 @@ const getHandler = async (req: NextRequest) => {
         },
       },
       orderBy: { createdAt: 'desc' },
+      take: limit,
+      skip,
     });
 
-    return NextResponse.json(clubs);
+    const total = await prisma.club.count({ where });
+    const totalPages = Math.ceil(total / limit);
+
+    return NextResponse.json({ clubs, total, page, totalPages });
   } catch (error) {
     console.error('Error fetching clubs:', error);
     return NextResponse.json(
