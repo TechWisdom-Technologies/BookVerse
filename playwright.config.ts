@@ -31,12 +31,41 @@ export default defineConfig({
     actionTimeout: 10000,
   },
 
-  /* Configure projects for major browsers */
+  /* Configure projects for major browsers and devices */
   projects: [
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'Mobile Chrome',
+      use: { ...devices['Pixel 5'] },
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 12'] },
+    },
+    {
+      name: 'Dark Mode Safari',
+      use: { 
+        ...devices['Desktop Safari'],
+        colorScheme: 'dark',
+      },
+    },
+    {
+      name: 'Tablet Landscape',
+      use: {
+        ...devices['iPad Pro 11 landscape'],
+      },
+    }
   ],
 
   /* Run your local dev server before starting the tests */
