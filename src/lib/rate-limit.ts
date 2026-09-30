@@ -100,7 +100,7 @@ function rateLimitInMemory(ip: string, limit: number, windowMs: number): { succe
  * Helper to check rate limits for incoming Next.js App Router requests.
  * Uses Upstash Redis in production, in-memory Map in development.
  */
-export async function checkRateLimit(limit = 60, windowMs = 60000, route = "unknown") {
+export async function checkRateLimit(limit = 60, windowMs = 60000, route = "unknown"): Promise<{ limited: true; response: NextResponse } | { limited: false; remaining: number }> {
   const h = await headers();
   const ip = h.get("x-forwarded-for")?.split(",")[0].trim() || h.get("x-real-ip") || "127.0.0.1";
 
