@@ -10,6 +10,23 @@ export async function GET(request: NextRequest) {
     const genre = url.searchParams.get("genre");
     const excludeGenre = url.searchParams.get("excludeGenre");
 
+    const cacheKey = `author_stories_cache_${dbUser.id}_${genre || 'all'}_${excludeGenre || 'none'}`;
+    let redisClient: any = null;
+
+    try {
+      const { Redis } = await import("@upstash/redis");
+      redisClient = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      });
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return NextResponse.json(cached);
+      }
+    } catch (e) {
+      console.warn("Redis cache read error:", e);
+    }
+
     const whereClause: any = { authorId: dbUser.id };
     
     if (genre) {
@@ -35,7 +52,17 @@ export async function GET(request: NextRequest) {
       orderBy: { updatedAt: "desc" },
     });
 
-    return NextResponse.json({ stories });
+    const responseData = { stories };
+
+    if (redisClient) {
+      try {
+        await redisClient.set(cacheKey, responseData, { ex: 30 }); // 30 seconds for author dashboard
+      } catch (e) {
+        console.warn("Redis cache write error:", e);
+      }
+    }
+
+    return NextResponse.json(responseData);
   } catch (error) {
     if (error instanceof Error && error.message === "UNAUTHORIZED") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

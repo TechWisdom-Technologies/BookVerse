@@ -5,6 +5,23 @@ import { getAuth } from '@/lib/auth';
 export async function GET(req: Request) {
   try {
     const user = await getAuth();
+    const cacheKey = `recommendations_cache_${user?.id || 'anon'}`;
+    let redisClient: any = null;
+
+    try {
+      const { Redis } = await import("@upstash/redis");
+      redisClient = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      });
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return NextResponse.json(cached);
+      }
+    } catch (e) {
+      console.warn("Redis cache read error:", e);
+    }
+
     let recommendedStories: any[] = [];
     const limit = 6;
 
@@ -194,6 +211,14 @@ export async function GET(req: Request) {
         isFeaturedPromo: isFeatured,
       };
     });
+
+    if (redisClient) {
+      try {
+        await redisClient.set(cacheKey, serialized, { ex: user ? 180 : 600 }); // 3 min for auth, 10 min for anon
+      } catch (e) {
+        console.warn("Redis cache write error:", e);
+      }
+    }
 
     return NextResponse.json(serialized);
   } catch (error) {

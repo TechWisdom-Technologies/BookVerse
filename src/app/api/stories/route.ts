@@ -20,6 +20,23 @@ const getHandler = async (request: NextRequest) => {
     const genre = searchParams.get("genre") || "";
     const skip = (page - 1) * limit;
 
+    const cacheKey = `stories_cache:${genre || 'all'}:${sort}:${page}:${limit}`;
+    let redisClient: any = null;
+
+    try {
+      const { Redis } = await import("@upstash/redis");
+      redisClient = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      });
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return NextResponse.json(cached);
+      }
+    } catch (e) {
+      console.warn("Redis cache read error:", e);
+    }
+
     const { ids: rankedStoryIds, total } = await getSortedStoryIds(genre, sort);
     const paginatedIds = rankedStoryIds.slice(skip, skip + limit);
 
@@ -54,13 +71,24 @@ const getHandler = async (request: NextRequest) => {
 
     const totalPages = Math.ceil(total / limit);
 
-    return NextResponse.json({
+    const responseData = {
       stories,
       total,
       page,
       limit,
       totalPages,
-    });
+    };
+
+    if (redisClient) {
+      try {
+        // Cache the result for 60 seconds to survive huge traffic spikes without stale data
+        await redisClient.set(cacheKey, responseData, { ex: 60 });
+      } catch (e) {
+        console.warn("Redis cache write error:", e);
+      }
+    }
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error("GET /api/stories error:", error);
     return NextResponse.json(

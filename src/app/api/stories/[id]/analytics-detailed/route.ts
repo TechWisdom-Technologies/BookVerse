@@ -31,6 +31,23 @@ export async function GET(
       return NextResponse.json(paidFeatureError('PRO'), { status: 402 });
     }
 
+    const cacheKey = `analytics_detailed_cache_${id}`;
+    let redisClient: any = null;
+
+    try {
+      const { Redis } = await import("@upstash/redis");
+      redisClient = new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL!,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+      });
+      const cached = await redisClient.get(cacheKey);
+      if (cached) {
+        return NextResponse.json(cached);
+      }
+    } catch (e) {
+      console.warn("Redis cache read error:", e);
+    }
+
     // Fetch detailed analytics
     const readingLogs = await prisma.readingLog.findMany({
       where: { storyId: id },
@@ -54,13 +71,23 @@ export async function GET(
       estimatedReads: Math.max(100 - index * 5, 0),
     }));
 
-    return NextResponse.json({
+    const responseData = {
       storyId: id,
       totalReads: readingLogs.length,
       avgReadTime: Math.round(avgReadTime),
       completionRate: Math.round(completionRate),
       chapterDropoff,
-    });
+    };
+
+    if (redisClient) {
+      try {
+        await redisClient.set(cacheKey, responseData, { ex: 300 }); // Cache for 5 minutes
+      } catch (e) {
+        console.warn("Redis cache write error:", e);
+      }
+    }
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Error fetching analytics:', error);
     return NextResponse.json({ error: 'Failed to fetch' }, { status: 500 });
