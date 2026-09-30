@@ -10,10 +10,15 @@ export async function GET(request: Request) {
     const type = (searchParams.get("type") as "all" | "books" | "stories" | "universes" | "authors" | "series" | "clubs") || "all";
     const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
     const limit = Math.min(24, Math.max(1, parseInt(searchParams.get("limit") || "12", 10)));
+    
+    const tagsParam = searchParams.get("tags");
+    const subGenresParam = searchParams.get("subGenres");
+    const moodParam = searchParams.get("mood");
+    const ageRatingParam = searchParams.get("ageRating");
 
-    if (!q.trim()) {
+    if (!q.trim() && !tagsParam && !subGenresParam && !moodParam && !ageRatingParam) {
       return NextResponse.json(
-        { error: "Query parameter 'q' is required" },
+        { error: "At least one search parameter (q, tags, subGenres, etc.) is required" },
         { status: 400 }
       );
     }
@@ -133,6 +138,20 @@ export async function GET(request: Request) {
           const take = type === "all" ? Math.ceil(limit / 6) : limit;
           const skip = type === "all" ? 0 : (page - 1) * limit;
 
+          const tagsArray = tagsParam ? tagsParam.split(",").map(t => t.trim()) : [];
+          const subGenresArray = subGenresParam ? subGenresParam.split(",").map(sg => sg.trim()) : [];
+          
+          const tagsFilter = tagsArray.length > 0 
+            ? Prisma.sql`AND s.tags @> ARRAY[${Prisma.join(tagsArray)}]::text[]` 
+            : Prisma.empty;
+            
+          const subGenresFilter = subGenresArray.length > 0 
+            ? Prisma.sql`AND s."subGenres" @> ARRAY[${Prisma.join(subGenresArray)}]::text[]` 
+            : Prisma.empty;
+            
+          const moodFilter = moodParam ? Prisma.sql`AND s.mood = ${moodParam}` : Prisma.empty;
+          const ageRatingFilter = ageRatingParam ? Prisma.sql`AND s."ageRating" = ${parseInt(ageRatingParam, 10)}` : Prisma.empty;
+
           // PostgreSQL Raw Query for Full Text Search with Weights and Promotion Score
           const storiesQuery = Prisma.sql`
             SELECT 
@@ -143,6 +162,7 @@ export async function GET(request: Request) {
               s.published,
               s.created_at AS "createdAt",
               s.view_count AS "viewCount",
+              s.promotion_score AS "promotionScore",
               (
                 SELECT sp.tier 
                 FROM story_promotions sp 
@@ -166,6 +186,10 @@ export async function GET(request: Request) {
             JOIN users u ON u.id = s.author_id
             LEFT JOIN story_search_index si ON si.story_id = s.id
             WHERE s.published = true
+              ${tagsFilter}
+              ${subGenresFilter}
+              ${moodFilter}
+              ${ageRatingFilter}
               AND (
                 ${searchQuery} = '' OR 
                 (
@@ -188,7 +212,7 @@ export async function GET(request: Request) {
                 WHEN 'FEATURED' THEN 1
                 ELSE 0
               END DESC,
-              rank DESC, 
+              (rank + COALESCE(s.promotion_score, 0)) DESC, 
               s.view_count DESC
             LIMIT ${take} OFFSET ${skip};
           `;
@@ -201,6 +225,10 @@ export async function GET(request: Request) {
               FROM stories s
               LEFT JOIN story_search_index si ON si.story_id = s.id
               WHERE s.published = true
+                ${tagsFilter}
+                ${subGenresFilter}
+                ${moodFilter}
+                ${ageRatingFilter}
                 AND (
                   ${searchQuery} = '' OR 
                   (
