@@ -24,7 +24,7 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
   return (
     <Link
       href={href}
-      className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+      className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors"
     >
       {children}
     </Link>
@@ -55,7 +55,7 @@ function SocialLink({ href, icon: Icon, label }: { href: string; icon: React.Com
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex items-center justify-center w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-400 border border-zinc-100 dark:border-zinc-800 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-white transition-all duration-300"
+      className="group relative flex items-center justify-center w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-zinc-100 dark:border-zinc-800 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-white transition-all duration-300"
       aria-label={label}
     >
       <Icon size={16} />
@@ -102,7 +102,7 @@ function NewsletterForm() {
 
   return (
     <div id="newsletter" className="border border-zinc-100 dark:border-zinc-900 rounded p-8 bg-white dark:bg-zinc-950 shadow-sm">
-      <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 mb-4 italic">Newsletter</h3>
+      <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-300 mb-4 italic">Newsletter</h3>
       <p className="text-[11px] text-zinc-500 mb-6 font-medium leading-relaxed italic">
         Weekly book recommendations and author updates, straight to your inbox.
       </p>
@@ -112,7 +112,7 @@ function NewsletterForm() {
           <Heart size={16} className="text-zinc-900 dark:text-white" />
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white">Thank you!</p>
-            <p className="text-[9px] text-zinc-400">You&apos;re now subscribed.</p>
+            <p className="text-[9px] text-zinc-500 dark:text-zinc-400">You&apos;re now subscribed.</p>
           </div>
         </div>
       ) : (
@@ -210,7 +210,7 @@ export function Footer() {
               ].map((s) => (
                 <div key={s.label} className="flex flex-col">
                   <span className="text-xl font-bold text-zinc-900 dark:text-white tracking-tighter">{s.val}</span>
-                  <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-300">{s.label}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-300">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -224,7 +224,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 mb-20">
           {/* Discover */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Discover</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Discover</h4>
             <ul className="space-y-3">
               <li><FooterLink href="/">Home</FooterLink></li>
               <li><FooterLink href="/library">Browse Library</FooterLink></li>
@@ -237,7 +237,7 @@ export function Footer() {
 
           {/* Community */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Community</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Community</h4>
             <ul className="space-y-3">
               <li><FooterLink href="/clubs">Book Clubs</FooterLink></li>
               <li><FooterLink href="/activity-feed">Activity Feed</FooterLink></li>
@@ -249,7 +249,7 @@ export function Footer() {
 
           {/* For Authors */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">For Authors</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">For Authors</h4>
             <ul className="space-y-3">
               <li><FooterLink href="/write/dashboard">Author Dashboard</FooterLink></li>
               <li><FooterLink href="/write/new">Write a Story</FooterLink></li>
@@ -264,7 +264,7 @@ export function Footer() {
 
           {/* Support & Legal */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Support & Legal</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Support & Legal</h4>
             <ul className="space-y-3">
               <li><FooterLink href="/premium">Premium</FooterLink></li>
               <li><FooterLink href="/gifts">Gifts</FooterLink></li>
@@ -280,28 +280,28 @@ export function Footer() {
 
           {/* Contact Info */}
           <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Get in Touch</h4>
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Get in Touch</h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin size={14} className="text-zinc-300 mt-0.5 flex-shrink-0" />
+                <MapPin size={14} className="text-zinc-500 dark:text-zinc-300 mt-0.5 flex-shrink-0" />
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Johra+Mension,+Koyalarbari+,+Kuratoli,+Kuril-1229,+Dhaka+,+Bangladesh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors leading-relaxed"
+                  className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors leading-relaxed"
                 >
                   Johra Mension, Koyalarbari<br />Kuratoli, Kuril-1229<br />Dhaka, Bangladesh
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail size={14} className="text-zinc-300 flex-shrink-0" />
-                <a href="mailto:bookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <Mail size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0" />
+                <a href="mailto:bookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
                   bookverse@gmail.com
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Phone size={14} className="text-zinc-300 flex-shrink-0" />
-                <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <Phone size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0" />
+                <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
                   +880 1799-269699
                 </a>
               </li>
@@ -309,7 +309,7 @@ export function Footer() {
             
             {/* Social Links Moved Here */}
             <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/50">
-              <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic mb-4">Follow Us</h4>
+              <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic mb-4">Follow Us</h4>
               <div className="flex items-center gap-3">
                 <SocialLink href="https://facebook.com" icon={FacebookIcon} label="Facebook" />
                 <SocialLink href="https://instagram.com" icon={InstagramIcon} label="Instagram" />
@@ -326,7 +326,7 @@ export function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             {/* Copyright */}
             <div className="flex flex-col items-center md:items-start gap-1">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-300 italic">
+              <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">
                 © {new Date().getFullYear()} BookVerse. All rights reserved.
               </div>
 
@@ -338,7 +338,7 @@ export function Footer() {
       {/* Back to Top */}
       <button
         onClick={scrollToTop}
-        className="fixed bottom-28 right-6 w-10 h-10 rounded bg-white dark:bg-zinc-950 shadow-md border border-zinc-100 dark:border-zinc-800 flex items-center justify-center text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white transition-all z-30"
+        className="fixed bottom-28 right-6 w-10 h-10 rounded bg-white dark:bg-zinc-950 shadow-md border border-zinc-100 dark:border-zinc-800 flex items-center justify-center text-zinc-500 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-900 dark:hover:border-white transition-all z-30"
         aria-label="Back to top"
       >
         <ChevronUp size={20} />
