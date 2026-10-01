@@ -53,10 +53,10 @@ test.describe('Phase 4: Session & Authentication State Recovery', () => {
     
     // Setup a listener in Tab B for storage events
     await pageB.evaluate(() => {
-      window.authStatus = 'unauthenticated';
+      (window as any).authStatus = 'unauthenticated';
       window.addEventListener('storage', (e) => {
         if (e.key === 'bookverse_auth_state' && e.newValue) {
-          window.authStatus = 'authenticated';
+          (window as any).authStatus = 'authenticated';
         }
       });
     });
@@ -70,7 +70,7 @@ test.describe('Phase 4: Session & Authentication State Recovery', () => {
     const tabBAuthStatus = await pageB.evaluate(() => {
       return new Promise((resolve) => {
         // Give it a tiny bit of time to process the storage event
-        setTimeout(() => resolve(window.authStatus), 100);
+        setTimeout(() => resolve((window as any).authStatus), 100);
       });
     });
 
