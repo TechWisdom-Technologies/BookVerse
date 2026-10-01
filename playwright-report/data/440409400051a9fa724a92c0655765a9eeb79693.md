@@ -1,0 +1,817 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: public\library-browse.spec.ts >> Library Browse Page >> displays book cards or empty state
+- Location: tests\e2e\public\library-browse.spec.ts:17:7
+
+# Error details
+
+```
+Error: expect(received).toBeTruthy()
+
+Received: false
+```
+
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation "Bottom navigation" [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - link [ref=e5] [cursor=pointer]:
+          - /url: /
+          - img "BookVerse" [ref=e8]
+          - generic: BookVerse
+        - link [ref=e9] [cursor=pointer]:
+          - /url: /support
+        - link [ref=e15] [cursor=pointer]:
+          - /url: /library
+        - link [ref=e20] [cursor=pointer]:
+          - /url: /stories
+        - link [ref=e26] [cursor=pointer]:
+          - /url: /universes
+        - link [ref=e32] [cursor=pointer]:
+          - /url: /series
+        - link [ref=e39] [cursor=pointer]:
+          - /url: /clubs
+      - link [ref=e45] [cursor=pointer]:
+        - /url: /
+      - generic [ref=e50]:
+        - link [ref=e51] [cursor=pointer]:
+          - /url: /search
+        - link [ref=e57] [cursor=pointer]:
+          - /url: /activity-feed
+        - button "Toggle AI Librarian" [ref=e62]:
+          - generic: AI Librarian
+        - link "Sign In" [ref=e67] [cursor=pointer]:
+          - /url: /login
+  - main [ref=e72]:
+    - generic [ref=e73]:
+      - generic [ref=e75]:
+        - link "Back Home" [ref=e76] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e79]:
+          - heading "Digital Library." [level=1] [ref=e80]
+          - paragraph [ref=e81]: Explore thousands of stories and books shared by our community.
+      - generic [ref=e82]:
+        - complementary [ref=e83]:
+          - complementary [ref=e85]:
+            - generic [ref=e86]:
+              - text: Search
+              - textbox "Title, author, keyword..." [ref=e88]
+            - generic [ref=e92]:
+              - text: Genre
+              - combobox "Type or select genre" [ref=e93]
+            - generic [ref=e94]:
+              - text: Language
+              - combobox "Type or select language" [ref=e95]
+            - generic [ref=e96]:
+              - text: Author
+              - combobox [ref=e97]:
+                - option "All Authors" [selected]
+                - option "শারমিন আহমেদ"
+                - option "Unknown"
+                - option "Stephen Hawking"
+                - option "অ্যান্থনী মাসকারেণহাস"
+                - option "Major General Khadim Hussain Raja"
+                - option "Timothy E. Gregory"
+                - option "Douglas A. Howard"
+                - option "Lesley Hazleton"
+                - option "Stuart J. Russell and Peter Norvig"
+                - option "Motiur Rahman Rentu"
+                - option "Dan Brown"
+                - option "David McDowall"
+                - option "Academic Support Centre"
+                - option "Noah Savolainen"
+                - option "Dr. Dinesh Chandra Sarkar"
+                - option "Neil DeGrasse Tyson"
+                - option "Larry Anderson"
+                - option "Unknown Author"
+                - option "মতিয়ুর রহমান রেন্টু"
+                - option "মুক্তিযুদ্ধ ই-আর্কাইভ"
+                - option "Dewan S. Ahmed"
+                - option "Touraj Daryaee"
+                - option "David Sacks"
+                - option "Ian Billingsley"
+                - option "Abu Sayed"
+                - option "Professor Robert Garland"
+                - option "Burjor Avari"
+                - option "অশোকা রায়না"
+                - option "Hüseyn Hilmi Iş›k"
+                - option "Kazi Anowar Hossain"
+                - option "Professor Solomon"
+                - option "Smart"
+                - option "Avik Sarkar"
+                - option "Harbans Mukhia"
+                - option "শারমিন আহমদ"
+                - option "Charles Darwin"
+                - option "Jerrold Grossman, Kenneth H. Rosen"
+                - option "Sun Tzu"
+                - option "L.J.A.A.K. Niazi"
+                - option "Neamat Imam"
+                - option "Mario Puzo"
+                - option "John F. Richards"
+                - option "Marshall G. S. Hodgson"
+                - option "Halil Inalcik"
+                - option "Jamal N. Islam"
+                - option "Donald Quataert"
+                - option "শরিফুল হক ডালিম"
+                - option "[193"
+                - option "[195"
+                - option "[197]Masud Rana"
+                - option "L-e-a J-e-a A-e K-e Niyazi"
+                - option "নারায়ণ সান্যাল"
+                - option "PKS"
+                - option "Jon Duckett"
+                - option "User"
+                - option "Administrator"
+                - option "Rodney P. Carlisle"
+                - option "CamScanner"
+                - option "Sakib"
+                - option "Dr. Robert Garland"
+                - option "Avari, Burjor"
+                - option "Hakikat"
+                - option "www.BanglaBook.org"
+                - option "Mazhar"
+                - option "maas"
+                - option "ciet"
+                - option "Darwin, Charles, 1809-1882"
+                - option "Surrender at Dacca"
+                - option "লে. জে. এ. এ. কে. নিয়াজি"
+                - option "The"
+                - option "DONALD QUATAERT"
+                - option "David Halliday"
+                - option "jjin"
+                - option "[172"
+                - option "[174"
+                - option "[176]Masud Rana"
+                - option "[198]Masud Rana"
+                - option "[199"
+                - option "[201"
+                - option "[203 204]Masud Rana"
+                - option "Kazi Anwar Hossain"
+                - option "[208"
+                - option "[210]Masud Rana"
+                - option "[211]Masud Rana"
+                - option "[449]Masud Rana"
+                - option "[451]Masud Rana"
+                - option "[452]Masud Rana"
+                - option "[453]Masud Rana"
+                - option "বাংলাদেশ গবেষনা কেন্দ্র ঢাকা"
+                - option "আওয়ামী লীগ"
+                - option "আগম"
+                - option "Deb"
+                - option "home"
+                - option "আমিই খালেদ মোশাররফ"
+                - option "মুক্তিযুদ্ধ ই-আর্কাইভ, বাংলাদেশ মুক্তিযুদ্ধ পাঠাগার ও গবেষণা কেন্দ্র"
+                - option "মেজর জেনারেল মইনুল হোসেন"
+                - option "Ekattorer Dingulee - A Memories of the days of Bangladesh Liberation War"
+                - option "Col. Shafayat Jamil"
+                - option "কর্নেল হুদা ও আমার যুদ্ধ"
+                - option "কালকেউটের ছোবল"
+                - option "creative zone"
+                - option "Amarboi.com"
+                - option "চরমপত্র"
+                - option "তিন গোয়েন্দা ভলিউম"
+                - option "মহিউদ্দিন আহমদ"
+                - option "জোছনা ও জননীর গল্প"
+                - option "ডেটলাইন বাংলাদেশ"
+                - option "Rakib Hasan"
+                - option "লে. কর্নেল (অবঃ) এম. এ. হামিদ, পি. এস. সি"
+                - option "দূর্গ রহস্য"
+                - option "Tufan"
+                - option "অ্যান্থনি মাসকারেণহাস"
+                - option "নিষিদ্ধ লোবান"
+                - option "নীতি"
+                - option "প্রসঙ্গ"
+                - option "ফাঁসির মঞ্চে কর্ণেল তাহের"
+                - option "বঙ্গবন্ধু শেখ মুজিবকে ঘিরে কিছু কথা ও বাংলাদেশ"
+                - option "বঙ্গবন্ধুর স্বদেশ প্রত্যাবর্তন ও শাসনকাল ১৯৭২"
+                - option "মেজর মোঃ মোখলেছুর রহমান (অব)"
+                - option "আবু আল সাঈদ"
+                - option "শাহ মোয়াজ্জেম হোসেন"
+                - option "বাংলা শব্দের উৎস"
+                - option "ব্রিগেডিয়ার সাখাওয়াত হোসেন"
+                - option "বাংলাদেশে তন গোয়েন্দা"
+                - option "মুহাম্মদ হাবিবুর রহমান"
+                - option "ASUS-PC"
+                - option "HP"
+                - option "মানব সামাজ"
+                - option "মুক্তিযুদ্ধ ও তারপরঃ একটি নির্দলীয় ইতিহাস"
+                - option "মুখোশ পরা মানুষ"
+                - option "Biplob"
+                - option "Windows7"
+                - option "কর্নেল সরোয়ার হোসেন মোল্লা (অব.)"
+                - option "রহস্যের দ্বীপ"
+                - option "Arundhati Roy, Translated by Susmita Chakraborty"
+                - option "শুঁটকি বাহিনী"
+                - option "সাগরতীরে তিন গোয়েন্দা"
+                - option "সিদ্ধ"
+                - option "সৈনিক জীবন"
+                - option "সোনার মূর্তি"
+                - option "Biprodas Bogua"
+                - option "Ronjit Biswas"
+                - option "হিমগিরিতে সাবধান"
+                - option "Ananda Swami"
+                - option "Jonathan Clements"
+                - option "Allan Mallinson"
+                - option "Mary Boykin Chesnut"
+                - option "Charles Dickens"
+                - option "Selina Meyer"
+                - option "Edgar Rice Burroughs"
+                - option "Elizabeth Cook"
+                - option "Shahriar"
+                - option "Zitkala-Sa"
+                - option "Pierre Loti"
+                - option "ancient"
+                - option "Awami League Uthanporbo 1948"
+                - option "A. H. Sayce"
+                - option "Jen Sincero"
+                - option "Jafar, Abu Tr."
+                - option "Subhodeep Mukhopadhyay"
+                - option "আলী আহসান"
+                - option "Sarah Pinborough"
+                - option "Bhut Samagro"
+                - option "Conn Iggulden"
+                - option "Joe Dispenza & Dr."
+                - option "Rafael Sabatini"
+                - option "James Green"
+                - option "Jonathan Kellerman"
+                - option "Julius Caesar"
+                - option "Cari Silverwood"
+                - option "Grant Allen"
+                - option "Darius Foroux"
+                - option "A. T. Mahan"
+                - option "Narayan Sanyal"
+                - option "Cornelius Tacitus"
+                - option "Catherine Price"
+                - option "H. B. Marriott Watson"
+                - option "John W. Campbell"
+                - option "Tagore, Rabindranath"
+                - option "William Shakespeare"
+                - option "Dray, Stephanie"
+                - option "Mejodidi"
+                - option "6"
+                - option "আকবর আলি খান"
+                - option "Nur Masalha"
+                - option "Henryk Sienkiewicz"
+                - option "George F. Worts"
+                - option "Police"
+                - option "Prachin vharote nari o shomaj by Sukumari Bhattacharya"
+                - option "purba"
+                - option "Jacob Abbott"
+                - option "Candice Millard"
+                - option "Thakur, Rabindranath"
+                - option "Joshua Slocum"
+                - option "Aroj Ali Matubbor"
+                - option "Senjuti"
+                - option "Samuel Taylor Coleridge"
+                - option "Smaran"
+                - option "Choudhury, Pramatha"
+                - option "Edgar Burroughs"
+                - option "Tarzan & the Madman"
+                - option "David Pilling"
+                - option "Charlie Gilkey"
+                - option "Covey, Sean"
+                - option "Benjamin Louis Eulalie de Bonneville & Washington Irving"
+                - option "P. S. Allen"
+                - option "Rolf Dobelli"
+                - option "Jean Larteguy"
+                - option "Oliver Optic"
+                - option "Frank Frost Abbott"
+                - option "Judson Brewer"
+                - option "Stanley G. Weinbaum"
+                - option "Julia Crouch"
+                - option "Ridgwell Cullum"
+                - option "Livy"
+                - option "Edward Gibbon"
+                - option "Suetonius"
+                - option "Alex Michaelides"
+                - option "E. Phillips Oppenheim"
+                - option "W. Warde Fowler"
+                - option "Stephen R. Covey"
+                - option "John Gwynne"
+                - option "Homer"
+                - option "Earl Nightingale"
+                - option "Jeff Wheeler"
+                - option "Marco Polo"
+                - option "J. R. R. Tolkien"
+                - option "McGonigal, Kelly"
+                - option "Pat Barker"
+                - option "Apsley Cherry-Garrard"
+                - option "Sayantani Putatunda"
+                - option "Roy F. Baumeister"
+                - option "Colm Doyle"
+                - option "Serhii Rudenko"
+                - option "Kevin Horsley"
+                - option "Jules Verne"
+                - option "Carol Leonnig & Philip Rucker"
+                - option "Mary Shelley"
+                - option "Craig Challen"
+                - option "17 Himu Remand"
+                - option "Mozammel Hosain Toha"
+                - option "SUVOM"
+                - option "8 Dorja 9 Kuthori by Samaresh Majumdar"
+                - option "Aahoron by Samaresh Majumdar"
+                - option "Agniputra by Sunil Gangopadhyay"
+                - option "Sunil Gangyopadhyay"
+                - option "Arjun bipbip Dot Com by Somoresh Mojumder"
+                - option "Niladri"
+                - option "Arjun Samagra Part"
+                - option "ToHiDuL"
+                - option "Jyotirmoy Mandal"
+                - option "Atmapakkha by Samoresh Majumder"
+                - option "Bagher Khela by Satyajit Roy"
+                - option "Dai Bandhan by Samaresh Majumda"
+                - option "homw"
+                - option "Chobir Deshay Kobitar Deshay by Sunil Gangopadhay"
+                - option "Dr Shering"
+                - option "Ek Ekta Din Onnorokom by Sunil Gangopadhyay"
+                - option "Feluda Samagra 4 by Satyajit Roy"
+                - option "Feluda Samagra 6 by Satyajit Roy"
+                - option "Feluda Somogro"
+                - option "Feludar Sange Kashite by Satyajit Roy"
+                - option "Orbund"
+                - option "Gorosthane Sabdhan 2 by Satyajit Roy"
+                - option "Gurghutiyar Ghotona by Satyajit Roy"
+                - option "holde Barir Rohosya by Sunil Gangopadhyay"
+                - option "MANIK"
+                - option "www.amarboi.com"
+                - option "Keo Bojhe Na by Samaresh Majumdar"
+                - option "lighter by Samaresh majumdar"
+                - option "Joy"
+                - option "Moner Manush by Sunil Gangopadhyay"
+                - option "Niruddesher Deshe by Sunil Gangopadhay"
+                - option "Onno Rokom Vromon by Samaresh Majumdar"
+                - option "Ankan"
+                - option "sUmon"
+                - option "Jyoti"
+                - option "Professor Shonku O Voot by Satyajit Roy"
+                - option "Humayun Ahmed"
+                - option "Sonar Kella by Satyajit Roy"
+                - option "Sundorboner Guptodhon by Satyajit Roy"
+                - option "Taka Poysa by Samaresh Majumdar"
+                - option "Taray Grohon Hoyna by Somoresh Majumder"
+                - option "Thikana Bharatborsho by Samaresh Majumder"
+                - option "Tin Jaliyat Ebong Ek Mithyebadi by Samaresh Majumdar"
+                - option "Margaret Oliphant"
+                - option "Byron Katie"
+                - option "Barbara Oakley"
+                - option "Md Nazmus Sakib Emon"
+                - option "Lilian Turner"
+                - option "Oscar Wilde"
+                - option "ইমাম আবু যাকারিয়া ইয়াহ্‌ইয়া ইবন শরফ আন্‌-নওয়াবী"
+                - option "Anthony de Mello"
+                - option "Rick Hanson"
+                - option "Mason Currey"
+                - option "Maxwell, John C."
+                - option "John Maxwell"
+                - option "Burns, David D."
+                - option "মুফতি তাকি উসমানি"
+                - option "Peter Hollins"
+                - option "Napier Malcolm"
+                - option "Mihaly Csikszentmihalyi"
+                - option "David Heinemeier Hansson & Jason Fried"
+                - option "Oliver Sacks"
+                - option "Hadis Foundation"
+                - option "www.icsbook.info"
+                - option "Henry Frith"
+                - option "Frank Tallis"
+                - option "Siobhan Miller"
+                - option "Minerva Brace Norton"
+                - option "Jane Austen"
+                - option "Martin E. Seligman"
+                - option "Phil McGraw"
+                - option "firas al khatib"
+                - option "Peter C. Brown"
+                - option "Albert, Lauri"
+                - option "Sunil Saxena"
+                - option "meurisse, thibaut"
+                - option "Giovanni Dienstmann"
+                - option "Prof. Mark Williams"
+                - option "Stephen Guise"
+                - option "Grenville Kleiser"
+                - option "Tracy, Brian"
+                - option "Personal Development for Smart"
+                - option "ড. খোন্দকার আব্দুল্লাহ জাহাঙ্গীর"
+                - option "Mark Twain"
+                - option "Mat Auryn"
+                - option "Acuff, Jon"
+                - option "Elaine Fox"
+                - option "Barbara Sher"
+                - option "Tim S Grover"
+                - option "Chögyam Trungpa"
+                - option "Cal Orey"
+                - option "Daniel Gilbert"
+                - option "Addiss, Stephen, Lao-Tzu, Lombardo, Stanley"
+                - option "Chris Anderson"
+                - option "Douglas Stone"
+                - option "Brian Tracy"
+                - option "Gary John Bishop"
+                - option "Arthur Conan Doyle"
+                - option "Dalai Lama"
+                - option "Vishen Lakhiani"
+                - option "David Robson"
+                - option "W. Somerset Maugham"
+                - option "Jonathan Haidt"
+                - option "W. Timothy Gallwey"
+                - option "Dinty W. Moore"
+                - option "Robin Sharma"
+                - option "G. Sidney Paternoster"
+                - option "FIORE, PH.D., NEIL"
+                - option "আবদুস সাত্তার"
+                - option "Murphy, Joseph"
+                - option "Thomas M. Sterner"
+                - option "Niccolò Machiavelli"
+                - option "Daniel Coyle"
+                - option "Alan W. Watts"
+                - option "মাহবুবুর রহমান"
+                - option "John Esten Cooke"
+                - option "Charles Franklin Thwing"
+                - option "Damon Zahariades"
+                - option "John C. Maxwell"
+                - option "Marshall Goldsmith & Mark Reiter"
+                - option "Denise Linn"
+                - option "Scott Carney"
+                - option "Chris Prentiss"
+                - option "ফারুক মাহমুদ"
+                - option "আব্দুল্লাহ শাহেদ আল-মাদানী"
+                - option "আবুল আসাদ"
+                - option "আবুল হোসেন ভট্টাচার্য"
+                - option "Golam Ahmad Murtaza"
+                - option "আবদুল হাই শিকদার"
+                - option "Abdullah Al-Amin"
+                - option "সাইয়েদ আবুল আ'লা মওদূদী"
+                - option "সিরাজুল ইসলাম"
+                - option "represented by www.banglainternet.com, Mufty Abdur Rouf"
+                - option "আবদুল হালিম, নূরুন নাহার বেগম"
+                - option "এম. এ. মোহাইমেন"
+                - option "মাওঃমাসুদ আলম নদভী"
+                - option "এস. এম. রুহুল আমীন"
+                - option "ড. মাহফুজুর রহমান আখন্দ"
+            - generic [ref=e98]:
+              - text: File Type
+              - combobox [ref=e99]:
+                - option "All Types" [selected]
+                - option "PDF"
+                - option "EPUB"
+            - generic [ref=e100]:
+              - text: Sort
+              - combobox [ref=e101]:
+                - option "Recent" [selected]
+                - option "Most Downloaded"
+                - option "Top Rated"
+                - option "Title (A-Z)"
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - heading "Collections" [level=2] [ref=e104]
+            - generic [ref=e105]: 807 Books Found
+          - generic [ref=e106]:
+            - link "_ _ _ _ _._. _ _ Fiction _ _ _ _ _._. _ _ Unknown Author 0.0 0" [ref=e107] [cursor=pointer]:
+              - /url: /library/cmukzxo1g007358xk0bf8qjy8
+              - generic [ref=e108]:
+                - img "_ _ _ _ _._. _ _" [ref=e110]
+                - generic [ref=e112]:
+                  - generic [ref=e113]: Fiction
+                  - heading "_ _ _ _ _._. _ _" [level=3] [ref=e115]
+                  - paragraph [ref=e116]: Unknown Author
+                  - generic [ref=e117]:
+                    - generic [ref=e118]: "0.0"
+                    - generic [ref=e122]: "0"
+            - link "ফাতেহনামা Fiction ফাতেহনামা Unknown Author 0.0 0" [ref=e126] [cursor=pointer]:
+              - /url: /library/cmukzxjwo007158xkt42vliuj
+              - generic [ref=e127]:
+                - img "ফাতেহনামা" [ref=e129]
+                - generic [ref=e131]:
+                  - generic [ref=e132]: Fiction
+                  - heading "ফাতেহনামা" [level=3] [ref=e134]
+                  - paragraph [ref=e135]: Unknown Author
+                  - generic [ref=e136]:
+                    - generic [ref=e137]: "0.0"
+                    - generic [ref=e141]: "0"
+            - link "_ _ _ _ _. _. _ _ Fiction _ _ _ _ _. _. _ _ Unknown Author 0.0 0" [ref=e145] [cursor=pointer]:
+              - /url: /library/cmukzxg27006z58xknngte5ze
+              - generic [ref=e146]:
+                - img "_ _ _ _ _. _. _ _" [ref=e148]
+                - generic [ref=e150]:
+                  - generic [ref=e151]: Fiction
+                  - heading "_ _ _ _ _. _. _ _" [level=3] [ref=e153]
+                  - paragraph [ref=e154]: Unknown Author
+                  - generic [ref=e155]:
+                    - generic [ref=e156]: "0.0"
+                    - generic [ref=e160]: "0"
+            - link "আরাকানের মুসলমানদের ইতিহাস Fiction আরাকানের মুসলমানদের ইতিহাস ড. মাহফুজুর রহমান আখন্দ 0.0 0" [ref=e164] [cursor=pointer]:
+              - /url: /library/cmukzxb5r006x58xk4izs6348
+              - generic [ref=e165]:
+                - img "আরাকানের মুসলমানদের ইতিহাস" [ref=e167]
+                - generic [ref=e169]:
+                  - generic [ref=e170]: Fiction
+                  - heading "আরাকানের মুসলমানদের ইতিহাস" [level=3] [ref=e172]
+                  - paragraph [ref=e173]: ড. মাহফুজুর রহমান আখন্দ
+                  - generic [ref=e174]:
+                    - generic [ref=e175]: "0.0"
+                    - generic [ref=e179]: "0"
+            - link "_ _ _ _ _ _ _ Fiction _ _ _ _ _ _ _ Unknown Author 0.0 0" [ref=e183] [cursor=pointer]:
+              - /url: /library/cmukzx6z4006v58xkinl4ikqf
+              - generic [ref=e184]:
+                - img "_ _ _ _ _ _ _" [ref=e186]
+                - generic [ref=e188]:
+                  - generic [ref=e189]: Fiction
+                  - heading "_ _ _ _ _ _ _" [level=3] [ref=e191]
+                  - paragraph [ref=e192]: Unknown Author
+                  - generic [ref=e193]:
+                    - generic [ref=e194]: "0.0"
+                    - generic [ref=e198]: "0"
+            - link "_ _ _ _ _ _ _ _ Fiction _ _ _ _ _ _ _ _ Unknown Author 0.0 0" [ref=e202] [cursor=pointer]:
+              - /url: /library/cmukzx337006t58xk4acxg0ep
+              - generic [ref=e203]:
+                - img "_ _ _ _ _ _ _ _" [ref=e205]
+                - generic [ref=e207]:
+                  - generic [ref=e208]: Fiction
+                  - heading "_ _ _ _ _ _ _ _" [level=3] [ref=e210]
+                  - paragraph [ref=e211]: Unknown Author
+                  - generic [ref=e212]:
+                    - generic [ref=e213]: "0.0"
+                    - generic [ref=e217]: "0"
+            - link "পথ ও পাথেয় - নির্বাচিত কুরআন হাদীস Fiction পথ ও পাথেয় - নির্বাচিত কুরআন হাদীস এস. এম. রুহুল আমীন 0.0 0" [ref=e221] [cursor=pointer]:
+              - /url: /library/cmukzwzoh006r58xk3ezkjf9g
+              - generic [ref=e222]:
+                - img "পথ ও পাথেয় - নির্বাচিত কুরআন হাদীস" [ref=e224]
+                - generic [ref=e226]:
+                  - generic [ref=e227]: Fiction
+                  - heading "পথ ও পাথেয় - নির্বাচিত কুরআন হাদীস" [level=3] [ref=e229]
+                  - paragraph [ref=e230]: এস. এম. রুহুল আমীন
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: "0.0"
+                    - generic [ref=e236]: "0"
+            - link "_ _ _ _ _ _ _ _. _ _ _ Fiction _ _ _ _ _ _ _ _. _ _ _ Unknown Author 0.0 0" [ref=e240] [cursor=pointer]:
+              - /url: /library/cmukzwvrv006p58xkpw65edqc
+              - generic [ref=e241]:
+                - img "_ _ _ _ _ _ _ _. _ _ _" [ref=e243]
+                - generic [ref=e245]:
+                  - generic [ref=e246]: Fiction
+                  - heading "_ _ _ _ _ _ _ _. _ _ _" [level=3] [ref=e248]
+                  - paragraph [ref=e249]: Unknown Author
+                  - generic [ref=e250]:
+                    - generic [ref=e251]: "0.0"
+                    - generic [ref=e255]: "0"
+            - link "উপমহাদেশে ইসলামী আন্দোলনের ইতিহাস Fiction উপমহাদেশে ইসলামী আন্দোলনের ইতিহাস মাওঃমাসুদ আলম নদভী 0.0 0" [ref=e259] [cursor=pointer]:
+              - /url: /library/cmukzwrwn006n58xkwwhud0l8
+              - generic [ref=e260]:
+                - img "উপমহাদেশে ইসলামী আন্দোলনের ইতিহাস" [ref=e262]
+                - generic [ref=e264]:
+                  - generic [ref=e265]: Fiction
+                  - heading "উপমহাদেশে ইসলামী আন্দোলনের ইতিহাস" [level=3] [ref=e267]
+                  - paragraph [ref=e268]: মাওঃমাসুদ আলম নদভী
+                  - generic [ref=e269]:
+                    - generic [ref=e270]: "0.0"
+                    - generic [ref=e274]: "0"
+            - link "_ _ _ _ _ _ _ _ _ _ Fiction _ _ _ _ _ _ _ _ _ _ Unknown Author 0.0 0" [ref=e278] [cursor=pointer]:
+              - /url: /library/cmukzwnur006l58xkzp771gue
+              - generic [ref=e279]:
+                - img "_ _ _ _ _ _ _ _ _ _" [ref=e281]
+                - generic [ref=e283]:
+                  - generic [ref=e284]: Fiction
+                  - heading "_ _ _ _ _ _ _ _ _ _" [level=3] [ref=e286]
+                  - paragraph [ref=e287]: Unknown Author
+                  - generic [ref=e288]:
+                    - generic [ref=e289]: "0.0"
+                    - generic [ref=e293]: "0"
+            - link "ইতিহাসের আলোকে দেশ বিভাগ ও কায়েদে আযম জিন্নাহ Fiction ইতিহাসের আলোকে দেশ বিভাগ ও কায়েদে আযম জিন্নাহ এম. এ. মোহাইমেন 0.0 0" [ref=e297] [cursor=pointer]:
+              - /url: /library/cmukzwjh8006j58xk2726wmqo
+              - generic [ref=e298]:
+                - img "ইতিহাসের আলোকে দেশ বিভাগ ও কায়েদে আযম জিন্নাহ" [ref=e300]
+                - generic [ref=e302]:
+                  - generic [ref=e303]: Fiction
+                  - heading "ইতিহাসের আলোকে দেশ বিভাগ ও কায়েদে আযম জিন্নাহ" [level=3] [ref=e305]
+                  - paragraph [ref=e306]: এম. এ. মোহাইমেন
+                  - generic [ref=e307]:
+                    - generic [ref=e308]: "0.0"
+                    - generic [ref=e312]: "0"
+            - link "_ _ _ _ _ _ _ _ _ _ _ Fiction _ _ _ _ _ _ _ _ _ _ _ Unknown Author 0.0 0" [ref=e316] [cursor=pointer]:
+              - /url: /library/cmukzwfbg006h58xk5wtkpwo4
+              - generic [ref=e317]:
+                - img "_ _ _ _ _ _ _ _ _ _ _" [ref=e319]
+                - generic [ref=e321]:
+                  - generic [ref=e322]: Fiction
+                  - heading "_ _ _ _ _ _ _ _ _ _ _" [level=3] [ref=e324]
+                  - paragraph [ref=e325]: Unknown Author
+                  - generic [ref=e326]:
+                    - generic [ref=e327]: "0.0"
+                    - generic [ref=e331]: "0"
+          - generic [ref=e336]:
+            - button [disabled] [ref=e337]
+            - generic [ref=e340]:
+              - link "01" [ref=e341] [cursor=pointer]:
+                - /url: /library?page=1
+              - link "02" [ref=e342] [cursor=pointer]:
+                - /url: /library?page=2
+              - link "03" [ref=e343] [cursor=pointer]:
+                - /url: /library?page=3
+              - link "04" [ref=e344] [cursor=pointer]:
+                - /url: /library?page=4
+              - link "05" [ref=e345] [cursor=pointer]:
+                - /url: /library?page=5
+              - generic [ref=e346]: ...
+              - link "68" [ref=e347] [cursor=pointer]:
+                - /url: /library?page=68
+            - link [ref=e348] [cursor=pointer]:
+              - /url: /library?page=2
+  - contentinfo [ref=e351]:
+    - generic [ref=e352]:
+      - generic [ref=e353]:
+        - generic [ref=e354]:
+          - link "BookVerse Logo BookVerse" [ref=e355] [cursor=pointer]:
+            - /url: /
+            - img "BookVerse Logo" [ref=e356]
+            - generic [ref=e357]: BookVerse
+          - paragraph [ref=e359]: Discover, read, and share your favorite books with a community of passionate readers. Join millions of book lovers on their literary journey.
+          - generic [ref=e360]:
+            - generic [ref=e361]:
+              - generic [ref=e362]: 807+
+              - generic [ref=e363]: Books
+            - generic [ref=e364]:
+              - generic [ref=e365]: 4+
+              - generic [ref=e366]: Authors
+            - generic [ref=e367]:
+              - generic [ref=e368]: 7+
+              - generic [ref=e369]: Readers
+        - generic [ref=e370]:
+          - heading "Newsletter" [level=3] [ref=e371]
+          - paragraph [ref=e372]: Weekly book recommendations and author updates, straight to your inbox.
+          - generic [ref=e374]:
+            - textbox "Your email" [ref=e375]
+            - button [ref=e376]
+      - generic [ref=e380]:
+        - generic [ref=e381]:
+          - heading "Discover" [level=4] [ref=e382]
+          - list [ref=e383]:
+            - listitem [ref=e384]:
+              - link "Home" [ref=e385] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e386]:
+              - link "Browse Library" [ref=e387] [cursor=pointer]:
+                - /url: /library
+            - listitem [ref=e388]:
+              - link "Stories" [ref=e389] [cursor=pointer]:
+                - /url: /stories
+            - listitem [ref=e390]:
+              - link "Universes" [ref=e391] [cursor=pointer]:
+                - /url: /universes
+            - listitem [ref=e392]:
+              - link "Series" [ref=e393] [cursor=pointer]:
+                - /url: /series
+            - listitem [ref=e394]:
+              - link "Search" [ref=e395] [cursor=pointer]:
+                - /url: /search
+        - generic [ref=e396]:
+          - heading "Community" [level=4] [ref=e397]
+          - list [ref=e398]:
+            - listitem [ref=e399]:
+              - link "Book Clubs" [ref=e400] [cursor=pointer]:
+                - /url: /clubs
+            - listitem [ref=e401]:
+              - link "Activity Feed" [ref=e402] [cursor=pointer]:
+                - /url: /activity-feed
+            - listitem [ref=e403]:
+              - link "Challenges" [ref=e404] [cursor=pointer]:
+                - /url: /reading-challenges
+            - listitem [ref=e405]:
+              - link "My Shelf" [ref=e406] [cursor=pointer]:
+                - /url: /shelf
+            - listitem [ref=e407]:
+              - link "Offline Stories" [ref=e408] [cursor=pointer]:
+                - /url: /offline-stories
+        - generic [ref=e409]:
+          - heading "For Authors" [level=4] [ref=e410]
+          - list [ref=e411]:
+            - listitem [ref=e412]:
+              - link "Author Dashboard" [ref=e413] [cursor=pointer]:
+                - /url: /write/dashboard
+            - listitem [ref=e414]:
+              - link "Write a Story" [ref=e415] [cursor=pointer]:
+                - /url: /write/new
+            - listitem [ref=e416]:
+              - link "Story Universes" [ref=e417] [cursor=pointer]:
+                - /url: /write/universes
+            - listitem [ref=e418]:
+              - link "Story Series" [ref=e419] [cursor=pointer]:
+                - /url: /write/series
+            - listitem [ref=e420]:
+              - link "Analytics" [ref=e421] [cursor=pointer]:
+                - /url: /author/analytics
+            - listitem [ref=e422]:
+              - link "Wallet" [ref=e423] [cursor=pointer]:
+                - /url: /wallet
+            - listitem [ref=e424]:
+              - link "Newsletter & Fans" [ref=e425] [cursor=pointer]:
+                - /url: /author/newsletter
+            - listitem [ref=e426]:
+              - link "Upload Book" [ref=e427] [cursor=pointer]:
+                - /url: /upload
+        - generic [ref=e428]:
+          - heading "Support & Legal" [level=4] [ref=e429]
+          - list [ref=e430]:
+            - listitem [ref=e431]:
+              - link "Premium" [ref=e432] [cursor=pointer]:
+                - /url: /premium
+            - listitem [ref=e433]:
+              - link "Gifts" [ref=e434] [cursor=pointer]:
+                - /url: /gifts
+            - listitem [ref=e435]:
+              - link "Settings" [ref=e436] [cursor=pointer]:
+                - /url: /settings
+            - listitem [ref=e437]:
+              - link "Support Desk" [ref=e438] [cursor=pointer]:
+                - /url: /support
+            - listitem [ref=e439]:
+              - link "Documentation" [ref=e440] [cursor=pointer]:
+                - /url: /docs
+            - listitem [ref=e441]:
+              - link "Privacy Policy" [ref=e442] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e443]:
+              - link "Terms of Service" [ref=e444] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e445]:
+              - link "Cookie Policy" [ref=e446] [cursor=pointer]:
+                - /url: /cookies
+            - listitem [ref=e447]:
+              - link "DMCA" [ref=e448] [cursor=pointer]:
+                - /url: /dmca
+        - generic [ref=e449]:
+          - heading "Get in Touch" [level=4] [ref=e450]
+          - list [ref=e451]:
+            - listitem [ref=e452]:
+              - link "Johra Mension, Koyalarbari Kuratoli, Kuril-1229 Dhaka, Bangladesh" [ref=e456] [cursor=pointer]:
+                - /url: https://www.google.com/maps/search/?api=1&query=Johra+Mension,+Koyalarbari+,+Kuratoli,+Kuril-1229,+Dhaka+,+Bangladesh
+                - text: Johra Mension, KoyalarbariKuratoli, Kuril-1229Dhaka, Bangladesh
+            - listitem [ref=e457]:
+              - link "bookverse@gmail.com" [ref=e461] [cursor=pointer]:
+                - /url: mailto:bookverse@gmail.com
+            - listitem [ref=e462]:
+              - link "+880 1799-269699" [ref=e465] [cursor=pointer]:
+                - /url: tel:+8801799269699
+          - generic [ref=e466]:
+            - heading "Follow Us" [level=4] [ref=e467]
+            - generic [ref=e468]:
+              - link "Facebook" [ref=e469] [cursor=pointer]:
+                - /url: https://facebook.com
+              - link "Instagram" [ref=e472] [cursor=pointer]:
+                - /url: https://instagram.com
+              - link "Twitter" [ref=e476] [cursor=pointer]:
+                - /url: https://twitter.com
+              - link "LinkedIn" [ref=e479] [cursor=pointer]:
+                - /url: https://linkedin.com
+              - link "TikTok" [ref=e484] [cursor=pointer]:
+                - /url: https://tiktok.com
+      - generic [ref=e487]: © 2026 BookVerse. All rights reserved.
+    - button "Back to top" [ref=e491]
+  - button "Open Next.js Dev Tools" [ref=e499] [cursor=pointer]
+  - alert [ref=e503]
+```
+
+# Test source
+
+```ts
+  1  | /**
+  2  |  * E2E Tests: Library (Books) Browse Page
+  3  |  */
+  4  | import { test, expect } from '../fixtures/auth.fixture';
+  5  | 
+  6  | test.describe('Library Browse Page', () => {
+  7  |   test.beforeEach(async ({ page }) => {
+  8  |     await page.goto('/library');
+  9  |     await page.waitForLoadState('domcontentloaded');
+  10 |   });
+  11 | 
+  12 |   test('library page loads successfully', async ({ page }) => {
+  13 |     const body = await page.textContent('body');
+  14 |     expect(body?.length).toBeGreaterThan(100);
+  15 |   });
+  16 | 
+  17 |   test('displays book cards or empty state', async ({ page }) => {
+  18 |     const bookCards = page.locator('[class*="card"], [class*="book"], article, [data-testid*="book"]');
+  19 |     const emptyState = page.locator(':has-text("No books"), :has-text("no results"), :has-text("empty")');
+  20 | 
+  21 |     expect(
+  22 |       (await bookCards.count()) > 0 || (await emptyState.count()) > 0
+> 23 |     ).toBeTruthy();
+     |       ^ Error: expect(received).toBeTruthy()
+  24 |   });
+  25 | 
+  26 |   test('has filter controls for genre/language', async ({ page }) => {
+  27 |     const filterElements = page.locator(
+  28 |       'select, [class*="filter"], button:has-text("Filter"), [role="combobox"], input[placeholder*="search" i]'
+  29 |     );
+  30 |     expect(await filterElements.count()).toBeGreaterThanOrEqual(0);
+  31 |   });
+  32 | });
+  33 | 
+```

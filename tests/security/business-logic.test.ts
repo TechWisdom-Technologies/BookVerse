@@ -33,10 +33,10 @@ describe('Phase 6: Business Logic & Payment Security', () => {
   describe('Tips — Negative amount attack', () => {
     it('rejects a tip with amount 0', async () => {
       (getAuth as any).mockResolvedValue({ id: 'u1' });
-      const req = new NextRequest('http://localhost/api/tips/u2', {
-        method: 'POST',
-        body: JSON.stringify({ amount: 0, senderNumber: '123', transactionId: 'tx1' }),
-      });
+      const req = {
+        json: async () => ({ amount: 0, senderNumber: '123', transactionId: 'tx1' }),
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await postTip(req, { params: Promise.resolve({ userId: 'u2' }) });
       expect(res.status).toBe(400);
       const data = await res.json();
@@ -49,10 +49,10 @@ describe('Phase 6: Business Logic & Payment Security', () => {
       (prisma.tip.findFirst as any).mockResolvedValue(null);
       (prisma.tip.create as any).mockResolvedValue({ id: 't1', amount: 1 });
 
-      const req = new NextRequest('http://localhost/api/tips/u2', {
-        method: 'POST',
-        body: JSON.stringify({ amount: -100, senderNumber: '123', transactionId: 'tx2' }),
-      });
+      const req = {
+        json: async () => ({ amount: -100, senderNumber: '123', transactionId: 'tx2' }),
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await postTip(req, { params: Promise.resolve({ userId: 'u2' }) });
       // The amount gets clamped to 1 (minimum), not rejected — this IS the security measure
       expect(res.status).toBe(201);
@@ -61,10 +61,10 @@ describe('Phase 6: Business Logic & Payment Security', () => {
 
     it('rejects self-tipping', async () => {
       (getAuth as any).mockResolvedValue({ id: 'u1' });
-      const req = new NextRequest('http://localhost/api/tips/u1', {
-        method: 'POST',
-        body: JSON.stringify({ amount: 10, senderNumber: '123', transactionId: 'tx3' }),
-      });
+      const req = {
+        json: async () => ({ amount: 10, senderNumber: '123', transactionId: 'tx3' }),
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await postTip(req, { params: Promise.resolve({ userId: 'u1' }) });
       expect(res.status).toBe(400);
       const data = await res.json();
@@ -78,13 +78,13 @@ describe('Phase 6: Business Logic & Payment Security', () => {
       (hasFeatureAccess as any).mockResolvedValue(true);
       (prisma.subscriptionTransaction.findUnique as any).mockResolvedValue({ id: 'existing' });
 
-      const req = new NextRequest('http://localhost/api/gift-memberships', {
-        method: 'POST',
-        body: JSON.stringify({
+      const req = {
+        json: async () => ({
           recipientEmail: 'a@b.com', tier: 'PRO', duration: 1,
           senderNumber: '123', transactionId: 'dup-tx',
         }),
-      });
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await postGift(req);
       expect(res.status).toBe(400);
       const data = await res.json();
@@ -97,13 +97,13 @@ describe('Phase 6: Business Logic & Payment Security', () => {
       (prisma.subscriptionTransaction.findUnique as any).mockResolvedValue(null);
       (prisma.giftMembership.findUnique as any).mockResolvedValue(null);
 
-      const req = new NextRequest('http://localhost/api/gift-memberships', {
-        method: 'POST',
-        body: JSON.stringify({
+      const req = {
+        json: async () => ({
           recipientEmail: 'a@b.com', tier: 'HACKER', duration: 1,
           senderNumber: '123', transactionId: 'tx-new',
         }),
-      });
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await postGift(req);
       expect(res.status).toBe(400);
       const data = await res.json();
@@ -121,10 +121,10 @@ describe('Phase 6: Business Logic & Payment Security', () => {
         expiresAt: new Date(Date.now() + 86400000),
       });
 
-      const req = new NextRequest('http://localhost/api/gift-memberships/redeem', {
-        method: 'POST',
-        body: JSON.stringify({ code: 'GIFT-123' }),
-      });
+      const req = {
+        json: async () => ({ code: 'GIFT-123' }),
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await redeemGift(req);
       expect(res.status).toBe(403);
       const data = await res.json();
@@ -140,10 +140,10 @@ describe('Phase 6: Business Logic & Payment Security', () => {
         expiresAt: new Date(Date.now() - 86400000), // Expired yesterday
       });
 
-      const req = new NextRequest('http://localhost/api/gift-memberships/redeem', {
-        method: 'POST',
-        body: JSON.stringify({ code: 'GIFT-EXP' }),
-      });
+      const req = {
+        json: async () => ({ code: 'GIFT-EXP' }),
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await redeemGift(req);
       expect(res.status).toBe(400);
       const data = await res.json();
@@ -159,10 +159,10 @@ describe('Phase 6: Business Logic & Payment Security', () => {
         expiresAt: new Date(Date.now() + 86400000),
       });
 
-      const req = new NextRequest('http://localhost/api/gift-memberships/redeem', {
-        method: 'POST',
-        body: JSON.stringify({ code: 'GIFT-USED' }),
-      });
+      const req = {
+        json: async () => ({ code: 'GIFT-USED' }),
+        headers: { get: () => '127.0.0.1' },
+      } as any as NextRequest;
       const res = await redeemGift(req);
       expect(res.status).toBe(400);
       const data = await res.json();

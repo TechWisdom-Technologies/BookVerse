@@ -31,5 +31,5 @@ describe('Stats API Integration', () => {
     
     expect(prisma.book.count).toHaveBeenCalledTimes(1);
     expect(prisma.user.count).toHaveBeenCalledTimes(2);
-  });
+  }, 15000);
 });

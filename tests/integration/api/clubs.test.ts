@@ -35,7 +35,7 @@ describe('Clubs API Integration', () => {
 
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data).toHaveLength(1);
+      expect(data.clubs).toHaveLength(1);
 
       expect(prisma.club.findMany).toHaveBeenCalledWith(
         expect.objectContaining({

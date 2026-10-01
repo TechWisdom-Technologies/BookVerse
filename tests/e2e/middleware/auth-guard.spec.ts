@@ -20,8 +20,7 @@ test.describe('Auth Guard Middleware', () => {
   for (const route of protectedRoutes) {
     test(`redirects unauthenticated user from ${route}`, async ({ visitorPage }) => {
       await visitorPage.goto(route);
-      await visitorPage.waitForLoadState('domcontentloaded');
-      expect(visitorPage.url()).toContain('/login');
+      await expect(visitorPage).toHaveURL(/.*login.*/);
     });
   }
 });

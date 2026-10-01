@@ -48,7 +48,7 @@ test.describe('Mutation Testing Execution Part 4 (Phases 31-40)', () => {
 
   test('Phase 38: State Machine & Reducer Mutations - switch fallthrough block', async ({ page }) => {
     let state = 'IDLE';
-    const action = 'START';
+    const action: string = 'START';
     switch (action) {
       case 'START':
         state = 'LOADING';
