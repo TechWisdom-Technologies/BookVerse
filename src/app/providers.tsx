@@ -1,11 +1,25 @@
 "use client";
 
+import { useEffect } from "react";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 export { useAuth };
 
+const VALID_THEMES = ['light', 'dark', 'rose', 'amoled', 'cyberpunk', 'mint', 'neon', 'earth', 'canvas', 'vintage', 'oceanic', 'royal', 'system'];
+
 export function Providers({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    try {
+      const currentTheme = localStorage.getItem('theme');
+      if (currentTheme && !VALID_THEMES.includes(currentTheme)) {
+        localStorage.removeItem('theme');
+        // Force reload or re-render to apply system default
+        document.documentElement.className = document.documentElement.className.replace(currentTheme, '').trim();
+      }
+    } catch (e) {}
+  }, []);
+
   return (
     <ThemeProvider 
       attribute="class" 
