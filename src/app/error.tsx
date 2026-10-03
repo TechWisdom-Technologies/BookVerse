@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { AlertTriangle, Home, RotateCcw, Terminal, WifiOff, BookOpen, Download } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
+import * as Sentry from "@sentry/nextjs";
 
 function isNetworkError(error: Error & { digest?: string }): boolean {
   const msg = (error.message || "").toLowerCase();
@@ -44,6 +45,7 @@ export default function ErrorPage({
 
   useEffect(() => {
     console.error("Application error:", error);
+    Sentry.captureException(error);
     setIsOffline(!navigator.onLine);
 
     const goOffline = () => setIsOffline(true);
