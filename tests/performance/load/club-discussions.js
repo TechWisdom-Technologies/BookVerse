@@ -31,8 +31,8 @@ export default function () {
     ['POST', `${BASE_URL}/api/clubs/1/discussions/1/replies`, payload, params], // Posting a reply
   ]);
 
-  check(responses[0], { 'club read status valid': (r) => [200, 404, 401].includes(r.status) });
-  check(responses[1], { 'club reply status valid': (r) => [200, 201, 404, 401, 403].includes(r.status) });
+  check(responses[0], { 'club read status valid': (r) => [200].includes(r.status) });
+  check(responses[1], { 'club reply status valid': (r) => [200, 201].includes(r.status) });
 
   sleep(3);
 }

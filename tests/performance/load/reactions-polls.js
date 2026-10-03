@@ -31,7 +31,7 @@ export default function () {
   ]);
 
   check(responses[0], {
-    'reaction post status is valid': (r) => [200, 201, 404, 400].includes(r.status),
+    'reaction post status is valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(2);

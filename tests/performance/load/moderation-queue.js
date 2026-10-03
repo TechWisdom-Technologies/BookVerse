@@ -31,7 +31,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/moderation/check-content`, payload, params);
 
   check(res, {
-    'moderation status is valid': (r) => [200, 201, 401, 403, 404].includes(r.status),
+    'moderation status is valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(5);

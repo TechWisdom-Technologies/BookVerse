@@ -29,7 +29,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/reading-challenges/1/participate`, payload, params);
 
   check(res, {
-    'challenge participate status valid': (r) => [200, 201, 404, 401, 400].includes(r.status),
+    'challenge participate status valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(1);

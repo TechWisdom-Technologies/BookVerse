@@ -30,7 +30,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/upload`, payload, params);
 
   check(res, {
-    'upload status is valid': (r) => [200, 201, 401, 403, 404, 400].includes(r.status),
+    'upload status is valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(5);

@@ -31,7 +31,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/comments`, payload, params);
 
   check(res, {
-    'comment post status is 201 or 401/404': (r) => [201, 401, 404, 400].includes(r.status),
+    'comment post status is 201 or 401/404': (r) => [201].includes(r.status),
   });
 
   sleep(2); // Users don't spam 10 comments a second usually

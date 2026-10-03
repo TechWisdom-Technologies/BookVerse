@@ -35,11 +35,11 @@ export default function () {
   ]);
 
   check(responses[0], {
-    'progress sync status is 200/201/404': (r) => [200, 201, 404, 400].includes(r.status),
+    'progress sync status is 200/201/404': (r) => [200, 201].includes(r.status),
   });
   
   check(responses[1], {
-    'reading log sync status is 200/201/404': (r) => [200, 201, 404, 400].includes(r.status),
+    'reading log sync status is 200/201/404': (r) => [200, 201].includes(r.status),
   });
 
   // Usually synced every 10-30 seconds, but we speed it up slightly to generate load

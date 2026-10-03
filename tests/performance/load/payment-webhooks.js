@@ -30,7 +30,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/payment/uddokta/webhook`, payload, params);
 
   check(res, {
-    'webhook status is 200/404': (r) => [200, 404, 400].includes(r.status), // 404/400 acceptable if mock data fails validation, but not 500
+    'webhook status is 200/201': (r) => [200].includes(r.status), // 404/400 acceptable if mock data fails validation, but not 500
   });
 
   sleep(1);

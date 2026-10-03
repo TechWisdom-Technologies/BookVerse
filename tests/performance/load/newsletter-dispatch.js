@@ -30,7 +30,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/newsletter/send`, payload, params);
 
   check(res, {
-    'newsletter dispatch status is valid': (r) => [200, 201, 202, 401, 403, 404].includes(r.status),
+    'newsletter dispatch status is valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(5);

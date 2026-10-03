@@ -30,7 +30,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/auth/callback/credentials`, payload, params);
 
   check(res, {
-    'auth status is 200 or 401/404': (r) => [200, 302, 401, 404].includes(r.status),
+    'auth status is 200 or 201/404': (r) => [200].includes(r.status),
   });
 
   sleep(2);

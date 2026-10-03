@@ -30,7 +30,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/story-promotions`, payload, params);
 
   check(res, {
-    'promotion bid status valid': (r) => [200, 201, 404, 401, 403, 400].includes(r.status),
+    'promotion bid status valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(5);

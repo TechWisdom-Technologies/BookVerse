@@ -24,7 +24,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/pdf-proxy?url=mock-url`, params);
 
   check(res, {
-    'pdf proxy status is valid': (r) => [200, 401, 403, 404, 400].includes(r.status),
+    'pdf proxy status is valid': (r) => [200].includes(r.status),
   });
 
   sleep(5);

@@ -23,7 +23,7 @@ export default function () {
   ]);
 
   check(responses[0], {
-    'favicon status is 200 or 404': (r) => r.status === 200 || r.status === 404,
+    'favicon status is 200 or 201': (r) => r.status === 200 ,
   });
 
   sleep(0.5);

@@ -23,7 +23,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/search?q=${term}`);
 
   check(res, {
-    'search api status is 200 or 404': (r) => r.status === 200 || r.status === 404,
+    'search api status is 200 or 201': (r) => r.status === 200 ,
   });
 
   sleep(0.5); // Rapid searching

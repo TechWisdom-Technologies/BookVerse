@@ -25,7 +25,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/users/me/export`, params);
 
   check(res, {
-    'export status is valid': (r) => [200, 202, 401, 404, 403].includes(r.status),
+    'export status is valid': (r) => [200].includes(r.status),
   });
 
   sleep(15);

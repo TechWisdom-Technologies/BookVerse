@@ -26,7 +26,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/notifications/priority`, params);
 
   check(res, {
-    'notification poll status is valid': (r) => [200, 304, 401, 404, 403].includes(r.status),
+    'notification poll status is valid': (r) => [200].includes(r.status),
   });
 
   // Clients typically poll every 10-30 seconds

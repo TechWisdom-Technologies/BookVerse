@@ -26,7 +26,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/stories/recommendations`, params);
 
   check(res, {
-    'recommendations status is 200': (r) => [200, 404, 401].includes(r.status),
+    'recommendations status is 200': (r) => [200].includes(r.status),
   });
 
   sleep(5);

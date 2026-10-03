@@ -29,7 +29,7 @@ export default function () {
   ]);
 
   check(responses[0], {
-    'profile api status is 200 or 401/404': (r) => [200, 401, 404].includes(r.status),
+    'profile api status is 200 or 201/404': (r) => [200].includes(r.status),
   });
 
   sleep(1);

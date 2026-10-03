@@ -25,7 +25,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/stories/1/analytics-detailed`, params);
 
   check(res, {
-    'analytics status is valid': (r) => [200, 401, 404, 403].includes(r.status),
+    'analytics status is valid': (r) => [200].includes(r.status),
   });
 
   // Authors don't refresh analytics 10 times a second

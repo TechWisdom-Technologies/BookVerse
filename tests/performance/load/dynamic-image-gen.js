@@ -18,7 +18,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/api/stories/1/share-card`);
 
   check(res, {
-    'share card generated (200 or 404)': (r) => [200, 404].includes(r.status),
+    'share card generated (200 or 201)': (r) => [200].includes(r.status),
   });
 
   sleep(2);

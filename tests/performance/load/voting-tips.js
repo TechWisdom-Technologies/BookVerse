@@ -30,7 +30,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/tips`, payload, params);
 
   check(res, {
-    'tip post status is 201/200 or 401/404': (r) => [200, 201, 401, 404, 400].includes(r.status),
+    'tip post status is 201/200 or 201/404': (r) => [200, 201].includes(r.status),
   });
 
   sleep(2);

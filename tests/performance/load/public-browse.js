@@ -25,11 +25,11 @@ export default function () {
   ]);
 
   check(responses[0], {
-    'books api status is 200 or 404': (r) => r.status === 200 || r.status === 404, // 404 acceptable if API doesn't exist yet
+    'books api status is 200 or 201': (r) => r.status === 200 , // 404 acceptable if API doesn't exist yet
   });
 
   check(responses[1], {
-    'stories api status is 200 or 404': (r) => r.status === 200 || r.status === 404,
+    'stories api status is 200 or 201': (r) => r.status === 200 ,
   });
 
   sleep(1); // User thinks/reads for 1 second before clicking again

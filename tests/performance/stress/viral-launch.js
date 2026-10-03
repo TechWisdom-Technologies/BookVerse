@@ -25,7 +25,7 @@ export default function () {
   const res = http.get(`${BASE_URL}/library/999`); // Assuming 999 is the viral book
 
   check(res, {
-    'page loaded successfully (200 or 404)': (r) => r.status === 200 || r.status === 404,
+    'page loaded successfully (200 or 201)': (r) => r.status === 200 ,
   });
 
   sleep(1);

@@ -31,7 +31,7 @@ export default function () {
   const res = http.post(`${BASE_URL}/api/stories/1/inline-comments`, payload, params);
 
   check(res, {
-    'inline comment post status is valid': (r) => [200, 201, 404, 400].includes(r.status),
+    'inline comment post status is valid': (r) => [200, 201].includes(r.status),
   });
 
   sleep(3);
