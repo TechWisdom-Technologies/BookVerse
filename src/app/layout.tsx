@@ -4,6 +4,8 @@ import "./globals.css";
 import { Providers } from "@/app/providers";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -119,6 +121,8 @@ export default function RootLayout({
             }
           `}
         </Script>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
