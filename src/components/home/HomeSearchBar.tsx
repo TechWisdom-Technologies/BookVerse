@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Search, TrendingUp, Book, User, Compass, Loader2, Mic } from "lucide-react";
 import toast from "react-hot-toast";
+import Link from "next/link";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const PLACEHOLDERS = [
   "Search books, stories...",
@@ -22,6 +24,7 @@ const DEFAULT_SUGGESTIONS = [
 ];
 
 export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initialQuery?: string, variant?: "home" | "searchPage" }) {
+  const { user, loading } = useAuth();
   const [query, setQuery] = useState(initialQuery);
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
@@ -161,9 +164,10 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
   };
 
   const inner = (
-    <div className={`relative w-full ${variant === "searchPage" ? "max-w-3xl mx-auto z-50 mb-16" : "max-w-2xl"}`}>
-      <form onSubmit={handleSearch} className="relative flex items-center group z-20 w-full">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-zinc-900 dark:group-focus-within:text-white transition-colors z-10" />
+    <div className={`relative w-full flex items-center gap-3 ${variant === "searchPage" ? "max-w-3xl mx-auto z-50 mb-16" : "max-w-4xl"}`}>
+      <div className="relative flex-1">
+        <form onSubmit={handleSearch} className="relative flex items-center group z-20 w-full">
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 group-focus-within:text-zinc-900 dark:group-focus-within:text-white transition-colors z-10" />
         <input
           type="text"
           value={query}
@@ -246,6 +250,18 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
               </div>
             )}
           </div>
+        </div>
+      )}
+      </div>
+
+      {!user && !loading && variant === "home" && (
+        <div className="hidden md:flex items-center gap-2 z-20">
+          <Link href="/login" className="px-6 py-3.5 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-md border border-white/10 text-white text-[11px] font-bold uppercase tracking-[0.15em] rounded-full transition-all whitespace-nowrap shadow-lg">
+            Sign In
+          </Link>
+          <Link href="/signup" className="px-6 py-3.5 bg-white text-zinc-950 text-[11px] font-bold uppercase tracking-[0.15em] rounded-full hover:bg-zinc-100 transition-all whitespace-nowrap shadow-xl border border-white/20">
+            Sign Up
+          </Link>
         </div>
       )}
     </div>
