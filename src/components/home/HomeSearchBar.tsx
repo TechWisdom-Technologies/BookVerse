@@ -259,7 +259,7 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
           <Link href="/login" className="px-6 py-3.5 bg-zinc-900/40 hover:bg-zinc-900/60 backdrop-blur-md border border-white/10 text-white text-[11px] font-bold uppercase tracking-[0.15em] rounded-full transition-all whitespace-nowrap shadow-lg">
             Sign In
           </Link>
-          <Link href="/signup" className="px-6 py-3.5 bg-white text-zinc-950 text-[11px] font-bold uppercase tracking-[0.15em] rounded-full hover:bg-zinc-100 transition-all whitespace-nowrap shadow-xl border border-white/20">
+          <Link href="/signup?redirect=%2F" className="px-6 py-3.5 bg-white text-zinc-950 text-[11px] font-bold uppercase tracking-[0.15em] rounded-full hover:bg-zinc-100 transition-all whitespace-nowrap shadow-xl border border-white/20">
             Sign Up
           </Link>
         </div>
