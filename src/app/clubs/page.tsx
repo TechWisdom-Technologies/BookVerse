@@ -50,9 +50,12 @@ export default function ClubsPage() {
         const res = await fetch('/api/clubs');
         if (res.ok) {
           const data = await res.json();
-          setClubs(data);
-          setFilteredClubs(data);
+          const list: Club[] = Array.isArray(data) ? data : Array.isArray(data?.clubs) ? data.clubs : [];
+          setClubs(list);
+          setFilteredClubs(list);
         }
+      } catch (err) {
+        console.error('Error fetching clubs:', err);
       } finally {
         setLoading(false);
       }

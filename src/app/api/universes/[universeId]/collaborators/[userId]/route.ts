@@ -67,6 +67,15 @@ export async function DELETE(
       }
     }
 
+    const collaborator = await prisma.universeCollaborator.findUnique({
+      where: { universeId_userId: { universeId, userId } },
+      select: { status: true },
+    });
+    if (!collaborator) {
+      return NextResponse.json({ error: 'Collaborator not found' }, { status: 404 });
+    }
+    const wasPending = collaborator.status === 'PENDING';
+
     // 1. Delete all stories written by this collaborator in this universe as requested
     await prisma.story.deleteMany({
       where: {
@@ -91,8 +100,10 @@ export async function DELETE(
         data: {
           userId: userId,
           type: 'SYSTEM',
-          title: 'Removed from Universe',
-          message: `You have been removed from the universe "${universe.name}" by the architect. Reason: ${reason}`,
+          title: wasPending ? 'Co-Author Request Declined' : 'Removed from Universe',
+          message: wasPending
+            ? `Your request to co-author the universe "${universe.name}" was declined by the architect. Reason: ${reason}`
+            : `You have been removed from the universe "${universe.name}" by the architect. Reason: ${reason}`,
           isRead: false,
         },
       });

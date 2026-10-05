@@ -1,6 +1,7 @@
 import { logTokenUsage } from './ai-metrics';
 
-export async function fetchGroqWithFallback(body: any) {
+export async function fetchGroqWithFallback(input: any) {
+  const { timeoutMs, ...body } = input || {};
   // Collect all Groq API keys available in the environment
   const keys = [
     process.env.GROQ_API_KEY_1,
@@ -28,6 +29,7 @@ export async function fetchGroqWithFallback(body: any) {
           'Authorization': `Bearer ${key}`,
         },
         body: JSON.stringify(body),
+        signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : undefined,
       });
 
       if (!response.ok) {

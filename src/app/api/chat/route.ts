@@ -15,6 +15,54 @@ const groq = createGroq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+// In-memory cache of the catalog used to ground the AI, so we don't hit the DB on every message
+const CATALOG_TTL_MS = 5 * 60 * 1000;
+let catalogCache: { booksList: string; storiesList: string; expiresAt: number } | null = null;
+
+const truncate = (text: string | null, maxLen: number = 100) => {
+  if (!text) return "No details provided.";
+  return text.length > maxLen ? text.substring(0, maxLen) + "..." : text;
+};
+
+async function getCatalog() {
+  if (catalogCache && catalogCache.expiresAt > Date.now()) return catalogCache;
+
+  const [books, stories] = await Promise.all([
+    prisma.book.findMany({
+      take: 12,
+      orderBy: { downloadCount: "desc" },
+      select: { id: true, title: true, authorName: true, genre: true, description: true },
+    }),
+    prisma.story.findMany({
+      where: { published: true },
+      take: 12,
+      orderBy: { viewCount: "desc" },
+      select: {
+        id: true,
+        title: true,
+        genre: true,
+        summary: true,
+        description: true,
+        author: { select: { username: true, displayName: true } },
+      },
+    }),
+  ]);
+
+  const booksList = books
+    .map((b) => `- "${b.title}" by ${b.authorName} (Genre: ${b.genre}) - ${truncate(b.description)}`)
+    .join("\n");
+
+  const storiesList = stories
+    .map((s) => `- "${s.title}" by ${s.author.displayName || s.author.username} (Genre: ${s.genre || 'General'}) - ${truncate(s.summary || s.description)}`)
+    .join("\n");
+
+  catalogCache = { booksList, storiesList, expiresAt: Date.now() + CATALOG_TTL_MS };
+  return catalogCache;
+}
+
+// Only send the most recent turns to the model to keep prompts small and fast
+const MAX_HISTORY_MESSAGES = 10;
+
 const postHandler = async (req: NextRequest) => {
   // Rate limit: 10 AI chat messages per minute per IP
   const limitRes = await checkRateLimit(10, 60000);
@@ -41,51 +89,8 @@ const postHandler = async (req: NextRequest) => {
       messages = [{ role: 'user', content: body.content }];
     }
 
-    // Fetch a curated subset of books and stories to ground the AI without hitting token limits
-    const [books, stories] = await Promise.all([
-      prisma.book.findMany({
-        take: 12,
-        orderBy: { downloadCount: "desc" },
-        select: {
-          id: true,
-          title: true,
-          authorName: true,
-          genre: true,
-          description: true,
-        },
-      }),
-      prisma.story.findMany({
-        where: { published: true },
-        take: 12,
-        orderBy: { viewCount: "desc" },
-        select: {
-          id: true,
-          title: true,
-          genre: true,
-          summary: true,
-          description: true,
-          author: {
-            select: {
-              username: true,
-              displayName: true,
-            },
-          },
-        },
-      }),
-    ]);
-
-    const truncate = (text: string | null, maxLen: number = 100) => {
-      if (!text) return "No details provided.";
-      return text.length > maxLen ? text.substring(0, maxLen) + "..." : text;
-    };
-
-    const booksList = books
-      .map((b) => `- "${b.title}" by ${b.authorName} (Genre: ${b.genre}) - ${truncate(b.description)}`)
-      .join("\n");
-
-    const storiesList = stories
-      .map((s) => `- "${s.title}" by ${s.author.displayName || s.author.username} (Genre: ${s.genre || 'General'}) - ${truncate(s.summary || s.description)}`)
-      .join("\n");
+    // Fetch a curated subset of books and stories (cached) to ground the AI without hitting token limits
+    const { booksList, storiesList } = await getCatalog();
 
     let responseText = '';
     const systemPrompt = `You are the BookVerse AI Librarian, a helpful, enthusiastic, and knowledgeable assistant for a digital library platform. 
@@ -106,16 +111,23 @@ const postHandler = async (req: NextRequest) => {
       
       Do NOT use Markdown syntax like **asterisks** for bolding. Structure your answer clearly with plain text spacing and always encourage users to read more!`;
 
-    const sanitizedMessages = messages.map((m: any) => ({
-      role: m.role,
-      content: m.content,
-    }));
+    const sanitizedMessages = messages
+      .filter((m: any) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.id !== 'error')
+      .slice(-MAX_HISTORY_MESSAGES)
+      .filter((m: any, i: number, arr: any[]) => arr.slice(0, i + 1).some((x: any) => x.role === 'user'))
+      .map((m: any) => ({
+        role: m.role,
+        content: m.content,
+      }));
 
     try {
-      // 1. Try Gemini First
+      // 1. Try Gemini First (thinking disabled for fast replies)
       const data = await fetchGeminiWithFallback({
         messages: [{ role: 'system', content: systemPrompt }, ...sanitizedMessages],
         temperature: 0.7,
+        max_tokens: 800,
+        thinkingBudget: 0,
+        timeoutMs: 10000,
       });
       responseText = data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
     } catch (geminiErr: any) {
@@ -128,6 +140,8 @@ const postHandler = async (req: NextRequest) => {
           messages: [{ role: 'system', content: systemPrompt }, ...sanitizedMessages],
           max_tokens: 1024,
           temperature: 0.7,
+          reasoning_effort: 'low',
+          timeoutMs: 10000,
         });
         responseText = data.choices[0]?.message?.content || "I'm sorry, I couldn't generate a response.";
       } catch (groqErr: any) {

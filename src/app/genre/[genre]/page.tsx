@@ -32,8 +32,10 @@ export default function GenreCommunityPage() {
         setLoading(true);
         const booksRes = await fetch(`/api/books?genre=${encodeURIComponent(genre)}`);
         const clubsRes = await fetch(`/api/clubs?genre=${encodeURIComponent(genre)}`);
-        const books = booksRes.ok ? await booksRes.json() : [];
-        const clubs = clubsRes.ok ? await clubsRes.json() : [];
+        const booksData = booksRes.ok ? await booksRes.json() : [];
+        const clubsData = clubsRes.ok ? await clubsRes.json() : [];
+        const books = Array.isArray(booksData) ? booksData : Array.isArray(booksData?.books) ? booksData.books : [];
+        const clubs = Array.isArray(clubsData) ? clubsData : Array.isArray(clubsData?.clubs) ? clubsData.clubs : [];
 
         setGenreData({
           genre,

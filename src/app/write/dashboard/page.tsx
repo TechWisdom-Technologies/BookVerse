@@ -228,7 +228,7 @@ export default function AuthorDashboardPage() {
  const [leaveUniverseModal, setLeaveUniverseModal] = useState<{ universeId: string; universeName: string } | null>(null);
  const [isLeaving, setIsLeaving] = useState(false);
 
- const [removeCoAuthorModal, setRemoveCoAuthorModal] = useState<{ universeId: string; userId: string; username: string } | null>(null);
+ const [removeCoAuthorModal, setRemoveCoAuthorModal] = useState<{ universeId: string; userId: string; username: string; mode?: 'remove' | 'decline' } | null>(null);
  const [coAuthorRemoveReason, setCoAuthorRemoveReason] = useState("");
  const [isRemovingCoAuthor, setIsRemovingCoAuthor] = useState(false);
 
@@ -579,7 +579,11 @@ export default function AuthorDashboardPage() {
  </button>
  <button
  disabled={actionLoading === req.universeId}
- onClick={() => handleRespondInvite(req.universeId, false, req.user?.id)}
+ onClick={() => {
+ if (!req.user?.id) return;
+ setCoAuthorRemoveReason("");
+ setRemoveCoAuthorModal({ universeId: req.universeId, userId: req.user.id, username: req.user.username, mode: 'decline' });
+ }}
  className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-zinc-100 hover:bg-rose-50 dark:bg-zinc-900 dark:hover:bg-rose-950/30 text-zinc-600 dark:text-zinc-400 hover:text-rose-600 dark:hover:text-rose-500 border border-transparent hover:border-rose-200 dark:hover:border-rose-900/50 text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
  >
  {actionLoading === req.universeId ? (
@@ -1585,7 +1589,7 @@ export default function AuthorDashboardPage() {
  <div className="bg-white dark:bg-zinc-950 w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-xl overflow-hidden flex flex-col">
  <div className="p-6 border-b border-zinc-100 dark:border-zinc-900 flex items-center justify-between">
  <h3 className="text-lg font-semibold text-zinc-800 dark:text-zinc-100 mb-2 font-bold text-zinc-900 dark:text-white text-rose-500 flex items-center gap-2">
- <AlertCircle className="w-4 h-4" /> Remove Co-Author
+ <AlertCircle className="w-4 h-4" /> {removeCoAuthorModal.mode === 'decline' ? 'Decline Request' : 'Remove Co-Author'}
  </h3>
  <button
  onClick={() => setRemoveCoAuthorModal(null)}
@@ -1596,11 +1600,15 @@ export default function AuthorDashboardPage() {
  </div>
  <div className="p-6 space-y-4">
  <p className="text-xs text-zinc-500 font-medium">
- Are you sure you want to remove <span className="font-bold text-zinc-900 dark:text-white">@{removeCoAuthorModal.username}</span> from this universe? This will also unlink all stories they have contributed to this universe.
+ {removeCoAuthorModal.mode === 'decline' ? (
+ <>Decline the co-author request from <span className="font-bold text-zinc-900 dark:text-white">@{removeCoAuthorModal.username}</span>? They will be notified with the reason below.</>
+ ) : (
+ <>Are you sure you want to remove <span className="font-bold text-zinc-900 dark:text-white">@{removeCoAuthorModal.username}</span> from this universe? This will also unlink all stories they have contributed to this universe.</>
+ )}
  </p>
  <div className="space-y-2">
  <label className="text-sm font-bold text-zinc-400 flex items-center gap-1.5">
- Reason for Removal <span className="text-rose-500">*</span>
+ {removeCoAuthorModal.mode === 'decline' ? 'Reason for Declining' : 'Reason for Removal'} <span className="text-rose-500">*</span>
  </label>
  <textarea
  value={coAuthorRemoveReason}
@@ -1622,7 +1630,7 @@ export default function AuthorDashboardPage() {
  disabled={isRemovingCoAuthor || !coAuthorRemoveReason.trim()}
  className="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
  >
- {isRemovingCoAuthor ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> :"Remove Co-Author"}
+ {isRemovingCoAuthor ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : removeCoAuthorModal.mode === 'decline' ? "Decline Request" : "Remove Co-Author"}
  </button>
  </div>
  </div>

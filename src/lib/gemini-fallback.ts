@@ -41,9 +41,18 @@ export async function fetchGeminiWithFallback(options: any) {
   if (options.response_format?.type === 'json_object') {
     generationConfig.responseMimeType = "application/json";
   }
+  if (options.max_tokens !== undefined) {
+    generationConfig.maxOutputTokens = options.max_tokens;
+  }
+  // thinkingBudget: 0 disables Gemini 2.5 "thinking" for much faster responses
+  if (options.thinkingBudget !== undefined) {
+    generationConfig.thinkingConfig = { thinkingBudget: options.thinkingBudget };
+  }
   if (Object.keys(generationConfig).length > 0) {
     payload.generationConfig = generationConfig;
   }
+
+  const timeoutMs: number | undefined = options.timeoutMs;
 
   for (const key of keys) {
     const startTime = performance.now();
@@ -53,6 +62,7 @@ export async function fetchGeminiWithFallback(options: any) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        signal: timeoutMs ? AbortSignal.timeout(timeoutMs) : undefined,
       });
 
       if (!response.ok) {
