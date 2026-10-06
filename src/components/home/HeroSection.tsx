@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { BookOpen, Play, ArrowRight, Star } from "lucide-react";
@@ -16,7 +17,13 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
     <section className="relative w-full h-screen min-h-[800px] flex items-start pt-6 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] dark:opacity-20" />
+        <Image 
+          src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=2000&auto=format&fit=crop"
+          alt="Hero Background"
+          fill
+          priority
+          className="object-cover opacity-[0.03] dark:opacity-20"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-white via-white/80 to-transparent dark:from-zinc-950 dark:via-zinc-950/80 dark:to-transparent" />
 
         {/* Animated Orbs - Hidden on mobile to prevent GPU flickering/blinking, Subtle in Light Mode */}
@@ -105,14 +112,14 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
             <div className="flex -space-x-3">
               {topUsers.length > 0 ? (
                 topUsers.map((user, i) => (
-                  <div key={user.id} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
-                    <img src={user.avatarUrl || `https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover" />
+                  <div key={user.id} className="relative w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                    <Image src={user.avatarUrl || `https://i.pravatar.cc/100?img=${i + 10}`} alt="User" fill sizes="40px" className="object-cover" />
                   </div>
                 ))
               ) : (
                 [1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
-                    <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" className="w-full h-full object-cover" />
+                  <div key={i} className="relative w-10 h-10 rounded-full border-2 border-white dark:border-zinc-950 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden">
+                    <Image src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="User" fill sizes="40px" className="object-cover" />
                   </div>
                 ))
               )}

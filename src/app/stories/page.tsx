@@ -10,19 +10,11 @@ import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { ContinueReadingDashboard } from "@/components/home/ContinueReadingDashboard";
 import { getSortedStoryIds } from "@/lib/story-ranking";
+import { getCurrentUser } from "@/lib/auth";
 
-export const dynamic = "force-dynamic";
 
-async function getCurrentUserId() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("firebase-token")?.value;
-    if (!token) return null;
-    const decoded = await adminAuth.verifyIdToken(token);
-    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
-    return user?.id ?? null;
-  } catch { return null; }
-}
+
+
 
 const storyGenres = [
   "Action", "Adventure", "Comedy", "Contemporary", "Drama", "Dystopian", "Fantasy", "Fiction", 
@@ -52,7 +44,8 @@ export default async function StoriesPage({ searchParams }: StoriesPageProps) {
   const { ids: rankedStoryIds, total } = await getSortedStoryIds(genre, sort, authorName);
   const paginatedIds = rankedStoryIds.slice(skip, skip + limit);
 
-  const currentUserId = await getCurrentUserId();
+  const currentUser = await getCurrentUser();
+  const currentUserId = currentUser?.id ?? null;
 
   const [storiesUnsorted, recentProgress, recentBookBookmarks, activePromotions] = await Promise.all([
     prisma.story.findMany({

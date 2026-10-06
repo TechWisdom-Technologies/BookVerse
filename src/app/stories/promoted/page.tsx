@@ -3,7 +3,7 @@ import { ArrowLeft, Megaphone, Sparkles, Trophy } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 import { StoryGrid } from "@/components/stories/StoryGrid";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function PromotedStoriesPage() {
   try {

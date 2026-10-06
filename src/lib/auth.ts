@@ -2,6 +2,7 @@ import type { DecodedIdToken } from "firebase-admin/auth";
 import { cookies, headers } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
+import { cache } from "react";
 
 import { User } from "@prisma/client";
 
@@ -9,7 +10,7 @@ import { User } from "@prisma/client";
  * Helper to get the authenticated database user.
  * Renamed to getCurrentUser to avoid conflicts.
  */
-export async function getCurrentUser(): Promise<User | null> {
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   try {
     const { dbUser } = await verifyToken();
     return dbUser;
@@ -20,12 +21,12 @@ export async function getCurrentUser(): Promise<User | null> {
     }
     return null;
   }
-}
+});
 
-export async function verifyToken(): Promise<{
+export const verifyToken = cache(async (): Promise<{
   firebaseUser: DecodedIdToken;
   dbUser: User;
-}> {
+}> => {
   const cookieStore = await cookies();
   const tokenFromCookie = cookieStore.get("firebase-token")?.value;
 
@@ -55,7 +56,7 @@ export async function verifyToken(): Promise<{
   if (!dbUser) throw new Error("USER_NOT_FOUND");
 
   return { firebaseUser, dbUser };
-}
+});
 
 // Legacy export for backward compatibility
 export { getCurrentUser as getAuth };

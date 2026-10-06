@@ -24,6 +24,7 @@ import { DynamicBackButton } from "@/components/stories/DynamicBackButton";
 import { adminAuth } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
+import { getCurrentUser } from "@/lib/auth";
 
 interface StoryPageProps {
   params: Promise<{ id: string }>;
@@ -42,16 +43,7 @@ export async function generateMetadata({ params }: StoryPageProps): Promise<Meta
   };
 }
 
-async function getCurrentUserId() {
-  try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("firebase-token")?.value;
-    if (!token) return null;
-    const decoded = await adminAuth.verifyIdToken(token);
-    const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
-    return user?.id ?? null;
-  } catch { return null; }
-}
+
 
 function estimateReadingTime(content: any): number {
   if (!content) return 1;
@@ -86,47 +78,53 @@ function renderChapterContentToHtml(content: unknown): string {
 
 export default async function StoryDetailPage({ params }: StoryPageProps) {
   const { id } = await params;
-  const currentUserId = await getCurrentUserId();
 
-  const story = await prisma.story.findUnique({
-    where: { id },
-    include: {
-      author: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true, _count: { select: { followers: true, following: true } } } },
-      chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true, content: true, illustrationUrl: true } },
-      promotions: {
-        where: { status: "ACTIVE", endDate: { gt: new Date() } },
-        orderBy: { endDate: "asc" },
-        select: { id: true, tier: true, endDate: true },
+  // Run all independent queries concurrently to prevent waterfall
+  const [currentUser, story, reactionCounts] = await Promise.all([
+    getCurrentUser(),
+    prisma.story.findUnique({
+      where: { id },
+      include: {
+        author: { select: { id: true, username: true, displayName: true, avatarUrl: true, bio: true, _count: { select: { followers: true, following: true } } } },
+        chapters: { orderBy: { chapterOrder: "asc" }, select: { id: true, title: true, chapterOrder: true, createdAt: true, content: true, illustrationUrl: true } },
+        promotions: {
+          where: { status: "ACTIVE", endDate: { gt: new Date() } },
+          orderBy: { endDate: "asc" },
+          select: { id: true, tier: true, endDate: true },
+        },
+        series: { select: { name: true } },
+        universe: { select: { name: true } },
+        _count: { select: { reactions: true, comments: true } },
       },
-      series: { select: { name: true } },
-      universe: { select: { name: true } },
-      _count: { select: { reactions: true, comments: true } },
-    },
-  });
+    }),
+    prisma.storyReaction.groupBy({ by: ["reactionType"], where: { storyId: id }, _count: true }),
+  ]);
+
+  const currentUserId = currentUser?.id ?? null;
 
   if (!story || !story.published) notFound();
 
-
-
-  const readingProgress = currentUserId
-    ? await prisma.readingProgress.findUnique({
-        where: {
-          userId_storyId: {
-            userId: currentUserId,
-            storyId: id,
-          },
-        },
-      })
-    : null;
+  // Run dependent queries concurrently
+  const [readingProgress, userReaction] = await Promise.all([
+    currentUserId
+      ? prisma.readingProgress.findUnique({
+          where: { userId_storyId: { userId: currentUserId, storyId: id } },
+        })
+      : Promise.resolve(null),
+    currentUserId 
+      ? prisma.storyReaction.findUnique({ 
+          where: { storyId_userId: { storyId: id, userId: currentUserId } }, 
+          select: { reactionType: true } 
+        }) 
+      : Promise.resolve(null)
+  ]);
 
   const resumeChapter = readingProgress
     ? story.chapters.find((c) => c.id === readingProgress.chapterId)
     : null;
 
-  const reactionCounts = await prisma.storyReaction.groupBy({ by: ["reactionType"], where: { storyId: id }, _count: true });
   const reactions: Record<ReactionType, number> = { LIKE: 0, LOVE: 0, FIRE: 0, CRY: 0, WOW: 0 };
   for (const reaction of reactionCounts) { reactions[reaction.reactionType] = reaction._count; }
-  const userReaction = currentUserId ? await prisma.storyReaction.findUnique({ where: { storyId_userId: { storyId: id, userId: currentUserId } }, select: { reactionType: true } }) : null;
 
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-32">

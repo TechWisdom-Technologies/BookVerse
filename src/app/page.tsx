@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { BookGrid } from "@/components/books/BookGrid";
 import type { Book } from "@prisma/client";
 import { cookies } from "next/headers";
@@ -16,6 +17,7 @@ async function getCurrentUserId() {
     return user?.id ?? null;
   } catch { return null; }
 }
+
 import {
   BookOpen,
   Search,
@@ -41,7 +43,7 @@ import { StoryGrid } from "@/components/stories/StoryGrid";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { AnimatedStats } from "@/components/home/AnimatedStats";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 const categoriesBase = [
   { name: "Fiction", icon: BookOpen, color: "text-zinc-400" },
@@ -79,9 +81,25 @@ const getUniverseGraphic = (name: string) => {
 export default async function HomePage() {
   try {
     const currentUserId = await getCurrentUserId();
-    const [featured, recent, universes, stories, promotedStories, activePromotions] = await Promise.all([
-      prisma.book.findMany({ take: 8, where: { isFeatured: true }, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
-      prisma.book.findMany({ take: 8, where: { isNewArrival: true }, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } } }),
+    
+    // Run all database queries concurrently in a single Promise.all
+    const [
+      featuredRaw, 
+      recentRaw, 
+      universes, 
+      stories, 
+      promotedStories, 
+      activePromotions,
+      topUsers, 
+      totalUsers, 
+      totalBooks, 
+      totalStories, 
+      totalReadTimeAggr,
+      bookGenres, 
+      storyGenres
+    ] = await Promise.all([
+      prisma.book.findMany({ take: 8, where: { isFeatured: true }, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } }, reviews: { select: { rating: true } } } }),
+      prisma.book.findMany({ take: 8, where: { isNewArrival: true }, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } }, reviews: { select: { rating: true } } } }),
       prisma.universe.findMany({
         take: 4,
         orderBy: { createdAt: "desc" },
@@ -149,10 +167,7 @@ export default async function HomePage() {
           storyId: true,
           tier: true
         }
-      })
-    ]);
-
-    const [topUsers, totalUsers, totalBooks, totalStories, totalReadTimeAggr] = await Promise.all([
+      }),
       prisma.user.findMany({
         take: 4,
         orderBy: {
@@ -168,25 +183,24 @@ export default async function HomePage() {
       prisma.user.count(),
       prisma.book.count(),
       prisma.story.count(),
-      prisma.readingLog.aggregate({ _sum: { minutes: true } })
+      prisma.readingLog.aggregate({ _sum: { minutes: true } }),
+      prisma.book.groupBy({ by: ['genre'], _count: { genre: true } }),
+      prisma.story.groupBy({ by: ['genre'], _count: { genre: true } })
     ]);
 
     const totalReadTime = totalReadTimeAggr._sum.minutes || 0;
 
-    const addRatings = async <T extends Pick<Book, "id">>(books: T[]) => {
-      return Promise.all(books.map(async (book) => {
-        const reviews = await prisma.bookReview.findMany({ where: { bookId: book.id }, select: { rating: true } });
-        const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
-        return { ...book, averageRating: avgRating };
-      }));
+    // Calculate ratings synchronously (no N+1 queries)
+    const calculateRatings = (books: any[]) => {
+      return books.map((book) => {
+        const { reviews, ...rest } = book;
+        const avgRating = reviews.length > 0 ? reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length : 0;
+        return { ...rest, averageRating: avgRating };
+      });
     };
 
-    const [featuredWithRatings, recentWithRatings] = await Promise.all([addRatings(featured), addRatings(recent)]);
-
-    const [bookGenres, storyGenres] = await Promise.all([
-      prisma.book.groupBy({ by: ['genre'], _count: { genre: true } }),
-      prisma.story.groupBy({ by: ['genre'], _count: { genre: true } })
-    ]);
+    const featuredWithRatings = calculateRatings(featuredRaw);
+    const recentWithRatings = calculateRatings(recentRaw);
 
     const genreMap = new Map<string, number>();
     
@@ -429,10 +443,12 @@ export default async function HomePage() {
                       {/* Universe Cover */}
                       <div className="h-40 w-full overflow-hidden relative">
                         {u.coverUrl ? (
-                          <img
+                          <Image
                             src={u.coverUrl}
                             alt=""
-                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-105"
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                            className="object-cover transition-all duration-700 group-hover:scale-105"
                           />
                         ) : (
                           <div className={`w-full h-full bg-gradient-to-br ${getUniverseGraphic(u.name)} flex flex-col items-center justify-center p-4 text-center relative overflow-hidden`}>
@@ -469,9 +485,9 @@ export default async function HomePage() {
 
                         <div className="pt-3 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between mt-auto">
                           <div className="flex items-center gap-1.5">
-                            <div className="w-5 h-5 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[7px] font-bold overflow-hidden border border-zinc-100 dark:border-zinc-800">
+                            <div className="relative w-5 h-5 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[7px] font-bold overflow-hidden border border-zinc-100 dark:border-zinc-800">
                               {u.user.avatarUrl ? (
-                                <img src={u.user.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                <Image src={u.user.avatarUrl} alt="" fill sizes="20px" className="object-cover" />
                               ) : (
                                 u.user.username[0].toUpperCase()
                               )}

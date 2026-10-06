@@ -7,8 +7,6 @@ import { verifyToken } from "@/lib/auth";
 import Link from "next/link";
 import { Upload, Search, Library as LibraryIcon, Loader2, ArrowLeft } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 interface SearchParams {
   q?: string;
   genre?: string;
@@ -61,7 +59,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     const [books, total, genres, languages, authors] = await Promise.all([
       prisma.book.findMany({
         where,
-        select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } } },
+        select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } }, reviews: { select: { rating: true } } },
         orderBy,
         skip,
         take: limit,
@@ -72,13 +70,11 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
       prisma.book.findMany({ distinct: ["authorName"], select: { authorName: true } }),
     ]);
 
-    const booksWithRatings = await Promise.all(
-      books.map(async (book) => {
-        const reviews = await prisma.bookReview.findMany({ where: { bookId: book.id }, select: { rating: true } });
-        const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
-        return { ...book, averageRating: avgRating };
-      })
-    );
+    const booksWithRatings = books.map((book) => {
+      const { reviews, ...rest } = book;
+      const avgRating = reviews.length > 0 ? reviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / reviews.length : 0;
+      return { ...rest, averageRating: avgRating };
+    });
 
     const totalPages = Math.ceil(total / limit);
     const genreList = genres.map((g) => g.genre).filter(Boolean);
