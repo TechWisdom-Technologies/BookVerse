@@ -39,6 +39,7 @@ export default function UniverseExplorationPage() {
   const [universes, setUniverses] = useState<Universe[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState<string>('All Genres');
 
   useEffect(() => { fetchUniverses(); }, []);
 
@@ -52,10 +53,14 @@ export default function UniverseExplorationPage() {
     } finally { setLoading(false); }
   };
 
-  const filteredUniverses = universes.filter(u =>
-    u.name.toLowerCase().includes(search.toLowerCase()) ||
-    u.genre.toLowerCase().includes(search.toLowerCase())
-  );
+  const uniqueGenres = ['All Genres', ...Array.from(new Set(universes.map(u => u.genre).filter(Boolean)))];
+
+  const filteredUniverses = universes.filter(u => {
+    const matchesSearch = u.name.toLowerCase().includes(search.toLowerCase()) || 
+                          (u.genre && u.genre.toLowerCase().includes(search.toLowerCase()));
+    const matchesGenre = selectedGenre === 'All Genres' || u.genre === selectedGenre;
+    return matchesSearch && matchesGenre;
+  });
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-white dark:bg-zinc-950">
@@ -80,16 +85,29 @@ export default function UniverseExplorationPage() {
             </div>
           </div>
 
-          {/* Simple Search */}
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-300" />
-            <input
-              type="text"
-              placeholder="Search worlds..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
-            />
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* Genre Dropdown */}
+            <select
+              value={selectedGenre}
+              onChange={(e) => setSelectedGenre(e.target.value)}
+              className="px-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all cursor-pointer"
+            >
+              {uniqueGenres.map(genre => (
+                <option key={genre} value={genre}>{genre}</option>
+              ))}
+            </select>
+
+            {/* Simple Search */}
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-400" />
+              <input
+                type="text"
+                placeholder="Search worlds..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded text-[10px] font-bold uppercase tracking-widest text-zinc-900 dark:text-white outline-none focus:border-zinc-900 dark:focus:border-white transition-all"
+              />
+            </div>
           </div>
         </header>
 
