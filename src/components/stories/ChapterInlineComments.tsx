@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { MessageSquare, Send } from "lucide-react";
+import { MessageSquare, Send, Trash2 } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface InlineComment {
   id: string;
@@ -12,6 +13,7 @@ interface InlineComment {
   spoilerAlert: boolean;
   createdAt: string;
   author: {
+    id: string;
     username: string;
     displayName: string | null;
   };
@@ -19,6 +21,7 @@ interface InlineComment {
 
 export function ChapterInlineComments({ storyId, chapterId }: { storyId: string; chapterId: string }) {
   const paragraphId = `chapter-${chapterId}`;
+  const { dbUser } = useAuth();
   const [comments, setComments] = useState<InlineComment[]>([]);
   const [content, setContent] = useState("");
   const [spoilerAlert, setSpoilerAlert] = useState(false);
@@ -61,6 +64,20 @@ export function ChapterInlineComments({ storyId, chapterId }: { storyId: string;
     }
   };
 
+  const deleteComment = async (commentId: string) => {
+    if (!confirm("Are you sure you want to delete this note?")) return;
+    try {
+      const res = await fetch(`/api/stories/${storyId}/inline-comments?commentId=${commentId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete comment");
+      setComments((prev) => prev.filter((c) => c.id !== commentId));
+      toast.success("Note deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete note. Please try again.");
+    }
+  };
+
   return (
     <section className="mt-16 border-t border-zinc-100 dark:border-zinc-900 pt-10">
       <div className="flex items-center gap-2 mb-6">
@@ -74,10 +91,21 @@ export function ChapterInlineComments({ storyId, chapterId }: { storyId: string;
           chapterComments.map((comment) => (
             <div key={comment.id} className="rounded border border-zinc-100 dark:border-zinc-900 p-4">
               <div className="flex items-center justify-between gap-3 mb-2">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
-                  {comment.author.displayName || comment.author.username}
-                </p>
-                {comment.spoilerAlert && <span className="text-[9px] font-bold uppercase tracking-widest text-rose-500">Spoiler</span>}
+                <div className="flex items-center gap-2">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+                    {comment.author.displayName || comment.author.username}
+                  </p>
+                  {comment.spoilerAlert && <span className="text-[9px] font-bold uppercase tracking-widest text-rose-500">Spoiler</span>}
+                </div>
+                {(dbUser?.id === comment.author.id || dbUser?.role === 'ADMIN') && (
+                  <button 
+                    onClick={() => deleteComment(comment.id)}
+                    className="p-1 text-zinc-400 hover:text-rose-500 transition-colors"
+                    title="Delete note"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
               <p className="text-sm text-zinc-600 dark:text-zinc-300">{comment.content}</p>
             </div>

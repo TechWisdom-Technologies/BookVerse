@@ -112,3 +112,44 @@ export async function POST(
     return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const user = await getAuth();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const commentId = searchParams.get('commentId');
+
+    if (!commentId) {
+      return NextResponse.json({ error: 'Comment ID is required' }, { status: 400 });
+    }
+
+    const existingComment = await prisma.inlineComment.findUnique({
+      where: { id: commentId }
+    });
+
+    if (!existingComment) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+
+    // Only allow deletion if the user is the author or an admin
+    if (existingComment.authorId !== user.id && user.role !== 'ADMIN') {
+      return NextResponse.json({ error: 'Forbidden: You can only delete your own comments' }, { status: 403 });
+    }
+
+    await prisma.inlineComment.delete({
+      where: { id: commentId }
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting inline comment:', error);
+    return NextResponse.json({ error: 'Failed to delete comment' }, { status: 500 });
+  }
+}

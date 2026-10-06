@@ -284,7 +284,13 @@ export default function UniverseShowcasePage({ params }: { params: Promise<{ uni
                 )}
                 {requested ? "Requested!" : "Request More Books"}
               </button>
-              <button className="flex items-center gap-2 text-[9px] font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-colors">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(window.location.href);
+                  toast.success("Dossier link copied to clipboard!");
+                }}
+                className="flex items-center gap-2 text-[9px] font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white uppercase tracking-widest transition-colors"
+              >
                 <Share2 className="w-3 h-3" /> Broadcast Dossier
               </button>
             </div>
