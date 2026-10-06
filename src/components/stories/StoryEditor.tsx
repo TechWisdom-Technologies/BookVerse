@@ -29,7 +29,8 @@ import {
   Check,
   Type,
   Terminal,
-  Activity
+  Activity,
+  X
 } from "lucide-react";
 
 interface StoryEditorProps {
@@ -51,6 +52,9 @@ export default function StoryEditor({
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSavedContentRef = useRef<string>("");
   const isMountedRef = useRef(true);
+
+  const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
 
   const editor = useEditor({
     extensions: [
@@ -133,10 +137,17 @@ export default function StoryEditor({
     }
   }, [chapterId, editor]);
 
-  const addImage = useCallback(() => {
-    const url = window.prompt("Enter image URL:");
-    if (url && editor) { editor.chain().focus().setImage({ src: url }).run(); }
-  }, [editor]);
+  const openImageModal = useCallback(() => {
+    setImageUrl("");
+    setIsImageModalOpen(true);
+  }, []);
+
+  const handleAddImage = useCallback(() => {
+    if (imageUrl && editor) {
+      editor.chain().focus().setImage({ src: imageUrl }).run();
+    }
+    setIsImageModalOpen(false);
+  }, [editor, imageUrl]);
 
   if (!editor) return (
     <div className="flex items-center justify-center py-40">
@@ -192,7 +203,7 @@ export default function StoryEditor({
         </div>
 
         <div className="flex items-center gap-1 px-2 border-r border-zinc-100 dark:border-zinc-800 bg-zinc-100/50 dark:bg-zinc-800/30 rounded mx-1">
-          <ToolbarButton onClick={addImage} title="Add Image">
+          <ToolbarButton onClick={openImageModal} title="Add Image">
             <ImageIcon className="w-3.5 h-3.5" />
           </ToolbarButton>
           <ExtractTextFeature onExtracted={(text) => editor.chain().focus().insertContent(text).run()} />
@@ -239,6 +250,41 @@ export default function StoryEditor({
           Auto-save active
         </div>
       </div>
+
+      {/* Image Modal */}
+      {isImageModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-zinc-100 dark:border-zinc-800">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-900 dark:text-white">Insert Image</h3>
+              <button onClick={() => setIsImageModalOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Image URL</label>
+                <input 
+                  type="url" 
+                  value={imageUrl} 
+                  onChange={(e) => setImageUrl(e.target.value)} 
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-sm outline-none focus:border-zinc-900 dark:focus:border-white transition-colors"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-2 p-4 border-t border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/30">
+              <button onClick={() => setIsImageModalOpen(false)} className="px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition-colors">
+                Cancel
+              </button>
+              <button onClick={handleAddImage} disabled={!imageUrl} className="px-4 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all disabled:opacity-50">
+                Insert
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

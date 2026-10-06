@@ -233,7 +233,7 @@ export default function ChapterList({
       )}
 
       {/* Chapter List */}
-      <div className="max-h-[600px] overflow-y-auto">
+      <div className="max-h-[600px] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         {chapters.length === 0 ? (
           <div className="px-6 py-12 text-center text-[10px] font-bold uppercase tracking-widest text-zinc-300">
             No chapters found.
