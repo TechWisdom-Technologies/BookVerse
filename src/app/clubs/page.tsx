@@ -16,6 +16,7 @@ interface Club {
   owner: {
     username: string;
     displayName?: string;
+    avatarUrl?: string;
   };
   members: Array<{ userId: string }>;
 }

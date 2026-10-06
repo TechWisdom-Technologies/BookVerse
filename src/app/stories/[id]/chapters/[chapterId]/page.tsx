@@ -181,7 +181,7 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
         </header>
 
         {/* Narrative Article */}
-        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${alignClass} ${spacingClass} ${indentClass} ${isReaderThemeActive ? '' : 'prose-zinc dark:prose-invert text-zinc-700 dark:text-zinc-300'}`}>
+        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${alignClass} ${spacingClass} ${indentClass} ${isReaderThemeActive ? '' : 'prose-zinc dark:prose-invert text-zinc-900 dark:text-white'}`}>
           {html ? (
             <div dangerouslySetInnerHTML={{ __html: html }} className={fontSizeClass} />
           ) : (
