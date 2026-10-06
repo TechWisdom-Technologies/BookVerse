@@ -109,6 +109,8 @@ export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookD
 
             <a
               href={`/api/books/${book.id}/download`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center justify-center gap-3 w-full px-8 py-4 font-bold rounded text-[11px] uppercase tracking-[0.2em] bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
             >
               <Download className="h-4 w-4" />

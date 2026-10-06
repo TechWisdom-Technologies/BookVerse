@@ -185,8 +185,12 @@ export default function ClubsPage() {
 
                     <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20">
-                          {club.owner.username[0].toUpperCase()}
+                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20 overflow-hidden shrink-0">
+                          {club.owner.avatarUrl ? (
+                            <img src={club.owner.avatarUrl} alt={club.owner.username} className="w-full h-full object-cover" />
+                          ) : (
+                            club.owner.username[0].toUpperCase()
+                          )}
                         </div>
                         <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">
                           {club.owner.displayName || club.owner.username}
@@ -249,8 +253,12 @@ export default function ClubsPage() {
 
                 <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20">
-                      {club.owner.username[0].toUpperCase()}
+                    <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20 overflow-hidden shrink-0">
+                      {club.owner.avatarUrl ? (
+                        <img src={club.owner.avatarUrl} alt={club.owner.username} className="w-full h-full object-cover" />
+                      ) : (
+                        club.owner.username[0].toUpperCase()
+                      )}
                     </div>
                     <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">
                       {club.owner.displayName || club.owner.username}
