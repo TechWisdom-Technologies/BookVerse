@@ -410,7 +410,7 @@ export default function ActivityFeedPage() {
                     <div className="flex items-center gap-2 mt-4 pt-4 border-t border-zinc-50 dark:border-zinc-900">
                       <Clock className="w-2.5 h-2.5 text-zinc-200" />
                       <p className="text-[9px] font-bold uppercase tracking-widest text-zinc-300 font-mono">
-                        {new Date(activity.timestamp).toLocaleDateString()} • {formatTime(activity.timestamp)}
+                        {new Date(activity.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })} • {new Date(activity.timestamp).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}
                       </p>
                     </div>
                   </div>
