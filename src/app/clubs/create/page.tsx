@@ -231,6 +231,8 @@ export default function CreateClubPage() {
               ) : (
                 <div className="w-full max-w-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg p-1">
                   <FileUpload 
+                    label="Upload Cover Image"
+                    accept="image/*"
                     uploadKind="cover"
                     onUpload={(url) => setFormData(prev => ({ ...prev, coverUrl: url }))}
                   />
