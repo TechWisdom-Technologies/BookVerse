@@ -6,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 import { ArrowLeft, Users, Globe, Lock, Loader2, Sparkles } from 'lucide-react';
+import { FileUpload } from '@/components/shared/FileUpload';
 
 const GENRES = [
   'Fantasy',
@@ -208,25 +209,33 @@ export default function CreateClubPage() {
               />
             </div>
 
-            {/* Cover Image URL */}
+            {/* Cover Image Upload */}
             <div className="space-y-2">
-              <label htmlFor="coverUrl" className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">
-                Cover Image URL (optional)
+              <label className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400 ml-1">
+                Cover Image (optional)
               </label>
-              <input
-                type="text"
-                id="coverUrl"
-                name="coverUrl"
-                value={formData.coverUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/image.jpg"
-                className="w-full px-5 py-3.5 bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded outline-none focus:border-zinc-900 dark:focus:border-white transition-all text-xs font-medium"
-              />
+              
               {formData.coverUrl ? (
-                <div className="mt-2 w-40 h-24 rounded overflow-hidden border border-zinc-100 dark:border-zinc-800">
+                <div className="mt-2 w-full max-w-sm rounded-xl overflow-hidden border border-zinc-100 dark:border-zinc-800 relative group aspect-video">
                   <img src={formData.coverUrl} alt="cover preview" className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, coverUrl: '' }))}
+                      className="px-4 py-2 bg-rose-500 hover:bg-rose-600 transition-colors text-white text-[10px] font-bold uppercase tracking-widest rounded"
+                    >
+                      Remove Cover
+                    </button>
+                  </div>
                 </div>
-              ) : null}
+              ) : (
+                <div className="w-full max-w-sm bg-zinc-50 dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 rounded-lg p-1">
+                  <FileUpload 
+                    uploadKind="cover"
+                    onUpload={(url) => setFormData(prev => ({ ...prev, coverUrl: url }))}
+                  />
+                </div>
+              )}
             </div>
 
             {/* Genre Selection */}
