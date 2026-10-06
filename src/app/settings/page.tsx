@@ -1613,7 +1613,7 @@ export default function SettingsPage() {
                       Sign Out All Devices
                     </span>
                     <span className="text-[9px] text-zinc-400 font-bold uppercase tracking-wider block leading-relaxed max-w-xl">
-                      Revokes all Firebase authentication tokens across every device and browser where you are currently signed in. You will be signed out everywhere, including this device, and will need to log in again.
+                      Revokes all active sessions across every device and browser where you are currently signed in. You will be signed out everywhere, including this device, and will need to log in again.
                     </span>
                   </div>
 

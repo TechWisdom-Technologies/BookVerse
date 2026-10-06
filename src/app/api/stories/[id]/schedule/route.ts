@@ -55,6 +55,23 @@ export async function POST(
       );
     }
 
+    const chapterExists = await prisma.storyChapter.findFirst({
+      where: {
+        storyId: id,
+        OR: [
+          { chapterNumber: chapterNumber },
+          { chapterOrder: chapterNumber }
+        ]
+      }
+    });
+
+    if (!chapterExists) {
+      return NextResponse.json(
+        { error: 'Cannot schedule. The specified chapter does not exist. Please create a draft first.' },
+        { status: 400 }
+      );
+    }
+
     const scheduled = await prisma.scheduledChapter.create({
       data: {
         storyId: id,

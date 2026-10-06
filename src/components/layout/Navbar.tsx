@@ -608,7 +608,7 @@ export function Navbar() {
                     <h3 className="inline-block text-[9px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/10 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-blue-500/20 dark:border-blue-500/20 shadow-sm">Activity & More</h3>
                   </div>
                   <div className="space-y-1">
-                    <DropdownItem href="/reading-challenges" icon={Trophy} label="Challenges" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
+                    <DropdownItem href="/reading-challenges" icon={Trophy} label="Challenges" badge="COMING SOON" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/settings" icon={Settings} label="Settings" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/docs" icon={BookOpen} label="Documentation" onClick={() => setProfileOpen(false)} />
                     <DropdownItem href="/premium" icon={Premium} label="Premium" badge={!isPro ? "PRO" : undefined} onClick={() => setProfileOpen(false)} />
