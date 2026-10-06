@@ -92,7 +92,7 @@ export async function POST(
     if (parentId) {
       const parent = await prisma.clubDiscussion.findFirst({
         where: { id: parentId, clubId },
-        select: { id: true, authorId: true, title: true },
+        select: { id: true, authorId: true, title: true, content: true },
       });
 
       if (!parent) {
@@ -119,11 +119,12 @@ export async function POST(
 
       // Notify parent author of reply
       if (parent.authorId !== user.id) {
+        const parentSnippet = parent.title || (parent.content ? (parent.content.length > 30 ? parent.content.substring(0, 30) + '...' : parent.content) : 'a message');
         void createNotification({
           userId: parent.authorId,
           type: "DISCUSSION_REPLY",
           title: "New Reply to Your Message",
-          message: `${user.displayName || user.username} replied to "${parent.title}"`,
+          message: `${user.displayName || user.username} replied to "${parentSnippet}"`,
           link: `/clubs/${clubId}`,
         }).catch(() => {});
       }
@@ -153,11 +154,12 @@ export async function POST(
         include: { club: { select: { name: true } } }
       }).then(async (members) => {
         for (const member of members) {
+          const contentSnippet = content ? (content.length > 50 ? content.substring(0, 50) + '...' : content) : '';
           await createNotification({
             userId: member.userId,
             type: "DISCUSSION",
             title: `New Discussion in ${member.club.name}`,
-            message: `${user.displayName || user.username} posted: "${title}"`,
+            message: `${user.displayName || user.username} posted: "${title || contentSnippet}"`,
             link: `/clubs/${clubId}`,
           });
         }

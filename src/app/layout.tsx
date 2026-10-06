@@ -108,8 +108,8 @@ export default function RootLayout({
         <Providers>
           <AppLayout>{children}</AppLayout>
         </Providers>
-        <Script id="service-worker-registration" strategy="afterInteractive">
-          {`
+        <Script id="service-worker-registration" strategy="afterInteractive" dangerouslySetInnerHTML={{
+          __html: `
             if ('serviceWorker' in navigator) {
               window.addEventListener('load', function() {
                 navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -119,8 +119,8 @@ export default function RootLayout({
                 });
               });
             }
-          `}
-        </Script>
+          `
+        }} />
         <Analytics />
         <SpeedInsights />
       </body>
