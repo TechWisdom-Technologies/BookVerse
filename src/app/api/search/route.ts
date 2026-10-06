@@ -212,7 +212,16 @@ export async function GET(request: Request) {
                 WHEN 'FEATURED' THEN 1
                 ELSE 0
               END DESC,
-              (rank + COALESCE(s.promotion_score, 0)) DESC, 
+              ((
+                ts_rank_cd(
+                  setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
+                  setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
+                  setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
+                  setweight(to_tsvector('english', coalesce(si.content, '')), 'C'),
+                  ${englishSearchExp}
+                )
+                ${banglaRankBoost}
+              ) + COALESCE(s.promotion_score, 0)) DESC, 
               s.view_count DESC
             LIMIT ${take} OFFSET ${skip};
           `;
@@ -523,7 +532,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("GET /api/search error:", error);
     return NextResponse.json(
-      { error: "Failed to perform search" },
+      { error: "Failed to perform search", details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }
