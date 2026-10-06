@@ -45,7 +45,15 @@ export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookD
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Failed to save book");
+      if (!res.ok) {
+        if (res.status === 409) {
+          setSaved(true);
+          toast.success("Already in your library");
+          return;
+        }
+        throw new Error("Failed to save book");
+      }
+      
       setSaved(!saved);
       toast.success(saved ? "Removed from library" : "Added to library");
     } catch (err) {
@@ -66,6 +74,7 @@ export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookD
                 src={book.coverUrl}
                 alt={book.title}
                 fill
+                sizes="(max-width: 768px) 100vw, 360px"
                 className="object-cover transition-all duration-700"
                 priority
               />
