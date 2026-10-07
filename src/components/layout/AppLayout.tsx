@@ -3,11 +3,13 @@
 import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
-import { AiLibrarianWidget } from "@/components/shared/AiLibrarianWidget";
-import { DevPhaseModal } from "@/components/shared/DevPhaseModal";
-import { AdminInstructionModal } from "@/components/shared/AdminInstructionModal";
-import { OfflineDetector } from "@/components/shared/OfflineDetector";
 import { ReactNode } from "react";
+import dynamic from "next/dynamic";
+
+const AiLibrarianWidget = dynamic(() => import("@/components/shared/AiLibrarianWidget").then(m => m.AiLibrarianWidget), { ssr: false });
+const DevPhaseModal = dynamic(() => import("@/components/shared/DevPhaseModal").then(m => m.DevPhaseModal), { ssr: false });
+const AdminInstructionModal = dynamic(() => import("@/components/shared/AdminInstructionModal").then(m => m.AdminInstructionModal), { ssr: false });
+const OfflineDetector = dynamic(() => import("@/components/shared/OfflineDetector").then(m => m.OfflineDetector), { ssr: false });
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
