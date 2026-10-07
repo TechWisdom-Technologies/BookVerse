@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Loader2, Shield } from "lucide-react";
@@ -14,8 +14,12 @@ const loginSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters."),
 });
 
-export function LoginForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
+export function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get("redirect");
+  let redirectUrl = redirectParam ?? "/";
+  if (!redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) redirectUrl = "/";
   const { user, loading, signIn, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

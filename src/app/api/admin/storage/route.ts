@@ -7,7 +7,7 @@ import { unstable_cache } from "next/cache";
 import { Redis } from "@upstash/redis";
 import { v2 as cloudinary } from "cloudinary";
 
-const getCachedDatabaseSize = unstable_cache(
+export const getCachedDatabaseSize = unstable_cache(
   async () => {
     try {
       const result: any = await prisma.$queryRaw`SELECT pg_database_size(current_database()) as size;`;
@@ -24,7 +24,7 @@ const getCachedDatabaseSize = unstable_cache(
   { revalidate: 300 }
 );
 
-const getCachedR2Size = unstable_cache(
+export const getCachedR2Size = unstable_cache(
   async () => {
     try {
       return await calculateTotalR2Size();
@@ -37,7 +37,7 @@ const getCachedR2Size = unstable_cache(
   { revalidate: 300 }
 );
 
-const getCachedRedisSize = unstable_cache(
+export const getCachedRedisSize = unstable_cache(
   async () => {
     try {
       const url = process.env.UPSTASH_REDIS_REST_URL;
@@ -67,7 +67,7 @@ const getCachedRedisSize = unstable_cache(
   { revalidate: 300 }
 );
 
-const getCachedCloudinarySize = unstable_cache(
+export const getCachedCloudinarySize = unstable_cache(
   async () => {
     try {
       if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {

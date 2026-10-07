@@ -1,12 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { BookDetail } from "@/components/books/BookDetail";
 import { BookReviews } from "@/components/books/BookReviews";
-import { cookies } from "next/headers";
-import { adminAuth } from "@/lib/firebase-admin";
+import { getCurrentUser } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-
-export const dynamic = "force-dynamic";
 
 interface BookPageProps {
   params: Promise<{ id: string }>;
@@ -49,16 +46,20 @@ export default async function BookPage({ params }: BookPageProps) {
       notFound();
     }
 
-    // Get reviews
-    const reviews = await prisma.bookReview.findMany({
-      where: { bookId: id },
-      include: {
-        user: {
-          select: { id: true, username: true, displayName: true, avatarUrl: true },
+    // Run independent queries in parallel to drastically reduce TTFB
+    const [reviews, user] = await Promise.all([
+      prisma.bookReview.findMany({
+        where: { bookId: id },
+        include: {
+          user: {
+            select: { id: true, username: true, displayName: true, avatarUrl: true },
+          },
         },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+        orderBy: { createdAt: "desc" },
+      }),
+      getCurrentUser(),
+    ]);
+
     const serializedReviews = reviews.map((review) => ({
       ...review,
       createdAt: review.createdAt.toISOString(),
@@ -67,31 +68,15 @@ export default async function BookPage({ params }: BookPageProps) {
     // Calculate average rating
     const averageRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
 
-    // Get current user
     let currentUserId: string | null = null;
     let isSaved = false;
 
-    try {
-      const cookieStore = await cookies();
-      const token = cookieStore.get("firebase-token")?.value;
-
-      if (token) {
-        const decoded = await adminAuth.verifyIdToken(token);
-        const user = await prisma.user.findUnique({
-          where: { firebaseUid: decoded.uid },
-          select: { id: true },
-        });
-        currentUserId = user?.id || null;
-
-        if (currentUserId) {
-          const save = await prisma.bookSave.findUnique({
-            where: { bookId_userId: { bookId: id, userId: currentUserId } },
-          });
-          isSaved = !!save;
-        }
-      }
-    } catch {
-      // User not authenticated
+    if (user) {
+      currentUserId = user.id;
+      const save = await prisma.bookSave.findUnique({
+        where: { bookId_userId: { bookId: id, userId: currentUserId } },
+      });
+      isSaved = !!save;
     }
 
     return (

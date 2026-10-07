@@ -1,18 +1,9 @@
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function ForgotPasswordPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ redirect?: string }>;
-}) {
-  const { redirect } = await searchParams;
-  let redirectUrl = redirect ?? "/";
-  if (!redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) {
-    redirectUrl = "/";
-  }
-
+export default function ForgotPasswordPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-6 relative">
       <div className="w-full max-w-[400px] z-10 relative">
@@ -24,18 +15,19 @@ export default async function ForgotPasswordPage({
               <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                 BookVerse
               </span>
-
             </div>
           </Link>
         </div>
         <Link
-          href={`/login${redirectUrl ? `?redirect=${encodeURIComponent(redirectUrl)}` : ""}`}
+          href="/login"
           className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors mb-12"
         >
           <ArrowLeft className="w-3 h-3" />
           Back to Sign In
         </Link>
-        <ForgotPasswordForm redirectUrl={redirectUrl} />
+        <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-zinc-300" /></div>}>
+          <ForgotPasswordForm />
+        </Suspense>
       </div>
     </main>
   );

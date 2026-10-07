@@ -132,8 +132,8 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
                   {/* Background */}
                   {club.coverUrl ? (
                     <>
-                      <img src={club.coverUrl} alt={club.name} className="absolute inset-0 w-full h-full object-cover z-0 blur-sm scale-105 transition-transform duration-700 group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 z-0" />
+                      <img src={club.coverUrl} alt={club.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/40 z-0" />
                     </>
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0 transition-transform duration-700 group-hover:scale-105" />
@@ -141,7 +141,7 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
 
                   {/* Top Badges */}
                   <div className="absolute top-6 left-6 right-6 z-10 flex justify-between items-start">
-                    <span className="backdrop-blur-md bg-white/10 text-white/90 text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20">
+                    <span className="bg-black/40 text-white/90 text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/10">
                       {club.genre || 'General'}
                     </span>
                     <div className="flex items-center gap-2">
@@ -165,9 +165,9 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
 
                     <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20 overflow-hidden shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center text-[10px] font-bold text-white border border-white/10 overflow-hidden shrink-0">
                           {club.owner.avatarUrl ? (
-                            <img src={club.owner.avatarUrl} alt={club.owner.username} className="w-full h-full object-cover" />
+                            <img src={club.owner.avatarUrl} alt={club.owner.username} loading="lazy" className="w-full h-full object-cover" />
                           ) : (
                             club.owner.username[0].toUpperCase()
                           )}
@@ -176,7 +176,7 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
                           {club.owner.displayName || club.owner.username}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/60 uppercase tracking-widest bg-white/5 backdrop-blur-sm px-2.5 py-1.5 rounded-full border border-white/10">
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/60 uppercase tracking-widest bg-black/40 px-2.5 py-1.5 rounded-full border border-white/10">
                         <Users className="w-3.5 h-3.5" />
                         {club.memberCount}
                       </div>
@@ -202,8 +202,8 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
                   {/* Background */}
                   {club.coverUrl ? (
                     <>
-                      <img src={club.coverUrl} alt={club.name} className="absolute inset-0 w-full h-full object-cover z-0 blur-sm scale-105 transition-transform duration-700 group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/20 z-0" />
+                      <img src={club.coverUrl} alt={club.name} loading="lazy" className="absolute inset-0 w-full h-full object-cover z-0 transition-transform duration-700 group-hover:scale-105" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/40 z-0" />
                     </>
                   ) : (
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-zinc-950 z-0 transition-transform duration-700 group-hover:scale-105" />
@@ -211,7 +211,7 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
 
                   {/* Top Badges */}
                   <div className="absolute top-6 left-6 right-6 z-10 flex justify-between items-start">
-                    <span className="backdrop-blur-md bg-white/10 text-white/90 text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/20">
+                    <span className="bg-black/40 text-white/90 text-[9px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-white/10">
                       {club.genre || 'General'}
                     </span>
                     <div className="flex items-center gap-2">
@@ -235,9 +235,9 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
 
                     <div className="pt-4 border-t border-white/10 flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-[10px] font-bold text-white border border-white/20 overflow-hidden shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center text-[10px] font-bold text-white border border-white/10 overflow-hidden shrink-0">
                           {club.owner.avatarUrl ? (
-                            <img src={club.owner.avatarUrl} alt={club.owner.username} className="w-full h-full object-cover" />
+                            <img src={club.owner.avatarUrl} alt={club.owner.username} loading="lazy" className="w-full h-full object-cover" />
                           ) : (
                             club.owner.username[0].toUpperCase()
                           )}
@@ -246,7 +246,7 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
                           {club.owner.displayName || club.owner.username}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/60 uppercase tracking-widest bg-white/5 backdrop-blur-sm px-2.5 py-1.5 rounded-full border border-white/10">
+                      <div className="flex items-center gap-1.5 text-[10px] font-bold text-white/60 uppercase tracking-widest bg-black/40 px-2.5 py-1.5 rounded-full border border-white/10">
                         <Users className="w-3.5 h-3.5" />
                         {club.memberCount}
                       </div>

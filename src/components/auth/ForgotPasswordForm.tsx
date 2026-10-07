@@ -3,6 +3,7 @@
 import { useState, useRef, type FormEvent } from "react";
 import Link from "next/link";
 import { z } from "zod";
+import { useSearchParams } from "next/navigation";
 import { MailCheck } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getFriendlyAuthErrorMessage } from "@/lib/auth-errors";
@@ -12,7 +13,11 @@ const forgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email address."),
 });
 
-export function ForgotPasswordForm({ redirectUrl = "/" }: { redirectUrl?: string }) {
+export function ForgotPasswordForm() {
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get("redirect");
+  let redirectUrl = redirectParam ?? "/";
+  if (!redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) redirectUrl = "/";
   const { resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);

@@ -1,18 +1,9 @@
 import { LoginForm } from "@/components/auth/LoginForm";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ redirect?: string }>;
-}) {
-  const { redirect } = await searchParams;
-  let redirectUrl = redirect ?? "/";
-  if (!redirectUrl.startsWith("/") || redirectUrl.startsWith("//")) {
-    redirectUrl = "/";
-  }
-
+export default function LoginPage() {
   return (
     <main className="min-h-screen bg-white dark:bg-zinc-950 flex flex-col items-center justify-center p-6 relative">
       <div className="w-full max-w-[400px] z-10 relative">
@@ -24,7 +15,6 @@ export default async function LoginPage({
               <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                 BookVerse
               </span>
-
             </div>
           </Link>
         </div>
@@ -32,7 +22,9 @@ export default async function LoginPage({
           <ArrowLeft className="w-3 h-3" />
           Back to Archives
         </Link>
-        <LoginForm redirectUrl={redirectUrl} />
+        <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-zinc-300" /></div>}>
+          <LoginForm />
+        </Suspense>
       </div>
     </main>
   );
