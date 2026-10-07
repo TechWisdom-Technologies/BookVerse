@@ -5,7 +5,7 @@ const ASSETS_TO_CACHE = [
   "/offline.html",
   "/manifest.json",
   "/site.webmanifest",
-  "/bookverse.png",
+  "/logo-icon.png",
   "/apple-touch-icon.png"
 ];
 

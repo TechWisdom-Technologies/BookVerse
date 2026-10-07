@@ -185,11 +185,8 @@ export function Footer() {
           {/* Left - Brand & Description */}
           <div className="space-y-8">
             <Link href="/" className="flex flex-col items-start gap-4 group">
-              <img
-                src="/bookverse.png"
-                alt="BookVerse Logo"
-                className="w-12 h-12 object-contain rounded"
-              />
+              <img src="/logo-dark.png" alt="BookVerse Logo" className="w-12 h-12 object-contain rounded dark:hidden" />
+              <img src="/logo-light.png" alt="BookVerse Logo" className="w-12 h-12 object-contain rounded hidden dark:block" />
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-tight">
                   BookVerse

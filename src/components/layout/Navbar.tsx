@@ -413,7 +413,8 @@ export function Navbar() {
             <div className="flex items-center justify-between mb-5 pb-3 border-b border-zinc-200/50 dark:border-zinc-800/50">
               <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 font-black text-base tracking-tight">
                 <div className="w-6 h-6 rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                  <img src="/bookverse.png" alt="BookVerse" className="w-full h-full object-cover" />
+                  <img src="/logo-dark.png" alt="BookVerse" className="w-full h-full object-cover dark:hidden" />
+                  <img src="/logo-light.png" alt="BookVerse" className="w-full h-full object-cover hidden dark:block" />
                 </div>
                 BookVerse
               </Link>
@@ -637,11 +638,7 @@ export function Navbar() {
             >
               <div className="absolute inset-0 rounded-full transition-all duration-300 bg-zinc-50 dark:bg-zinc-900 group-hover:bg-zinc-100 dark:group-hover:bg-zinc-800" />
               <div className="relative w-9 h-9 rounded-full overflow-hidden border border-zinc-100 dark:border-zinc-800 shadow-sm transition-all duration-500">
-                <img
-                  src="/bookverse.png"
-                  alt="BookVerse"
-                  className="w-full h-full object-cover"
-                />
+                <img src="/logo-icon.png" alt="BookVerse" className="w-full h-full object-cover" />
               </div>
               <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded text-[9px] font-bold uppercase tracking-widest whitespace-nowrap transition-all duration-200 pointer-events-none opacity-0 -translate-y-1 group-hover:opacity-100 group-hover:translate-y-0">
                 <div className="absolute inset-0 bg-zinc-900 dark:bg-white rounded shadow-md" />

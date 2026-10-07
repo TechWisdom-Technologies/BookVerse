@@ -126,11 +126,8 @@ export function Sidebar({ isOpen, onCloseAction }: SidebarProps) {
               href="/admin"
               className="flex items-center gap-3 text-lg font-black tracking-tight text-zinc-900 dark:text-white"
             >
-              <img
-                src="/bookverse.png"
-                alt="BookVerse"
-                className="h-8 w-8 object-contain rounded"
-              />
+              <img src="/logo-dark.png" alt="BookVerse" className="h-8 w-8 object-contain rounded dark:hidden" />
+              <img src="/logo-light.png" alt="BookVerse" className="h-8 w-8 object-contain rounded hidden dark:block" />
               <div className="flex flex-col">
                 <span className="text-sm font-black text-zinc-900 dark:text-white leading-tight">Admin Panel</span>
 

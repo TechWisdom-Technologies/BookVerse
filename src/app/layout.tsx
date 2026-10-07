@@ -83,8 +83,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/bookverse.png",
-    shortcut: "/bookverse.png",
+    icon: "/logo-icon.png",
+    shortcut: "/logo-icon.png",
     apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",

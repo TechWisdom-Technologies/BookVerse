@@ -61,7 +61,8 @@ export function AccessDeniedModal({ requiredTier, redirectTo }: AccessDeniedModa
           
           <div className="mb-8 relative">
             <div className="w-16 h-16 rounded-xl bg-[#070708] border border-zinc-800 flex items-center justify-center relative z-10">
-              <img src="/bookverse.png" alt="BookVerse Logo" className="w-8 h-8 object-contain" />
+              <img src="/logo-dark.png" alt="BookVerse Logo" className="w-8 h-8 object-contain dark:hidden" />
+              <img src="/logo-light.png" alt="BookVerse Logo" className="w-8 h-8 object-contain hidden dark:block" />
             </div>
           </div>
 

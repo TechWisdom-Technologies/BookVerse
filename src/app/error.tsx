@@ -73,11 +73,8 @@ export default function ErrorPage({
           {/* Header */}
           <div className="mb-10 pb-6 border-b border-zinc-100 dark:border-zinc-900 flex flex-col items-center text-center">
             <Link href="/" className="flex flex-col items-center gap-2 group mb-6">
-              <img
-                src="/bookverse.png"
-                alt="BookVerse Logo"
-                className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300"
-              />
+              <img src="/logo-dark.png" alt="BookVerse Logo" className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300 dark:hidden" />
+              <img src="/logo-light.png" alt="BookVerse Logo" className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300 hidden dark:block" />
               <div className="flex flex-col items-center">
                 <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                   BookVerse
@@ -149,11 +146,8 @@ export default function ErrorPage({
         {/* Malfunction Header */}
         <div className="mb-10 pb-6 border-b border-zinc-100 dark:border-zinc-900 flex flex-col items-center text-center">
           <Link href="/" className="flex flex-col items-center gap-2 group mb-6">
-            <img
-              src="/bookverse.png"
-              alt="BookVerse Logo"
-              className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300"
-            />
+            <img src="/logo-dark.png" alt="BookVerse Logo" className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300 dark:hidden" />
+            <img src="/logo-light.png" alt="BookVerse Logo" className="w-16 h-16 object-contain rounded-xl transition-transform group-hover:scale-105 duration-300 hidden dark:block" />
             <div className="flex flex-col items-center">
               <span className="text-sm font-black text-zinc-900 dark:text-white uppercase tracking-tight">
                 BookVerse
