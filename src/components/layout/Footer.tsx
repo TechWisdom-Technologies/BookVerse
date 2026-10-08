@@ -47,6 +47,9 @@ const LinkedinIcon = ({ size = 20, className = "" }) => (
 const TiktokIcon = ({ size = 20, className = "" }) => (
   <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
 );
+const TelegramIcon = ({ size = 20, className = "" }) => (
+  <svg width={size} height={size} className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+);
 
 // Social Link
 function SocialLink({ href, icon: Icon, label }: { href: string; icon: React.ComponentType<{ size?: number; className?: string }>; label: string }) {
@@ -290,16 +293,39 @@ export function Footer() {
                   Johra Mension, Koyalarbari<br />Kuratoli, Kuril-1229<br />Dhaka, Bangladesh
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0" />
-                <a href="mailto:bookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
-                  bookverse@gmail.com
-                </a>
+
+              <li className="flex items-start gap-3">
+                <Mail size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-2">
+                  <a href="mailto:official@techwisdom.site" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    official@techwisdom.site
+                  </a>
+                  <a href="mailto:twtech.contact@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    twtech.contact@gmail.com
+                  </a>
+                  <a href="mailto:bdbookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    bdbookverse@gmail.com
+                  </a>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <Phone size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-2">
+                  <a href="tel:+8801352215600" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    +880 1352-215600
+                  </a>
+                  <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    +880 1799-269699
+                  </a>
+                  <a href="tel:+8801641621584" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    +880 1641-621584
+                  </a>
+                </div>
               </li>
               <li className="flex items-center gap-3">
-                <Phone size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0" />
-                <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
-                  +880 1799-269699
+                <MessageCircle size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0" />
+                <a href="https://wa.me/message/XNAQSGDMKN7OD1" target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                  WhatsApp Chat
                 </a>
               </li>
             </ul>
@@ -313,6 +339,7 @@ export function Footer() {
                 <SocialLink href="https://twitter.com" icon={TwitterIcon} label="Twitter" />
                 <SocialLink href="https://linkedin.com" icon={LinkedinIcon} label="LinkedIn" />
                 <SocialLink href="https://tiktok.com" icon={TiktokIcon} label="TikTok" />
+                <SocialLink href="https://t.me/" icon={TelegramIcon} label="Telegram" />
               </div>
             </div>
           </div>

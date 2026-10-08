@@ -255,14 +255,14 @@ export default function SupportPage() {
                     Email Desk
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <a href="mailto:bookverse@gmail.com" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
-                      bookverse@gmail.com <ExternalLink className="w-2.5 h-2.5" />
+                    <a href="mailto:official@techwisdom.site" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      official@techwisdom.site <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                     <a href="mailto:twtech.contact@gmail.com" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
                       twtech.contact@gmail.com <ExternalLink className="w-2.5 h-2.5" />
                     </a>
-                    <a href="mailto:official@techwisdom.site" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
-                      official@techwisdom.site <ExternalLink className="w-2.5 h-2.5" />
+                    <a href="mailto:bdbookverse@gmail.com" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      bdbookverse@gmail.com <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                   </div>
                   <p className="text-[10px] text-zinc-500 font-medium leading-relaxed italic mt-1">
@@ -281,11 +281,11 @@ export default function SupportPage() {
                     Voice Assistance
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <a href="tel:+8801799269699" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
-                      +880 1799-269699 <ExternalLink className="w-2.5 h-2.5" />
-                    </a>
                     <a href="tel:+8801352215600" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
                       +880 1352-215600 <ExternalLink className="w-2.5 h-2.5" />
+                    </a>
+                    <a href="tel:+8801799269699" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
+                      +880 1799-269699 <ExternalLink className="w-2.5 h-2.5" />
                     </a>
                     <a href="tel:+8801641621584" className="text-sm font-bold text-zinc-900 dark:text-white hover:underline flex items-center gap-1.5">
                       +880 1641-621584 <ExternalLink className="w-2.5 h-2.5" />
