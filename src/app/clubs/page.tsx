@@ -14,7 +14,8 @@ export default async function ClubsPage() {
           select: { userId: true },
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: 50
     }),
     getCurrentUser()
   ]);
@@ -61,8 +62,8 @@ export default async function ClubsPage() {
   const safeCurrentUser = currentUser ? { id: currentUser.id } : null;
 
   return (
-    <ClubsClientView 
-      myClubs={myClubs} 
+    <ClubsClientView
+      myClubs={myClubs}
       discoverClubs={discoverClubs}
       initialUnreadCounts={unreadCountsByClub}
       currentUser={safeCurrentUser}

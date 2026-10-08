@@ -174,10 +174,7 @@ export async function GET(request: Request) {
               u.username AS "authorUsername",
               (
                 ts_rank_cd(
-                  setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
-                  setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
-                  setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                  setweight(to_tsvector('english', coalesce(si.content, '')), 'C'),
+                  s.fts_vector || setweight(to_tsvector('english', coalesce(si.content, '')), 'C'),
                   ${englishSearchExp}
                 )
                 ${banglaRankBoost}
@@ -193,10 +190,7 @@ export async function GET(request: Request) {
               AND (
                 ${searchQuery} = '' OR 
                 (
-                  setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
-                  setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
-                  setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                  setweight(to_tsvector('english', coalesce(si.content, '')), 'C')
+                  s.fts_vector || setweight(to_tsvector('english', coalesce(si.content, '')), 'C')
                 ) @@ (${englishSearchExp})
                 ${banglaSqlExtension}
               )
@@ -214,10 +208,7 @@ export async function GET(request: Request) {
               END DESC,
               ((
                 ts_rank_cd(
-                  setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
-                  setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
-                  setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                  setweight(to_tsvector('english', coalesce(si.content, '')), 'C'),
+                  s.fts_vector || setweight(to_tsvector('english', coalesce(si.content, '')), 'C'),
                   ${englishSearchExp}
                 )
                 ${banglaRankBoost}
@@ -241,10 +232,7 @@ export async function GET(request: Request) {
                 AND (
                   ${searchQuery} = '' OR 
                   (
-                    setweight(to_tsvector('english', coalesce(s.title, '')), 'A') ||
-                    setweight(to_tsvector('english', coalesce(array_to_string(s.tags, ' '), '')), 'A') ||
-                    setweight(to_tsvector('english', coalesce(s.summary, '')), 'B') ||
-                    setweight(to_tsvector('english', coalesce(si.content, '')), 'C')
+                    s.fts_vector || setweight(to_tsvector('english', coalesce(si.content, '')), 'C')
                   ) @@ (${englishSearchExp})
                   ${banglaSqlExtension}
                 )

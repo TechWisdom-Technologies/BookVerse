@@ -39,11 +39,13 @@ export function AdminInstructionModal() {
     // Poll for new admin instructions every 15 seconds while active on the site
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/users/me?t=${Date.now()}`, { 
+        const token = await user?.getIdToken();
+        const res = await fetch(`/api/users/me?t=${Date.now()}`, {
           cache: "no-store",
           headers: {
             "Cache-Control": "no-cache",
-            "Pragma": "no-cache"
+            "Pragma": "no-cache",
+            "Authorization": `Bearer ${token}`
           }
         });
         if (res.ok) {

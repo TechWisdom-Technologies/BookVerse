@@ -244,6 +244,13 @@ export default function NotificationsClientView({ initialNotifications }: { init
     } else if (!authLoading && user) {
       if (!initialLoadDone) {
         setInitialLoadDone(true);
+        
+        // Even if we skip the fetch, we still need to mark the initial SSR notifications as read!
+        const hasUnreadInitial = initialNotifications.some((n) => !n.isRead);
+        if (hasUnreadInitial) {
+          markAsRead("all", false);
+        }
+
         // Skip first fetch since we have SSR data, unless filters are active on mount
         if (typeFilter !== "all" || priorityFilter !== "all" || dateFilter !== "all") {
            fetchNotifications();
@@ -262,17 +269,15 @@ export default function NotificationsClientView({ initialNotifications }: { init
       if (priorityFilter !== "all") params.set("priority", priorityFilter);
       if (dateFilter !== "all") params.set("dateRange", dateFilter);
 
-      const res = await fetch(`/api/notifications?${params.toString()}`);
+      const res = await fetch(`/api/notifications?${params.toString()}`, { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
         setNotifications(data.notifications);
 
         // Mark unread as read
-        const unreadIds = data.notifications
-          .filter((n: Notification) => !n.isRead)
-          .map((n: Notification) => n.id);
-        if (unreadIds.length > 0) {
-          markAsRead(unreadIds);
+        const hasUnread = data.notifications.some((n: Notification) => !n.isRead);
+        if (hasUnread) {
+          markAsRead("all", false);
         }
       }
     } catch (error) {
@@ -282,14 +287,19 @@ export default function NotificationsClientView({ initialNotifications }: { init
     }
   };
 
-  const markAsRead = async (ids: string[]) => {
+  const markAsRead = async (ids: string[] | "all", updateLocalState = true) => {
     try {
       await fetch("/api/notifications/mark-read", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ids }),
       });
-      setNotifications((prev) => prev.map((n) => (ids.includes(n.id) ? { ...n, isRead: true } : n)));
+      if (updateLocalState) {
+        setNotifications((prev) => 
+          prev.map((n) => (ids === "all" || ids.includes(n.id) ? { ...n, isRead: true } : n))
+        );
+      }
+      window.dispatchEvent(new Event("refresh-notifications"));
     } catch (error) {
       console.error("Failed to mark notifications as read", error);
     }
@@ -315,9 +325,16 @@ export default function NotificationsClientView({ initialNotifications }: { init
   };
 
   const handleMarkAllRead = async () => {
-    const unreadIds = notifications.filter((n) => !n.isRead).map((n) => n.id);
-    if (unreadIds.length > 0) {
-      markAsRead(unreadIds);
+    try {
+      await fetch("/api/notifications/mark-read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: "all" }),
+      });
+      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+      window.dispatchEvent(new Event("refresh-notifications"));
+    } catch (error) {
+      console.error("Failed to mark all as read", error);
     }
   };
 
@@ -555,16 +572,16 @@ export default function NotificationsClientView({ initialNotifications }: { init
                 <Link
                   key={notification.id}
                   href={href}
-                  className={`block p-8 bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all group ${getPriorityIndicator(
+                  className={`block p-8 transition-all group ${getPriorityIndicator(
                     notification.priority
-                  )}`}
+                  )} ${!notification.isRead ? 'bg-indigo-50/30 dark:bg-indigo-500/10' : 'bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50'}`}
                 >
                   {content}
                 </Link>
               ) : (
                 <div
                   key={notification.id}
-                  className={`p-8 bg-white dark:bg-zinc-950 transition-all ${getPriorityIndicator(notification.priority)}`}
+                  className={`p-8 transition-all ${getPriorityIndicator(notification.priority)} ${!notification.isRead ? 'bg-indigo-50/30 dark:bg-indigo-500/10' : 'bg-white dark:bg-zinc-950'}`}
                 >
                   {content}
                 </div>

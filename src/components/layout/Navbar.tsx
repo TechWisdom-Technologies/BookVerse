@@ -171,17 +171,44 @@ export function Navbar() {
     const handleFeedVisit = () => {
       setHasNewFeed(false);
     };
+    
+    const refreshNotifications = () => {
+      fetch("/api/notifications", { cache: 'no-store' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.unreadCount !== undefined) {
+            setUnreadCount(data.unreadCount);
+          }
+        })
+        .catch(console.error);
+    };
+    
+    const refreshClubs = () => {
+      fetch("/api/clubs/unread", { cache: 'no-store' })
+        .then(res => res.json())
+        .then(data => {
+          if (data.hasUnread !== undefined) {
+            setHasUnreadClubs(data.hasUnread);
+          }
+        })
+        .catch(console.error);
+    };
+
     window.addEventListener("ai-librarian-state", handleState);
     window.addEventListener("feed-visited", handleFeedVisit);
+    window.addEventListener("refresh-notifications", refreshNotifications);
+    window.addEventListener("refresh-clubs", refreshClubs);
     return () => {
       window.removeEventListener("ai-librarian-state", handleState);
       window.removeEventListener("feed-visited", handleFeedVisit);
+      window.removeEventListener("refresh-notifications", refreshNotifications);
+      window.removeEventListener("refresh-clubs", refreshClubs);
     };
   }, []);
 
   useEffect(() => {
     if (user && !loading) {
-      fetch("/api/notifications")
+      fetch("/api/notifications", { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           if (data.unreadCount !== undefined) {
@@ -190,7 +217,7 @@ export function Navbar() {
         })
         .catch(err => console.error("Failed to fetch unread notifications", err));
 
-      fetch("/api/clubs/unread")
+      fetch("/api/clubs/unread", { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           if (data.hasUnread !== undefined) {

@@ -30,9 +30,9 @@ export function LoginForm() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.replace(redirectUrl);
+      window.location.href = redirectUrl;
     }
-  }, [loading, redirectUrl, router, user]);
+  }, [loading, redirectUrl, user]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

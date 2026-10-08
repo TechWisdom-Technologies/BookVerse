@@ -112,7 +112,9 @@ export default function ClubDetailClient({ initialClub, clubId }: ClubDetailClie
       const isMemberCheck = club.members.some((m: any) => m.userId === dbUser.id);
       setIsMember(isMemberCheck);
       if (isMemberCheck) {
-        fetch(`/api/clubs/${clubId}/read`, { method: 'POST' }).catch(console.error);
+        fetch(`/api/clubs/${clubId}/read`, { method: 'POST' })
+          .then(() => window.dispatchEvent(new Event("refresh-clubs")))
+          .catch(console.error);
       }
     } else if (!dbUser) {
       setIsMember(false);

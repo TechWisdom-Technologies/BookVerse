@@ -11,17 +11,22 @@ export async function POST(request: Request) {
     const { dbUser } = await verifyToken();
     const { ids } = await request.json();
 
-    if (!Array.isArray(ids) || ids.length === 0) {
+    if (ids === "all") {
+      await prisma.notification.updateMany({
+        where: { userId: dbUser.id, isRead: false },
+        data: { isRead: true },
+      });
+    } else if (Array.isArray(ids) && ids.length > 0) {
+      await prisma.notification.updateMany({
+        where: {
+          id: { in: ids },
+          userId: dbUser.id, // Security: ensure user owns these notifications
+        },
+        data: { isRead: true },
+      });
+    } else {
       return NextResponse.json({ error: "Invalid notification IDs" }, { status: 400 });
     }
-
-    await prisma.notification.updateMany({
-      where: {
-        id: { in: ids },
-        userId: dbUser.id, // Security: ensure user owns these notifications
-      },
-      data: { isRead: true },
-    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

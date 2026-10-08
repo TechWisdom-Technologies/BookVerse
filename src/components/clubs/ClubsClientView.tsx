@@ -26,7 +26,12 @@ interface ClubsClientViewProps {
   currentUser: { id: string } | null;
 }
 
-export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, currentUser }: ClubsClientViewProps) {
+export function ClubsClientView({ 
+  myClubs = [], 
+  discoverClubs = [], 
+  initialUnreadCounts = {}, 
+  currentUser 
+}: ClubsClientViewProps) {
   const [search, setSearch] = useState('');
   const [genreFilter, setGenreFilter] = useState('');
 
@@ -63,7 +68,7 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
 
   const allClubs = useMemo(() => [...myClubs, ...discoverClubs], [myClubs, discoverClubs]);
   const genres = useMemo(() => Array.from(new Set(allClubs.map(c => c.genre).filter(Boolean))), [allClubs]);
-  
+
   const totalFilteredCount = filteredMyClubs.length + filteredDiscoverClubs.length;
 
   return (
@@ -81,7 +86,7 @@ export function ClubsClientView({ myClubs, discoverClubs, initialUnreadCounts, c
               <p className="text-xs text-zinc-500 font-medium">Find a community of readers and discuss your favorite books.</p>
             </div>
           </div>
-          
+
           {currentUser && (
             <Link href="/clubs/create" className="px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2">
               <Plus className="w-4 h-4" />
