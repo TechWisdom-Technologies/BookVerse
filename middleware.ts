@@ -61,7 +61,12 @@ export async function middleware(req: NextRequest) {
       // Server-to-server calls (no browser) won't have Origin — those are fine.
       if (origin && appUrl) {
         const allowedOrigin = new URL(appUrl).origin;
-        if (origin !== allowedOrigin) {
+        
+        // Allow if it matches the configured URL exactly, or if it is our production domain, or if it is localhost
+        const isProdDomain = origin === "https://bookversebd.site" || origin === "https://www.bookversebd.site";
+        const isLocalHost = origin.startsWith("http://localhost");
+
+        if (origin !== allowedOrigin && !isProdDomain && !isLocalHost) {
           return NextResponse.json(
             { error: "Cross-origin request blocked" },
             { status: 403 }
