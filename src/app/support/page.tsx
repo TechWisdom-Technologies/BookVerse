@@ -499,6 +499,7 @@ export default function SupportPage() {
                     <div className="flex justify-center my-4">
                       <Turnstile
                         sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                        action="support_desk"
                         onSuccess={(token, _preClearance, boundTurnstile) => {
                           setCaptchaToken(token);
                           boundTurnstileRef.current = boundTurnstile;

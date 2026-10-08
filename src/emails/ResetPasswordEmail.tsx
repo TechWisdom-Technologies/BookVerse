@@ -23,7 +23,7 @@ export function ResetPasswordEmail({ resetLink }: ResetPasswordEmailProps) {
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: "32px" }}>
         <img
-          src="https://bookverse.techwisdom.site/logo-icon.png"
+          src="https://bookversebd.site/logo-icon.png"
           alt="BookVerse Logo"
           style={{ width: "56px", height: "56px", objectFit: "contain", borderRadius: "12px" }}
         />

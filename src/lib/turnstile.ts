@@ -7,10 +7,10 @@
 
 const TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify";
 
-export async function verifyTurnstileToken(token: string | null | undefined): Promise<{
-  success: boolean;
-  error?: string;
-}> {
+export async function verifyTurnstileToken(
+  token: string | null | undefined,
+  expectedAction?: string
+): Promise<{ success: boolean; error?: string }> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
 
   if (!secret) {
@@ -23,7 +23,14 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
     return { success: true };
   }
 
-  if (!token) {
+  const expectedHostnames = new Set(
+    (process.env.TURNSTILE_HOSTNAMES ?? "")
+      .split(",")
+      .map((hostname) => hostname.trim())
+      .filter(Boolean)
+  );
+
+  if (!token || token.length > 2048) {
     return { success: false, error: "CAPTCHA verification required." };
   }
 
@@ -39,11 +46,15 @@ export async function verifyTurnstileToken(token: string | null | undefined): Pr
 
     const data = await response.json();
 
-    if (data.success) {
+    if (
+      data.success &&
+      (!expectedAction || data.action === expectedAction) &&
+      (expectedHostnames.size === 0 || expectedHostnames.has(data.hostname))
+    ) {
       return { success: true };
     }
 
-    console.warn("[Turnstile] Verification failed:", data["error-codes"]);
+    console.warn("[Turnstile] Verification failed:", data["error-codes"], "Action:", data.action, "Hostname:", data.hostname);
     return { success: false, error: "CAPTCHA verification failed. Please try again." };
   } catch (err) {
     console.error("[Turnstile] Verification request error:", err);

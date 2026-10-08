@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bookverse.app";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://bookversebd.site";
 
   // Static routes
   const routes = ["", "/library", "/stories", "/search", "/login"];

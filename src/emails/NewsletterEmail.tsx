@@ -66,8 +66,8 @@ export function NewsletterEmail({ subject, content }: NewsletterEmailProps) {
               © {new Date().getFullYear()} BookVerse. All rights reserved.
             </Text>
             <Text style={{ fontSize: "12px", color: "#71717a", margin: "8px 0 0 0" }}>
-              <Link href="https://bookverse.app" style={{ color: "#18181b", textDecoration: "underline" }}>
-                bookverse.app
+              <Link href="https://bookversebd.site" style={{ color: "#18181b", textDecoration: "underline" }}>
+                bookversebd.site
               </Link>
             </Text>
             <Text style={{ fontSize: "10px", color: "#a1a1aa", margin: "24px 0 0 0" }}>

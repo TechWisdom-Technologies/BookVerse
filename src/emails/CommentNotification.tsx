@@ -112,8 +112,8 @@ export function CommentNotification({
               © {new Date().getFullYear()} BookVerse. All rights reserved.
             </Text>
             <Text style={{ fontSize: "12px", color: "#9ca3af", margin: "8px 0 0 0" }}>
-              <Link href="https://bookverse.app" style={{ color: "#6b7280" }}>
-                bookverse.app
+              <Link href="https://bookversebd.site" style={{ color: "#6b7280" }}>
+                bookversebd.site
               </Link>
             </Text>
           </Section>

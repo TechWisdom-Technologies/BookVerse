@@ -30,7 +30,7 @@ export function SupportRequestNotification({
     >
       <div style={{ textAlign: "center", marginBottom: "32px" }}>
         <img
-          src="https://bookverse.techwisdom.site/logo-icon.png"
+          src="https://bookversebd.site/logo-icon.png"
           alt="BookVerse Logo"
           style={{ width: "48px", height: "48px", objectFit: "contain", borderRadius: "10px" }}
         />

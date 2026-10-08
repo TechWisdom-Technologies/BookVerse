@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     const { name, email, category, subject, message, captchaToken } = await request.json();
 
     // Verify CAPTCHA
-    const captchaResult = await verifyTurnstileToken(captchaToken);
+    const captchaResult = await verifyTurnstileToken(captchaToken, "support_desk");
     if (!captchaResult.success) {
       return NextResponse.json(
         { error: captchaResult.error || "CAPTCHA verification failed." },
