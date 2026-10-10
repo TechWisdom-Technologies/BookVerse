@@ -113,8 +113,15 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
   const html = renderChapterContent(chapter.content);
 
   // Apply reading preferences
-  const isReaderThemeActive = user?.readerTheme && user.readerTheme !== 'white';
-  const themeClass = isReaderThemeActive ? `reader-theme-${user.readerTheme}` : 'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100';
+  const readerTheme = user?.readerTheme;
+  const isReaderThemeActive = Boolean(readerTheme && readerTheme !== 'white');
+  const themeClass = isReaderThemeActive ? `reader-theme-${readerTheme}` : 'bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100';
+  const isDarkReader = readerTheme === 'charcoal' || readerTheme === 'black';
+  const articleThemeClass = !isReaderThemeActive
+    ? 'prose-zinc dark:prose-invert text-zinc-900 dark:text-white'
+    : isDarkReader
+    ? (readerTheme === 'black' ? 'prose-invert text-white' : 'prose-invert text-[#E0E0E0]')
+    : (readerTheme === 'sepia' ? 'text-[#5F4B32]' : 'text-[#1E1E1E]');
   
   const fontClass = user?.readingFont === 'dyslexic' ? 'font-dyslexic' : user?.readingFont === 'serif' ? 'font-serif' : 'font-sans';
   
@@ -181,7 +188,7 @@ export default async function ChapterReaderPage({ params }: ChapterReaderPagePro
         </header>
 
         {/* Narrative Article */}
-        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${alignClass} ${spacingClass} ${indentClass} ${isReaderThemeActive ? '' : 'prose-zinc dark:prose-invert text-zinc-900 dark:text-white'}`}>
+        <article className={`prose max-w-none ${fontClass} ${lineHeightClass} ${alignClass} ${spacingClass} ${indentClass} ${articleThemeClass}`}>
           {html ? (
             <div dangerouslySetInnerHTML={{ __html: html }} className={fontSizeClass} />
           ) : (

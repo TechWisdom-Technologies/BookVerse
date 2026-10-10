@@ -213,21 +213,195 @@
 .reader-theme-white {
   background-color: #ffffff !important;
   color: #1e1e1e !important;
+  --tw-prose-body: #1e1e1e;
+  --tw-prose-headings: #111111;
+  --tw-prose-lead: #333333;
+  --tw-prose-links: #1d4ed8;
+  --tw-prose-bold: #111111;
+  --tw-prose-counters: #666666;
+  --tw-prose-bullets: #666666;
+  --tw-prose-hr: #e5e7eb;
+  --tw-prose-quotes: #1e1e1e;
+  --tw-prose-quote-borders: #d1d5db;
+  --tw-prose-captions: #666666;
+  --tw-prose-code: #111111;
 }
+
 .reader-theme-sepia {
   background-color: #f4ecd8 !important;
   color: #5f4b32 !important;
+  --tw-prose-body: #5f4b32;
+  --tw-prose-headings: #433422;
+  --tw-prose-lead: #5f4b32;
+  --tw-prose-links: #2c5282;
+  --tw-prose-bold: #433422;
+  --tw-prose-counters: #8c7355;
+  --tw-prose-bullets: #8c7355;
+  --tw-prose-hr: #dcd3bd;
+  --tw-prose-quotes: #433422;
+  --tw-prose-quote-borders: #c8bc9f;
+  --tw-prose-captions: #8c7355;
+  --tw-prose-code: #433422;
 }
+.reader-theme-sepia .prose p,
+.reader-theme-sepia .prose span,
+.reader-theme-sepia .prose div,
+.reader-theme-sepia .prose li {
+  color: #5f4b32 !important;
+}
+.reader-theme-sepia .prose h1,
+.reader-theme-sepia .prose h2,
+.reader-theme-sepia .prose h3,
+.reader-theme-sepia .prose h4,
+.reader-theme-sepia .prose strong,
+.reader-theme-sepia .prose b {
+  color: #433422 !important;
+}
+.reader-theme-sepia .prose blockquote {
+  color: #5f4b32 !important;
+  border-left-color: #c8bc9f !important;
+}
+
 .reader-theme-cream {
   background-color: #faf6ee !important;
   color: #1e1e1e !important;
+  --tw-prose-body: #1e1e1e;
+  --tw-prose-headings: #111111;
+  --tw-prose-lead: #333333;
+  --tw-prose-links: #1d4ed8;
+  --tw-prose-bold: #111111;
+  --tw-prose-counters: #666666;
+  --tw-prose-bullets: #666666;
+  --tw-prose-hr: #e5ded0;
+  --tw-prose-quotes: #1e1e1e;
+  --tw-prose-quote-borders: #ded5c4;
+  --tw-prose-captions: #666666;
+  --tw-prose-code: #111111;
 }
+.reader-theme-cream .prose p,
+.reader-theme-cream .prose span,
+.reader-theme-cream .prose div,
+.reader-theme-cream .prose li {
+  color: #1e1e1e !important;
+}
+.reader-theme-cream .prose h1,
+.reader-theme-cream .prose h2,
+.reader-theme-cream .prose h3,
+.reader-theme-cream .prose h4,
+.reader-theme-cream .prose strong,
+.reader-theme-cream .prose b {
+  color: #111111 !important;
+}
+.reader-theme-cream .prose blockquote {
+  color: #1e1e1e !important;
+  border-left-color: #ded5c4 !important;
+}
+
 .reader-theme-charcoal {
   background-color: #2d2d2d !important;
   color: #e0e0e0 !important;
+  --tw-prose-body: #e0e0e0;
+  --tw-prose-headings: #ffffff;
+  --tw-prose-lead: #d4d4d8;
+  --tw-prose-links: #93c5fd;
+  --tw-prose-bold: #ffffff;
+  --tw-prose-counters: #a1a1aa;
+  --tw-prose-bullets: #a1a1aa;
+  --tw-prose-hr: #404040;
+  --tw-prose-quotes: #e0e0e0;
+  --tw-prose-quote-borders: #52525b;
+  --tw-prose-captions: #a1a1aa;
+  --tw-prose-code: #ffffff;
+  --tw-prose-pre-code: #e0e0e0;
+  --tw-prose-pre-bg: #1e1e1e;
+  --tw-prose-th-borders: #404040;
+  --tw-prose-td-borders: #333333;
 }
+.reader-theme-charcoal .prose,
+.reader-theme-charcoal .prose p,
+.reader-theme-charcoal .prose span,
+.reader-theme-charcoal .prose div,
+.reader-theme-charcoal .prose li {
+  color: #e0e0e0 !important;
+}
+.reader-theme-charcoal .prose h1,
+.reader-theme-charcoal .prose h2,
+.reader-theme-charcoal .prose h3,
+.reader-theme-charcoal .prose h4,
+.reader-theme-charcoal .prose h5,
+.reader-theme-charcoal .prose h6,
+.reader-theme-charcoal .prose strong,
+.reader-theme-charcoal .prose b {
+  color: #ffffff !important;
+}
+.reader-theme-charcoal .prose blockquote {
+  color: #d4d4d8 !important;
+  border-left-color: #52525b !important;
+}
+.reader-theme-charcoal .prose a {
+  color: #93c5fd !important;
+}
+.reader-theme-charcoal .prose code {
+  color: #ffffff !important;
+}
+.reader-theme-charcoal h1,
+.reader-theme-charcoal h2,
+.reader-theme-charcoal h3,
+.reader-theme-charcoal header h1 {
+  color: #ffffff !important;
+}
+
 .reader-theme-black {
   background-color: #000000 !important;
+  color: #ffffff !important;
+  --tw-prose-body: #ffffff;
+  --tw-prose-headings: #ffffff;
+  --tw-prose-lead: #e4e4e7;
+  --tw-prose-links: #93c5fd;
+  --tw-prose-bold: #ffffff;
+  --tw-prose-counters: #a1a1aa;
+  --tw-prose-bullets: #a1a1aa;
+  --tw-prose-hr: #27272a;
+  --tw-prose-quotes: #ffffff;
+  --tw-prose-quote-borders: #3f3f46;
+  --tw-prose-captions: #a1a1aa;
+  --tw-prose-code: #ffffff;
+  --tw-prose-pre-code: #ffffff;
+  --tw-prose-pre-bg: #18181b;
+  --tw-prose-th-borders: #27272a;
+  --tw-prose-td-borders: #27272a;
+}
+.reader-theme-black .prose,
+.reader-theme-black .prose p,
+.reader-theme-black .prose span,
+.reader-theme-black .prose div,
+.reader-theme-black .prose li {
+  color: #ffffff !important;
+}
+.reader-theme-black .prose h1,
+.reader-theme-black .prose h2,
+.reader-theme-black .prose h3,
+.reader-theme-black .prose h4,
+.reader-theme-black .prose h5,
+.reader-theme-black .prose h6,
+.reader-theme-black .prose strong,
+.reader-theme-black .prose b {
+  color: #ffffff !important;
+}
+.reader-theme-black .prose blockquote {
+  color: #e4e4e7 !important;
+  border-left-color: #3f3f46 !important;
+}
+.reader-theme-black .prose a {
+  color: #93c5fd !important;
+}
+.reader-theme-black .prose code {
+  color: #ffffff !important;
+}
+.reader-theme-black h1,
+.reader-theme-black h2,
+.reader-theme-black h3,
+.reader-theme-black header h1 {
   color: #ffffff !important;
 }
 
