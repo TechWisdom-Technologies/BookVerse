@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { AnnotationType } from "@prisma/client";
 import { getAuth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { hasFeatureAccess, paidFeatureError } from "@/lib/entitlements";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -14,10 +13,7 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
     const user = await getAuth();
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (!(await hasFeatureAccess(user, "PRO"))) {
-      return NextResponse.json(paidFeatureError("PRO"), { status: 402 });
+      return NextResponse.json([]);
     }
 
     const annotations = await prisma.bookAnnotation.findMany({
@@ -39,9 +35,6 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (!(await hasFeatureAccess(user, "PRO"))) {
-      return NextResponse.json(paidFeatureError("PRO"), { status: 402 });
     }
 
     const body = await req.json();
@@ -91,9 +84,6 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    if (!(await hasFeatureAccess(user, "PRO"))) {
-      return NextResponse.json(paidFeatureError("PRO"), { status: 402 });
     }
 
     const { annotationId } = await req.json();
