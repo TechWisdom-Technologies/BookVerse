@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { BookDetail } from "@/components/books/BookDetail";
 import { BookReviews } from "@/components/books/BookReviews";
 import { getCurrentUser } from "@/lib/auth";
+import { DynamicBackButton } from "@/components/stories/DynamicBackButton";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
@@ -80,8 +81,13 @@ export default async function BookPage({ params }: BookPageProps) {
     }
 
     return (
-      <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-16 pb-32">
+      <main className="min-h-screen bg-[#FDFDFC] dark:bg-[#0A0A0A] pt-12 pb-32">
         <div className="mx-auto max-w-[1200px] px-6 sm:px-8">
+          {/* Navigation */}
+          <div className="mb-6">
+            <DynamicBackButton fallbackHref="/library" label="Library Archives" />
+          </div>
+
           <BookDetail
             book={{ ...book, averageRating }}
             currentUserId={currentUserId}

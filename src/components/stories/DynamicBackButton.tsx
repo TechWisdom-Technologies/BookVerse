@@ -4,13 +4,22 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 
-export function DynamicBackButton() {
+interface DynamicBackButtonProps {
+  fallbackHref?: string;
+  label?: string;
+  className?: string;
+}
+
+export function DynamicBackButton({
+  fallbackHref = "/stories",
+  label = "Story Archives",
+  className = ""
+}: DynamicBackButtonProps = {}) {
   const router = useRouter();
   const [canGoBack, setCanGoBack] = useState(false);
 
   useEffect(() => {
-    // Next.js client-side routing doesn't always update document.referrer reliably.
-    // Instead, we just check if they have a browser history state we can return to.
+    // Check if there is browser history state we can return to
     if (window.history.length > 1) {
       setCanGoBack(true);
     }
@@ -18,19 +27,20 @@ export function DynamicBackButton() {
 
   return (
     <button
+      type="button"
       onClick={() => {
         if (canGoBack) {
           router.back();
           // Force scroll to top after a short delay to override Next.js scroll restoration
           setTimeout(() => window.scrollTo(0, 0), 50);
         } else {
-          router.push("/stories");
+          router.push(fallbackHref);
         }
       }}
-      className="flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors"
+      className={`inline-flex items-center gap-2 text-xs font-bold text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors group ${className}`}
     >
-      <ArrowLeft className="w-3 h-3" />
-      Story Archives
+      <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+      <span>{label}</span>
     </button>
   );
 }

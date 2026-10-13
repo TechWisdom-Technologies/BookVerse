@@ -42,6 +42,12 @@ import { HeroSection } from "@/components/home/HeroSection";
 import { StoryGrid } from "@/components/stories/StoryGrid";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
 import { AnimatedStats } from "@/components/home/AnimatedStats";
+import { NewArrivalsSection } from "@/components/home/NewArrivalsSection";
+import { NewBookArrivalsSection } from "@/components/home/NewBookArrivalsSection";
+import { EditorsChoiceCarousel } from "@/components/home/EditorsChoiceCarousel";
+import { CommunityFeedCarousel } from "@/components/home/CommunityFeedCarousel";
+import { ExploreWorldsSection } from "@/components/home/ExploreWorldsSection";
+import { FeaturedSeriesSection } from "@/components/home/FeaturedSeriesSection";
 
 export const revalidate = 60;
 
@@ -96,12 +102,32 @@ export default async function HomePage() {
       totalStories, 
       totalReadTimeAggr,
       bookGenres, 
-      storyGenres
+      storyGenres,
+      newStoriesRaw,
+      seriesList
     ] = await Promise.all([
-      prisma.book.findMany({ take: 8, where: { isFeatured: true }, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } }, reviews: { select: { rating: true } } } }),
-      prisma.book.findMany({ take: 8, where: { isNewArrival: true }, orderBy: { createdAt: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } }, reviews: { select: { rating: true } } } }),
+      prisma.book.findMany({ take: 12, where: { isFeatured: true }, orderBy: { downloadCount: "desc" }, select: { id: true, title: true, authorName: true, coverUrl: true, genre: true, downloadCount: true, _count: { select: { reviews: true } }, reviews: { select: { rating: true } } } }),
+      prisma.book.findMany({ 
+        take: 10, 
+        where: { isNewArrival: true }, 
+        orderBy: { createdAt: "desc" }, 
+        select: { 
+          id: true, 
+          title: true, 
+          authorName: true, 
+          coverUrl: true, 
+          genre: true, 
+          description: true,
+          fileType: true,
+          language: true,
+          downloadCount: true, 
+          createdAt: true,
+          _count: { select: { reviews: true } }, 
+          reviews: { select: { rating: true } } 
+        } 
+      }),
       prisma.universe.findMany({
-        take: 4,
+        take: 8,
         orderBy: { createdAt: "desc" },
         include: {
           user: {
@@ -113,7 +139,11 @@ export default async function HomePage() {
             },
           },
           stories: {
+            take: 4,
             select: {
+              id: true,
+              title: true,
+              coverUrl: true,
               viewCount: true,
             },
           },
@@ -124,7 +154,7 @@ export default async function HomePage() {
           },
         },
       }),
-      prisma.story.findMany({ take: 8, where: { published: true }, orderBy: { viewCount: "desc" }, select: { id: true, title: true, coverUrl: true, summary: true, viewCount: true, createdAt: true, series: { select: { name: true } }, universe: { select: { name: true } }, sequenceNumber: true, author: { select: { id: true, username: true, displayName: true, avatarUrl: true } }, _count: { select: { chapters: true, reactions: true, comments: true } } } }),
+      prisma.story.findMany({ take: 12, where: { published: true }, orderBy: { viewCount: "desc" }, select: { id: true, title: true, coverUrl: true, summary: true, viewCount: true, createdAt: true, series: { select: { name: true } }, universe: { select: { name: true } }, sequenceNumber: true, author: { select: { id: true, username: true, displayName: true, avatarUrl: true } }, _count: { select: { chapters: true, reactions: true, comments: true } } } }),
       prisma.storyPromotion.findMany({
         where: {
           tier: "PROMOTED",
@@ -185,7 +215,63 @@ export default async function HomePage() {
       prisma.story.count(),
       prisma.readingLog.aggregate({ _sum: { minutes: true } }),
       prisma.book.groupBy({ by: ['genre'], _count: { genre: true } }),
-      prisma.story.groupBy({ by: ['genre'], _count: { genre: true } })
+      prisma.story.groupBy({ by: ['genre'], _count: { genre: true } }),
+      prisma.story.findMany({ 
+        take: 8, 
+        where: { published: true }, 
+        orderBy: { createdAt: "desc" }, 
+        select: { 
+          id: true, 
+          title: true, 
+          coverUrl: true, 
+          summary: true, 
+          description: true,
+          genre: true,
+          tags: true,
+          viewCount: true, 
+          createdAt: true, 
+          series: { select: { name: true } }, 
+          universe: { select: { name: true } }, 
+          sequenceNumber: true, 
+          author: { select: { id: true, username: true, displayName: true, avatarUrl: true } }, 
+          _count: { select: { chapters: true, reactions: true, comments: true } } 
+        } 
+      }),
+      prisma.series.findMany({
+        take: 8,
+        orderBy: { createdAt: "desc" },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+              displayName: true,
+              avatarUrl: true,
+            },
+          },
+          stories: {
+            take: 4,
+            orderBy: { sequenceNumber: "asc" },
+            select: {
+              id: true,
+              title: true,
+              coverUrl: true,
+              viewCount: true,
+              sequenceNumber: true,
+              _count: {
+                select: {
+                  chapters: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              stories: true,
+            },
+          },
+        },
+      })
     ]);
 
     const totalReadTime = totalReadTimeAggr._sum.minutes || 0;
@@ -235,7 +321,7 @@ export default async function HomePage() {
       };
     });
 
-    const formattedStories = stories.map(story => {
+    const formatStoryWithPromos = <T extends { id: string; createdAt: Date }>(story: T) => {
       const storyPromos = activePromotions.filter((ap: { storyId: string; tier: string }) => ap.storyId === story.id);
       const hasTrending = storyPromos.some(p => p.tier === 'TRENDING');
       const hasPromoted = storyPromos.some(p => p.tier === 'PROMOTED');
@@ -248,7 +334,10 @@ export default async function HomePage() {
         isPromotedPromo: !hasTrending && hasPromoted,
         isFeaturedPromo: !hasTrending && !hasPromoted && hasFeatured
       };
-    });
+    };
+
+    const formattedStories = stories.map(formatStoryWithPromos);
+    const formattedNewStories = newStoriesRaw.map(formatStoryWithPromos);
 
     // Deduplicate and sort promoted stories by budget (cost) and quality criteria
     const uniquePromotedMap = new Map();
@@ -341,27 +430,14 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* Featured Books */}
+        {/* Community Feed Carousel */}
+        {formattedStories.length > 0 && (
+          <CommunityFeedCarousel stories={formattedStories} />
+        )}
+
+        {/* Featured Books Carousel (Editor's Choice) */}
         {featuredWithRatings.length > 0 && (
-          <section className="py-24 px-6">
-            <div className="max-w-7xl mx-auto">
-              <div className="flex items-end justify-between mb-12 pb-6">
-                <div className="space-y-3">
-                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
-                    <Award className="w-3 h-3" /> Recommended
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
-                    Editor&apos;s Choice
-                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
-                  </h2>
-                </div>
-                <Link href="/library" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
-                  Browse All <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-              <BookGrid books={featuredWithRatings} />
-            </div>
-          </section>
+          <EditorsChoiceCarousel books={featuredWithRatings} />
         )}
 
         {/* Latest Stories */}
@@ -387,136 +463,30 @@ export default async function HomePage() {
           </section>
         )}
 
-        {/* Latest Stories */}
-        <section className="py-32 px-6 border-y border-zinc-50 dark:border-zinc-900 bg-zinc-50/10">
-          <div className="max-w-7xl mx-auto">
-              <div className="flex items-end justify-between mb-12 pb-6">
-                <div className="space-y-3">
-                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
-                    <Activity className="w-3 h-3" /> Latest Stories
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
-                    Community Feed
-                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
-                  </h2>
-                </div>
-                <Link href="/stories" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
-                  View All <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-            <StoryGrid stories={formattedStories} />
-          </div>
-        </section>
-
         {/* Categories */}
         <section className="py-32 px-6">
           <CategoryGrid categories={categoriesWithCounts} />
         </section>
 
-        {/* Trending & New */}
-        <section className="py-32 px-6 border-t border-zinc-50 dark:border-zinc-900">
-          <div className="max-w-7xl mx-auto space-y-32">
-            <div>
-              <div className="flex items-end justify-between mb-12 pb-6">
-                <div className="space-y-3">
-                  <div className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-zinc-100 dark:bg-zinc-900 border border-zinc-200/50 dark:border-zinc-800 text-[9px] font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 shadow-sm">
-                    <Globe className="w-3 h-3" /> Explore Universes
-                  </div>
-                  <h2 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-zinc-900 dark:text-white flex items-center gap-4">
-                    Explore Worlds
-                    <span className="hidden md:block h-[2px] w-24 bg-zinc-900 dark:bg-white opacity-10 rounded-full"></span>
-                  </h2>
-                </div>
-                <Link href="/universes" className="group flex items-center gap-2 px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md">
-                  Browse All <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {universes.map((u) => {
-                  const totalReads = u.stories.reduce((acc, s) => acc + s.viewCount, 0);
-                  return (
-                    <Link
-                      key={u.id}
-                      href={`/universes/${u.id}`}
-                      className="group flex flex-col border border-zinc-100 dark:border-zinc-900 rounded bg-white dark:bg-zinc-950 hover:bg-zinc-50/50 dark:hover:bg-zinc-900/50 transition-all relative overflow-hidden shadow-sm"
-                    >
-                      {/* Universe Cover */}
-                      <div className="h-40 w-full overflow-hidden relative">
-                        {u.coverUrl ? (
-                          <Image
-                            src={u.coverUrl}
-                            alt=""
-                            fill
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-                            className="object-cover transition-all duration-700 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className={`w-full h-full bg-gradient-to-br ${getUniverseGraphic(u.name)} flex flex-col items-center justify-center p-4 text-center relative overflow-hidden`}>
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_60%)] animate-pulse duration-1000" />
-                            <Compass className="w-8 h-8 text-white/90 drop-shadow-md mb-1 relative z-10" />
-                            <span className="text-[9px] font-mono font-bold uppercase tracking-[0.3em] text-white/80 relative z-10 drop-shadow-sm">
-                              {u.genre}
-                            </span>
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-zinc-950 via-transparent to-transparent opacity-60" />
-                      </div>
+        {/* Innovative New Arrival Stories Section */}
+        {formattedNewStories.length > 0 && (
+          <NewArrivalsSection stories={formattedNewStories} />
+        )}
 
-                      {/* Card Content */}
-                      <div className="p-5 space-y-3 relative z-10 flex-1 flex flex-col">
-                        <div className="flex items-center justify-between">
-                          <span className="px-1.5 py-0.5 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-400 text-[8px] font-bold uppercase tracking-widest border border-zinc-100 dark:border-zinc-800">
-                            {u.genre}
-                          </span>
-                          <div className="flex items-center gap-1 text-zinc-400 dark:text-zinc-500 text-[8px] font-bold uppercase tracking-widest">
-                            <Flame className="w-2.5 h-2.5" />
-                            {totalReads} Reads
-                          </div>
-                        </div>
+        {/* Innovative Explore Worlds Section */}
+        {universes.length > 0 && (
+          <ExploreWorldsSection universes={universes} />
+        )}
 
-                        <div className="flex-1">
-                          <h3 className="text-xs font-bold mb-1 tracking-tight group-hover:text-zinc-600 dark:group-hover:text-zinc-400 transition-colors uppercase line-clamp-1">
-                            {u.name}
-                          </h3>
-                          <p className="text-[10px] text-zinc-500 font-medium line-clamp-2 leading-relaxed">
-                            {u.description || 'No description provided.'}
-                          </p>
-                        </div>
+        {/* Featured Series Sagas Section */}
+        {seriesList.length > 0 && (
+          <FeaturedSeriesSection seriesList={seriesList} />
+        )}
 
-                        <div className="pt-3 border-t border-zinc-50 dark:border-zinc-900 flex items-center justify-between mt-auto">
-                          <div className="flex items-center gap-1.5">
-                            <div className="relative w-5 h-5 rounded bg-zinc-50 dark:bg-zinc-900 flex items-center justify-center text-[7px] font-bold overflow-hidden border border-zinc-100 dark:border-zinc-800">
-                              {u.user.avatarUrl ? (
-                                <Image src={u.user.avatarUrl} alt="" fill sizes="20px" className="object-cover" />
-                              ) : (
-                                u.user.username[0].toUpperCase()
-                              )}
-                            </div>
-                            <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest truncate max-w-[80px]">{u.user.displayName || u.user.username}</span>
-                          </div>
-
-                          <div className="flex items-center gap-1 text-[8px] font-bold text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors uppercase tracking-[0.2em]">
-                            <BookOpen className="w-3 h-3" />
-                            {u._count?.stories || 0} Stories
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-            {recentWithRatings.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-10 pb-4 border-b border-zinc-50 dark:border-zinc-900 italic">
-                  <Clock className="w-4 h-4 text-zinc-200" />
-                  <h2 className="text-[10px] font-bold uppercase tracking-widest text-zinc-300">New Arrivals</h2>
-                </div>
-                <BookGrid books={recentWithRatings} />
-              </div>
-            )}
-          </div>
-        </section>
+        {/* Innovative New Book Arrivals Section */}
+        {recentWithRatings.length > 0 && (
+          <NewBookArrivalsSection books={recentWithRatings} />
+        )}
 
         {/* Features */}
         <section className="py-32 px-6 bg-zinc-950 text-white">
