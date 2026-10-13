@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { UserPlus, UserCheck, Loader2 } from "lucide-react";
+import { useAuth, useSignInModal } from "@/app/providers";
 
 interface FollowButtonProps {
   targetUserId: string;
@@ -9,16 +10,27 @@ interface FollowButtonProps {
 }
 
 export function FollowButton({ targetUserId, isFollowing: initialIsFollowing }: FollowButtonProps) {
+  const { user } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const [isFollowing, setIsFollowing] = useState(initialIsFollowing);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleToggleFollow = async () => {
+    if (!user) {
+      requireSignIn("Sign in to follow authors and fellow readers.");
+      return;
+    }
+
     setIsLoading(true);
     try {
       if (isFollowing) {
         const res = await fetch(`/api/follow?followingId=${targetUserId}`, {
           method: "DELETE",
         });
+        if (res.status === 401) {
+          requireSignIn("Sign in to follow authors and fellow readers.");
+          return;
+        }
         if (res.ok) {
           setIsFollowing(false);
         }
@@ -28,6 +40,10 @@ export function FollowButton({ targetUserId, isFollowing: initialIsFollowing }: 
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ followingId: targetUserId }),
         });
+        if (res.status === 401) {
+          requireSignIn("Sign in to follow authors and fellow readers.");
+          return;
+        }
         if (res.ok) {
           setIsFollowing(true);
         }

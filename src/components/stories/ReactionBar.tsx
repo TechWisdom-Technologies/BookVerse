@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import type { ReactionType } from "@prisma/client";
 import { cn } from "@/lib/utils";
+import { useSignInModal } from "@/app/providers";
 
 const reactions: { type: ReactionType; emoji: string; label: string }[] = [
   { type: "LIKE", emoji: "👍", label: "Like" },
@@ -29,6 +30,7 @@ export function ReactionBar({
     initialUserReaction
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { requireSignIn } = useSignInModal();
 
   const toggleReaction = useCallback(
     async (type: ReactionType) => {
@@ -63,7 +65,7 @@ export function ReactionBar({
         });
 
         if (response.status === 401) {
-          toast.error("Sign in to react to stories.");
+          requireSignIn("Sign in to react to stories and show authors your support.");
           setCounts(previousCounts);
           setUserReaction(previousReaction);
           return;

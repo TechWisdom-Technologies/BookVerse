@@ -5,6 +5,7 @@ import { Mail, Loader2, Check } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSignInModal } from "@/app/providers";
 
 interface NewsletterSubscribeButtonProps {
   authorId: string;
@@ -15,6 +16,7 @@ export function NewsletterSubscribeButton({ authorId, initialIsSubscribed }: New
   const [isSubscribed, setIsSubscribed] = useState(initialIsSubscribed);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { requireSignIn } = useSignInModal();
 
   const handleToggleSubscribe = async () => {
     try {
@@ -29,7 +31,7 @@ export function NewsletterSubscribeButton({ authorId, initialIsSubscribed }: New
 
       if (!res.ok) {
         if (res.status === 401) {
-          toast.error("Please sign in to subscribe");
+          requireSignIn("Sign in to subscribe to author newsletters.");
           return;
         }
         const errData = await res.json();

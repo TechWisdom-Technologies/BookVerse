@@ -4,7 +4,8 @@ import { useEffect } from "react";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
-export { useAuth };
+import { SignInModalProvider, useSignInModal } from "@/components/auth/SignInRequiredModal";
+export { useAuth, useSignInModal };
 
 const VALID_THEMES = ['light', 'dark', 'rose', 'amoled', 'cyberpunk', 'mint', 'neon', 'earth', 'canvas', 'vintage', 'oceanic', 'royal', 'system'];
 
@@ -28,7 +29,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       themes={['light', 'dark', 'rose', 'amoled', 'cyberpunk', 'mint', 'neon', 'earth', 'canvas', 'vintage', 'oceanic', 'royal']}
       value={{ light: 'light', dark: 'dark', rose: 'rose', amoled: 'amoled', cyberpunk: 'cyberpunk', mint: 'mint', neon: 'neon', earth: 'earth', canvas: 'canvas', vintage: 'vintage', oceanic: 'oceanic', royal: 'royal' }}
     >
-      <AuthProvider>{children}</AuthProvider>
+      <AuthProvider>
+        <SignInModalProvider>{children}</SignInModalProvider>
+      </AuthProvider>
       <Toaster
         position="top-right"
         toastOptions={{

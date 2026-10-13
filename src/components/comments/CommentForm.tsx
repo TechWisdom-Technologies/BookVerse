@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Send } from "lucide-react";
+import { useSignInModal } from "@/app/providers";
 
 interface CommentAuthor {
   id: string;
@@ -38,6 +39,7 @@ export function CommentForm({
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const { requireSignIn } = useSignInModal();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +63,7 @@ export function CommentForm({
       });
 
       if (res.status === 401) {
-        setError("Please sign in to comment.");
+        requireSignIn("Sign in to join the conversation and share your thoughts.");
         return;
       }
 

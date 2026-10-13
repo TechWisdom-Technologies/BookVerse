@@ -49,6 +49,11 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      { source: '/register', destination: '/signup', permanent: true },
+    ];
+  },
   async headers() {
     // React/Next.js requires 'unsafe-eval' in development for debugging.
     // In production, the stricter CSP without it is used automatically.

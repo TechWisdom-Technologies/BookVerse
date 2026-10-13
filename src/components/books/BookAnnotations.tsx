@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import Link from 'next/link';
 import { getFriendlyErrorMessage } from '@/lib/friendly-errors';
-import { BookmarkIcon, Highlighter, Trash2, LogIn, X, ArrowRight } from 'lucide-react';
+import { BookmarkIcon, Highlighter, Trash2 } from 'lucide-react';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useSignInModal } from '@/app/providers';
 
 interface Annotation {
   id: string;
@@ -18,6 +18,7 @@ interface Annotation {
 
 export function BookAnnotations({ bookId }: { bookId: string }) {
   const { user } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [loading, setLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
@@ -25,7 +26,6 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
   const [content, setContent] = useState('');
   const [highlightedText, setHighlightedText] = useState('');
   const [saving, setSaving] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,7 +63,7 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
 
   const handleDelete = async (annotationId: string) => {
     if (!user) {
-      setShowLoginModal(true);
+      requireSignIn('You must be signed in to manage annotations.', `/library/${bookId}/read`);
       return;
     }
 
@@ -84,7 +84,7 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
 
   const handleCreate = async () => {
     if (!user) {
-      setShowLoginModal(true);
+      requireSignIn('You must be signed in to save bookmarks, highlight text, and record notes.', `/library/${bookId}/read`);
       return;
     }
 
@@ -111,7 +111,7 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
         setHighlightedText('');
         toast.success('Annotation added');
       } else if (res.status === 401) {
-        setShowLoginModal(true);
+        requireSignIn('You must be signed in to save bookmarks, highlight text, and record notes.', `/library/${bookId}/read`);
       } else {
         throw new Error(data.error || 'Failed to add annotation');
       }
@@ -126,7 +126,7 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
   const handleInteraction = (e: React.MouseEvent) => {
     if (!user) {
       e.preventDefault();
-      setShowLoginModal(true);
+      requireSignIn('You must be signed in to save bookmarks, highlight text, and record notes.', `/library/${bookId}/read`);
     }
   };
 
@@ -272,72 +272,6 @@ export function BookAnnotations({ bookId }: { bookId: string }) {
         </div>
       </div>
 
-      {/* Login Required Modal */}
-      {showLoginModal && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-          onClick={() => setShowLoginModal(false)}
-        >
-          <div 
-            className="relative w-full max-w-sm rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6 sm:p-8 shadow-2xl space-y-6 text-center animate-in zoom-in-95 duration-200"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              type="button"
-              onClick={() => setShowLoginModal(false)}
-              className="absolute top-4 right-4 p-2 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              aria-label="Close dialog"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            {/* Icon */}
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-zinc-900 dark:text-white shadow-inner">
-              <LogIn className="w-6 h-6" />
-            </div>
-
-            {/* Content */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
-                Identity Required
-              </span>
-              <h3 className="text-base font-bold text-zinc-900 dark:text-white">
-                Sign in to Annotate
-              </h3>
-              <p className="text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xs mx-auto">
-                You must be signed in to save bookmarks, highlight text, and record your reading notes for this book.
-              </p>
-            </div>
-
-            {/* Actions */}
-            <div className="space-y-2 pt-2">
-              <Link
-                href={`/login?redirect=/library/${bookId}/read`}
-                className="w-full py-3.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[11px] font-bold uppercase tracking-widest rounded-xl transition-all hover:opacity-90 flex items-center justify-center gap-2 shadow-sm"
-              >
-                <span>Log In Now</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              
-              <Link
-                href={`/register?redirect=/library/${bookId}/read`}
-                className="w-full py-3 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800/50 text-[11px] font-bold uppercase tracking-widest rounded-xl transition-all flex items-center justify-center"
-              >
-                Create an Account
-              </Link>
-
-              <button
-                type="button"
-                onClick={() => setShowLoginModal(false)}
-                className="w-full py-2 text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors"
-              >
-                Maybe Later
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }

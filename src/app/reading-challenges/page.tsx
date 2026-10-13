@@ -10,6 +10,7 @@ import {
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useSignInModal } from '@/app/providers';
 import { checkTierAccess } from "@/lib/tier-check";
 import { AccessDeniedModal } from "@/components/auth/AccessDeniedModal";
 import Link from 'next/link';
@@ -28,6 +29,7 @@ interface Challenge {
 export default function ReadingChallengesPage() {
   const router = useRouter();
   const { user, dbUser, loading: authLoading } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const access = checkTierAccess(dbUser, "PRO", "/reading-challenges");
   const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,10 @@ export default function ReadingChallengesPage() {
   };
 
   const handleParticipate = async (challengeId: string) => {
-    if (!dbUser) return toast.error('Please login first.');
+    if (!dbUser) {
+      requireSignIn('Sign in to participate in reading challenges.');
+      return;
+    }
     try {
       setJoiningId(challengeId);
       const res = await fetch(`/api/reading-challenges/${challengeId}/participate`, { method: 'POST' });

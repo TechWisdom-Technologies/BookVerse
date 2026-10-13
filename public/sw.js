@@ -1,4 +1,5 @@
-const CACHE_NAME = "bookverse-cache-v6";
+const CACHE_NAME = "bookverse-cache-v7";
+const IS_DEV_HOST = ["localhost", "127.0.0.1", "[::1]"].includes(self.location.hostname);
 const OFFLINE_PAGE = "/offline.html";
 
 const ASSETS_TO_CACHE = [
@@ -44,6 +45,10 @@ self.addEventListener("fetch", (event) => {
 
   // Skip cross-origin requests
   if (url.origin !== self.location.origin) return;
+
+  // Never intercept on localhost — dev chunks aren't content-hashed and
+  // caching them serves stale code from other projects/builds.
+  if (IS_DEV_HOST) return;
 
   // Skip HMR/webpack dev-only requests (hot reload, etc.)
   if (url.pathname.startsWith("/_next/webpack-hmr")) return;

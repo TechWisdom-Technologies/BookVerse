@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { AlertTriangle, Loader2, ShieldAlert } from "lucide-react";
 import toast from "react-hot-toast";
+import { useSignInModal } from "@/app/providers";
 
 interface StoryModerationActionsProps {
   storyId: string;
@@ -21,11 +22,12 @@ export function StoryModerationActions({ storyId, authorId, currentUserId }: Sto
     description: "",
   });
   const [loading, setLoading] = useState<string | null>(null);
+  const { requireSignIn } = useSignInModal();
 
   const isAuthor = currentUserId === authorId;
 
   const reportStory = async () => {
-    if (!currentUserId) return toast.error("Please sign in first");
+    if (!currentUserId) return requireSignIn("Sign in to report content violations and help keep our community safe.");
     if (!reportDescription.trim()) return toast.error("Please provide description or details of the violation");
     setLoading("report");
     try {
@@ -46,7 +48,7 @@ export function StoryModerationActions({ storyId, authorId, currentUserId }: Sto
   };
 
   const submitDmca = async () => {
-    if (!currentUserId) return toast.error("Please sign in first");
+    if (!currentUserId) return requireSignIn("Sign in to submit a DMCA copyright claim.");
     setLoading("dmca");
     try {
       const res = await fetch("/api/dmca-notices", {

@@ -5,6 +5,7 @@ import { MessageSquare, Send, Trash2 } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
+import { useSignInModal } from "@/app/providers";
 
 interface InlineComment {
   id: string;
@@ -22,6 +23,7 @@ interface InlineComment {
 export function ChapterInlineComments({ storyId, chapterId }: { storyId: string; chapterId: string }) {
   const paragraphId = `chapter-${chapterId}`;
   const { dbUser } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const [comments, setComments] = useState<InlineComment[]>([]);
   const [content, setContent] = useState("");
   const [spoilerAlert, setSpoilerAlert] = useState(false);
@@ -45,6 +47,10 @@ export function ChapterInlineComments({ storyId, chapterId }: { storyId: string;
 
   const submit = async () => {
     if (!content.trim()) return;
+    if (!dbUser) {
+      requireSignIn("Sign in to leave inline comments on chapters.");
+      return;
+    }
     setLoading(true);
     try {
       const res = await fetch(`/api/stories/${storyId}/inline-comments`, {
@@ -52,6 +58,10 @@ export function ChapterInlineComments({ storyId, chapterId }: { storyId: string;
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ paragraphId, content, spoilerAlert }),
       });
+      if (res.status === 401) {
+        requireSignIn("Sign in to leave inline comments on chapters.");
+        return;
+      }
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Failed to comment");
       setComments((prev) => [data, ...prev]);

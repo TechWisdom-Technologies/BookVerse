@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import { useSignInModal } from '@/app/providers';
 import { 
   Users, 
   MessageSquare, 
@@ -84,6 +85,7 @@ interface ClubDetailClientProps {
 
 export default function ClubDetailClient({ initialClub, clubId }: ClubDetailClientProps) {
   const { dbUser } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const router = useRouter();
 
   const [club, setClub] = useState<Club | null>(initialClub);
@@ -122,7 +124,7 @@ export default function ClubDetailClient({ initialClub, clubId }: ClubDetailClie
   }, [club, dbUser, clubId]);
 
   const handleJoinClub = async () => {
-    if (!dbUser) return toast.error('Login required');
+    if (!dbUser) return requireSignIn('Sign in to join this book club.');
     if (club?.rules && !hasAgreedToRules) {
       return toast.error('You must agree to the club rules to join.');
     }
@@ -181,6 +183,7 @@ export default function ClubDetailClient({ initialClub, clubId }: ClubDetailClie
 
   const handlePostDiscussion = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!dbUser) return requireSignIn('Sign in to participate and post in club discussions.');
     if (!newDiscussionContent.trim()) return;
     try {
       setIsPosting(true);
@@ -297,7 +300,7 @@ export default function ClubDetailClient({ initialClub, clubId }: ClubDetailClie
   };
 
   const handleReact = async (discussionId: string, emoji: string, isReply = false, parentId?: string) => {
-    if (!dbUser) return toast.error('Login required');
+    if (!dbUser) return requireSignIn('Sign in to react to club discussions.');
     try {
       // Optimistic update
       const updateReactions = (discussions: ClubDiscussion[]) => 

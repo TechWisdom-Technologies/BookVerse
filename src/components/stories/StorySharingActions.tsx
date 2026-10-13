@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Eye, Loader2, Share2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { useSignInModal } from "@/app/providers";
 
 interface StorySharingActionsProps {
   storyId: string;
@@ -13,6 +14,7 @@ interface StorySharingActionsProps {
 export function StorySharingActions({ storyId, authorId, currentUserId }: StorySharingActionsProps) {
   const [loading, setLoading] = useState<string | null>(null);
   const isAuthor = currentUserId === authorId;
+  const { requireSignIn } = useSignInModal();
 
   async function logShareActivity(platform: string) {
     try {
@@ -27,7 +29,7 @@ export function StorySharingActions({ storyId, authorId, currentUserId }: StoryS
   }
 
   const joinBetaReaders = async () => {
-    if (!currentUserId) return toast.error("Please sign in first");
+    if (!currentUserId) return requireSignIn("Sign in to join the beta reader list and get early access to new chapters.");
     setLoading("beta");
     try {
       const res = await fetch(`/api/stories/${storyId}/beta-readers`, {

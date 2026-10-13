@@ -4,6 +4,7 @@ import { useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Coffee, Loader2, X, Heart, Globe } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useSignInModal } from "@/app/providers";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
@@ -17,6 +18,7 @@ const PRESET_AMOUNTS = [30, 50, 150];
 
 export function TipAuthorDialog({ authorId, authorName, storyId }: TipAuthorDialogProps) {
   const { user } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const [isOpen, setIsOpen] = useState(false);
   const [amount, setAmount] = useState<number>(30);
   const [customAmount, setCustomAmount] = useState<string>("");
@@ -127,7 +129,17 @@ export function TipAuthorDialog({ authorId, authorName, storyId }: TipAuthorDial
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) resetStates(); }}>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (open && !user) {
+          requireSignIn(`Sign in to tip and support ${authorName}.`);
+          return;
+        }
+        setIsOpen(open);
+        if (!open) resetStates();
+      }}
+    >
       <Dialog.Trigger asChild>
         <button className="inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-4 py-2 text-sm font-medium text-zinc-700 shadow-sm transition-colors hover:bg-zinc-50 hover:text-indigo-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-indigo-400">
           <Coffee className="h-4 w-4" />

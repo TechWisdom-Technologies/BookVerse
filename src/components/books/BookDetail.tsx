@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Star, Download, Bookmark, BookOpen, Globe, Languages } from "lucide-react";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
+import { useSignInModal } from "@/app/providers";
 
 interface Book {
   id: string;
@@ -30,10 +31,11 @@ interface BookDetailProps {
 export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookDetailProps) {
   const [saved, setSaved] = useState(initialSaved || false);
   const [savingState, setSavingState] = useState(false);
+  const { requireSignIn } = useSignInModal();
 
   async function handleSave() {
     if (!currentUserId) {
-      toast.error("Please sign in to save books");
+      requireSignIn("Sign in to save books to your personal library and access them anytime.");
       return;
     }
 
@@ -107,15 +109,26 @@ export function BookDetail({ book, currentUserId, isSaved: initialSaved }: BookD
               {saved ? "In Library" : "Add to Library"}
             </button>
 
-            <a
-              href={`/api/books/${book.id}/download`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-center gap-3 w-full px-8 py-4 font-bold rounded text-[11px] uppercase tracking-[0.2em] bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
-            >
-              <Download className="h-4 w-4" />
-              Download {book.fileType.toUpperCase()}
-            </a>
+            {currentUserId ? (
+              <a
+                href={`/api/books/${book.id}/download`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-3 w-full px-8 py-4 font-bold rounded text-[11px] uppercase tracking-[0.2em] bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+              >
+                <Download className="h-4 w-4" />
+                Download {book.fileType.toUpperCase()}
+              </a>
+            ) : (
+              <button
+                type="button"
+                onClick={() => requireSignIn("Sign in to download books to your device.")}
+                className="flex items-center justify-center gap-3 w-full px-8 py-4 font-bold rounded text-[11px] uppercase tracking-[0.2em] bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800 text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+              >
+                <Download className="h-4 w-4" />
+                Download {book.fileType.toUpperCase()}
+              </button>
+            )}
           </div>
         </div>
 

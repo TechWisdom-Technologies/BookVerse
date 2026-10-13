@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle2, BarChart3, Clock, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useSignInModal } from '@/app/providers';
 
 interface PollOption {
   id: string;
@@ -28,6 +29,7 @@ export function PollWidget({ pollId, question, options, expiresAt, onVote, userI
   const [userVoted, setUserVoted] = useState(!!initialVotedOptionId);
   const [isExpired, setIsExpired] = useState(false);
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(initialVotedOptionId || null);
+  const { requireSignIn } = useSignInModal();
 
   useEffect(() => {
     if (expiresAt && new Date(expiresAt) < new Date()) {
@@ -39,7 +41,7 @@ export function PollWidget({ pollId, question, options, expiresAt, onVote, userI
 
   const handleVote = async (optionId: string) => {
     if (!userId) {
-      toast.error('You must be logged in to vote.');
+      requireSignIn('Sign in to vote in polls and make your opinion count.');
       return;
     }
     if (isExpired || userVoted) return;

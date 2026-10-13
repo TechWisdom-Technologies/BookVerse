@@ -125,6 +125,11 @@ export function HomeSearchBar({ initialQuery = "", variant = "home" }: { initial
       try {
         setIsLoading(true);
         const res = await fetch(`/api/search?q=${encodeURIComponent(query.trim())}&limit=5`);
+        const contentType = res.headers.get("content-type") || "";
+        if (!res.ok || !contentType.includes("application/json")) {
+          setLiveResults([]);
+          return;
+        }
         const data = await res.json();
         if (data.results) {
           setLiveResults(data.results);

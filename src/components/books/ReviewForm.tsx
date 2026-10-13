@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { getFriendlyErrorMessage } from "@/lib/friendly-errors";
 import toast from "react-hot-toast";
 
+import { useSignInModal } from "@/app/providers";
+
 interface ReviewFormProps {
   bookId: string;
   onReviewSubmitted?: () => void;
@@ -21,6 +23,7 @@ export function ReviewForm({
   existingComment,
 }: ReviewFormProps) {
   const { user } = useAuth();
+  const { requireSignIn } = useSignInModal();
   const router = useRouter();
   const [rating, setRating] = useState(existingRating || 0);
   const [comment, setComment] = useState(existingComment || "");
@@ -28,8 +31,15 @@ export function ReviewForm({
 
   if (!user) {
     return (
-      <div className="border border-dashed border-zinc-100 dark:border-zinc-900 rounded bg-zinc-50/10 p-10 text-center">
-        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-300 italic">Sign in to leave a review.</p>
+      <div className="border border-dashed border-zinc-200 dark:border-zinc-800 rounded-xl bg-zinc-50/50 dark:bg-zinc-900/30 p-8 text-center space-y-3">
+        <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">Sign in to leave a review</p>
+        <button
+          type="button"
+          onClick={() => requireSignIn("Sign in to share your thoughts and rate this book.")}
+          className="px-6 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all hover:opacity-90 shadow-sm"
+        >
+          Sign In Now
+        </button>
       </div>
     );
   }
