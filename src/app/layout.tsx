@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "BookVerse Team" }],
   creator: "BookVerse",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://bookversebd.site"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL?.replace("https://bookversebd.site", "https://www.bookversebd.site") || "https://www.bookversebd.site"),
   openGraph: {
     type: "website",
     locale: "en_US",
