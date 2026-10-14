@@ -388,7 +388,7 @@ export default async function HomePage() {
       });
 
     return (
-      <main className="relative overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-20">
+      <main className="relative overflow-x-hidden bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 pb-0">
         <HeroSection topUsers={topUsers} totalUsers={totalUsers} />
 
         {/* Library Stats */}
@@ -502,7 +502,7 @@ export default async function HomePage() {
         </section>
 
         {/* Join Us or Newsletter */}
-        <section className="py-48 px-6 text-center border-t border-zinc-50 dark:border-zinc-900 bg-white dark:bg-zinc-950">
+        <section className="py-16 sm:py-24 px-6 text-center border-t border-zinc-50 dark:border-zinc-900 bg-white dark:bg-zinc-950">
           <div className="max-w-2xl mx-auto space-y-12">
             <h2 className="text-3xl font-bold tracking-tight uppercase">Start Your Journey.</h2>
             <p className="text-[11px] text-zinc-400 max-w-sm mx-auto font-medium italic leading-relaxed">

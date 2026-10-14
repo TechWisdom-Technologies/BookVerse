@@ -58,10 +58,10 @@ function SocialLink({ href, icon: Icon, label }: { href: string; icon: React.Com
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex items-center justify-center w-10 h-10 rounded bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-zinc-100 dark:border-zinc-800 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-white transition-all duration-300"
+      className="group relative flex items-center justify-center w-8 h-8 rounded-sm bg-zinc-50 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-zinc-200/80 dark:border-zinc-800 hover:bg-zinc-900 dark:hover:bg-white hover:text-white dark:hover:text-zinc-900 hover:border-zinc-900 dark:hover:border-white transition-all duration-300 shadow-sm"
       aria-label={label}
     >
-      <Icon size={16} />
+      <Icon size={14} />
     </a>
   );
 }
@@ -182,19 +182,18 @@ export function Footer() {
 
   return (
     <footer className="mt-auto bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
-      <div className="mx-auto max-w-7xl px-6 py-20">
+      <div className="mx-auto max-w-7xl px-6 pt-12 pb-24 sm:pb-28">
         {/* Top Section */}
-        <div className="grid lg:grid-cols-2 gap-20 mb-20 pb-20 border-b border-zinc-50 dark:border-zinc-900">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 mb-12 sm:mb-16 pb-12 sm:pb-16 border-b border-zinc-100 dark:border-zinc-900">
           {/* Left - Brand & Description */}
-          <div className="space-y-8">
-            <Link href="/" className="flex flex-col items-start gap-4 group">
-              <img src="/logo-dark.png" alt="BookVerse Logo" className="w-12 h-12 object-contain rounded dark:hidden" />
-              <img src="/logo-light.png" alt="BookVerse Logo" className="w-12 h-12 object-contain rounded hidden dark:block" />
+          <div className="space-y-6">
+            <Link href="/" className="flex flex-col items-start gap-3 group">
+              <img src="/logo-dark.png" alt="BookVerse Logo" className="w-10 h-10 object-contain rounded dark:hidden" />
+              <img src="/logo-light.png" alt="BookVerse Logo" className="w-10 h-10 object-contain rounded hidden dark:block" />
               <div className="flex flex-col gap-0.5">
                 <span className="text-sm font-bold text-zinc-900 dark:text-white uppercase tracking-tight">
                   BookVerse
                 </span>
-
               </div>
             </Link>
             <p className="text-[11px] text-zinc-500 leading-relaxed font-medium max-w-md italic">
@@ -202,7 +201,7 @@ export function Footer() {
             </p>
             
             {/* Stats */}
-            <div className="flex gap-12 pt-4">
+            <div className="flex gap-10 pt-2">
               {[
                 { val: stats.books, label: 'Books' },
                 { val: stats.authors, label: 'Authors' },
@@ -221,11 +220,11 @@ export function Footer() {
         </div>
 
         {/* Links Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 sm:gap-10 mb-8 sm:mb-10">
           {/* Discover */}
-          <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Discover</h4>
-            <ul className="space-y-3">
+          <div className="space-y-4">
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-300 italic">Discover</h4>
+            <ul className="space-y-2.5">
               <li><FooterLink href="/">Home</FooterLink></li>
               <li><FooterLink href="/library">Browse Library</FooterLink></li>
               <li><FooterLink href="/stories">Stories</FooterLink></li>
@@ -236,9 +235,9 @@ export function Footer() {
           </div>
 
           {/* Community */}
-          <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Community</h4>
-            <ul className="space-y-3">
+          <div className="space-y-4">
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-300 italic">Community</h4>
+            <ul className="space-y-2.5">
               <li><FooterLink href="/clubs">Book Clubs</FooterLink></li>
               <li><FooterLink href="/activity-feed">Activity Feed</FooterLink></li>
               <li><FooterLink href="/reading-challenges">Challenges</FooterLink></li>
@@ -248,9 +247,9 @@ export function Footer() {
           </div>
 
           {/* For Authors */}
-          <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">For Authors</h4>
-            <ul className="space-y-3">
+          <div className="space-y-4">
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-300 italic">For Authors</h4>
+            <ul className="space-y-2.5">
               <li><FooterLink href="/write/dashboard">Author Dashboard</FooterLink></li>
               <li><FooterLink href="/write/new">Write a Story</FooterLink></li>
               <li><FooterLink href="/write/universes">Story Universes</FooterLink></li>
@@ -263,9 +262,9 @@ export function Footer() {
           </div>
 
           {/* Support & Legal */}
-          <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Support & Legal</h4>
-            <ul className="space-y-3">
+          <div className="space-y-4">
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-300 italic">Support & Legal</h4>
+            <ul className="space-y-2.5">
               <li><FooterLink href="/premium">Premium</FooterLink></li>
               <li><FooterLink href="/gifts">Gifts</FooterLink></li>
               <li><FooterLink href="/settings">Settings</FooterLink></li>
@@ -279,81 +278,75 @@ export function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-6">
-            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">Get in Touch</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin size={14} className="text-zinc-500 dark:text-zinc-300 mt-0.5 flex-shrink-0" />
+          <div className="space-y-4">
+            <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-300 italic">Get in Touch</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-2.5">
+                <MapPin size={13} className="text-zinc-400 dark:text-zinc-500 mt-0.5 flex-shrink-0" />
                 <a
                   href="https://www.google.com/maps/search/?api=1&query=Johra+Mension,+Koyalarbari+,+Kuratoli,+Kuril-1229,+Dhaka+,+Bangladesh"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors leading-relaxed"
+                  className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors leading-relaxed"
                 >
-                  Johra Mension, Koyalarbari<br />Kuratoli, Kuril-1229<br />Dhaka, Bangladesh
+                  Kuril, Dhaka, Bangladesh
                 </a>
               </li>
 
-              <li className="flex items-start gap-3">
-                <Mail size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0 mt-0.5" />
-                <div className="flex flex-col gap-2">
-                  <a href="mailto:official@techwisdom.site" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
-                    official@techwisdom.site
-                  </a>
-                  <a href="mailto:twtech.contact@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+              <li className="flex items-start gap-2.5">
+                <Mail size={13} className="text-zinc-400 dark:text-zinc-500 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <a href="mailto:twtech.contact@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                     twtech.contact@gmail.com
                   </a>
-                  <a href="mailto:bdbookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                  <a href="mailto:bdbookverse@gmail.com" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                     bdbookverse@gmail.com
+                  </a>
+                  <a href="mailto:official@techwisdom.site" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    official@techwisdom.site
                   </a>
                 </div>
               </li>
-              <li className="flex items-start gap-3">
-                <Phone size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0 mt-0.5" />
-                <div className="flex flex-col gap-2">
-                  <a href="tel:+8801352215600" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
-                    +880 1352-215600
-                  </a>
-                  <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+              <li className="flex items-start gap-2.5">
+                <Phone size={13} className="text-zinc-400 dark:text-zinc-500 flex-shrink-0 mt-0.5" />
+                <div className="flex flex-col gap-1">
+                  <a href="tel:+8801799269699" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                     +880 1799-269699
                   </a>
-                  <a href="tel:+8801641621584" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                  <a href="tel:+8801352215600" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
+                    +880 1352-215600
+                  </a>
+                  <a href="tel:+8801641621584" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                     +880 1641-621584
                   </a>
                 </div>
               </li>
-              <li className="flex items-center gap-3">
-                <MessageCircle size={14} className="text-zinc-500 dark:text-zinc-300 flex-shrink-0" />
-                <a href="https://wa.me/message/XNAQSGDMKN7OD1" target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-500 dark:text-zinc-400 dark:hover:text-white transition-colors">
+              <li className="flex items-center gap-2.5">
+                <MessageCircle size={13} className="text-zinc-400 dark:text-zinc-500 flex-shrink-0" />
+                <a href="https://wa.me/message/XNAQSGDMKN7OD1" target="_blank" rel="noopener noreferrer" className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white transition-colors">
                   WhatsApp Chat
                 </a>
               </li>
             </ul>
-            
-            {/* Social Links Moved Here */}
-            <div className="pt-4 mt-4 border-t border-zinc-100 dark:border-zinc-800/50">
-              <h4 className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic mb-4">Follow Us</h4>
-              <div className="flex items-center gap-3">
-                <SocialLink href="https://facebook.com" icon={FacebookIcon} label="Facebook" />
-                <SocialLink href="https://instagram.com" icon={InstagramIcon} label="Instagram" />
-                <SocialLink href="https://twitter.com" icon={TwitterIcon} label="Twitter" />
-                <SocialLink href="https://linkedin.com" icon={LinkedinIcon} label="LinkedIn" />
-                <SocialLink href="https://tiktok.com" icon={TiktokIcon} label="TikTok" />
-                <SocialLink href="https://t.me/" icon={TelegramIcon} label="Telegram" />
-              </div>
-            </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="pt-10 border-t border-zinc-50 dark:border-zinc-900">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="pt-6 border-t border-zinc-100 dark:border-zinc-900">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Copyright */}
-            <div className="flex flex-col items-center md:items-start gap-1">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-500 dark:text-zinc-300 italic">
-                © {new Date().getFullYear()} BookVerse. All rights reserved.
-              </div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 dark:text-zinc-400 italic">
+              © {new Date().getFullYear()} BookVerse. All rights reserved.
+            </div>
 
+            {/* Social Links */}
+            <div className="flex items-center gap-2">
+              <SocialLink href="https://facebook.com" icon={FacebookIcon} label="Facebook" />
+              <SocialLink href="https://instagram.com" icon={InstagramIcon} label="Instagram" />
+              <SocialLink href="https://twitter.com" icon={TwitterIcon} label="Twitter" />
+              <SocialLink href="https://linkedin.com" icon={LinkedinIcon} label="LinkedIn" />
+              <SocialLink href="https://tiktok.com" icon={TiktokIcon} label="TikTok" />
+              <SocialLink href="https://t.me/" icon={TelegramIcon} label="Telegram" />
             </div>
           </div>
         </div>
