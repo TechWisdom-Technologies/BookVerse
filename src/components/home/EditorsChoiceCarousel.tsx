@@ -117,10 +117,10 @@ export function EditorsChoiceCarousel({ books }: EditorsChoiceCarouselProps) {
           </div>
         </div>
 
-        {/* Carousel Rail (No ugly scrollbar, Touch pan enabled) */}
+        {/* Carousel Rail (No ugly scrollbar, Native touch scroll & vertical pan enabled) */}
         <div 
           ref={scrollRef}
-          className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 pt-2 px-1 scroll-smooth snap-x snap-mandatory touch-pan-x scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 pt-2 px-1 scroll-smooth snap-x snap-mandatory overscroll-x-contain scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
           {books.map((book, idx) => {
             const avgRating = book.averageRating || 0;
@@ -155,7 +155,8 @@ export function EditorsChoiceCarousel({ books }: EditorsChoiceCarouselProps) {
                           alt={book.title}
                           fill
                           sizes="288px"
-                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          draggable={false}
+                          className="object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
                         />
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 text-center">

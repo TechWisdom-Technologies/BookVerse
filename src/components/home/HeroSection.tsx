@@ -14,7 +14,7 @@ interface HeroSectionProps {
 
 export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionProps) {
   return (
-    <section className="relative w-full h-screen min-h-[800px] flex items-start pt-6 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
+    <section className="relative w-full min-h-[660px] sm:min-h-[750px] lg:h-screen lg:min-h-[800px] flex items-start pt-6 sm:pt-10 justify-center overflow-hidden bg-white dark:bg-zinc-950 transition-colors duration-500">
       {/* Background Layer */}
       <div className="absolute inset-0 z-0">
         <Image 
@@ -49,19 +49,17 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
         />
       </div>
 
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 flex flex-col items-center text-center">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 flex flex-col items-center text-center">
 
-        <Suspense fallback={<div className="h-16 w-full max-w-2xl mx-auto mb-12" />}>
+        <Suspense fallback={<div className="h-16 w-full max-w-2xl mx-auto mb-8 sm:mb-12" />}>
           <HomeSearchBar />
         </Suspense>
-
-
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          className="text-6xl sm:text-7xl lg:text-9xl font-bold text-zinc-900 dark:text-white tracking-tighter mb-10 uppercase leading-[0.9]"
+          className="text-4xl xs:text-5xl sm:text-7xl lg:text-9xl font-bold text-zinc-900 dark:text-white tracking-tighter mb-6 sm:mb-10 uppercase leading-[0.95] sm:leading-[0.9]"
         >
           Your Next <br className="hidden sm:block" />
           <span className="text-zinc-300 dark:text-zinc-800">
@@ -73,7 +71,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-          className="text-sm sm:text-base text-zinc-500 max-w-xl mb-16 font-medium italic leading-relaxed"
+          className="text-xs sm:text-sm md:text-base text-zinc-500 max-w-xl mb-8 sm:mb-16 font-medium italic leading-relaxed px-2 sm:px-0"
         >
           Discover thousands of stories, connect with passionate readers, and experience literature in a clean, minimalist environment.
         </motion.p>
@@ -82,11 +80,11 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row items-center gap-8"
+          className="flex flex-col sm:flex-row items-center gap-3.5 sm:gap-8 w-full sm:w-auto max-w-xs sm:max-w-none"
         >
           <Link
             href="/library"
-            className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded font-bold text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:scale-105 shadow-xl border border-zinc-900 dark:border-white"
+            className="w-full sm:w-auto group relative inline-flex items-center justify-center gap-3 sm:gap-4 px-8 sm:px-12 py-3.5 sm:py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:scale-105 active:scale-95 shadow-xl border border-zinc-900 dark:border-white"
           >
             <BookOpen className="w-4 h-4" />
             <span>Start Reading</span>
@@ -95,7 +93,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
 
           <Link
             href="/stories"
-            className="group relative inline-flex items-center justify-center gap-4 px-12 py-4 bg-transparent border border-zinc-100 dark:border-zinc-800 text-zinc-400 dark:text-zinc-500 rounded font-bold text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white hover:scale-105"
+            className="w-full sm:w-auto group relative inline-flex items-center justify-center gap-3 sm:gap-4 px-8 sm:px-12 py-3.5 sm:py-4 bg-transparent border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 rounded font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.2em] transition-all duration-500 hover:bg-zinc-50 dark:hover:bg-zinc-900 hover:text-zinc-900 dark:hover:text-white hover:scale-105 active:scale-95"
           >
             <Play className="w-4 h-4 ml-0.5" />
             <span>Latest Stories</span>
@@ -106,7 +104,7 @@ export function HeroSection({ topUsers = [], totalUsers = 50000 }: HeroSectionPr
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1 }}
-          className="mt-24 flex items-center gap-10 text-[10px] font-bold uppercase tracking-widest text-zinc-300 dark:text-zinc-700"
+          className="mt-12 sm:mt-24 flex items-center gap-6 sm:gap-10 text-[10px] font-bold uppercase tracking-widest text-zinc-300 dark:text-zinc-700"
         >
           <div className="flex items-center gap-4">
             <div className="flex -space-x-3">

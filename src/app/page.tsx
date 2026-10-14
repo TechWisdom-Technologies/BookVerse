@@ -404,8 +404,8 @@ export default async function HomePage() {
         </section>
 
         {/* Quick Genre Filter */}
-        <section className="px-6 mt-12 mb-8 w-full max-w-7xl mx-auto relative z-20">
-          <div className="flex items-center gap-3 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] mask-edges">
+        <section className="px-4 sm:px-6 mt-8 sm:mt-12 mb-6 sm:mb-8 w-full max-w-7xl mx-auto relative z-20">
+          <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-4 overscroll-x-contain [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] mask-edges">
             <Link 
               href="/stories"
               className="whitespace-nowrap px-5 py-2.5 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-md"

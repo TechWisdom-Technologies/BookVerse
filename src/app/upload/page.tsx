@@ -28,7 +28,6 @@ export default async function UploadPage() {
               <h1 className="text-2xl font-bold tracking-tight">Manuscript Protocol</h1>
             </div>
           </header>
-          
           <div className="p-8 border border-zinc-100 dark:border-zinc-900 rounded-lg bg-zinc-50/50 dark:bg-zinc-900/30 flex items-start gap-4">
             <ShieldAlert className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
             <div>

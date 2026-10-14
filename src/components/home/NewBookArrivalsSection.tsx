@@ -142,10 +142,10 @@ export function NewBookArrivalsSection({ books }: NewBookArrivalsSectionProps) {
           </div>
         </div>
 
-        {/* 3D Exhibition Slipcase Rail (Hidden Scrollbar) */}
+        {/* 3D Exhibition Slipcase Rail (Hidden Scrollbar, Native touch scroll & vertical pan enabled) */}
         <div 
           ref={scrollRef}
-          className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 pt-4 px-1 scroll-smooth snap-x snap-mandatory touch-pan-x scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          className="flex gap-4 sm:gap-6 overflow-x-auto pb-4 pt-4 px-1 scroll-smooth snap-x snap-mandatory overscroll-x-contain scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
         >
           {filteredBooks.map((book, idx) => {
             const avgRating = book.averageRating || 0;
@@ -181,7 +181,8 @@ export function NewBookArrivalsSection({ books }: NewBookArrivalsSectionProps) {
                         alt={book.title}
                         fill
                         sizes="288px"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        draggable={false}
+                        className="object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none"
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-gradient-to-br from-zinc-100 via-zinc-200 to-zinc-100 dark:from-zinc-900 dark:via-zinc-800 dark:to-zinc-900 text-center">
