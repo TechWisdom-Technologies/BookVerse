@@ -15,6 +15,9 @@ export const getCurrentUser = cache(async (): Promise<User | null> => {
     const { dbUser } = await verifyToken();
     return dbUser;
   } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.message?.includes("Dynamic server usage")) {
+      throw error;
+    }
     // Suppress expected auth errors so Next.js doesn't show the red error overlay in dev mode
     if (error?.message !== "UNAUTHORIZED" && error?.message !== "USER_NOT_FOUND") {
       console.error("Auth error:", error);

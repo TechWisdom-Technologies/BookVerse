@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import NotificationsClientView from "@/components/notifications/NotificationsClientView";
 
+export const dynamic = 'force-dynamic';
+
 export default async function NotificationsPage() {
   const user = await getCurrentUser();
 

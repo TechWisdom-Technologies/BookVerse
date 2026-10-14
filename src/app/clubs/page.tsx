@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma';
 import { getCurrentUser } from '@/lib/auth';
 import { ClubsClientView } from '@/components/clubs/ClubsClientView';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ClubsPage() {
   // Fetch data on the server
   const [clubs, currentUser] = await Promise.all([

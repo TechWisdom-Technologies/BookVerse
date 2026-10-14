@@ -6,6 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { ArrowLeft, Bookmark } from "lucide-react";
 import { ShelfClient } from "./ShelfClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ShelfPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("firebase-token")?.value;

@@ -7,6 +7,8 @@ import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase-admin";
 import { Suspense } from "react";
 
+export const dynamic = 'force-dynamic';
+
 async function getCurrentUserId() {
   try {
     const cookieStore = await cookies();
@@ -15,7 +17,12 @@ async function getCurrentUserId() {
     const decoded = await adminAuth.verifyIdToken(token);
     const user = await prisma.user.findUnique({ where: { firebaseUid: decoded.uid }, select: { id: true } });
     return user?.id ?? null;
-  } catch { return null; }
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.message?.includes("Dynamic server usage")) {
+      throw error;
+    }
+    return null;
+  }
 }
 
 import {
@@ -527,7 +534,10 @@ export default async function HomePage() {
         </section>
       </main>
     );
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.digest === "DYNAMIC_SERVER_USAGE" || error?.message?.includes("Dynamic server usage")) {
+      throw error;
+    }
     console.error("HomePage Data Fetching Error:", error);
     // Re-throw so error.tsx boundary handles this with proper offline UI
     // (includes network detection, offline stories link, retry button)
